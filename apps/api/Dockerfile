@@ -17,8 +17,11 @@ COPY . .
 
 # Cria usuário não-root para o processo
 RUN addgroup --gid 1001 appgroup \
- && adduser  --uid 1001 --gid 1001 --no-create-home --disabled-password appuser \
- && chown -R appuser:appgroup /app
+ && adduser  --uid 1001 --gid 1001 --no-create-home --disabled-password appuser
+
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh \
+ && chown -R appuser:appgroup /app /docker-entrypoint.sh
 
 USER appuser
 
