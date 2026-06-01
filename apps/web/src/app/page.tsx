@@ -244,7 +244,7 @@ export default function LandingPage() {
 
   // Load charger types
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/api/v1/public/config`)
+    fetch("/api/v1/public/config")
       .then((r) => r.json())
       .then((d) => setChargerTypes(d.charger_types ?? []))
       .catch(() => {});
@@ -286,7 +286,7 @@ export default function LandingPage() {
     setSpecialistError("");
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/api/v1/public/leads/${leadId}/specialist-message`,
+        `/api/v1/public/leads/${leadId}/specialist-message`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -350,7 +350,7 @@ export default function LandingPage() {
     setSubmitting(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/api/v1/public/simulate`,
+        `/api/v1/public/simulate`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

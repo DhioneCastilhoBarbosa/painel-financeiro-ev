@@ -5,8 +5,6 @@ import { CheckCircle2, Loader2, X } from "lucide-react";
 
 const GREEN = "#06CB3F";
 const DARK  = "#163134";
-const API   = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-
 function formatDocument(value: string): string {
   const d = value.replace(/\D/g, "").slice(0, 14);
   if (d.length <= 11) {
@@ -99,7 +97,7 @@ export function EnterpriseContactForm() {
     setSending(true);
     setError("");
     try {
-      const res = await fetch(`${API}/api/v1/public/enterprise-contact`, {
+      const res = await fetch("/api/v1/public/enterprise-contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

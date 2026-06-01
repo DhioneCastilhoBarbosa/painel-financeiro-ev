@@ -23,7 +23,8 @@
 #
 # Portas no host (evitam conflito com outras apps no mesmo servidor):
 #   web → 3003 | api → 8001 | postgres → 5435 | redis → 6380
-# Acesso temporário: http://54.159.164.244:3003 (front) e :8001 (API)
+# Acesso: http://54.159.164.244:3003 (front + /api via proxy Next)
+# API direta (Swagger): http://54.159.164.244:8001
 # ─────────────────────────────────────────────────────────────────────────────
 
 services:
@@ -78,8 +79,8 @@ services:
     ports:
       - "8001:8000"
     environment:
-      # CORS / links — sobrescreva no Dokploy quando tiver domínio
-      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://54.159.164.244:3003,http://54.159.164.244}
+      # CORS (fallback se algo chamar :8001 direto) — Dokploy pode sobrescrever
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://54.159.164.244:3003,http://54.159.164.244:8001,http://54.159.164.244}
       APP_URL: ${APP_URL:-http://54.159.164.244:3003}
     volumes:
       - uploads_data:/app/uploads
@@ -156,8 +157,9 @@ services:
       context: ./apps/web
       dockerfile: Dockerfile
       args:
-        # Browser acessa a API na porta publicada (sem nginx na mesma origem)
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://54.159.164.244:8001}
+        # Vazio = browser usa /api/* na mesma origem (proxy Next → api:8000)
+        NEXT_PUBLIC_API_URL: ""
+        INTERNAL_API_URL: http://api:8000
     image: financedash-web:latest
     container_name: financedash_web_prod
     restart: always

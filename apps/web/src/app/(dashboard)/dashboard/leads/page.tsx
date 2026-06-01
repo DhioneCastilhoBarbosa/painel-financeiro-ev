@@ -288,7 +288,7 @@ export default function LeadsPage() {
   // ── Handlers ────────────────────────────────────────────────────────────────
   const handleExport = () =>
     window.open(
-      `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/api/v1/leads/export`,
+      `/api/v1/leads/export`,
       "_blank",
     );
 

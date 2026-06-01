@@ -15,9 +15,11 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Variáveis de build — sobrescrever com --build-arg em produção
+# Proxy /api no build (destino usado pelo Next em runtime no container)
+ARG INTERNAL_API_URL=http://api:8000
 ARG NEXT_PUBLIC_API_URL=""
 
+ENV INTERNAL_API_URL=$INTERNAL_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -30,6 +32,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV INTERNAL_API_URL=http://api:8000
 
 # Cria usuário não-root
 RUN addgroup --system --gid 1001 nodejs \
