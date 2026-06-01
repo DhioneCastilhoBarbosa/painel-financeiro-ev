@@ -496,7 +496,7 @@ export default function TeamPage() {
                       onValueChange={(val) => {
                         if (val === "__builtin__" && m.custom_role_id) {
                           removeCustomRole(m.id, m.custom_role_id);
-                        } else if (val !== "__builtin__") {
+                        } else if (val && val !== "__builtin__") {
                           assignRole(m.id, val);
                         }
                       }}

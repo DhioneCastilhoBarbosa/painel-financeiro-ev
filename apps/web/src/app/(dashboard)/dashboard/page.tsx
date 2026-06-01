@@ -12,6 +12,7 @@ import { DashboardOnboarding } from "@/components/DashboardOnboarding";
 import { useFilters } from "@/contexts/FilterContext";
 import { useKPIs, useTimeseries, useHourly, useInsights, usePayments } from "@/hooks/useAnalytics";
 import { formatCurrency, formatNumber, formatPct, formatKwh } from "@/lib/format";
+import type { TimeSeriesPoint } from "@/lib/types";
 import { DownloadableChart } from "@/components/DownloadableChart";
 import Link from "next/link";
 import useSWR from "swr";
@@ -58,11 +59,14 @@ export default function DashboardPage() {
   }));
 
   // Compute 7-day moving average on timeseries
-  const timeseriesWithMA = (timeseries ?? []).map((d, i, arr) => {
-    const window = arr.slice(Math.max(0, i - 6), i + 1);
-    const ma = window.reduce((sum, x) => sum + x.revenue, 0) / window.length;
-    return { ...d, ma7: Math.round(ma * 100) / 100 };
-  });
+  const timeseriesWithMA = ((timeseries ?? []) as TimeSeriesPoint[]).map(
+    (d, i, arr) => {
+      const window = arr.slice(Math.max(0, i - 6), i + 1);
+      const ma =
+        window.reduce((sum, x) => sum + x.revenue, 0) / window.length;
+      return { ...d, ma7: Math.round(ma * 100) / 100 };
+    }
+  );
 
   if (!kpisLoading && !hasData) {
     return (
