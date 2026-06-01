@@ -1,0 +1,63 @@
+# ─── Secrets / environment (NUNCA versionar valores reais) ───────────────────
+.env
+.env.local
+.env.production
+.env.staging
+.env.*.local
+**/.env
+# Templates versionados:
+!.env.example
+!.env.production.example
+
+# ─── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+.coverage.*
+
+# ─── Node / Next.js ─────────────────────────────────────────────────────────────
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+
+# ─── Uploads, datasets e dados locais ─────────────────────────────────────────
+apps/api/uploads/
+uploads/
+datasets/
+
+# ─── Docker / volumes locais ──────────────────────────────────────────────────
+postgres_data/
+redis_data/
+
+# ─── IDEs e OS ─────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ─── Scripts ad-hoc na API (testes manuais; manter apps/api/tests/) ─────────────
+apps/api/check_*.py
+apps/api/test_*.py
+!apps/api/tests/
+
+# ─── Produção (servidor) ───────────────────────────────────────────────────────
+prod/scripts/_certbot-renew-hook.sh

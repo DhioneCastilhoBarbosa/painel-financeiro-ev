@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="8.8173475mm"
+   height="42.363831mm"
+   viewBox="0 0 8.8173475 42.363831"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   sodipodi:docname="intelbras-i.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.73851712"
+     inkscape:cx="-438.71698"
+     inkscape:cy="137.43757"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="3832"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath17990">
+      <path
+         d="M 0,6519.685 H 3685.039 V 0 H 0 Z"
+         transform="translate(-1639.1696,-4754.4703)"
+         id="path17990-6" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath17994">
+      <path
+         d="M 0,6519.685 H 3685.039 V 0 H 0 Z"
+         transform="translate(-1630.3334,-4661.6983)"
+         id="path17994-0" />
+    </clipPath>
+  </defs>
+  <g
+     inkscape:label="Camada 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-220.92709,-112.18332)">
+    <path
+       id="path17989-4"
+       d="m 0,0 c -5.333,0 -9.655,-4.324 -9.655,-9.651 0,-5.333 4.322,-9.657 9.655,-9.657 5.331,0 9.654,4.324 9.654,9.657 C 9.654,-4.324 5.331,0 0,0"
+       style="fill:#029d39;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       transform="matrix(0.45664442,0,0,-0.45664442,225.33599,112.18332)"
+       clip-path="url(#clipPath17990)" />
+    <path
+       id="path17993-2"
+       d="M 0,0 H 17.662 V 70.63 C 7.787,70.63 0,68.021 0,68.021 Z"
+       style="fill:#029d39;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       transform="matrix(0.45664442,0,0,-0.45664442,221.30085,154.54715)"
+       clip-path="url(#clipPath17994)" />
+  </g>
+</svg>

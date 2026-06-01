@@ -1,0 +1,24 @@
+[tool.pytest.ini_options]
+asyncio_mode    = "auto"
+testpaths       = ["tests"]
+addopts         = "-v --tb=short --cov=app --cov-report=term-missing --cov-report=xml"
+
+[tool.coverage.run]
+source   = ["app"]
+omit     = ["app/workers/*", "*/migrations/*", "*/tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty   = true
+fail_under   = 60       # CI falha se cobertura cair abaixo de 60%
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+select  = ["E", "F", "W", "I", "UP", "B", "C4", "SIM"]
+ignore  = ["E501", "B008"]   # E501=line-too-long, B008=function-call-in-default
+
+[tool.mypy]
+python_version = "3.12"
+strict         = false
+ignore_missing_imports = true

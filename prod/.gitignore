@@ -1,0 +1,5 @@
+# Nunca versionar o .env de produção
+.env
+
+# Script auxiliar gerado pelo setup.sh (contém caminho absoluto do servidor)
+scripts/_certbot-renew-hook.sh

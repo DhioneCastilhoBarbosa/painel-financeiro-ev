@@ -1,0 +1,104 @@
+services:
+  db:
+    image: timescale/timescaledb:latest-pg16
+    container_name: financedash_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-financedash}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-financedash_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-financedash}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U financedash"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: financedash_redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: financedash_api
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://financedash:financedash_dev@db:5432/financedash
+      REDIS_URL: redis://redis:6379/0
+      DATASETS_DIR: /datasets
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./apps/api:/app
+      - uploads_data:/app/uploads
+      - ./datasets:/datasets
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  worker:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: financedash_worker
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://financedash:financedash_dev@db:5432/financedash
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - ./apps/api:/app
+      - uploads_data:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A app.workers.celery_app worker --loglevel=info --concurrency=2
+
+  web:
+    image: node:20-alpine
+    container_name: financedash_web
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/web:/app
+      # Volume nomeado para node_modules — evita conflito entre binários
+      # do container (Linux) e do host (Windows/macOS)
+      - web_node_modules:/app/node_modules
+    environment:
+      NODE_ENV: development
+      # URL usada pelo *servidor* Next.js para proxiar /api/* (rede interna Docker)
+      INTERNAL_API_URL: http://api:8000
+      # Polling necessário para hot-reload funcionar dentro de container
+      # (eventos de filesystem não propagam bem via bind mount no Windows/macOS)
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+    depends_on:
+      - api
+    # Instala dependências na primeira vez (usa o volume nomeado de node_modules)
+    # e sobe o servidor de desenvolvimento com hot-reload
+    command: sh -c "npm install --legacy-peer-deps --prefer-offline && npm run dev"
+
+volumes:
+  postgres_data:
+  redis_data:
+  uploads_data:
+  web_node_modules:

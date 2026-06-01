@@ -1,0 +1,194 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# docker-compose.prod.yml — Configuração de PRODUÇÃO
+#
+# Diferenças em relação ao docker-compose.yml (desenvolvimento):
+#   • API roda com múltiplos workers, SEM --reload
+#   • Sem bind-mount de código-fonte (usa imagem construída)
+#   • celery-beat incluído (schedule automático de alertas)
+#   • nginx como reverse proxy (roteia /api/* e /*)
+#   • Variáveis sensíveis via .env.production (no Dokploy: aba Environment)
+#   • Healthchecks em todos os serviços
+#   • Usuário não-root nos containers da aplicação
+#
+# Em produção na AWS, remova os serviços `db` e `redis` deste arquivo
+# e configure DATABASE_URL e REDIS_URL no .env.production apontando para
+# os serviços gerenciados (Timescale Cloud + ElastiCache).
+#
+# Como usar:
+#   docker compose -f docker-compose.prod.yml up -d --build
+#   docker compose -f docker-compose.prod.yml exec api alembic upgrade head
+#
+# Portas no host (evitam conflito com outras apps no mesmo servidor):
+#   web → 3003 | api → 8001 | postgres → 5435 | redis → 6380
+# Acesso temporário: http://54.159.164.244:3003 (front) e :8001 (API)
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── Banco de dados (descomente se não usar serviço gerenciado) ─────────────
+  db:
+    image: timescale/timescaledb:latest-pg16
+    container_name: financedash_db_prod
+    restart: always
+    environment:
+      POSTGRES_USER:     ${POSTGRES_USER:-financedash}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB:       ${POSTGRES_DB:-financedash}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-financedash}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5435:5432"
+
+  # ── Redis (descomente se não usar ElastiCache) ─────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: financedash_redis_prod
+    restart: always
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    ports:
+      - "6380:6379"
+
+  # ── API FastAPI ───────────────────────────────────────────────────────────
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    image: financedash-api:latest
+    container_name: financedash_api_prod
+    restart: always
+    env_file: .env.production
+    ports:
+      - "8001:8000"
+    environment:
+      # CORS / links — sobrescreva no Dokploy quando tiver domínio
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://54.159.164.244:3003,http://54.159.164.244}
+      APP_URL: ${APP_URL:-http://54.159.164.244:3003}
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    # Sem --reload; 2 workers síncronos + 1 thread async por worker
+    command: >
+      uvicorn app.main:app
+        --host 0.0.0.0
+        --port 8000
+        --workers 2
+        --proxy-headers
+        --forwarded-allow-ips "*"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ── Celery Worker ─────────────────────────────────────────────────────────
+  worker:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    image: financedash-api:latest
+    container_name: financedash_worker_prod
+    restart: always
+    env_file: .env.production
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      celery -A app.workers.celery_app worker
+        --loglevel=info
+        --concurrency=2
+        --without-gossip
+        --without-mingle
+
+  # ── Celery Beat (schedule automático) ────────────────────────────────────
+  # IMPORTANTE: deve ter EXATAMENTE UMA instância. Nunca escale este serviço.
+  beat:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    image: financedash-api:latest
+    container_name: financedash_beat_prod
+    restart: always
+    env_file: .env.production
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      celery -A app.workers.celery_app beat
+        --loglevel=info
+        --schedule /tmp/celerybeat-schedule
+
+  # ── Frontend Next.js ──────────────────────────────────────────────────────
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+      args:
+        # Browser acessa a API na porta publicada (sem nginx na mesma origem)
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://54.159.164.244:8001}
+    image: financedash-web:latest
+    container_name: financedash_web_prod
+    restart: always
+    ports:
+      - "3003:3000"
+    environment:
+      NODE_ENV: production
+      INTERNAL_API_URL: http://api:8000
+    depends_on:
+      - api
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ > /dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # ── Nginx (reverse proxy) ────────────────────────────────────────────────
+  # Opcional: sem ports no host — use web:3003 / api:8001 ou domínio no Dokploy.
+  # Quando tiver domínio no Dokploy, pode apontar o Traefik para web ou reativar nginx.
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: financedash_nginx_prod
+    restart: always
+    profiles:
+      - with-nginx
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      # Para TLS, adicione:
+      # - ./infra/nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      - api
+      - web
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost/ > /dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres_data:
+  redis_data:
+  uploads_data:
