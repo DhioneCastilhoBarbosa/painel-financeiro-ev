@@ -6,7 +6,7 @@
 #   • Sem bind-mount de código-fonte (usa imagem construída)
 #   • celery-beat incluído (schedule automático de alertas)
 #   • nginx como reverse proxy (roteia /api/* e /*)
-#   • Variáveis sensíveis via .env.production (no Dokploy: aba Environment)
+#   • Variáveis: Dokploy → aba Environment (grava .env) ou arquivo .env local
 #   • Healthchecks em todos os serviços
 #   • Usuário não-root nos containers da aplicação
 #
@@ -17,6 +17,9 @@
 # Como usar:
 #   docker compose -f docker-compose.prod.yml up -d --build
 #   docker compose -f docker-compose.prod.yml exec api alembic upgrade head
+#
+# Dokploy: use a aba Environment (não crie .env.production no repo).
+# O Dokploy grava as variáveis em .env na pasta do compose.
 #
 # Portas no host (evitam conflito com outras apps no mesmo servidor):
 #   web → 3003 | api → 8001 | postgres → 5435 | redis → 6380
@@ -69,7 +72,9 @@ services:
     image: financedash-api:latest
     container_name: financedash_api_prod
     restart: always
-    env_file: .env.production
+    env_file:
+      - path: .env
+        required: false
     ports:
       - "8001:8000"
     environment:
@@ -106,7 +111,9 @@ services:
     image: financedash-api:latest
     container_name: financedash_worker_prod
     restart: always
-    env_file: .env.production
+    env_file:
+      - path: .env
+        required: false
     volumes:
       - uploads_data:/app/uploads
     depends_on:
@@ -130,7 +137,9 @@ services:
     image: financedash-api:latest
     container_name: financedash_beat_prod
     restart: always
-    env_file: .env.production
+    env_file:
+      - path: .env
+        required: false
     depends_on:
       db:
         condition: service_healthy
