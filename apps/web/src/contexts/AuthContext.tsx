@@ -22,6 +22,19 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+/** Rotas públicas — não tentam refresh (evita 401 no console na landing). */
+function isPublicRoute(path: string): boolean {
+  if (path === "/") return true;
+  const prefixes = [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/solucao",
+    "/manual",
+  ];
+  return prefixes.some((p) => path === p || path.startsWith(`${p}/`));
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -45,6 +58,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (typeof window !== "undefined" && isPublicRoute(window.location.pathname)) {
+      setLoading(false);
+      return;
+    }
     refresh().finally(() => setLoading(false));
   }, [refresh]);
 

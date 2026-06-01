@@ -73,6 +73,11 @@ class Settings(BaseSettings):
     def cors_origins(self) -> list[str]:
         return [o.strip() for o in self.allowed_origins.split(",")]
 
+    @property
+    def cookie_secure(self) -> bool:
+        """Cookies Secure só em HTTPS — em http://IP o browser ignora secure=True."""
+        return self.app_url.lower().startswith("https://")
+
 
 @lru_cache
 def get_settings() -> Settings:

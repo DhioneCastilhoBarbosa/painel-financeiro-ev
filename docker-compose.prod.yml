@@ -89,20 +89,21 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    # Sem --reload; 2 workers síncronos + 1 thread async por worker
+    # Migrações antes do uvicorn (evita 500 em /public/config sem tabelas)
     command: >
-      uvicorn app.main:app
+      sh -c "alembic upgrade head &&
+      exec uvicorn app.main:app
         --host 0.0.0.0
         --port 8000
         --workers 2
         --proxy-headers
-        --forwarded-allow-ips "*"
+        --forwarded-allow-ips '*'"
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 15s
+      retries: 5
+      start_period: 90s
 
   # ── Celery Worker ─────────────────────────────────────────────────────────
   worker:
@@ -118,6 +119,8 @@ services:
     volumes:
       - uploads_data:/app/uploads
     depends_on:
+      api:
+        condition: service_healthy
       db:
         condition: service_healthy
       redis:
@@ -142,6 +145,8 @@ services:
       - path: .env
         required: false
     depends_on:
+      api:
+        condition: service_healthy
       db:
         condition: service_healthy
       redis:

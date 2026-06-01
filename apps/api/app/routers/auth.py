@@ -7,6 +7,7 @@ from jwt.exceptions import InvalidTokenError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.database import get_db
 from app.core.deps import CurrentUser
 from app.core.ratelimit import limiter
@@ -40,6 +41,29 @@ router = APIRouter()
 
 REFRESH_TOKEN_PREFIX = "refresh:"
 RESET_TOKEN_PREFIX = "reset:"
+
+_REFRESH_COOKIE_MAX_AGE = 30 * 24 * 3600
+
+
+def _set_refresh_cookie(response: Response, token: str) -> None:
+    """HttpOnly refresh cookie — Secure apenas quando APP_URL é https://."""
+    response.set_cookie(
+        key="refresh_token",
+        value=token,
+        httponly=True,
+        secure=settings.cookie_secure,
+        samesite="lax",
+        max_age=_REFRESH_COOKIE_MAX_AGE,
+    )
+
+
+def _clear_refresh_cookie(response: Response) -> None:
+    response.delete_cookie(
+        key="refresh_token",
+        httponly=True,
+        secure=settings.cookie_secure,
+        samesite="lax",
+    )
 
 
 def _slug_from_name(name: str) -> str:
@@ -156,14 +180,7 @@ async def login(
         str(user.id),
     )
 
-    response.set_cookie(
-        key="refresh_token",
-        value=refresh,
-        httponly=True,
-        secure=True,
-        samesite="lax",
-        max_age=30 * 24 * 3600,
-    )
+    _set_refresh_cookie(response, refresh)
 
     return TokenResponse(access_token=access)
 
@@ -212,14 +229,7 @@ async def refresh_token(
     new_refresh = create_refresh_token(str(user.id))
     await redis.setex(f"{REFRESH_TOKEN_PREFIX}{new_refresh}", 30 * 24 * 3600, str(user.id))
 
-    response.set_cookie(
-        key="refresh_token",
-        value=new_refresh,
-        httponly=True,
-        secure=True,
-        samesite="lax",
-        max_age=30 * 24 * 3600,
-    )
+    _set_refresh_cookie(response, new_refresh)
 
     access = create_access_token(str(user.id), str(user.organization_id))
     return TokenResponse(access_token=access)
@@ -236,7 +246,7 @@ async def logout(request: Request, response: Response):
     if token:
         redis = get_redis()
         await redis.delete(f"{REFRESH_TOKEN_PREFIX}{token}")
-    response.delete_cookie("refresh_token")
+    _clear_refresh_cookie(response)
     return {"message": "Logout realizado"}
 
 
