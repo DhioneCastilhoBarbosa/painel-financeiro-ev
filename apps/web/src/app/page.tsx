@@ -1176,8 +1176,8 @@ export default function LandingPage() {
                   <AreaChart data={result.monthly_projections} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
                     <defs>
                       <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={BRAND.primary} stopOpacity={0.15} />
-                        <stop offset="95%" stopColor={BRAND.primary} stopOpacity={0} />
+                        <stop offset="5%" stopColor={BRAND.primary} stopOpacity={0.45} />
+                        <stop offset="95%" stopColor={BRAND.primary} stopOpacity={0.08} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
