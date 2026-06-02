@@ -8,7 +8,7 @@ import { Logo } from "@/components/Logo";
 import {
   Zap, TrendingUp, Clock, ChevronRight, CheckCircle2,
   BarChart3, Mail, ArrowRight, Loader2, ChevronDown,
-  MapPin, Search,
+  MapPin, Search, Star,
 } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
@@ -195,7 +195,24 @@ interface ChargerType {
   label: string;
   power_kw: number;
   price_brl: number;
+  avg_sessions_day?: number;
+  avg_duration_min?: number;
 }
+
+// Recomendações de carregador por setor (chaves = sector value do SECTORS array)
+const SECTOR_RECOMMENDATIONS: Record<string, string[]> = {
+  "Shopping Center / Mall":          ["AC 22 kW", "AC 7,4 kW", "DC 30 kW", "DC 60 kW", "DC 80 kW"],
+  "Hotel / Pousada":                 ["AC 22 kW", "AC 7,4 kW", "DC 30 kW"],
+  "Posto de Gasolina / Conveniência":["AC 22 kW", "DC 30 kW", "DC 60 kW", "DC 80 kW", "DC 120 kW", "DC 180 kW"],
+  "Estacionamento Público/Privado":  ["AC 22 kW", "AC 7,4 kW", "DC 30 kW"],
+  "Condomínio Residencial":          ["AC 22 kW", "AC 7,4 kW"],
+  "Condomínio Corporativo":          ["AC 22 kW", "AC 7,4 kW", "DC 30 kW"],
+  "Supermercado / Varejo":           ["AC 22 kW", "AC 7,4 kW", "DC 30 kW", "DC 60 kW", "DC 80 kW"],
+  "Restaurante / Alimentação":       ["AC 22 kW", "AC 7,4 kW", "DC 30 kW"],
+  "Aeroporto / Terminal":            ["AC 22 kW", "AC 7,4 kW"],
+  "Educação (Universidade / Escola)":["AC 7,4 kW", "AC 22 kW", "DC 30 kW"],
+  "Saúde (Hospital / Clínica)":      ["AC 7,4 kW", "AC 22 kW", "DC 30 kW"],
+};
 
 // ── Componente ────────────────────────────────────────────────────────────────
 
@@ -213,6 +230,7 @@ export default function LandingPage() {
   const [result, setResult] = useState<SimResult | null>(null);
   const [leadId, setLeadId] = useState<string | null>(null);
   const [chargerTypes, setChargerTypes] = useState<ChargerType[]>([]);
+  const [pricePerKwh, setPricePerKwh] = useState<number>(0.85);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   // Mensagem ao especialista (após resultado)
@@ -242,11 +260,14 @@ export default function LandingPage() {
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Load charger types
+  // Load charger types + price_per_kwh
   useEffect(() => {
     fetch("/api/v1/public/config")
       .then((r) => r.json())
-      .then((d) => setChargerTypes(d.charger_types ?? []))
+      .then((d) => {
+        setChargerTypes(d.charger_types ?? []);
+        if (typeof d.price_per_kwh === "number") setPricePerKwh(d.price_per_kwh);
+      })
       .catch(() => {});
   }, []);
 
@@ -552,20 +573,49 @@ export default function LandingPage() {
       </section>
 
       {/* ── Stats bar ────────────────────────────────────────────────────────── */}
-      <section style={{ backgroundColor: BRAND.primary }}>
-        <div className="max-w-6xl mx-auto px-6 py-6 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
-          {[
-            { value: "245%+", label: "ROI médio projetado em 5 anos" },
-            { value: "~18 meses", label: "Payback médio estimado" },
-            { value: "R$ 9.800", label: "Receita/mês média (DC 60 kW)" },
-          ].map(({ value, label }) => (
-            <div key={label} style={{ color: BRAND.dark }}>
-              <p className="text-3xl font-extrabold tracking-tight">{value}</p>
-              <p className="text-sm mt-1 opacity-70 font-medium">{label}</p>
+      {(() => {
+        // Calcula os stats diretamente do config da API para garantir consistência
+        const OPEX_PCT = 0.25;
+        const dc60 = chargerTypes.find((c) => c.key === "DC 60 kW");
+        const kwhSession = dc60 ? dc60.power_kw * ((dc60.avg_duration_min ?? 35) / 60) : 35;
+        const monthlyRev = dc60
+          ? (dc60.avg_sessions_day ?? 6) * 30 * kwhSession * pricePerKwh
+          : null;
+        const monthlyNet = monthlyRev ? monthlyRev * (1 - OPEX_PCT) : null;
+        const capex60 = dc60?.price_brl ?? 75_000;
+        // Payback simples (sem crescimento) — mesma fórmula do backend
+        const paybackMonths = monthlyNet ? Math.round(capex60 / monthlyNet) : null;
+        // ROI sem crescimento (conservador) = (net*60 / capex - 1) * 100
+        const roi = monthlyNet ? Math.round((monthlyNet * 60 / capex60 - 1) * 100) : null;
+
+        const stats = [
+          {
+            value: roi !== null ? `${roi}%+` : "—",
+            label: "ROI projetado em 5 anos (DC 60 kW)",
+          },
+          {
+            value: paybackMonths !== null ? `~${paybackMonths} meses` : "—",
+            label: "Payback estimado (DC 60 kW)",
+          },
+          {
+            value: monthlyRev !== null ? fmtBRL(monthlyRev) : "—",
+            label: "Receita/mês estimada (DC 60 kW)",
+          },
+        ];
+
+        return (
+          <section style={{ backgroundColor: BRAND.primary }}>
+            <div className="max-w-6xl mx-auto px-6 py-6 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+              {stats.map(({ value, label }) => (
+                <div key={label} style={{ color: BRAND.dark }}>
+                  <p className="text-3xl font-extrabold tracking-tight">{value}</p>
+                  <p className="text-sm mt-1 opacity-70 font-medium">{label}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </section>
+          </section>
+        );
+      })()}
 
       {/* ── Como funciona ─────────────────────────────────────────────────── */}
       <section style={{ backgroundColor: BRAND.lightGray }} className="py-20">
@@ -669,10 +719,19 @@ export default function LandingPage() {
 
                 {/* Carregador */}
                 <div>
-                  <label className="block text-sm font-semibold mb-3" style={{ color: BRAND.dark }}>
-                    Qual carregador te interessa?
-                  </label>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="block text-sm font-semibold" style={{ color: BRAND.dark }}>
+                      Qual carregador te interessa?
+                    </label>
+                    {sector && SECTOR_RECOMMENDATIONS[sector] && (
+                      <span className="flex items-center gap-1 text-xs font-medium" style={{ color: "#d97706" }}>
+                        <Star className="h-3.5 w-3.5 fill-current" />
+                        Recomendado para este setor
+                      </span>
+                    )}
+                  </div>
                   {(() => {
+                    const recommendations = sector ? (SECTOR_RECOMMENDATIONS[sector] ?? []) : [];
                     const list = chargerTypes.length > 0
                       ? chargerTypes
                       : [
@@ -693,18 +752,27 @@ export default function LandingPage() {
                             {items.map((c) => {
                               const displayLabel = c.label.replace(/^(AC|DC)\s+/i, "");
                               const active = chargerType === c.key;
+                              const recommended = recommendations.includes(c.key);
                               return (
                                 <button
                                   key={c.key}
                                   type="button"
                                   onClick={() => { setChargerType(c.key); setErrors((p) => ({ ...p, chargerType: "" })); }}
-                                  className="flex flex-col items-center p-3.5 rounded-xl border-2 text-center transition-all"
+                                  className="relative flex flex-col items-center p-3.5 rounded-xl border-2 text-center transition-all"
                                   style={
                                     active
                                       ? { borderColor: BRAND.primary, backgroundColor: `${BRAND.primary}10`, color: BRAND.dark }
-                                      : { borderColor: "#e2e8f0", color: "#475569" }
+                                      : recommended
+                                        ? { borderColor: "#f59e0b", backgroundColor: "#fffbeb", color: "#475569" }
+                                        : { borderColor: "#e2e8f0", color: "#475569" }
                                   }
                                 >
+                                  {recommended && (
+                                    <span className="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 rounded-full shadow-sm"
+                                      style={{ backgroundColor: "#f59e0b" }}>
+                                      <Star className="h-3 w-3 fill-white text-white" />
+                                    </span>
+                                  )}
                                   <Zap
                                     className="h-5 w-5 mb-1.5"
                                     style={active ? { fill: BRAND.primary, color: BRAND.primary } : { color: BRAND.midGray }}
