@@ -10,16 +10,30 @@ import { toast } from "sonner";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 
 const GREEN = "#06CB3F";
-const DARK  = "#163134";
+const DARK = "#163134";
 
 const schema = z.object({
-  email:    z.string().email("E-mail inválido"),
+  email: z.string().email("E-mail inválido"),
   password: z.string().min(1, "Informe a senha"),
 });
 
@@ -69,7 +83,10 @@ export default function LoginPage() {
 
         {/* Divider accent */}
         <div className="flex justify-center">
-          <div className="h-0.5 w-10 rounded-full" style={{ backgroundColor: GREEN }} />
+          <div
+            className="h-0.5 w-10 rounded-full"
+            style={{ backgroundColor: GREEN }}
+          />
         </div>
 
         <CardTitle className="text-xl">Entrar na sua conta</CardTitle>
@@ -113,13 +130,21 @@ export default function LoginPage() {
                     </Link>
                   </div>
                   <FormControl>
-                    <Input type="password" autoComplete="current-password" {...field} />
+                    <Input
+                      type="password"
+                      autoComplete="current-password"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full font-semibold" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full font-semibold"
+              disabled={loading}
+            >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Entrar
             </Button>
@@ -130,8 +155,9 @@ export default function LoginPage() {
       <CardFooter className="justify-center text-sm text-muted-foreground pb-6">
         Não tem conta?{" "}
         <span
-          className="ml-1 font-semibold cursor-not-allowed opacity-40 select-none"
-          title="Cadastro temporariamente indisponível"
+          className="ml-1 font-semibold cursor-pointer hover:underline transition-colors"
+          title="Cadastre-se grátis"
+          onClick={() => router.push("/register")}
         >
           Cadastre-se grátis
         </span>
