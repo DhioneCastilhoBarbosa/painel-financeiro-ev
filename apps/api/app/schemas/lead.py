@@ -6,6 +6,12 @@ from uuid import UUID
 from pydantic import BaseModel, EmailStr, Field
 
 
+class ChargerItem(BaseModel):
+    """Um tipo de carregador com sua quantidade na simulação multi-carregador."""
+    charger_type: str = Field(..., min_length=1, max_length=50)
+    num_chargers: int = Field(default=1, ge=1, le=500)
+
+
 class LeadRequest(BaseModel):
     name: str = Field(..., min_length=2, max_length=200)
     cnpj: str = Field(..., min_length=11, max_length=20)  # aceita CPF (11 dígitos raw) ou CNPJ (18 chars formatado)
@@ -13,10 +19,13 @@ class LeadRequest(BaseModel):
     phone: str = Field(..., min_length=10, max_length=20)
     state: str = Field(..., min_length=2, max_length=50)
     city: str = Field(..., min_length=2, max_length=100)
-    charger_type: str = Field(..., min_length=1, max_length=50)
+    # Legado — usado quando charger_items não é fornecido
+    charger_type: str = Field(default="", max_length=50)
+    num_chargers: int = Field(default=1, ge=1, le=500)
+    # Multi-carregador — quando presente, tem prioridade sobre charger_type/num_chargers
+    charger_items: list[ChargerItem] | None = Field(default=None)
     sector: str = Field(..., min_length=1, max_length=100)
     position: str = Field(..., min_length=1, max_length=100)
-    num_chargers: int = Field(default=1, ge=1, le=500)
     message: str | None = Field(default=None, max_length=1000)
 
 

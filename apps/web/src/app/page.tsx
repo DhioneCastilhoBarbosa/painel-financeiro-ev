@@ -241,8 +241,8 @@ export default function LandingPage() {
 
   // Step 1
   const [sector, setSector] = useState("");
-  const [chargerType, setChargerType] = useState("");
-  const [numChargers, setNumChargers] = useState(1);
+  // chargerCounts: mapa de key → quantidade (0 = não selecionado)
+  const [chargerCounts, setChargerCounts] = useState<Record<string, number>>({});
 
   // Step 2
   const [name, setName] = useState("");
@@ -329,8 +329,8 @@ export default function LandingPage() {
   const validateStep1 = () => {
     const e: Record<string, string> = {};
     if (!sector) e.sector = "Selecione o setor";
-    if (!chargerType) e.chargerType = "Selecione o modelo de carregador";
-    if (numChargers < 1) e.numChargers = "Mínimo 1 ponto";
+    const totalSelected = Object.values(chargerCounts).reduce((a, b) => a + b, 0);
+    if (totalSelected === 0) e.chargerType = "Selecione ao menos um carregador";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -379,9 +379,10 @@ export default function LandingPage() {
             name, cnpj, email,
             phone: `(${ddd}) ${phone}`,
             state: stateUF, city,
-            charger_type: chargerType,
+            charger_items: Object.entries(chargerCounts)
+              .filter(([, qty]) => qty > 0)
+              .map(([type, qty]) => ({ charger_type: type, num_chargers: qty })),
             sector, position,
-            num_chargers: numChargers,
             message: message.trim() || null,
           }),
         }
@@ -417,13 +418,20 @@ export default function LandingPage() {
     setSpecialistSent(false);
     setSpecialistMsg("");
     setErrors({});
+    setChargerCounts({});
     setStep(1);
     scrollToForm();
   };
 
   if (loading) return null;
 
-  const selectedCharger = chargerTypes.find((c) => c.key === chargerType);
+  // Derivados de chargerCounts
+  const selectedItems = Object.entries(chargerCounts).filter(([, qty]) => qty > 0);
+  const totalChargers = selectedItems.reduce((s, [, qty]) => s + qty, 0);
+  const totalCapexEstimate = selectedItems.reduce((s, [key, qty]) => {
+    const ct = chargerTypes.find((c) => c.key === key);
+    return s + (ct ? ct.price_brl * qty : 0);
+  }, 0);
 
   const fieldCls = (err?: string) =>
     cn(
@@ -751,14 +759,20 @@ export default function LandingPage() {
                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                             {items.map((c) => {
                               const displayLabel = c.label.replace(/^(AC|DC)\s+/i, "");
-                              const active = chargerType === c.key;
+                              const count = chargerCounts[c.key] ?? 0;
+                              const active = count > 0;
                               const recommended = recommendations.includes(c.key);
+                              const inc = () => {
+                                setChargerCounts((p) => ({ ...p, [c.key]: (p[c.key] ?? 0) + 1 }));
+                                setErrors((p) => ({ ...p, chargerType: "" }));
+                              };
+                              const dec = () => setChargerCounts((p) => ({
+                                ...p, [c.key]: Math.max(0, (p[c.key] ?? 0) - 1),
+                              }));
                               return (
-                                <button
+                                <div
                                   key={c.key}
-                                  type="button"
-                                  onClick={() => { setChargerType(c.key); setErrors((p) => ({ ...p, chargerType: "" })); }}
-                                  className="relative flex flex-col items-center p-3.5 rounded-xl border-2 text-center transition-all"
+                                  className="relative flex flex-col items-center pt-3 pb-2 px-2 rounded-xl border-2 text-center transition-all"
                                   style={
                                     active
                                       ? { borderColor: BRAND.primary, backgroundColor: `${BRAND.primary}10`, color: BRAND.dark }
@@ -774,11 +788,31 @@ export default function LandingPage() {
                                     </span>
                                   )}
                                   <Zap
-                                    className="h-5 w-5 mb-1.5"
+                                    className="h-4 w-4 mb-1"
                                     style={active ? { fill: BRAND.primary, color: BRAND.primary } : { color: BRAND.midGray }}
                                   />
-                                  <span className="font-bold text-sm">{displayLabel}</span>
-                                </button>
+                                  <span className="font-bold text-sm mb-2">{displayLabel}</span>
+                                  {/* Contador ─── */}
+                                  <div className="flex items-center gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={dec}
+                                      disabled={count === 0}
+                                      className="w-6 h-6 rounded-md text-base font-bold flex items-center justify-center transition-colors disabled:opacity-30"
+                                      style={active ? { backgroundColor: `${BRAND.primary}30`, color: BRAND.dark } : { backgroundColor: "#f1f5f9", color: "#64748b" }}
+                                    >−</button>
+                                    <span className="text-sm font-bold min-w-[1.25rem] text-center"
+                                      style={{ color: active ? BRAND.dark : "#94a3b8" }}>
+                                      {count}
+                                    </span>
+                                    <button
+                                      type="button"
+                                      onClick={inc}
+                                      className="w-6 h-6 rounded-md text-base font-bold flex items-center justify-center transition-colors"
+                                      style={active ? { backgroundColor: BRAND.primary, color: BRAND.dark } : { backgroundColor: "#f1f5f9", color: "#64748b" }}
+                                    >+</button>
+                                  </div>
+                                </div>
                               );
                             })}
                           </div>
@@ -794,28 +828,20 @@ export default function LandingPage() {
                     );
                   })()}
                   {errors.chargerType && <p className="text-red-500 text-xs mt-1.5">{errors.chargerType}</p>}
-                </div>
-
-                {/* Quantidade */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: BRAND.dark }}>
-                    Quantos pontos de recarga?
-                  </label>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="number" min={1} max={500}
-                      value={numChargers}
-                      onChange={(e) => setNumChargers(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-28 px-4 py-3 rounded-xl border border-slate-200 text-sm text-center focus:outline-none focus:ring-2"
-                      style={{ ["--tw-ring-color" as string]: BRAND.primary }}
-                    />
-                    <span className="text-sm text-slate-500">pontos de recarga</span>
-                  </div>
-                  {selectedCharger && (
-                    <p className="text-xs text-slate-400 mt-2">
-                      Estimativa de investimento:{" "}
-                      <strong className="text-slate-600">{fmtBRL(selectedCharger.price_brl * numChargers)}</strong>
-                    </p>
+                  {/* Resumo + estimativa de CAPEX */}
+                  {totalChargers > 0 && (
+                    <div className="mt-3 p-3 rounded-xl text-sm" style={{ backgroundColor: `${BRAND.primary}10`, color: BRAND.dark }}>
+                      <p className="font-semibold text-xs mb-1">Selecionado:</p>
+                      <p className="font-medium">
+                        {selectedItems.map(([key, qty]) => `${key} ×${qty}`).join(" + ")}
+                        {" · "}<span className="font-bold">{totalChargers} {totalChargers === 1 ? "ponto" : "pontos"}</span>
+                      </p>
+                      {totalCapexEstimate > 0 && (
+                        <p className="text-xs mt-1 opacity-70">
+                          Estimativa de investimento: <strong>{fmtBRL(totalCapexEstimate)}</strong>
+                        </p>
+                      )}
+                    </div>
                   )}
                 </div>
 
@@ -839,7 +865,10 @@ export default function LandingPage() {
                   style={{ backgroundColor: `${BRAND.primary}15`, color: BRAND.dark }}
                 >
                   <Zap className="h-4 w-4 fill-current shrink-0" style={{ color: BRAND.primary }} />
-                  <span><strong>{chargerType}</strong> × {numChargers} pontos · {sector}</span>
+                  <span>
+                    <strong>{selectedItems.map(([key, qty]) => `${key} ×${qty}`).join(" + ")}</strong>
+                    {" · "}{totalChargers} {totalChargers === 1 ? "ponto" : "pontos"} · {sector}
+                  </span>
                   <button onClick={() => setStep(1)} className="ml-auto text-xs underline opacity-70 hover:opacity-100">editar</button>
                 </div>
 

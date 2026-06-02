@@ -25,7 +25,7 @@ from app.services.email import (
     send_lead_notification_email,
     send_specialist_contact_notification,
 )
-from app.services.simulator import run_simulation
+from app.services.simulator import run_simulation, run_simulation_multi
 
 router = APIRouter()
 
@@ -116,16 +116,33 @@ async def submit_lead(
     """Captura lead, executa simulação e envia e-mails."""
     config = await _get_config(db)
 
-    # Valida que o charger_type submetido existe na configuração ativa.
-    # Impede envios manipulados via curl/Postman com tipos arbitrários.
     valid_types = set(config["charger_configs"].keys())
-    if body.charger_type not in valid_types:
-        raise HTTPException(
-            status_code=422,
-            detail=f"Tipo de carregador inválido. Opções: {', '.join(sorted(valid_types))}",
-        )
 
-    sim = run_simulation(body.charger_type, body.num_chargers, config)
+    # ── Modo multi-carregador (charger_items presente) ──────────────────────
+    if body.charger_items:
+        invalid = [i.charger_type for i in body.charger_items if i.charger_type not in valid_types]
+        if invalid:
+            raise HTTPException(
+                status_code=422,
+                detail=f"Tipo(s) de carregador inválido(s): {', '.join(invalid)}. "
+                       f"Opções: {', '.join(sorted(valid_types))}",
+            )
+        items = [{"charger_type": i.charger_type, "num_chargers": i.num_chargers}
+                 for i in body.charger_items]
+        sim = run_simulation_multi(items, config)
+        lead_charger_type = sim.pop("charger_type_label", sim["charger_type"])[:50]
+        lead_num_chargers = sim["num_chargers"]
+
+    # ── Modo legado — tipo único ─────────────────────────────────────────────
+    else:
+        if body.charger_type not in valid_types:
+            raise HTTPException(
+                status_code=422,
+                detail=f"Tipo de carregador inválido. Opções: {', '.join(sorted(valid_types))}",
+            )
+        sim = run_simulation(body.charger_type, body.num_chargers, config)
+        lead_charger_type = body.charger_type
+        lead_num_chargers = body.num_chargers
 
     ip = request.client.host if request.client else None
 
@@ -137,10 +154,10 @@ async def submit_lead(
         phone=body.phone,
         state=body.state,
         city=body.city,
-        charger_type=body.charger_type,
+        charger_type=lead_charger_type,
         sector=body.sector,
         position=body.position,
-        num_chargers=body.num_chargers,
+        num_chargers=lead_num_chargers,
         message=body.message,
         simulation_result=sim,
         ip_address=ip,
@@ -162,8 +179,8 @@ async def submit_lead(
             notif.email,
             body.name, body.email, body.phone,
             body.state, body.city,
-            body.charger_type, body.sector, body.position,
-            body.num_chargers, sim,
+            lead_charger_type, body.sector, body.position,
+            lead_num_chargers, sim,
             cnpj=body.cnpj,
             message=body.message,
         )
