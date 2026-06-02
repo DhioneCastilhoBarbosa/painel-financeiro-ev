@@ -1,5 +1,5 @@
-from contextlib import asynccontextmanager
 import time
+from contextlib import asynccontextmanager
 
 import sentry_sdk
 from fastapi import Depends, FastAPI, Request

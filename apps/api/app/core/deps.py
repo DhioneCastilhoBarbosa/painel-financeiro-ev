@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
@@ -32,8 +32,8 @@ async def get_current_user(
         if payload.get("type") != "access":
             raise exc
         user_id: str = payload["sub"]
-    except (InvalidTokenError, KeyError):
-        raise exc
+    except (InvalidTokenError, KeyError) as err:
+        raise exc from err
 
     user = await db.get(User, user_id)
     if not user or not user.is_active:
@@ -63,7 +63,7 @@ async def require_active_plan(
     if not org:
         return  # Organização inválida — não bloqueia (erro de dados)
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(datetime.UTC)
 
     # ── Trial local ─────────────────────────────────────────────────────────
     if org.plan == "trial":
