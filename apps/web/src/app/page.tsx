@@ -379,9 +379,11 @@ export default function LandingPage() {
             name, cnpj, email,
             phone: `(${ddd}) ${phone}`,
             state: stateUF, city,
-            charger_items: Object.entries(chargerCounts)
-              .filter(([, qty]) => qty > 0)
-              .map(([type, qty]) => ({ charger_type: type, num_chargers: qty })),
+            // Multi-carregador (novo schema)
+            charger_items: selectedItems.map(([type, qty]) => ({ charger_type: type, num_chargers: qty })),
+            // Campos legado — obrigatórios no schema antigo (compat com servidor sem restart)
+            charger_type: selectedItems[0]?.[0] ?? "",
+            num_chargers: totalChargers,
             sector, position,
             message: message.trim() || null,
           }),
@@ -393,7 +395,10 @@ export default function LandingPage() {
           const body = await res.json();
           if (typeof body.detail === "string") errMsg = body.detail;
           else if (Array.isArray(body.detail))
-            errMsg = body.detail.map((e: { msg?: string }) => e.msg ?? "").filter(Boolean).join("; ");
+            errMsg = body.detail.map((e: { msg?: string; loc?: unknown[] }) => {
+              const field = Array.isArray(e.loc) && e.loc.length > 1 ? ` (${e.loc.slice(1).join(".")})` : "";
+              return `${e.msg ?? ""}${field}`;
+            }).filter(Boolean).join("; ");
         } catch { /* ignore parse error */ }
         setErrors({ submit: errMsg });
         return;

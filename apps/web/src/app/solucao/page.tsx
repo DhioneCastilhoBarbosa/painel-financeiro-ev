@@ -69,8 +69,8 @@ const PLANS = [
   {
     id: "starter",
     name: "Starter",
-    price: "R$ 197",
-    period: "/mês",
+    price: "Sob consulta",
+    period: "",
     highlight: false,
     description: "Ideal para operadores com poucos pontos de carga.",
     features: [
@@ -84,8 +84,8 @@ const PLANS = [
   {
     id: "pro",
     name: "Pro",
-    price: "R$ 497",
-    period: "/mês",
+    price: "Sob consulta",
+    period: "",
     highlight: true,
     badge: "Mais popular",
     description: "Para redes com múltiplas estações e equipe analítica.",
