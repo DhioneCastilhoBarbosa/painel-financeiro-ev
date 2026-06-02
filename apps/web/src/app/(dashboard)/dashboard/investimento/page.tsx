@@ -266,11 +266,16 @@ export default function InvestimentoPage() {
   const capex = calcCapex(inputs);
   const horizon = inputs.horizon_years * 12;
 
-  // Suggested kWh at 100% occupancy based on power × connectors per charger × hours × 30 days
+  // kWh/mês a 100% de ocupação — calculado automaticamente, não editável pelo usuário
   const suggestedKwh = useMemo(() => {
     const totalKw = inputs.n_chargers * inputs.power_kw;
     return Math.round(totalKw * operatingHoursPerDay * 30);
   }, [inputs.n_chargers, inputs.power_kw, operatingHoursPerDay]);
+
+  // Mantém avg_monthly_kwh sempre sincronizado com o valor calculado
+  useEffect(() => {
+    setInputs(prev => ({ ...prev, avg_monthly_kwh: suggestedKwh }));
+  }, [suggestedKwh]);
 
   // Real data for "preencher com dados reais"
   const { data: kpis } = useKPIs({});
@@ -745,25 +750,16 @@ export default function InvestimentoPage() {
                   <label className="text-xs font-medium text-slate-600 dark:text-slate-400 flex-1">
                     kWh/mês (100% de ocupação)
                   </label>
-                  <Help text={`Energia total disponível se os carregadores operarem em plena capacidade. Fórmula: n° carregadores (${inputs.n_chargers}) × potência (${inputs.power_kw} kW) × horas/dia (${operatingHoursPerDay.toFixed(1)}h) × 30 dias = ${suggestedKwh.toLocaleString("pt-BR")} kWh. Você pode ajustar manualmente para refletir perdas ou restrições de rede.`} />
+                  <Help text={`Calculado automaticamente: ${inputs.n_chargers} carregador(es) × ${inputs.power_kw} kW × ${operatingHoursPerDay.toFixed(1)} h/dia × 30 dias = ${suggestedKwh.toLocaleString("pt-BR")} kWh. Ajuste o horário de funcionamento ou a potência para alterar este valor.`} />
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <input type="number" min={0} step={100} value={inputs.avg_monthly_kwh}
-                    onChange={e => set("avg_monthly_kwh", parseFloat(e.target.value) || 0)}
-                    className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-sm text-right focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900" />
+                <div className="flex items-center gap-1.5 rounded-md border border-input bg-muted/50 px-2 py-1.5">
+                  <span className="flex-1 text-sm text-right text-muted-foreground select-none">
+                    {suggestedKwh.toLocaleString("pt-BR")}
+                  </span>
                   <span className="text-xs text-muted-foreground shrink-0">kWh</span>
-                  {inputs.avg_monthly_kwh !== suggestedKwh && (
-                    <button
-                      onClick={() => set("avg_monthly_kwh", suggestedKwh)}
-                      className="shrink-0 flex items-center text-blue-600 hover:text-blue-800 transition-colors"
-                      title={`Usar valor calculado: ${suggestedKwh.toLocaleString("pt-BR")} kWh`}
-                    >
-                      <RefreshCw className="h-3 w-3" />
-                    </button>
-                  )}
                 </div>
                 <p className="text-[0.65rem] text-muted-foreground">
-                  Calc: {inputs.n_chargers}×{inputs.power_kw}kW×{operatingHoursPerDay.toFixed(1)}h×30d = {suggestedKwh.toLocaleString("pt-BR")} kWh
+                  {inputs.n_chargers}×{inputs.power_kw} kW × {operatingHoursPerDay.toFixed(1)} h/dia × 30 dias
                 </p>
               </div>
 
