@@ -1011,6 +1011,13 @@ export default function LandingPage() {
               </p>
             </div>
 
+            {/* Derive payback from monthly_projections so card matches chart */}
+            {(() => {
+              const chartPayback = result.monthly_projections.find((p) => p.cumulative >= 0)?.month ?? null;
+              const paybackMonths = chartPayback ?? result.payback_months;
+              const paybackYears = paybackMonths ? paybackMonths / 12 : null;
+
+            return (<>
             {/* KPI cards — sem CAPEX */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
               {[
@@ -1022,10 +1029,10 @@ export default function LandingPage() {
                 },
                 {
                   label: "Payback estimado",
-                  value: result.payback_months
-                    ? `${result.payback_months.toFixed(0)} meses`
+                  value: paybackMonths
+                    ? `${paybackMonths} meses`
                     : "> 5 anos",
-                  sub: result.payback_years ? `~${result.payback_years.toFixed(1)} anos` : "",
+                  sub: paybackYears ? `~${paybackYears.toFixed(1)} anos` : "",
                   color: BRAND.dark,
                 },
                 {
@@ -1081,9 +1088,9 @@ export default function LandingPage() {
                     <Area type="monotone" dataKey="cumulative" stroke={BRAND.primary} strokeWidth={2.5} fill="url(#grad)" />
                   </AreaChart>
                 </ResponsiveContainer>
-                {result.payback_months && result.payback_months <= 24 && (
+                {paybackMonths && paybackMonths <= 24 && (
                   <p className="text-xs text-slate-500 text-center mt-2">
-                    ✅ Ponto de payback no mês {result.payback_months.toFixed(0)}
+                    ✅ Ponto de payback no mês {paybackMonths}
                   </p>
                 )}
               </div>
@@ -1162,6 +1169,8 @@ export default function LandingPage() {
                 </div>
               )}
             </div>
+            </>);
+            })()}
           </div>
         </section>
       )}

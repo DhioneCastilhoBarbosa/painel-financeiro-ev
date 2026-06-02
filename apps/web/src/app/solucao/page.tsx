@@ -168,13 +168,13 @@ export default function SolucaoPage() {
             >
               Entrar
             </Link>
-            <Link
-              href="/register"
-              className="text-sm px-4 py-2 rounded-lg font-semibold transition-colors"
+            <span
+              className="text-sm px-4 py-2 rounded-lg font-semibold opacity-40 cursor-not-allowed select-none"
               style={{ backgroundColor: GREEN, color: DARK }}
+              title="Cadastros temporariamente suspensos"
             >
               Começar grátis
-            </Link>
+            </span>
           </div>
         </div>
       </header>
@@ -207,14 +207,14 @@ export default function SolucaoPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/register"
-                className="flex items-center justify-center gap-2 px-8 py-4 font-bold rounded-xl transition-all text-lg"
+              <span
+                className="flex items-center justify-center gap-2 px-8 py-4 font-bold rounded-xl text-lg opacity-40 cursor-not-allowed select-none"
                 style={{ backgroundColor: GREEN, color: DARK }}
+                title="Cadastros temporariamente suspensos"
               >
                 Criar conta gratuita
                 <ArrowRight className="h-5 w-5" />
-              </Link>
+              </span>
               <Link
                 href="/"
                 className="flex items-center justify-center gap-2 px-8 py-4 border border-white/20 text-white hover:bg-white/10 rounded-xl transition-all text-lg"
@@ -455,17 +455,17 @@ export default function SolucaoPage() {
                 {plan.id === "enterprise" ? (
                   <EnterpriseContactForm />
                 ) : (
-                  <Link
-                    href="/register"
-                    className="block w-full text-center py-3 rounded-xl font-bold text-sm transition-all mb-6"
+                  <span
+                    className="block w-full text-center py-3 rounded-xl font-bold text-sm mb-6 opacity-40 cursor-not-allowed select-none"
                     style={
                       plan.highlight
                         ? { backgroundColor: GREEN, color: DARK }
                         : { backgroundColor: "#f1f5f9", color: DARK }
                     }
+                    title="Cadastros temporariamente suspensos"
                   >
                     Começar trial grátis
-                  </Link>
+                  </span>
                 )}
 
                 <ul className="space-y-2.5">
@@ -522,14 +522,14 @@ export default function SolucaoPage() {
             14 dias grátis · Sem cartão de crédito · Resultado imediato
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/register"
-              className="inline-flex items-center justify-center gap-2 px-10 py-4 font-bold rounded-xl transition-all text-lg shadow-xl"
+            <span
+              className="inline-flex items-center justify-center gap-2 px-10 py-4 font-bold rounded-xl text-lg shadow-xl opacity-40 cursor-not-allowed select-none"
               style={{ backgroundColor: GREEN, color: DARK }}
+              title="Cadastros temporariamente suspensos"
             >
               Criar conta gratuita
               <ArrowRight className="h-5 w-5" />
-            </Link>
+            </span>
             <Link
               href="/"
               className="inline-flex items-center justify-center gap-2 px-10 py-4 border border-white/20 text-white hover:bg-white/10 rounded-xl transition-all text-lg"
