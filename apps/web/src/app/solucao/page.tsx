@@ -123,10 +123,6 @@ const PLANS = [
 
 const INTEGRATIONS = [
   { name: "Intelbras CVE-Pro", category: "Hardware", color: "#06CB3F" },
-  { name: "Tupi",              category: "Hardware", color: "#3B82F6" },
-  { name: "Voltbras",          category: "Hardware", color: "#8B5CF6" },
-  { name: "movE",              category: "Hardware", color: "#F59E0B" },
-  { name: "Spott",             category: "Hardware", color: "#10B981" },
 ];
 
 const TESTIMONIALS = [
