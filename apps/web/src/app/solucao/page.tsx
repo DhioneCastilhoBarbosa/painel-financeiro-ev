@@ -6,6 +6,7 @@ import {
   PieChart, Activity, Layers, Target, Building2,
 } from "lucide-react";
 import { EnterpriseContactForm } from "./EnterpriseContactForm";
+import { Logo } from "@/components/Logo";
 
 export const metadata: Metadata = {
   title: "Dashboard Financeiro para Eletropostos",
@@ -148,11 +149,8 @@ export default function SolucaoPage() {
         style={{ backgroundColor: `${DARK}f5` }}
       >
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: GREEN }}>
-              <Zap className="h-5 w-5 fill-current" style={{ color: DARK }} />
-            </div>
-            <span className="font-bold text-white text-lg tracking-tight">FinanceDash</span>
+          <Link href="/">
+            <Logo height={30} />
           </Link>
           <div className="flex items-center gap-3">
             <Link href="/" className="hidden sm:block text-sm text-white/70 hover:text-white transition-colors font-medium">
@@ -539,12 +537,8 @@ export default function SolucaoPage() {
       {/* ── Footer ── */}
       <footer style={{ backgroundColor: "#0a1f22" }} className="py-10">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: GREEN }}>
-              <Zap className="h-4 w-4 fill-current" style={{ color: DARK }} />
-            </div>
-            <span className="font-bold text-white tracking-tight">FinanceDash</span>
-            <span className="text-white/30">— Gestão Financeira de Eletropostos</span>
+          <div className="flex items-center">
+            <Logo height={24} />
           </div>
           <div className="flex items-center gap-6 text-sm text-white/40">
             <Link href="/" className="hover:text-white transition-colors">Simular ROI</Link>

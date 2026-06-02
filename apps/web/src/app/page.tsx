@@ -1330,9 +1330,8 @@ export default function LandingPage() {
       {/* ── Footer ───────────────────────────────────────────────────────── */}
       <footer style={{ backgroundColor: "#0a1f22" }} className="py-10">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center">
             <Logo height={26} />
-            <span className="text-white/30 text-sm hidden sm:inline">— Gestão Financeira de Eletropostos</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-white/40">
             <Link href="/login" className="hover:text-white transition-colors">Entrar</Link>
