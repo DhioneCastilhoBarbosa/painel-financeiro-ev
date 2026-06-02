@@ -154,13 +154,13 @@ export default function LoginPage() {
 
       <CardFooter className="justify-center text-sm text-muted-foreground pb-6">
         Não tem conta?{" "}
-        <span
-          className="ml-1 font-semibold cursor-pointer hover:underline transition-colors"
+        <Link
+          href="/register"
+          className="ml-1 font-semibold hover:underline transition-colors"
           title="Cadastre-se grátis"
-          onClick={() => router.push("/register")}
         >
           Cadastre-se grátis
-        </span>
+        </Link>
       </CardFooter>
     </Card>
   );
