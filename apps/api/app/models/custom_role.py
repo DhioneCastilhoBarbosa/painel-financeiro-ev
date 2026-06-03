@@ -2,12 +2,17 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
+
+if TYPE_CHECKING:
+    from app.models.organization import Organization
+    from app.models.user import User
 
 
 class CustomRole(Base):
@@ -31,5 +36,5 @@ class CustomRole(Base):
         onupdate=lambda: datetime.now(datetime.UTC),
     )
 
-    organization: Mapped["Organization"] = relationship("Organization")
-    members: Mapped[list["User"]] = relationship("User", back_populates="custom_role_obj", foreign_keys="User.custom_role_id")
+    organization: Mapped[Organization] = relationship("Organization")
+    members: Mapped[list[User]] = relationship("User", back_populates="custom_role_obj", foreign_keys="User.custom_role_id")

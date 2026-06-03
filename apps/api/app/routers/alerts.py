@@ -124,7 +124,9 @@ async def evaluate_alerts(
     Também atualiza last_triggered_at nos alertas que disparam.
     """
     from datetime import date, timedelta
+
     from sqlalchemy import select as sa_select
+
     from app.models.charging_session import ChargingSession
 
     # Load yesterday's sessions (full completed day)

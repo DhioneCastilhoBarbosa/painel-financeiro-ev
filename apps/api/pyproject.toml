@@ -20,6 +20,10 @@ target-version = "py312"
 select  = ["E", "F", "W", "I", "UP", "B", "C4", "SIM"]
 ignore  = ["E501", "B008"]   # E501=line-too-long, B008=function-call-in-default
 
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+force-sort-within-sections = false
+
 [tool.mypy]
 python_version = "3.12"
 strict         = false

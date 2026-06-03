@@ -2,12 +2,16 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
+
+if TYPE_CHECKING:
+    from app.models.organization import Organization
 
 
 class PaybackScenario(Base):
@@ -34,4 +38,4 @@ class PaybackScenario(Base):
         onupdate=lambda: datetime.now(datetime.UTC),
     )
 
-    organization: Mapped["Organization"] = relationship("Organization", back_populates="payback_scenarios")
+    organization: Mapped[Organization] = relationship("Organization", back_populates="payback_scenarios")

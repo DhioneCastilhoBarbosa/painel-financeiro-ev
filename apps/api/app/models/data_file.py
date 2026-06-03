@@ -3,12 +3,17 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 from enum import Enum
+from typing import TYPE_CHECKING
 
 from sqlalchemy import BigInteger, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
+
+if TYPE_CHECKING:
+    from app.models.charging_session import ChargingSession
+    from app.models.organization import Organization
 
 
 class FileStatus(str, Enum):
@@ -46,7 +51,7 @@ class DataFile(Base):
     processed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     # Relationships
-    organization: Mapped["Organization"] = relationship("Organization", back_populates="data_files")
-    sessions: Mapped[list["ChargingSession"]] = relationship(
+    organization: Mapped[Organization] = relationship("Organization", back_populates="data_files")
+    sessions: Mapped[list[ChargingSession]] = relationship(
         "ChargingSession", back_populates="data_file", cascade="all, delete-orphan"
     )

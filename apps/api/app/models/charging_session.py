@@ -2,12 +2,16 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Numeric, PrimaryKeyConstraint, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
+
+if TYPE_CHECKING:
+    from app.models.data_file import DataFile
 
 
 class ChargingSession(Base):
@@ -59,4 +63,4 @@ class ChargingSession(Base):
     raw: Mapped[dict] = mapped_column(JSONB, default=dict)
 
     # Relationships
-    data_file: Mapped["DataFile"] = relationship("DataFile", back_populates="sessions")
+    data_file: Mapped[DataFile] = relationship("DataFile", back_populates="sessions")

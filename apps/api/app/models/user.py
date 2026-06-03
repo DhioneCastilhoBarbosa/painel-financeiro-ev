@@ -3,12 +3,17 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 from enum import Enum
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
+
+if TYPE_CHECKING:
+    from app.models.custom_role import CustomRole
+    from app.models.organization import Organization
 
 
 class UserRole(str, Enum):
@@ -45,7 +50,7 @@ class User(Base):
     )
 
     # Relationships
-    organization: Mapped["Organization"] = relationship("Organization", back_populates="users")
-    custom_role_obj: Mapped["CustomRole | None"] = relationship(
+    organization: Mapped[Organization] = relationship("Organization", back_populates="users")
+    custom_role_obj: Mapped[CustomRole | None] = relationship(
         "CustomRole", back_populates="members", foreign_keys=[custom_role_id]
     )

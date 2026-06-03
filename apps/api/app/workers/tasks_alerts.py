@@ -16,7 +16,6 @@ from datetime import date, datetime, timedelta
 from functools import lru_cache as _lru_cache
 
 import pandas as pd
-
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 
