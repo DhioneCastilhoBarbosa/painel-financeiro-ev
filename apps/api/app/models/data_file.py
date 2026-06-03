@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 from enum import Enum
 
 from sqlalchemy import BigInteger, DateTime, ForeignKey, Integer, String, Text
@@ -39,7 +41,7 @@ class DataFile(Base):
     extra_metadata: Mapped[dict] = mapped_column(JSONB, default=dict)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+        DateTime(timezone=True), default=lambda: datetime.now(datetime.UTC)
     )
     processed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 

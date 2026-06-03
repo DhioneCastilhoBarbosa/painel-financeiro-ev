@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
@@ -46,12 +48,12 @@ class CostConfiguration(Base):
     discount_rate_annual: Mapped[float] = mapped_column(Float, default=0.12)
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+        DateTime(timezone=True), default=lambda: datetime.now(datetime.UTC)
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(datetime.UTC),
+        onupdate=lambda: datetime.now(datetime.UTC),
     )
 
     organization: Mapped["Organization"] = relationship("Organization", back_populates="cost_configurations")

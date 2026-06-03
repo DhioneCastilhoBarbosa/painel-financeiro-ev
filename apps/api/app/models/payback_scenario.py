@@ -1,7 +1,9 @@
-import uuid
-from datetime import datetime, timezone
+from __future__ import annotations
 
-from sqlalchemy import DateTime, ForeignKey, String, Text
+import uuid
+from datetime import datetime
+
+from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -24,12 +26,12 @@ class PaybackScenario(Base):
     results: Mapped[dict] = mapped_column(JSONB, default=dict)
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+        DateTime(timezone=True), default=lambda: datetime.now(datetime.UTC)
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(datetime.UTC),
+        onupdate=lambda: datetime.now(datetime.UTC),
     )
 
     organization: Mapped["Organization"] = relationship("Organization", back_populates="payback_scenarios")

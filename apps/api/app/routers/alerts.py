@@ -4,7 +4,7 @@ Avaliação dos alertas é feita via POST /evaluate (pode ser chamado por cron/C
 """
 
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
@@ -124,7 +124,6 @@ async def evaluate_alerts(
     Também atualiza last_triggered_at nos alertas que disparam.
     """
     from datetime import date, timedelta
-    import pandas as pd
     from sqlalchemy import select as sa_select
     from app.models.charging_session import ChargingSession
 
@@ -150,7 +149,7 @@ async def evaluate_alerts(
         active_alerts_result = await db.execute(
             select(Alert).where(
                 Alert.organization_id == current_user.organization_id,
-                Alert.is_active == True,
+                Alert.is_active.is_(True),
             )
         )
         active_alerts = active_alerts_result.scalars().all()
@@ -161,7 +160,7 @@ async def evaluate_alerts(
             fired = (alert.operator == "below" and value < threshold) or \
                     (alert.operator == "above" and value > threshold)
             if fired:
-                alert.last_triggered_at = datetime.now(timezone.utc)
+                alert.last_triggered_at = datetime.now(datetime.UTC)
                 triggered.append({
                     "id": str(alert.id),
                     "name": alert.name,
@@ -174,7 +173,7 @@ async def evaluate_alerts(
         await db.flush()
         return {
             "triggered": triggered,
-            "evaluated_at": datetime.now(timezone.utc).isoformat(),
+            "evaluated_at": datetime.now(datetime.UTC).isoformat(),
             "metrics": empty_metrics,
         }
 
@@ -202,7 +201,7 @@ async def evaluate_alerts(
     active_alerts_result = await db.execute(
         select(Alert).where(
             Alert.organization_id == current_user.organization_id,
-            Alert.is_active == True,
+            Alert.is_active.is_(True),
         )
     )
     active_alerts = active_alerts_result.scalars().all()
@@ -214,7 +213,7 @@ async def evaluate_alerts(
         fired = (alert.operator == "below" and value < threshold) or \
                 (alert.operator == "above" and value > threshold)
         if fired:
-            alert.last_triggered_at = datetime.now(timezone.utc)
+            alert.last_triggered_at = datetime.now(datetime.UTC)
             triggered.append({
                 "id": str(alert.id),
                 "name": alert.name,
@@ -226,7 +225,7 @@ async def evaluate_alerts(
             })
 
     await db.flush()
-    return {"triggered": triggered, "evaluated_at": datetime.now(timezone.utc).isoformat(), "metrics": metrics}
+    return {"triggered": triggered, "evaluated_at": datetime.now(datetime.UTC).isoformat(), "metrics": metrics}
 
 
 @router.delete("/{alert_id}", status_code=status.HTTP_204_NO_CONTENT)

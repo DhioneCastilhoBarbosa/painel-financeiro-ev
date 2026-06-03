@@ -14,12 +14,13 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+
 from app.core.database import get_db
 from app.core.ratelimit import limiter
 from app.models.lead import Lead
 from app.models.lead_notification_email import LeadNotificationEmail
 from app.models.simulator_config import DEFAULT_CHARGER_CONFIGS, SimulatorConfig
-from app.schemas.lead import LeadRequest, LeadResponse, SpecialistMessageRequest, EnterpriseContactRequest
+from app.schemas.lead import EnterpriseContactRequest, LeadRequest, LeadResponse, SpecialistMessageRequest
 from app.services.email import (
     send_lead_confirmation_email,
     send_lead_notification_email,
@@ -34,7 +35,7 @@ router = APIRouter()
 
 async def _get_config(db: AsyncSession) -> dict:
     result = await db.execute(
-        select(SimulatorConfig).where(SimulatorConfig.is_active == True).limit(1)
+        select(SimulatorConfig).where(SimulatorConfig.is_active.is_(True)).limit(1)
     )
     cfg = result.scalar_one_or_none()
     if cfg:
@@ -170,7 +171,7 @@ async def submit_lead(
 
     # Notificações para administradores — filtra por estado se configurado
     notif_result = await db.execute(
-        select(LeadNotificationEmail).where(LeadNotificationEmail.is_active == True)
+        select(LeadNotificationEmail).where(LeadNotificationEmail.is_active.is_(True))
     )
     for notif in notif_result.scalars():
         if notif.states and body.state not in notif.states:
@@ -208,8 +209,8 @@ async def add_specialist_message(
     # UUID básico de formato válido antes de bater no banco
     try:
         uuid.UUID(lead_id)
-    except ValueError:
-        raise HTTPException(status_code=404, detail="Lead não encontrado")
+    except ValueError as err:
+        raise HTTPException(status_code=404, detail="Lead não encontrado") from err
 
     lead = await db.get(Lead, lead_id)
     if not lead:
@@ -229,7 +230,7 @@ async def add_specialist_message(
 
     # Notifica admins (com filtro de estado)
     notif_result = await db.execute(
-        select(LeadNotificationEmail).where(LeadNotificationEmail.is_active == True)
+        select(LeadNotificationEmail).where(LeadNotificationEmail.is_active.is_(True))
     )
     for notif in notif_result.scalars():
         if notif.states and lead.state not in notif.states:
@@ -281,7 +282,7 @@ async def enterprise_contact(
 
     # Notifica admins
     notif_result = await db.execute(
-        select(LeadNotificationEmail).where(LeadNotificationEmail.is_active == True)
+        select(LeadNotificationEmail).where(LeadNotificationEmail.is_active.is_(True))
     )
     for notif in notif_result.scalars():
         if notif.states:  # enterprise contacts ignoram filtro de estado

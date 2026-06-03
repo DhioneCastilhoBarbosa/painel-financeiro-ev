@@ -5,7 +5,6 @@ Queries no banco → pandas → services/analytics.py → JSON.
 
 
 from datetime import date
-from typing import Optional
 
 import pandas as pd
 from fastapi import APIRouter, Depends, Query
@@ -114,11 +113,11 @@ async def _load_cost_config(cost_config_id: str | None, organization_id, db: Asy
 # ─── Filter params helper ─────────────────────────────────────────────────────
 
 def _filter_params(
-    date_from: Optional[date] = Query(None),
-    date_to: Optional[date] = Query(None),
-    files: Optional[list[str]] = Query(None),
-    stations: Optional[list[str]] = Query(None),
-    connectors: Optional[list[str]] = Query(None),
+    date_from: date | None = Query(None),
+    date_to: date | None = Query(None),
+    files: list[str] | None = Query(None),
+    stations: list[str] | None = Query(None),
+    connectors: list[str] | None = Query(None),
 ):
     return {"date_from": date_from, "date_to": date_to, "file_ids": files, "stations": stations, "connectors": connectors}
 
@@ -231,7 +230,7 @@ async def get_dre(
     db: AsyncSession = Depends(get_db),
     filters: dict = Depends(_filter_params),
     granularity: str = Query("monthly", pattern="^(weekly|monthly|quarterly)$"),
-    cost_config_id: Optional[str] = Query(None),
+    cost_config_id: str | None = Query(None),
 ):
     df = await _load_df(current_user.organization_id, db, **filters)
     cost_cfg = await _load_cost_config(cost_config_id, current_user.organization_id, db)
@@ -443,8 +442,9 @@ async def get_forecast(
     sobre a série diária histórica.
     Retorna: historical (mesmos dados do timeseries daily) + forecast (datas futuras com intervalo de confiança).
     """
-    import numpy as np
     from datetime import timedelta
+
+    import numpy as np
 
     df = await _load_df(current_user.organization_id, db, **filters)
     if df.empty or len(df) < 7:

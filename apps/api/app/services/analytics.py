@@ -7,11 +7,10 @@ Opera sobre DataFrames pandas extraídos do banco de dados.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Any
 
-import numpy as np
 import pandas as pd
 
 
@@ -676,7 +675,7 @@ def user_deep_analysis(df: pd.DataFrame) -> dict[str, Any]:
 
     # ── Voucher analysis ──────────────────────────────────────────────────────
     if has_voucher_col:
-        voucher_df = df[df["has_voucher"] == True]
+        voucher_df = df[df["has_voucher"]]
         total_voucher_sessions = int(len(voucher_df))
         voucher_users = set(voucher_df["user_tag"].dropna().unique())
         total_voucher_users = len(voucher_users)
@@ -684,8 +683,8 @@ def user_deep_analysis(df: pd.DataFrame) -> dict[str, Any]:
         retained = 0
         for u in voucher_users:
             udf = df[df["user_tag"] == u].sort_values("started_at")
-            first_v = udf[udf["has_voucher"] == True]["started_at"].min()
-            back = udf[(udf["started_at"] > first_v) & (udf["has_voucher"] != True)]
+            first_v = udf[udf["has_voucher"]]["started_at"].min()
+            back = udf[(udf["started_at"] > first_v) & (~udf["has_voucher"])]
             if len(back) > 0:
                 retained += 1
 
@@ -697,9 +696,12 @@ def user_deep_analysis(df: pd.DataFrame) -> dict[str, Any]:
         ).reset_index()
 
         def _seg(n: int) -> str:
-            if n == 1: return "1 sessão"
-            if n <= 4: return "2–4"
-            if n <= 9: return "5–9"
+            if n == 1:
+                return "1 sessão"
+            if n <= 4:
+                return "2–4"
+            if n <= 9:
+                return "5–9"
             return "10+"
 
         ORDER = ["1 sessão", "2–4", "5–9", "10+"]

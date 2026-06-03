@@ -7,7 +7,7 @@ Totalmente stateless: recebe inputs, retorna resultados como dict JSON-serializÃ
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 
@@ -59,7 +59,6 @@ def _calc_scenario(inputs: PaybackInputs, occupancy_pct: float) -> dict[str, Any
     inv_unit = inputs.hardware_cost + inputs.installation_cost
     inv_total = inv_unit * inputs.n_chargers
     inv_display = inv_total if inputs.portfolio_view else inv_unit
-    hw_display = inputs.hardware_cost * inputs.n_chargers if inputs.portfolio_view else inputs.hardware_cost
     inst_display = inputs.installation_cost * inputs.n_chargers if inputs.portfolio_view else inputs.installation_cost
 
     n_inst = max(1, inputs.installments)

@@ -12,10 +12,10 @@ Correções aplicadas:
 from __future__ import annotations
 
 import logging
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timedelta
+from functools import lru_cache as _lru_cache
 
 import pandas as pd
-from functools import lru_cache as _lru_cache
 
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
@@ -147,7 +147,7 @@ def _compute_metrics(org_id, yesterday: date) -> dict:
 def evaluate_all_organizations():
     """Avalia alertas de todas as organizações contra os dados de ontem."""
     yesterday = date.today() - timedelta(days=1)
-    now       = datetime.now(timezone.utc)
+    now       = datetime.now(datetime.UTC)
     cooldown  = timedelta(hours=ALERT_COOLDOWN_HOURS)
 
     with _get_session_factory()() as db:
@@ -165,7 +165,7 @@ def evaluate_all_organizations():
                 alerts = db.execute(
                     select(Alert).where(
                         Alert.organization_id == org_id,
-                        Alert.is_active == True,
+                        Alert.is_active.is_(True),
                     )
                 ).scalars().all()
 

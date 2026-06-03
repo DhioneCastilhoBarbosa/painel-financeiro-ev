@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 from sqlalchemy import DateTime, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -18,7 +20,7 @@ class Organization(Base):
     status: Mapped[str] = mapped_column(String(50), default="active")
     settings: Mapped[dict] = mapped_column(JSONB, default=dict)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+        DateTime(timezone=True), default=lambda: datetime.now(datetime.UTC)
     )
     trial_ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 

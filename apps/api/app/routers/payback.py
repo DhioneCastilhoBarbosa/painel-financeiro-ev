@@ -1,6 +1,6 @@
 import secrets
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
@@ -80,8 +80,9 @@ async def save_scenario(
     db: AsyncSession = Depends(get_db),
 ):
     # Limite de cenários por plano
-    from app.models.organization import Organization
     from sqlalchemy import func
+
+    from app.models.organization import Organization
 
     org = await db.get(Organization, current_user.organization_id)
     count = await db.scalar(
@@ -104,8 +105,8 @@ async def save_scenario(
         name=body.name,
         inputs=body.inputs,
         results=body.results,
-        created_at=datetime.now(timezone.utc),
-        updated_at=datetime.now(timezone.utc),
+        created_at=datetime.now(datetime.UTC),
+        updated_at=datetime.now(datetime.UTC),
     )
     db.add(scenario)
     await db.flush()
@@ -129,7 +130,7 @@ async def update_scenario(
     sc.name = body.name
     sc.inputs = body.inputs
     sc.results = body.results
-    sc.updated_at = datetime.now(timezone.utc)
+    sc.updated_at = datetime.now(datetime.UTC)
     return sc
 
 

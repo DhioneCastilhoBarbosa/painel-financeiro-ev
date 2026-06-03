@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 from sqlalchemy import DateTime, Integer, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -28,6 +28,6 @@ class Lead(Base):
     ip_address: Mapped[str | None] = mapped_column(String(50), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(datetime.UTC),
         index=True,
     )

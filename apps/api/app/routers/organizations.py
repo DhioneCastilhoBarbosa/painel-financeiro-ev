@@ -1,6 +1,6 @@
 import secrets
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func, select
@@ -123,7 +123,7 @@ async def invite_member(
         role=body.role,
         token=token,
         invited_by=current_user.id,
-        expires_at=datetime.now(timezone.utc) + timedelta(hours=48),
+        expires_at=datetime.now(datetime.UTC) + timedelta(hours=48),
         custom_role_id=resolved_custom_role_id,
     )
     db.add(invite)
@@ -150,7 +150,7 @@ async def list_invitations(current_user: CurrentUser, db: AsyncSession = Depends
         select(Invitation).where(
             Invitation.organization_id == current_user.organization_id,
             Invitation.accepted_at.is_(None),
-            Invitation.expires_at > datetime.now(timezone.utc),
+            Invitation.expires_at > datetime.now(datetime.UTC),
         )
     )
     invites = result.scalars().all()
@@ -248,7 +248,7 @@ async def get_usage(current_user: CurrentUser, db: AsyncSession = Depends(get_db
     org = await db.get(Organization, current_user.organization_id)
     user_count = await db.scalar(
         select(func.count(User.id)).where(
-            User.organization_id == current_user.organization_id, User.is_active == True
+            User.organization_id == current_user.organization_id, User.is_active.is_(True)
         )
     )
     file_count = await db.scalar(
@@ -286,7 +286,7 @@ async def create_cost_config(
         existing = await db.execute(
             select(CostConfiguration).where(
                 CostConfiguration.organization_id == current_user.organization_id,
-                CostConfiguration.is_default == True,
+                CostConfiguration.is_default.is_(True),
             )
         )
         for cfg in existing.scalars():

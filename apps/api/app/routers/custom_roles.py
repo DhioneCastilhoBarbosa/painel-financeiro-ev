@@ -6,7 +6,6 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 from app.core.database import get_db
 from app.core.deps import CurrentUser
@@ -86,7 +85,7 @@ async def list_roles(current_user: CurrentUser, db: AsyncSession = Depends(get_d
             select(User).where(
                 User.organization_id == current_user.organization_id,
                 User.custom_role_id == role.id,
-                User.is_active == True,
+                User.is_active.is_(True),
             )
         )
         member_counts[str(role.id)] = len(count_result.scalars().all())

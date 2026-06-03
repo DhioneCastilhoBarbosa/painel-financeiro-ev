@@ -11,8 +11,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from app.models.user import User
     from app.models.custom_role import CustomRole
+    from app.models.user import User
 
 ALL_PERMISSIONS = [
     "view_dashboard",    # Dashboard / KPIs / séries temporais
@@ -68,7 +68,7 @@ BUILTIN_DEFAULTS: dict[str, dict[str, bool]] = {
 }
 
 
-def resolve_permissions(user: "User", custom_role: "CustomRole | None" = None) -> dict[str, bool]:
+def resolve_permissions(user: User, custom_role: CustomRole | None = None) -> dict[str, bool]:
     """Retorna dict completo de permissões para o usuário."""
     # owner e admin sempre têm tudo, independente de custom role
     if user.role in ("owner", "admin"):

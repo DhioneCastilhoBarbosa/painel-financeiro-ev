@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Numeric, PrimaryKeyConstraint, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID

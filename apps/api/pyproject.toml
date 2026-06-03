@@ -15,6 +15,8 @@ fail_under   = 60       # CI falha se cobertura cair abaixo de 60%
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+
+[tool.ruff.lint]
 select  = ["E", "F", "W", "I", "UP", "B", "C4", "SIM"]
 ignore  = ["E501", "B008"]   # E501=line-too-long, B008=function-call-in-default
 

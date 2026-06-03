@@ -6,7 +6,6 @@ para que o desenvolvimento local funcione sem conta Resend.
 from __future__ import annotations
 
 import logging
-from typing import Optional
 
 from app.core.config import settings
 

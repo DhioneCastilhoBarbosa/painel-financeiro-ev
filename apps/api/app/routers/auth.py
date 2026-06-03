@@ -1,6 +1,6 @@
 import secrets
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from jwt.exceptions import InvalidTokenError
@@ -24,11 +24,9 @@ from app.models.custom_role import CustomRole
 from app.models.organization import Organization
 from app.models.subscription import Subscription, SubscriptionPlan, SubscriptionStatus
 from app.models.user import User, UserRole
-from app.services.permissions import resolve_permissions
 from app.schemas.auth import (
     ForgotPasswordRequest,
     LoginRequest,
-    RefreshRequest,
     RegisterRequest,
     ResetPasswordRequest,
     TokenResponse,
@@ -36,6 +34,7 @@ from app.schemas.auth import (
     UserResponse,
     VerifyEmailRequest,
 )
+from app.services.permissions import resolve_permissions
 
 router = APIRouter()
 
@@ -101,7 +100,7 @@ async def register(request: Request, body: RegisterRequest, db: AsyncSession = D
         slug=_slug_from_name(body.organization_name),
         plan="trial",
         status="active",
-        trial_ends_at=datetime.now(timezone.utc) + timedelta(days=14),
+        trial_ends_at=datetime.now(datetime.UTC) + timedelta(days=14),
     )
     db.add(org)
     await db.flush()
@@ -168,7 +167,7 @@ async def login(
     if not user.is_active:
         raise HTTPException(status_code=403, detail="Conta desativada")
 
-    user.last_login_at = datetime.now(timezone.utc)
+    user.last_login_at = datetime.now(datetime.UTC)
 
     access = create_access_token(str(user.id), str(user.organization_id))
     refresh = create_refresh_token(str(user.id))
@@ -217,8 +216,8 @@ async def refresh_token(
         payload = decode_token(token)
         if payload.get("type") != "refresh":
             raise ValueError()
-    except (InvalidTokenError, ValueError):
-        raise HTTPException(status_code=401, detail="Token inválido")
+    except (InvalidTokenError, ValueError) as err:
+        raise HTTPException(status_code=401, detail="Token inválido") from err
 
     user = await db.get(User, user_id)
     if not user or not user.is_active:
@@ -269,7 +268,7 @@ async def verify_email(body: VerifyEmailRequest, db: AsyncSession = Depends(get_
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
-    user.email_verified_at = datetime.now(timezone.utc)
+    user.email_verified_at = datetime.now(datetime.UTC)
     await redis.delete(f"verify:{body.token}")
     return {"message": "E-mail verificado com sucesso"}
 
@@ -321,8 +320,8 @@ async def reset_password(body: ResetPasswordRequest, db: AsyncSession = Depends(
         payload = decode_token(body.token)
         if payload.get("purpose") != "reset":
             raise ValueError()
-    except (InvalidTokenError, ValueError):
-        raise HTTPException(status_code=400, detail="Token inválido")
+    except (InvalidTokenError, ValueError) as err:
+        raise HTTPException(status_code=400, detail="Token inválido") from err
 
     user = await db.get(User, user_id)
     if not user:

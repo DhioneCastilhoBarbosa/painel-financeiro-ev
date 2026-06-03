@@ -76,26 +76,26 @@ async def _require_manage_leads(user, db: AsyncSession) -> None:
 
 # ─── Helper ───────────────────────────────────────────────────────────────────
 
-def _lead_to_list_item(l: Lead) -> LeadListItem:
-    sim = l.simulation_result
+def _lead_to_list_item(lead: Lead) -> LeadListItem:
+    sim = lead.simulation_result
     return LeadListItem(
-        id=l.id,
-        name=l.name,
-        email=l.email,
-        phone=l.phone,
-        cnpj=l.cnpj,
-        state=l.state,
-        city=l.city,
-        charger_type=l.charger_type,
-        sector=l.sector,
-        position=l.position,
-        num_chargers=l.num_chargers,
+        id=lead.id,
+        name=lead.name,
+        email=lead.email,
+        phone=lead.phone,
+        cnpj=lead.cnpj,
+        state=lead.state,
+        city=lead.city,
+        charger_type=lead.charger_type,
+        sector=lead.sector,
+        position=lead.position,
+        num_chargers=lead.num_chargers,
         monthly_revenue=sim.get("monthly_revenue", 0),
         payback_months=sim.get("payback_months"),
         roi_5y_pct=sim.get("roi_5y_pct", 0),
-        message=l.message,
-        specialist_message=l.specialist_message,
-        created_at=l.created_at,
+        message=lead.message,
+        specialist_message=lead.specialist_message,
+        created_at=lead.created_at,
     )
 
 
@@ -121,7 +121,7 @@ async def list_leads(
         q = q.where(Lead.charger_type == charger_type)
 
     result = await db.execute(q)
-    return [_lead_to_list_item(l) for l in result.scalars().all()]
+    return [_lead_to_list_item(lead) for lead in result.scalars().all()]
 
 
 @router.get("/export", summary="Exportar todos os leads em CSV (para Excel / Google Sheets)")
@@ -142,16 +142,16 @@ async def export_leads_csv(
         "Payback (meses)", "ROI 5 anos (%)", "VPL 5 anos (R$)",
         "Mensagem (formulário)", "Mensagem (especialista)",
     ])
-    for l in leads:
-        sim = l.simulation_result
+    for lead in leads:
+        sim = lead.simulation_result
         writer.writerow([
-            l.created_at.strftime("%Y-%m-%d %H:%M"),
-            l.name, l.cnpj or "", l.email, l.phone, l.state, l.city,
-            l.sector, l.position, l.charger_type, l.num_chargers,
+            lead.created_at.strftime("%Y-%m-%d %H:%M"),
+            lead.name, lead.cnpj or "", lead.email, lead.phone, lead.state, lead.city,
+            lead.sector, lead.position, lead.charger_type, lead.num_chargers,
             sim.get("monthly_revenue", ""), sim.get("monthly_net", ""),
             sim.get("payback_months", ""), sim.get("roi_5y_pct", ""),
             sim.get("npv_5y", ""),
-            l.message or "", l.specialist_message or "",
+            lead.message or "", lead.specialist_message or "",
         ])
 
     output.seek(0)
@@ -207,7 +207,7 @@ async def get_simulator_config(
 ):
     await _require_manage_leads(current_user, db)
     result = await db.execute(
-        select(SimulatorConfig).where(SimulatorConfig.is_active == True).limit(1)
+        select(SimulatorConfig).where(SimulatorConfig.is_active.is_(True)).limit(1)
     )
     cfg = result.scalar_one_or_none()
     if not cfg:
@@ -225,7 +225,7 @@ async def update_simulator_config(
 ):
     await _require_manage_leads(current_user, db)
     result = await db.execute(
-        select(SimulatorConfig).where(SimulatorConfig.is_active == True).limit(1)
+        select(SimulatorConfig).where(SimulatorConfig.is_active.is_(True)).limit(1)
     )
     cfg = result.scalar_one_or_none()
     if not cfg:

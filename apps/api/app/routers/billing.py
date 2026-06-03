@@ -5,9 +5,9 @@ Webhook endpoint handles subscription lifecycle events.
 """
 
 import logging
-from datetime import datetime, timezone
+from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -168,7 +168,7 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
         event = _s.Webhook.construct_event(payload, sig, settings.stripe_webhook_secret)
     except (_s.error.SignatureVerificationError, ValueError) as exc:
         logger.warning("Stripe webhook signature invalid: %s", exc)
-        raise HTTPException(status_code=400, detail="Invalid signature")
+        raise HTTPException(status_code=400, detail="Invalid signature") from exc
 
     event_type = event["type"]
     data = event["data"]["object"]
@@ -220,9 +220,9 @@ async def _handle_subscription_upsert(stripe_sub: dict, db: AsyncSession) -> Non
     sub.plan = plan
     sub.status = sub_status
     if stripe_sub.get("current_period_start"):
-        sub.current_period_start = datetime.fromtimestamp(stripe_sub["current_period_start"], tz=timezone.utc)
+        sub.current_period_start = datetime.fromtimestamp(stripe_sub["current_period_start"], tz=datetime.UTC)
     if stripe_sub.get("current_period_end"):
-        sub.current_period_end = datetime.fromtimestamp(stripe_sub["current_period_end"], tz=timezone.utc)
+        sub.current_period_end = datetime.fromtimestamp(stripe_sub["current_period_end"], tz=datetime.UTC)
 
     org = await db.get(Organization, org_id)
     if org:
@@ -246,7 +246,7 @@ async def _handle_subscription_deleted(stripe_sub: dict, db: AsyncSession) -> No
     sub = await db.scalar(select(Subscription).where(Subscription.organization_id == org_id))
     if sub:
         sub.status = SubscriptionStatus.canceled
-        sub.canceled_at = datetime.now(timezone.utc)
+        sub.canceled_at = datetime.now(datetime.UTC)
 
     org = await db.get(Organization, org_id)
     if org:

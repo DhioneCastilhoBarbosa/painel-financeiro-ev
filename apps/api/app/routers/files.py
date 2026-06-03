@@ -1,6 +1,7 @@
+import contextlib
 import os
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 
 from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, UploadFile, status
@@ -84,7 +85,7 @@ async def _process_file_background(file_id: str, storage_key: str, organization_
             data_file.date_max = metadata.get("date_max")
             data_file.stations = metadata.get("stations", [])
             data_file.connector_types = metadata.get("connector_types", [])
-            data_file.processed_at = datetime.now(timezone.utc)
+            data_file.processed_at = datetime.now(datetime.UTC)
             await db.commit()
 
         except Exception as exc:
@@ -310,10 +311,8 @@ async def delete_file(file_id: str, current_user: CurrentUser, db: AsyncSession 
     await log_action(db, current_user.organization_id, current_user.id, current_user.email,
                      "delete_file", "data_file", file_id,
                      f"filename={f.original_filename}")
-    try:
+    with contextlib.suppress(Exception):
         await _delete_from_storage(f.storage_key)
-    except Exception:
-        pass
     await db.delete(f)
 
 

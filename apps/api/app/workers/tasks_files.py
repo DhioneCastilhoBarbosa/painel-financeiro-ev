@@ -3,13 +3,13 @@ Celery task para processamento assíncrono de arquivos Excel enviados pelos usu�
 Usa SQLAlchemy síncrono (psycopg2) para evitar conflitos de event-loop no worker.
 """
 
-import os
 import uuid
+from datetime import datetime
+from functools import lru_cache as _lru_cache
 from pathlib import Path
-from datetime import datetime, timezone
 
-from sqlalchemy import create_engine, insert, update
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy import create_engine, insert
+from sqlalchemy.orm import sessionmaker
 
 from app.core.config import settings
 from app.models.charging_session import ChargingSession
@@ -24,9 +24,6 @@ def _sync_db_url() -> str:
     url = url.replace("postgresql+asyncpg://", "postgresql+psycopg2://")
     url = url.replace("postgresql+asyncpg:", "postgresql+psycopg2:")
     return url
-
-
-from functools import lru_cache as _lru_cache
 
 
 @_lru_cache(maxsize=1)
@@ -101,7 +98,7 @@ def process_file(self, file_id: str, storage_key: str, organization_id: str):
             data_file.date_max = metadata.get("date_max")
             data_file.stations = metadata.get("stations", [])
             data_file.connector_types = metadata.get("connector_types", [])
-            data_file.processed_at = datetime.now(timezone.utc)
+            data_file.processed_at = datetime.now(datetime.UTC)
             db.commit()
 
         except Exception as exc:
@@ -111,4 +108,4 @@ def process_file(self, file_id: str, storage_key: str, organization_id: str):
                 data_file.status = FileStatus.error
                 data_file.error_message = str(exc)[:2000]
                 db.commit()
-            raise self.retry(exc=exc)
+            raise self.retry(exc=exc) from exc

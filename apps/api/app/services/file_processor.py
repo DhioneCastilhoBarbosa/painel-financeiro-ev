@@ -8,8 +8,7 @@ Migrado de eletropostos_dashboard.py — process_df() e lógica de parse.
 from __future__ import annotations
 
 import re
-from datetime import datetime, timezone
-from typing import Iterator
+from datetime import datetime
 
 import numpy as np
 import pandas as pd
@@ -24,7 +23,7 @@ def _parse_start_date(value: str) -> datetime | None:
     part = value.split(" - ")[0].strip()
     for fmt in ("%d/%m/%Y %H:%M", "%Y-%m-%d %H:%M:%S", "%d/%m/%Y %H:%M:%S"):
         try:
-            return datetime.strptime(part, fmt).replace(tzinfo=timezone.utc)
+            return datetime.strptime(part, fmt).replace(tzinfo=datetime.UTC)
         except ValueError:
             continue
     return None
@@ -44,8 +43,8 @@ def _parse_end_date(value: str) -> datetime | None:
         try:
             if fmt == "%H:%M":
                 full = f"{start_date} {end_str}"
-                return datetime.strptime(full, "%d/%m/%Y %H:%M").replace(tzinfo=timezone.utc)
-            return datetime.strptime(end_str, fmt).replace(tzinfo=timezone.utc)
+                return datetime.strptime(full, "%d/%m/%Y %H:%M").replace(tzinfo=datetime.UTC)
+            return datetime.strptime(end_str, fmt).replace(tzinfo=datetime.UTC)
         except ValueError:
             continue
     return None
