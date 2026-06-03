@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 
 from sqlalchemy import Boolean, DateTime, Float, Integer
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -66,6 +66,6 @@ class SimulatorConfig(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(datetime.UTC),
-        onupdate=lambda: datetime.now(datetime.UTC),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
     )

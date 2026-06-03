@@ -28,10 +28,10 @@ class _JsonFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         import json
-        from datetime import datetime
+        from datetime import UTC, datetime
 
         payload: dict = {
-            "ts":      datetime.fromtimestamp(record.created, tz=datetime.UTC).isoformat(),
+            "ts":      datetime.fromtimestamp(record.created, tz=UTC).isoformat(),
             "level":   record.levelname,
             "logger":  record.name,
             "msg":     record.getMessage(),

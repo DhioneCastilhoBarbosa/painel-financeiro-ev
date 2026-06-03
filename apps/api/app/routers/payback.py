@@ -1,6 +1,6 @@
 import secrets
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
@@ -105,8 +105,8 @@ async def save_scenario(
         name=body.name,
         inputs=body.inputs,
         results=body.results,
-        created_at=datetime.now(datetime.UTC),
-        updated_at=datetime.now(datetime.UTC),
+        created_at=datetime.now(UTC),
+        updated_at=datetime.now(UTC),
     )
     db.add(scenario)
     await db.flush()
@@ -130,7 +130,7 @@ async def update_scenario(
     sc.name = body.name
     sc.inputs = body.inputs
     sc.results = body.results
-    sc.updated_at = datetime.now(datetime.UTC)
+    sc.updated_at = datetime.now(UTC)
     return sc
 
 

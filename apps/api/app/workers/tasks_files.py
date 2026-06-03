@@ -4,7 +4,7 @@ Usa SQLAlchemy síncrono (psycopg2) para evitar conflitos de event-loop no worke
 """
 
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 from functools import lru_cache as _lru_cache
 from pathlib import Path
 
@@ -98,7 +98,7 @@ def process_file(self, file_id: str, storage_key: str, organization_id: str):
             data_file.date_max = metadata.get("date_max")
             data_file.stations = metadata.get("stations", [])
             data_file.connector_types = metadata.get("connector_types", [])
-            data_file.processed_at = datetime.now(datetime.UTC)
+            data_file.processed_at = datetime.now(UTC)
             db.commit()
 
         except Exception as exc:

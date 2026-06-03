@@ -4,7 +4,7 @@ Avaliação dos alertas é feita via POST /evaluate (pode ser chamado por cron/C
 """
 
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
@@ -162,7 +162,7 @@ async def evaluate_alerts(
             fired = (alert.operator == "below" and value < threshold) or \
                     (alert.operator == "above" and value > threshold)
             if fired:
-                alert.last_triggered_at = datetime.now(datetime.UTC)
+                alert.last_triggered_at = datetime.now(UTC)
                 triggered.append({
                     "id": str(alert.id),
                     "name": alert.name,
@@ -175,7 +175,7 @@ async def evaluate_alerts(
         await db.flush()
         return {
             "triggered": triggered,
-            "evaluated_at": datetime.now(datetime.UTC).isoformat(),
+            "evaluated_at": datetime.now(UTC).isoformat(),
             "metrics": empty_metrics,
         }
 
@@ -215,7 +215,7 @@ async def evaluate_alerts(
         fired = (alert.operator == "below" and value < threshold) or \
                 (alert.operator == "above" and value > threshold)
         if fired:
-            alert.last_triggered_at = datetime.now(datetime.UTC)
+            alert.last_triggered_at = datetime.now(UTC)
             triggered.append({
                 "id": str(alert.id),
                 "name": alert.name,
@@ -227,7 +227,7 @@ async def evaluate_alerts(
             })
 
     await db.flush()
-    return {"triggered": triggered, "evaluated_at": datetime.now(datetime.UTC).isoformat(), "metrics": metrics}
+    return {"triggered": triggered, "evaluated_at": datetime.now(UTC).isoformat(), "metrics": metrics}
 
 
 @router.delete("/{alert_id}", status_code=status.HTTP_204_NO_CONTENT)

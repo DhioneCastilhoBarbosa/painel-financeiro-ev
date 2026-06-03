@@ -1,6 +1,6 @@
 import secrets
 import uuid
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from jwt.exceptions import InvalidTokenError
@@ -100,7 +100,7 @@ async def register(request: Request, body: RegisterRequest, db: AsyncSession = D
         slug=_slug_from_name(body.organization_name),
         plan="trial",
         status="active",
-        trial_ends_at=datetime.now(datetime.UTC) + timedelta(days=14),
+        trial_ends_at=datetime.now(UTC) + timedelta(days=14),
     )
     db.add(org)
     await db.flush()
@@ -167,7 +167,7 @@ async def login(
     if not user.is_active:
         raise HTTPException(status_code=403, detail="Conta desativada")
 
-    user.last_login_at = datetime.now(datetime.UTC)
+    user.last_login_at = datetime.now(UTC)
 
     access = create_access_token(str(user.id), str(user.organization_id))
     refresh = create_refresh_token(str(user.id))
@@ -268,7 +268,7 @@ async def verify_email(body: VerifyEmailRequest, db: AsyncSession = Depends(get_
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
-    user.email_verified_at = datetime.now(datetime.UTC)
+    user.email_verified_at = datetime.now(UTC)
     await redis.delete(f"verify:{body.token}")
     return {"message": "E-mail verificado com sucesso"}
 

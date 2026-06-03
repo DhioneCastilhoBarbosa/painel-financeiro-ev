@@ -1,6 +1,6 @@
 import secrets
 import uuid
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func, select
@@ -123,7 +123,7 @@ async def invite_member(
         role=body.role,
         token=token,
         invited_by=current_user.id,
-        expires_at=datetime.now(datetime.UTC) + timedelta(hours=48),
+        expires_at=datetime.now(UTC) + timedelta(hours=48),
         custom_role_id=resolved_custom_role_id,
     )
     db.add(invite)
@@ -150,7 +150,7 @@ async def list_invitations(current_user: CurrentUser, db: AsyncSession = Depends
         select(Invitation).where(
             Invitation.organization_id == current_user.organization_id,
             Invitation.accepted_at.is_(None),
-            Invitation.expires_at > datetime.now(datetime.UTC),
+            Invitation.expires_at > datetime.now(UTC),
         )
     )
     invites = result.scalars().all()

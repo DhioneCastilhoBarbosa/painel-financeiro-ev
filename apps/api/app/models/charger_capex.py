@@ -1,5 +1,5 @@
 import uuid
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 
 from sqlalchemy import Date, DateTime, Float, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
@@ -45,10 +45,10 @@ class ChargerCapex(Base):
     notes: Mapped[str | None] = mapped_column(String(2000), nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(datetime.UTC)
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(datetime.UTC),
-        onupdate=lambda: datetime.now(datetime.UTC),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
     )
