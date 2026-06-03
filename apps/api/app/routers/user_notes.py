@@ -1,7 +1,7 @@
 """CRUD de notas por user_tag dentro de uma organização."""
 
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
@@ -54,7 +54,7 @@ async def upsert_note(
     note = result.scalars().first()
     if note:
         note.content = body.content
-        note.updated_at = datetime.now(datetime.UTC)
+        note.updated_at = datetime.now(UTC)
     else:
         note = UserNote(
             id=uuid.uuid4(),

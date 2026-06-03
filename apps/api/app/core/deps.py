@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
@@ -63,7 +63,7 @@ async def require_active_plan(
     if not org:
         return  # Organização inválida — não bloqueia (erro de dados)
 
-    now = datetime.now(datetime.UTC)
+    now = datetime.now(UTC)
 
     # ── Trial local ─────────────────────────────────────────────────────────
     if org.plan == "trial":

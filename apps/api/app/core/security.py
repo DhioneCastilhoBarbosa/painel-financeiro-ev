@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import jwt
@@ -20,7 +20,7 @@ def verify_password(plain: str, hashed: str) -> bool:
 
 def _create_token(data: dict[str, Any], expires_delta: timedelta) -> str:
     payload = data.copy()
-    payload["exp"] = datetime.now(datetime.UTC) + expires_delta
+    payload["exp"] = datetime.now(UTC) + expires_delta
     return jwt.encode(payload, settings.secret_key, algorithm=settings.algorithm)
 
 

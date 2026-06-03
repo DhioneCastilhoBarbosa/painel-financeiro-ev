@@ -5,7 +5,7 @@ Webhook endpoint handles subscription lifecycle events.
 """
 
 import logging
-from datetime import datetime
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import select
@@ -220,9 +220,9 @@ async def _handle_subscription_upsert(stripe_sub: dict, db: AsyncSession) -> Non
     sub.plan = plan
     sub.status = sub_status
     if stripe_sub.get("current_period_start"):
-        sub.current_period_start = datetime.fromtimestamp(stripe_sub["current_period_start"], tz=datetime.UTC)
+        sub.current_period_start = datetime.fromtimestamp(stripe_sub["current_period_start"], tz=UTC)
     if stripe_sub.get("current_period_end"):
-        sub.current_period_end = datetime.fromtimestamp(stripe_sub["current_period_end"], tz=datetime.UTC)
+        sub.current_period_end = datetime.fromtimestamp(stripe_sub["current_period_end"], tz=UTC)
 
     org = await db.get(Organization, org_id)
     if org:
@@ -246,7 +246,7 @@ async def _handle_subscription_deleted(stripe_sub: dict, db: AsyncSession) -> No
     sub = await db.scalar(select(Subscription).where(Subscription.organization_id == org_id))
     if sub:
         sub.status = SubscriptionStatus.canceled
-        sub.canceled_at = datetime.now(datetime.UTC)
+        sub.canceled_at = datetime.now(UTC)
 
     org = await db.get(Organization, org_id)
     if org:

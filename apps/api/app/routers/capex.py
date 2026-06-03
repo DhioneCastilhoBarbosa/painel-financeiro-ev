@@ -6,7 +6,7 @@ vinculando a uma estação dos dados de sessão para calcular payback real.
 """
 
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func, select
@@ -37,9 +37,9 @@ async def _compute_performance(
 
     installed_dt = datetime(
         rec.installed_at.year, rec.installed_at.month, rec.installed_at.day,
-        tzinfo=datetime.UTC,
+        tzinfo=UTC,
     )
-    now = datetime.now(datetime.UTC)
+    now = datetime.now(UTC)
     months_elapsed = max(0.0, (now - installed_dt).days / 30.44)
 
     revenue_total = 0.0
@@ -65,7 +65,7 @@ async def _compute_performance(
         data_source = "sessions"
 
         # Média mensal: últimos 90 dias
-        cutoff_90d = datetime.now(datetime.UTC)
+        cutoff_90d = datetime.now(UTC)
         cutoff_90d = cutoff_90d.replace(
             hour=0, minute=0, second=0, microsecond=0
         )
@@ -176,7 +176,7 @@ async def update_capex(
 
     for field, value in body.model_dump(exclude_unset=True).items():
         setattr(rec, field, value)
-    rec.updated_at = datetime.now(datetime.UTC)
+    rec.updated_at = datetime.now(UTC)
     await db.flush()
     perf = await _compute_performance(rec, db, current_user.organization_id)
     return ChargerCapexResponse.model_validate({**rec.__dict__, "performance": perf})

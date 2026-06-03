@@ -12,7 +12,7 @@ Correções aplicadas:
 from __future__ import annotations
 
 import logging
-from datetime import date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from functools import lru_cache as _lru_cache
 
 import pandas as pd
@@ -146,7 +146,7 @@ def _compute_metrics(org_id, yesterday: date) -> dict:
 def evaluate_all_organizations():
     """Avalia alertas de todas as organizações contra os dados de ontem."""
     yesterday = date.today() - timedelta(days=1)
-    now       = datetime.now(datetime.UTC)
+    now       = datetime.now(UTC)
     cooldown  = timedelta(hours=ALERT_COOLDOWN_HOURS)
 
     with _get_session_factory()() as db:
