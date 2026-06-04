@@ -10,7 +10,6 @@ export const ROUTE_PERMISSIONS: Record<string, Role[]> = {
   "/dashboard/stations":     ["owner", "admin", "analyst"],
   "/dashboard/usuarios":     ["owner", "admin", "analyst"],
   "/dashboard/dre":          ["owner", "admin", "analyst"],
-  "/dashboard/payback":      ["owner", "admin", "analyst"],
   "/dashboard/cohort":       ["owner", "admin", "analyst"],
   "/dashboard/investimento":  ["owner", "admin", "analyst"],
   "/dashboard/relatorio":    ["owner", "admin", "analyst", "viewer"],

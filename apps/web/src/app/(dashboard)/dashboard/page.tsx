@@ -405,7 +405,7 @@ export default function DashboardPage() {
               </div>
             </div>
             <Link
-              href="/dashboard/payback"
+              href="/dashboard/investimento"
               className={cn(buttonVariants({ variant: "outline", size: "sm" }), "shrink-0 border-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900")}
             >
               Calcular Payback
