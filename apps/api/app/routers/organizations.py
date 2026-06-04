@@ -204,11 +204,23 @@ async def list_invitations(current_user: CurrentUser, db: AsyncSession = Depends
         )
     )
     invites = result.scalars().all()
+
+    # Resolve custom role names in one query
+    custom_role_ids = [inv.custom_role_id for inv in invites if inv.custom_role_id]
+    custom_role_names: dict[str, str] = {}
+    if custom_role_ids:
+        from app.models.custom_role import CustomRole
+        cr_result = await db.execute(
+            select(CustomRole.id, CustomRole.name).where(CustomRole.id.in_(custom_role_ids))
+        )
+        custom_role_names = {str(row.id): row.name for row in cr_result}
+
     return [
         {
             "id": str(inv.id),
             "email": inv.email,
             "role": inv.role,
+            "custom_role_name": custom_role_names.get(str(inv.custom_role_id)) if inv.custom_role_id else None,
             "created_at": inv.created_at,
             "expires_at": inv.expires_at,
         }

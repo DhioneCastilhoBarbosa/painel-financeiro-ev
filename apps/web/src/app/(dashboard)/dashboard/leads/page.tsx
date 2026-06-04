@@ -376,7 +376,7 @@ export default function LeadsPage() {
         <div>
           <h1 className="text-2xl font-bold">CRM de Leads</h1>
           <p className="text-muted-foreground text-sm mt-0.5">
-            Leads capturados pelo simulador público
+            Gestão global da plataforma — exclusivo para Administradores Intelbras
           </p>
         </div>
         <div className="flex items-center gap-2">

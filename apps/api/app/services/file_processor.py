@@ -77,8 +77,24 @@ def _col(df: pd.DataFrame, *names: str) -> str | None:
 
 def read_excel(file_bytes: bytes) -> pd.DataFrame:
     import io
+    import zipfile
 
-    return pd.read_excel(io.BytesIO(file_bytes), engine="openpyxl")
+    if len(file_bytes) == 0:
+        raise ValueError(
+            "O arquivo está vazio (0 bytes). Verifique se o dataset de exemplo está corretamente instalado no servidor."
+        )
+
+    # xlsx is a zip archive — detect format and choose engine
+    if zipfile.is_zipfile(io.BytesIO(file_bytes)):
+        return pd.read_excel(io.BytesIO(file_bytes), engine="openpyxl")
+
+    # Try xlrd for legacy .xls binary format
+    try:
+        return pd.read_excel(io.BytesIO(file_bytes), engine="xlrd")
+    except Exception:
+        raise ValueError(
+            "Formato de arquivo não suportado. Envie um arquivo .xlsx (Excel 2007+) ou .xls válido."
+        )
 
 
 def normalize(df: pd.DataFrame) -> pd.DataFrame:

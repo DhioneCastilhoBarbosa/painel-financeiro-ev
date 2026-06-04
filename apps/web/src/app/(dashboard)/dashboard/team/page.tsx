@@ -38,7 +38,10 @@ const inviteSchema = z.object({
 type InviteData = z.infer<typeof inviteSchema>;
 
 const roleFormSchema = z.object({
-  name: z.string().min(1, "Nome obrigatório").max(100),
+  name: z.string().min(1, "Nome obrigatório").max(100).refine(
+    (v) => v.trim().toLowerCase() !== "master",
+    { message: "O nome 'Master' é reservado pelo sistema. Use outro nome." }
+  ),
   description: z.string().optional(),
 });
 type RoleFormData = z.infer<typeof roleFormSchema>;
@@ -100,6 +103,7 @@ interface Member {
 interface Invitation {
   id: string;
   email: string;
+  custom_role_name?: string | null;
   role: string;
   expires_at: string;
 }
@@ -548,7 +552,7 @@ export default function TeamPage() {
                   <div className="flex-1">
                     <p className="text-sm font-medium">{inv.email}</p>
                     <p className="text-xs text-muted-foreground">
-                      {BUILTIN_ROLE_LABELS[inv.role] ?? inv.role} · Expira {formatDate(inv.expires_at)}
+                      {inv.custom_role_name ?? BUILTIN_ROLE_LABELS[inv.role] ?? inv.role} · Expira {formatDate(inv.expires_at)}
                     </p>
                   </div>
                   <Badge variant="outline" className="text-amber-600 border-amber-200 dark:text-amber-400 dark:border-amber-800">Pendente</Badge>
@@ -587,8 +591,6 @@ export default function TeamPage() {
                   </FormItem>
                 )} />
                 <FormField control={form.control} name="roleKey" render={({ field }) => {
-                  // Se existem cargos personalizados → mostra Admin + cargos personalizados
-                  // Caso contrário → mostra os 3 built-ins como fallback
                   const hasCustom = (customRoles?.length ?? 0) > 0;
                   return (
                     <FormItem>
@@ -599,23 +601,16 @@ export default function TeamPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {/* Admin sempre disponível */}
-                          <SelectItem value="admin">Administrador</SelectItem>
-                          {hasCustom ? (
-                            <>
-                              {/* Separador visual se houver cargos personalizados */}
-                              {customRoles!.map((r) => (
-                                <SelectItem key={r.id} value={r.id}>
-                                  {r.name}
-                                </SelectItem>
-                              ))}
-                            </>
-                          ) : (
-                            // Fallback: built-ins quando não há cargos criados
-                            BUILTIN_INVITE_OPTIONS.slice(1).map((o) => (
-                              <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
-                            ))
-                          )}
+                          {/* Cargos integrados sempre disponíveis */}
+                          {BUILTIN_INVITE_OPTIONS.map((o) => (
+                            <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
+                          ))}
+                          {/* Cargos personalizados (se existirem) */}
+                          {hasCustom && customRoles!.map((r) => (
+                            <SelectItem key={r.id} value={r.id}>
+                              {r.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />

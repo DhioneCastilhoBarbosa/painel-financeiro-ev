@@ -170,7 +170,7 @@ export function ManualPage() {
   const [menuOpen, setMenuOpen]     = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
-  // Acesso restrito a usuários Mestre — aguarda o refresh() terminar antes de checar
+  // Acesso restrito a Administradores Intelbras — aguarda o refresh() terminar antes de checar
   useEffect(() => {
     if (loading) return;               // ainda carregando sessão, aguarda
     if (!user) {
@@ -228,7 +228,7 @@ export function ManualPage() {
     </nav>
   );
 
-  // Bloqueia render enquanto verifica sessão ou se não é mestre
+  // Bloqueia render enquanto verifica sessão ou se não é Administrador Intelbras
   if (loading || !user || !user.is_master) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: DARK }}>

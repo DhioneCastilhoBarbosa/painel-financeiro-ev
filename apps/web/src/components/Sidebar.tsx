@@ -136,7 +136,7 @@ export function Sidebar() {
         >
           {!collapsed ? (
             <>
-              {/* Painel Admin — apenas Mestres Intelbras */}
+              {/* Painel Admin — apenas Administradores Intelbras */}
               {showAdmin && (
                 <Link
                   href="/dashboard/admin"
@@ -152,7 +152,7 @@ export function Sidebar() {
                 </Link>
               )}
 
-              {/* Manual — apenas para usuários Mestre */}
+              {/* Manual — apenas para Administradores Intelbras */}
               {user?.is_master && (
                 <Link
                   href="/manual"
