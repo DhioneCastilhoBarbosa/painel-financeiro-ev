@@ -15,7 +15,6 @@ Capacidades:
 """
 from __future__ import annotations
 
-import uuid
 from datetime import UTC, datetime
 from typing import Any
 
@@ -30,7 +29,7 @@ from app.models.charging_session import ChargingSession
 from app.models.data_file import DataFile
 from app.models.organization import Organization
 from app.models.subscription import Subscription
-from app.models.user import User, UserRole
+from app.models.user import User
 from app.services.audit_service import log_action
 
 router = APIRouter()

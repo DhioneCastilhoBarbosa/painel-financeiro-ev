@@ -19,7 +19,12 @@ from app.core.ratelimit import limiter
 from app.models.lead import Lead
 from app.models.lead_notification_email import LeadNotificationEmail
 from app.models.simulator_config import DEFAULT_CHARGER_CONFIGS, SimulatorConfig
-from app.schemas.lead import EnterpriseContactRequest, LeadRequest, LeadResponse, SpecialistMessageRequest
+from app.schemas.lead import (
+    EnterpriseContactRequest,
+    LeadRequest,
+    LeadResponse,
+    SpecialistMessageRequest,
+)
 from app.services.email import (
     send_lead_confirmation_email,
     send_lead_notification_email,

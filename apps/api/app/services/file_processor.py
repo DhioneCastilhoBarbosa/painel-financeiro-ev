@@ -12,7 +12,6 @@ from datetime import UTC, datetime
 
 import pandas as pd
 
-
 # ─── Parsers ─────────────────────────────────────────────────────────────────
 
 def _parse_start_date(value: str) -> datetime | None:

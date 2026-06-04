@@ -275,10 +275,10 @@ async def load_example(
 
     try:
         content = await _read_example_bytes(filename)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Arquivo de exemplo não encontrado no servidor")
+    except FileNotFoundError as err:
+        raise HTTPException(status_code=404, detail="Arquivo de exemplo não encontrado no servidor") from err
     except Exception as exc:
-        raise HTTPException(status_code=503, detail=f"Erro ao acessar arquivo de exemplo: {exc}")
+        raise HTTPException(status_code=503, detail=f"Erro ao acessar arquivo de exemplo: {exc}") from exc
 
     org = await db.get(Organization, current_user.organization_id)
     existing_count = len((await db.execute(

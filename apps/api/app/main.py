@@ -17,9 +17,20 @@ from app.core.logging_config import setup_logging
 from app.core.ratelimit import limiter
 from app.core.redis import close_redis, get_redis
 from app.routers import (
-    admin, alerts, analytics, audit, auth, billing, capex,
-    custom_roles, files, leads, organizations, payback,
-    public, user_notes,
+    admin,
+    alerts,
+    analytics,
+    audit,
+    auth,
+    billing,
+    capex,
+    custom_roles,
+    files,
+    leads,
+    organizations,
+    payback,
+    public,
+    user_notes,
 )
 
 # ─── Inicialização ─────────────────────────────────────────────────────────────

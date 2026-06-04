@@ -3,6 +3,7 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 # Try to locate .env from project root; falls back gracefully if not found (Docker uses env vars directly)
 def _find_env_file() -> str | None:
     here = Path(__file__).resolve()
