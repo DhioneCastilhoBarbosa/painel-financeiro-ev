@@ -118,7 +118,7 @@ export default function AdminPage() {
     try {
       await api.patch(`/admin/organizations/${orgId}/status`, { status: newStatus });
       toast.success("Status atualizado");
-      mutate((key: string) => typeof key === "string" && key.startsWith("/admin/organizations"));
+      mutate((key: unknown) => typeof key === "string" && key.startsWith("/admin/organizations"));
     } catch (e: unknown) {
       const err = e as { response?: { data?: { detail?: string } } };
       toast.error(err?.response?.data?.detail ?? "Erro ao atualizar status");
@@ -132,7 +132,7 @@ export default function AdminPage() {
     try {
       await api.patch(`/admin/organizations/${orgId}/plan`, { plan: newPlan });
       toast.success("Plano atualizado");
-      mutate((key: string) => typeof key === "string" && key.startsWith("/admin/organizations"));
+      mutate((key: unknown) => typeof key === "string" && key.startsWith("/admin/organizations"));
     } catch (e: unknown) {
       const err = e as { response?: { data?: { detail?: string } } };
       toast.error(err?.response?.data?.detail ?? "Erro ao atualizar plano");
@@ -354,7 +354,7 @@ export default function AdminPage() {
                       <td className="px-4 py-2.5 font-medium">
                         <div className="flex items-center gap-1.5">
                           {u.name}
-                          {u.is_master && <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" title="Mestre" />}
+                          {u.is_master && <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" aria-label="Mestre" />}
                         </div>
                       </td>
                       <td className="px-4 py-2.5 text-muted-foreground">{u.email}</td>
