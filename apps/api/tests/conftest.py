@@ -10,6 +10,12 @@ Requisitos para rodar localmente:
   1. docker compose up db redis   (sobe só os serviços de infra)
   2. pip install -r requirements-dev.txt
   3. pytest
+
+Nota sobre NullPool:
+  Testes assíncronos com asyncpg sofrem de "Future attached to a different loop"
+  quando conexões do pool foram criadas em um event loop diferente do loop atual
+  do teste. NullPool evita esse problema ao não reutilizar conexões — cada
+  requisição abre e fecha sua própria conexão no loop corrente.
 """
 from __future__ import annotations
 
@@ -17,7 +23,6 @@ import os
 import uuid
 from typing import AsyncGenerator
 
-import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import (
@@ -25,6 +30,7 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
+from sqlalchemy.pool import NullPool
 
 # ── URL do banco de testes ──────────────────────────────────────────────────
 # Por padrão usa o banco dev com sufixo _test para isolamento
@@ -39,13 +45,18 @@ TEST_DATABASE_URL = os.getenv("TEST_DATABASE_URL", _DEFAULT_TEST_DB)
 
 @pytest_asyncio.fixture(scope="session")
 async def test_engine():
-    """Cria o engine de teste e as tabelas; dropa ao final."""
+    """
+    Cria o engine de teste e as tabelas; dropa ao final.
+
+    NullPool: cada operação de banco abre uma nova conexão no loop corrente e
+    fecha ao terminar. Evita o erro "Future attached to a different loop" quando
+    testes assíncronos em function-scope usam conexões criadas em outro loop.
+    """
     from app.core.database import Base
 
-    engine = create_async_engine(TEST_DATABASE_URL, echo=False, pool_pre_ping=True)
+    engine = create_async_engine(TEST_DATABASE_URL, echo=False, poolclass=NullPool)
 
     async with engine.begin() as conn:
-        # create_all não cria hypertable do TimescaleDB — OK para testes unitários
         await conn.run_sync(Base.metadata.create_all)
 
     yield engine
@@ -60,7 +71,7 @@ async def test_engine():
 async def db(test_engine) -> AsyncGenerator[AsyncSession, None]:
     """
     Sessão de banco isolada por teste.
-    Usa uma transaction rollback ao final — sem poluir o banco de testes.
+    Usa rollback ao final — sem poluir o banco de testes.
     """
     Session = async_sessionmaker(test_engine, expire_on_commit=False)
     async with Session() as session:
@@ -72,7 +83,7 @@ async def db(test_engine) -> AsyncGenerator[AsyncSession, None]:
 async def client(test_engine) -> AsyncGenerator[AsyncClient, None]:
     """
     AsyncClient apontando para a aplicação FastAPI com o banco de testes injetado.
-    Session-scoped para compartilhar o mesmo event loop e pool de conexões.
+    Session-scoped para que o dependency override persista entre testes.
     """
     from app.core.database import get_db
     from app.main import app
@@ -103,7 +114,10 @@ async def client(test_engine) -> AsyncGenerator[AsyncClient, None]:
 
 @pytest_asyncio.fixture(scope="session")
 async def registered_user(client: AsyncClient) -> dict:
-    """Cria e retorna um usuário registrado (uma vez por sessão de testes)."""
+    """
+    Cria e retorna um usuário registrado (uma vez por sessão de testes).
+    Session-scoped para não exceder o rate limit de 5 req/min em /register.
+    """
     payload = {
         "name":              "Usuário Teste",
         "email":             f"test_{uuid.uuid4().hex[:8]}@example.com",
