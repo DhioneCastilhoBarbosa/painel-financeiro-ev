@@ -85,6 +85,11 @@ services:
       REDIS_URL: redis://redis:6379/0
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://54.159.164.244:3003,http://54.159.164.244:8001,http://54.159.164.244}
       APP_URL: ${APP_URL:-http://54.159.164.244:3003}
+      # Armazenamento de arquivos via servidor WebDAV (nginx planilhas)
+      STORAGE_BACKEND: webdav
+      WEBDAV_URL: http://54.159.164.244:8083/planilhas
+      WEBDAV_USERNAME: uploader
+      WEBDAV_PASSWORD: vmx30032
     volumes:
       - uploads_data:/app/uploads
     depends_on:

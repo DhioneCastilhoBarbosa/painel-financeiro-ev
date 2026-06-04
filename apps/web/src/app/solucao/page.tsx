@@ -330,7 +330,7 @@ export default function SolucaoPage() {
               </h2>
               <p className="text-slate-500 text-lg mb-8 leading-relaxed">
                 Do MEI que instalou seu primeiro ponto de carga até redes com dezenas de
-                estações distribuídas pelo Brasil — o FinanceDash escala com o seu negócio.
+                estações distribuídas pelo Brasil — o Intelbras Finance escala com o seu negócio.
               </p>
               <div className="space-y-4">
                 {[

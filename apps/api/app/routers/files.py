@@ -4,6 +4,7 @@ import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 
+import httpx
 from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, UploadFile, status
 from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -18,7 +19,19 @@ from app.schemas.file import FileResponse
 from app.services import file_processor
 from app.services.audit_service import log_action
 
-# Pre-defined example datasets — check multiple candidate paths in priority order
+# Pre-defined example datasets — lidos do WebDAV (_examples/) ou do filesystem local
+EXAMPLE_DATASETS = {
+    "Supermercados — Cidade":           "4AC-supermercados-cidade-jan-abr.xlsx",
+    "Posto Cidade — Metrópole":         "1AC-1DC30-postocidade-metropole-jan-abr.xlsx",
+    "Posto Cidade — Turismo (AC+DC60)": "2AC-1DC60-postocidade-turismo-jan-abr.xlsx",
+    "Posto Cidade — Turismo (DC30)":    "2DC30-postocidade-turismo-jan-abr.xlsx",
+    "Posto Cidade — Nordeste":          "1AC-1DC60-postocidade-nordeste-jan-abr.xlsx",
+}
+
+# Pasta especial no WebDAV que armazena os datasets de exemplo (não é uma org)
+_WEBDAV_EXAMPLES_PATH = "_examples"
+
+
 def _find_datasets_dir() -> Path:
     env_dir = os.environ.get("DATASETS_DIR")
     if env_dir:
@@ -32,13 +45,35 @@ def _find_datasets_dir() -> Path:
     return local
 
 _DATASETS_DIR = _find_datasets_dir()
-EXAMPLE_DATASETS = {
-    "Supermercados — Cidade": "4AC-supermercados-cidade-jan-abr.xlsx",
-    "Posto Cidade — Metrópole": "1AC-1DC30-postocidade-metropole-jan-abr.xlsx",
-    "Posto Cidade — Turismo (AC+DC60)": "2AC-1DC60-postocidade-turismo-jan-abr.xlsx",
-    "Posto Cidade — Turismo (DC30)": "2DC30-postocidade-turismo-jan-abr.xlsx",
-    "Posto Cidade — Nordeste": "1AC-1DC60-postocidade-nordeste-jan-abr.xlsx",
-}
+
+
+async def _read_example_bytes(filename: str) -> bytes:
+    """Lê um dataset de exemplo do WebDAV (produção) ou do filesystem (desenvolvimento)."""
+    if settings.storage_backend == "webdav":
+        url = f"{settings.webdav_url.rstrip('/')}/{_WEBDAV_EXAMPLES_PATH}/{filename}"
+        async with httpx.AsyncClient(timeout=60) as client:
+            resp = await client.get(url)
+            if resp.status_code == 404:
+                raise FileNotFoundError(f"Exemplo não encontrado no servidor: {filename}")
+            if resp.status_code != 200:
+                raise RuntimeError(f"Erro ao baixar exemplo do servidor: {resp.status_code}")
+            return resp.content
+    else:
+        path = _DATASETS_DIR / filename
+        if not path.exists():
+            raise FileNotFoundError(f"Arquivo de exemplo não encontrado: {path}")
+        return path.read_bytes()
+
+
+async def _example_available(filename: str) -> bool:
+    """Verifica se o dataset de exemplo está disponível."""
+    if settings.storage_backend == "webdav":
+        url = f"{settings.webdav_url.rstrip('/')}/{_WEBDAV_EXAMPLES_PATH}/{filename}"
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.head(url)
+            return resp.status_code == 200
+    else:
+        return (_DATASETS_DIR / filename).exists()
 
 router = APIRouter()
 
@@ -99,11 +134,57 @@ async def _process_file_background(file_id: str, storage_key: str, organization_
 
 # ─── Storage helpers ──────────────────────────────────────────────────────────
 
-async def _save_to_storage(key: str, content: bytes) -> None:
+# Chave de armazenamento organizada por tipo:
+#   {org_id}/datasets/{file_id}.xlsx   ← uploads de dados de sessão
+#   {org_id}/examples/{file_id}.xlsx   ← datasets de exemplo carregados
+#   {org_id}/payback/{scenario_id}.json  ← análises de payback (reservado)
+#   {org_id}/reports/{report_id}.pdf     ← relatórios gerados (reservado)
+
+def _storage_key(org_id: str, file_type: str, file_id: str, ext: str) -> str:
+    """Retorna o caminho organizado por tipo de arquivo dentro da pasta da org."""
+    return f"{org_id}/{file_type}/{file_id}{ext}"
+
+
+def _webdav_url(key: str) -> str:
+    """Monta a URL completa do arquivo no servidor WebDAV."""
+    base = settings.webdav_url.rstrip("/")
+    return f"{base}/{key}"
+
+
+async def _ensure_webdav_dir(org_id: str, file_type: str) -> None:
+    """Cria os diretórios necessários no WebDAV (MKCOL, ignora se já existir)."""
+    auth = (settings.webdav_username, settings.webdav_password)
+    async with httpx.AsyncClient(timeout=30) as client:
+        # Cria pasta da org
+        await client.request("MKCOL", f"{settings.webdav_url.rstrip('/')}/{org_id}/", auth=auth)
+        # Cria subpasta de tipo
+        await client.request("MKCOL", f"{settings.webdav_url.rstrip('/')}/{org_id}/{file_type}/", auth=auth)
+        # Erros 405 (já existe) e 301 são ignorados — apenas exceções de rede propagam
+
+
+async def _save_to_storage(key: str, content: bytes, file_type: str = "datasets") -> None:
     if settings.storage_backend == "local":
         path = Path(settings.local_uploads_dir) / Path(key.replace("\\", "/"))
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(content)
+    elif settings.storage_backend == "webdav":
+        # Garante que os diretórios existam
+        parts = key.split("/")
+        if len(parts) >= 2:
+            org_id = parts[0]
+            ftype = parts[1] if len(parts) > 2 else file_type
+            await _ensure_webdav_dir(org_id, ftype)
+        url = _webdav_url(key)
+        auth = (settings.webdav_username, settings.webdav_password)
+        async with httpx.AsyncClient(timeout=60) as client:
+            resp = await client.put(
+                url,
+                content=content,
+                auth=auth,
+                headers={"Content-Type": "application/octet-stream"},
+            )
+            if resp.status_code not in (200, 201, 204):
+                raise RuntimeError(f"WebDAV PUT falhou: {resp.status_code} {resp.text[:200]}")
     else:
         import boto3
         client = boto3.client(
@@ -119,6 +200,16 @@ async def _read_from_storage(storage_key: str) -> bytes:
     if settings.storage_backend == "local":
         path = Path(settings.local_uploads_dir) / Path(storage_key.replace("\\", "/"))
         return path.read_bytes()
+    elif settings.storage_backend == "webdav":
+        url = _webdav_url(storage_key)
+        # GET não requer autenticação neste servidor
+        async with httpx.AsyncClient(timeout=60) as client:
+            resp = await client.get(url)
+            if resp.status_code == 404:
+                raise FileNotFoundError(f"Arquivo não encontrado no WebDAV: {storage_key}")
+            if resp.status_code != 200:
+                raise RuntimeError(f"WebDAV GET falhou: {resp.status_code} {resp.text[:200]}")
+            return resp.content
     else:
         import boto3
         client = boto3.client(
@@ -136,6 +227,12 @@ async def _delete_from_storage(key: str) -> None:
         path = Path(settings.local_uploads_dir) / Path(key.replace("\\", "/"))
         if path.exists():
             path.unlink()
+    elif settings.storage_backend == "webdav":
+        url = _webdav_url(key)
+        auth = (settings.webdav_username, settings.webdav_password)
+        async with httpx.AsyncClient(timeout=30) as client:
+            await client.delete(url, auth=auth)
+            # Ignora 404 — arquivo pode já ter sido removido
     else:
         import boto3
         client = boto3.client(
@@ -158,10 +255,11 @@ async def _get_file_or_404(file_id: str, organization_id, db: AsyncSession) -> D
 
 @router.get("/examples", summary="Listar datasets de exemplo disponíveis (demos pré-carregados)")
 async def list_examples():
-    return [
-        {"name": name, "filename": fname, "available": (_DATASETS_DIR / fname).exists()}
-        for name, fname in EXAMPLE_DATASETS.items()
-    ]
+    results = []
+    for name, fname in EXAMPLE_DATASETS.items():
+        available = await _example_available(fname)
+        results.append({"name": name, "filename": fname, "available": available})
+    return results
 
 
 @router.post("/examples/{dataset_name}/load", response_model=FileResponse, status_code=status.HTTP_201_CREATED, summary="Carregar dataset de exemplo para demonstração")
@@ -175,11 +273,12 @@ async def load_example(
     if not filename:
         raise HTTPException(status_code=404, detail="Dataset de exemplo não encontrado")
 
-    path = _DATASETS_DIR / filename
-    if not path.exists():
+    try:
+        content = await _read_example_bytes(filename)
+    except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Arquivo de exemplo não encontrado no servidor")
-
-    content = path.read_bytes()
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail=f"Erro ao acessar arquivo de exemplo: {exc}")
 
     org = await db.get(Organization, current_user.organization_id)
     existing_count = len((await db.execute(
@@ -194,8 +293,8 @@ async def load_example(
 
     ext = os.path.splitext(filename)[1].lower()
     file_id = str(uuid.uuid4())
-    storage_key = f"{current_user.organization_id}/{file_id}{ext}"
-    await _save_to_storage(storage_key, content)
+    storage_key = _storage_key(str(current_user.organization_id), "examples", file_id, ext)
+    await _save_to_storage(storage_key, content, file_type="examples")
 
     data_file = DataFile(
         id=file_id,
@@ -263,8 +362,8 @@ async def upload_file(
         )
 
     file_id = str(uuid.uuid4())
-    storage_key = f"{current_user.organization_id}/{file_id}{ext}"
-    await _save_to_storage(storage_key, content)
+    storage_key = _storage_key(str(current_user.organization_id), "datasets", file_id, ext)
+    await _save_to_storage(storage_key, content, file_type="datasets")
 
     data_file = DataFile(
         id=file_id,

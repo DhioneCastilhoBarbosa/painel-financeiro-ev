@@ -1,13 +1,14 @@
 ﻿"use client";
 
 import { useRef, useState } from "react";
-import { Printer, Download, BarChart2, TrendingUp, Zap, Users } from "lucide-react";
+import { Printer, Download, BarChart2, TrendingUp, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FilterBar } from "@/components/FilterBar";
 import { useFilters } from "@/contexts/FilterContext";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   useKPIs, useTimeseries, useHourly, useDRE, useStations,
   useWeekdays, useInsights, usePayments,
@@ -57,6 +58,7 @@ function KPIBox({ label, value, sub, color = "blue" }: { label: string; value: s
 
 export default function RelatorioPage() {
   const { filters } = useFilters();
+  const { user } = useAuth();
   const { data: kpis, isLoading: kpisLoading } = useKPIs(filters);
   const { data: timeseries, isLoading: tsLoading } = useTimeseries(filters);
   const { data: hourly } = useHourly(filters);
@@ -118,7 +120,11 @@ export default function RelatorioPage() {
         @media print {
           body * { visibility: hidden; }
           #report-content, #report-content * { visibility: visible; }
-          #report-content { position: absolute; top: 0; left: 0; width: 100%; padding: 0; }
+          #report-content {
+            position: absolute; top: 0; left: 0; width: 100%;
+            padding: 0; border: none !important;
+            box-shadow: none !important; border-radius: 0 !important;
+          }
           .no-print { display: none !important; }
           @page { margin: 15mm; }
         }
@@ -146,16 +152,18 @@ export default function RelatorioPage() {
         </p>
 
         {/* Report */}
-        <div id="report-content" className="bg-white dark:bg-slate-900 rounded-xl border p-8">
+        <div id="report-content" className="bg-white dark:bg-slate-900 p-8">
 
           {/* Cover / header */}
-          <div className="flex items-start justify-between mb-6 pb-5 border-b-2 border-blue-600">
+          <div className="flex items-start justify-between mb-6 pb-5 border-b-2 border-green-600">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Zap className="h-6 w-6 text-blue-600 fill-current" />
-                <span className="text-xl font-bold text-blue-700">FinanceDash</span>
-              </div>
+              {/* Logo Intelbras */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/intelbras-logo.svg" alt="Intelbras" height={32} style={{ display: "block", marginBottom: "10px" }} />
               <h1 className="text-2xl font-bold">Relatório Financeiro Executivo</h1>
+              <p className="text-sm font-medium mt-0.5" style={{ color: "#029d39" }}>
+                Intelbras Finance — Gestão Financeira para Eletropostos
+              </p>
               <p className="text-muted-foreground text-sm mt-1">
                 {filters.date_from && filters.date_to
                   ? `Período: ${new Date(filters.date_from).toLocaleDateString("pt-BR")} a ${new Date(filters.date_to).toLocaleDateString("pt-BR")}`
@@ -164,8 +172,9 @@ export default function RelatorioPage() {
             </div>
             <div className="text-right text-xs text-muted-foreground">
               <p className="font-medium text-sm text-foreground">Emitido em {today}</p>
-              <p className="mt-1">Documento confidencial</p>
-              <p>Uso interno</p>
+              {user?.name && <p className="mt-1">Gerado por: <span className="font-medium text-foreground">{user.name}</span></p>}
+              {user?.organization_name && <p className="mt-0.5">Organização: <span className="font-medium text-foreground">{user.organization_name}</span></p>}
+              <p className="mt-1">Documento confidencial · Uso interno</p>
             </div>
           </div>
 
@@ -410,8 +419,13 @@ export default function RelatorioPage() {
 
           {/* Footer */}
           <div className="border-t-2 border-slate-200 pt-4 mt-4 flex items-center justify-between text-[10px] text-muted-foreground">
-            <span>FinanceDash — Gestão Financeira de Eletropostos</span>
-            <span>Emitido em {today} · Documento confidencial — uso interno</span>
+            <span>Intelbras Finance — Gestão Financeira para Eletropostos</span>
+            <span>
+              Emitido em {today}
+              {user?.name ? ` · ${user.name}` : ""}
+              {user?.organization_name ? ` · ${user.organization_name}` : ""}
+              {" · "}Documento confidencial — uso interno
+            </span>
           </div>
         </div>
       </div>

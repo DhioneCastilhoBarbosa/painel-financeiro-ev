@@ -52,8 +52,16 @@ export function canManageLeads(user: User | null): boolean {
   return hasPermission(user, "manage_leads");
 }
 
+/** Returns true if the user is an Intelbras master (access to admin panel). */
+export function isIntelbrasmaster(user: User | null): boolean {
+  return !!user && user.is_master && user.organization_is_mother === true;
+}
+
 export function canAccess(user: User | null, route: string): boolean {
   if (!user) return false;
+
+  // Admin panel: only Intelbras masters
+  if (route === "/dashboard/admin") return isIntelbrasmaster(user);
 
   // Leads route: governed by permissions, not built-in role
   if (route === "/dashboard/leads") return canViewLeads(user);

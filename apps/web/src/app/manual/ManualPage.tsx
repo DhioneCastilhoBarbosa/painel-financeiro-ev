@@ -170,10 +170,13 @@ export function ManualPage() {
   const [menuOpen, setMenuOpen]     = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
-  // Acesso restrito a usuários Mestre
+  // Acesso restrito a usuários Mestre — aguarda o refresh() terminar antes de checar
   useEffect(() => {
-    if (!loading && (!user || !user.is_master)) {
-      router.replace("/dashboard");
+    if (loading) return;               // ainda carregando sessão, aguarda
+    if (!user) {
+      router.replace("/login");        // não autenticado → login
+    } else if (!user.is_master) {
+      router.replace("/dashboard");    // autenticado mas sem cargo Mestre → dashboard
     }
   }, [user, loading, router]);
 
@@ -304,7 +307,7 @@ export function ManualPage() {
             </div>
             <h1 className="text-3xl font-extrabold text-white mb-2">Manual do Sistema</h1>
             <p className="text-white/60">
-              FinanceDash — Plataforma SaaS de Gestão Financeira para Eletropostos
+              Intelbras Finance — Plataforma de Gestão Financeira para Eletropostos
             </p>
           </div>
 
@@ -1296,7 +1299,7 @@ perder poucos usuários impacta muito a receita.`}</Formula>
 
           {/* Footer */}
           <div className="mt-20 pt-8 border-t border-slate-200 text-center text-sm text-slate-400">
-            <p>FinanceDash — Documentação técnica interna</p>
+            <p>Intelbras Finance — Documentação técnica interna</p>
             <p className="mt-1">
               <Link href="/dashboard" className="hover:text-slate-600 transition-colors">
                 Abrir dashboard

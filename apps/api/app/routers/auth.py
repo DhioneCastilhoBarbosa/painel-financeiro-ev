@@ -94,6 +94,18 @@ async def register(request: Request, body: RegisterRequest, db: AsyncSession = D
     if existing:
         raise HTTPException(status_code=409, detail="E-mail já cadastrado")
 
+    # Protege o nome reservado "Intelbras" e garante unicidade de nome
+    if body.organization_name.strip().lower() == "intelbras":
+        raise HTTPException(
+            status_code=400,
+            detail="O nome 'Intelbras' é reservado. Para ingressar nesta organização, solicite um convite.",
+        )
+    name_taken = await db.scalar(
+        select(Organization).where(Organization.name == body.organization_name)
+    )
+    if name_taken:
+        raise HTTPException(status_code=409, detail="Já existe uma organização com esse nome. Escolha outro.")
+
     org = Organization(
         id=uuid.uuid4(),
         name=body.organization_name,
@@ -359,6 +371,7 @@ async def me(current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
         role=current_user.role,
         organization_id=str(current_user.organization_id),
         organization_name=org.name if org else "",
+        organization_is_mother=org.is_mother if org else False,
         email_verified=current_user.email_verified_at is not None,
         is_master=current_user.is_master,
         custom_role_id=str(current_user.custom_role_id) if current_user.custom_role_id else None,
@@ -400,6 +413,7 @@ async def update_me(
         role=user.role,
         organization_id=str(user.organization_id),
         organization_name=org.name if org else "",
+        organization_is_mother=org.is_mother if org else False,
         email_verified=user.email_verified_at is not None,
         is_master=user.is_master,
     )

@@ -38,13 +38,17 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
 
     # Storage
-    storage_backend: str = "local"  # local | s3
+    storage_backend: str = "local"  # local | s3 | webdav
     local_uploads_dir: str = "./uploads"
     r2_account_id: str = ""
     r2_access_key_id: str = ""
     r2_secret_access_key: str = ""
     r2_bucket_name: str = "financedash-files"
     r2_public_url: str = ""
+    # WebDAV (nginx file server)
+    webdav_url: str = "http://54.159.164.244:8083/planilhas"
+    webdav_username: str = "uploader"
+    webdav_password: str = "vmx30032"
 
     # Email
     resend_api_key: str = ""

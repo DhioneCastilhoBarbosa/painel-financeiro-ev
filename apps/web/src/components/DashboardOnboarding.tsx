@@ -112,7 +112,7 @@ export function DashboardOnboarding({ hasFiles, hasAlerts }: Props) {
               <Zap className="h-5 w-5 text-white fill-current" />
             </div>
             <div>
-              <h2 className="font-semibold text-base">Bem-vindo ao FinanceDash!</h2>
+              <h2 className="font-semibold text-base">Bem-vindo ao Intelbras Finance!</h2>
               <p className="text-sm text-muted-foreground">
                 {completedCount === steps.length
                   ? "Tudo pronto — explore o dashboard completo"

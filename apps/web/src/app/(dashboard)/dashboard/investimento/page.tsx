@@ -1,6 +1,8 @@
 ﻿"use client";
 
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import useSWR, { mutate as swrMutate } from "swr";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,7 +16,8 @@ import {
   computeProject, calcCapex, pmt, DEFAULT_INPUTS,
   type ProjectInputs, type ProjectResults, type OccupancyScenarioResult,
 } from "@/lib/investimentoCalc";
-import api from "@/lib/api";
+import api, { apiErrMsg } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { useKPIs, useSessionDuration, useConnectors } from "@/hooks/useAnalytics";
 import {
   ComposedChart, BarChart, Bar, Line, XAxis, YAxis, CartesianGrid,
@@ -23,13 +26,20 @@ import {
 import {
   TrendingUp, AlertTriangle, CheckCircle2, Info,
   Zap, DollarSign, Clock, BarChart3, Target, Database, HelpCircle, RefreshCw,
-  Download, Upload, Save, FolderOpen, X, Printer, ChevronRight,
+  Download, Upload, Save, FolderOpen, X, Printer, ChevronRight, Search, Loader2,
 } from "lucide-react";
 
-// ─── Saved configs ─────────────────────────────────────────────────────────────
+// ─── Saved configs (API) ────────────────────────────────────────────────────────
 
-type SavedConfig = { id: string; name: string; savedAt: string; inputs: ProjectInputs };
-const STORAGE_KEY = "fd_investimento_v1";
+interface SavedConfig {
+  id: string;
+  name: string;
+  inputs: ProjectInputs;
+  results: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+  share_token: string | null;
+}
 
 // ─── Small helpers ─────────────────────────────────────────────────────────────
 
@@ -238,6 +248,7 @@ function PrintParameters({ inputs, results, capex }: { inputs: ProjectInputs; re
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function InvestimentoPage() {
+  const { user } = useAuth();
   const [inputs, setInputs] = useState<ProjectInputs>(DEFAULT_INPUTS);
   const [fillMsg, setFillMsg] = useState<string | null>(null);
   const [showFillPanel, setShowFillPanel] = useState(false);
@@ -245,13 +256,15 @@ export default function InvestimentoPage() {
 
   // Export / import / save
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [savedConfigs, setSavedConfigs] = useState<SavedConfig[]>([]);
   const [showSavePanel, setShowSavePanel] = useState(false);
   const [saveName, setSaveName] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [scenarioSearch, setScenarioSearch] = useState("");
 
-  useEffect(() => {
-    try { setSavedConfigs(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]")); } catch { /* ignore */ }
-  }, []);
+  const { data: savedConfigs = [], isLoading: scenariosLoading } = useSWR<SavedConfig[]>(
+    "/payback/scenarios",
+    (url: string) => api.get(url).then(r => r.data),
+  );
 
   // Operating hours as local slider state (minutes from midnight)
   const [startMin, setStartMin] = useState(8 * 60);   // 08:00
@@ -379,30 +392,40 @@ export default function InvestimentoPage() {
     e.target.value = "";
   }
 
-  function handleSaveConfig() {
+  async function handleSaveConfig() {
     if (!saveName.trim()) return;
-    const cfg: SavedConfig = {
-      id: crypto.randomUUID(),
-      name: saveName.trim(),
-      savedAt: new Date().toISOString(),
-      inputs,
-    };
-    const updated = [cfg, ...savedConfigs].slice(0, 20);
-    setSavedConfigs(updated);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    setSaveName("");
-    setShowSavePanel(false);
+    setIsSaving(true);
+    try {
+      await api.post("/payback/scenarios", {
+        name: saveName.trim(),
+        inputs,
+        results,
+      });
+      await swrMutate("/payback/scenarios");
+      setSaveName("");
+      toast.success("Projeto salvo com sucesso");
+    } catch (err) {
+      toast.error(apiErrMsg(err, "Erro ao salvar projeto"));
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   function handleLoadConfig(cfg: SavedConfig) {
     setInputs({ ...DEFAULT_INPUTS, ...cfg.inputs });
     setShowSavePanel(false);
+    toast.success(`Projeto "${cfg.name}" carregado`);
   }
 
-  function handleDeleteConfig(id: string) {
-    const updated = savedConfigs.filter(c => c.id !== id);
-    setSavedConfigs(updated);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  async function handleDeleteConfig(id: string, name: string) {
+    if (!confirm(`Excluir o projeto "${name}"?`)) return;
+    try {
+      await api.delete(`/payback/scenarios/${id}`);
+      await swrMutate("/payback/scenarios");
+      toast.success("Projeto excluído");
+    } catch (err) {
+      toast.error(apiErrMsg(err, "Erro ao excluir projeto"));
+    }
   }
 
   // "Atual" occupancy based on actual utilization from real data (sessions × duration / available time)
@@ -938,14 +961,20 @@ export default function InvestimentoPage() {
         {/* ── RIGHT PANEL: Results ── */}
         <main className="flex-1 overflow-y-auto bg-white dark:bg-slate-950">
           {/* Print header — hidden on screen */}
-          <div className="hidden print:flex items-center justify-between px-0 pt-0 pb-4 mb-2 border-b border-gray-300">
+          <div className="hidden print:flex items-start justify-between px-0 pt-0 pb-4 mb-2 border-b border-gray-300">
             <div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/intelbras-logo.svg" alt="Intelbras" height={28} style={{ display: "block", marginBottom: "6px" }} />
               <h1 className="text-lg font-bold text-black">Análise de Investimento — Infraestrutura EV</h1>
               <p className="text-xs text-gray-500">
                 {inputs.n_chargers} carregador{inputs.n_chargers !== 1 ? "es" : ""} · {inputs.n_chargers * inputs.power_kw} kW instalados · Horizonte {inputs.horizon_years} anos
               </p>
             </div>
-            <p className="text-xs text-gray-400">{new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}</p>
+            <div className="text-right text-xs text-gray-400">
+              <p>{new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}</p>
+              {user?.name && <p className="mt-0.5">Gerado por: <span className="font-medium text-gray-600">{user.name}</span></p>}
+              {user?.organization_name && <p className="mt-0.5">Organização: <span className="font-medium text-gray-600">{user.organization_name}</span></p>}
+            </div>
           </div>
 
           {/* Header (screen only) */}
@@ -1002,6 +1031,7 @@ export default function InvestimentoPage() {
                 </Button>
                 {showSavePanel && (
                   <div className="absolute left-0 top-full mt-1 z-50 w-80 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xl p-4 space-y-3">
+                    {/* ── Salvar ── */}
                     <p className="text-xs font-semibold">Salvar configuração atual</p>
                     <div className="flex items-center gap-2">
                       <input
@@ -1012,37 +1042,73 @@ export default function InvestimentoPage() {
                         onKeyDown={e => { if (e.key === "Enter") handleSaveConfig(); }}
                         className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
                       />
-                      <Button size="sm" className="h-7 gap-1 text-xs shrink-0" onClick={handleSaveConfig} disabled={!saveName.trim()}>
-                        <Save className="h-3.5 w-3.5" /> Salvar
+                      <Button
+                        size="sm"
+                        className="h-7 gap-1 text-xs shrink-0"
+                        onClick={handleSaveConfig}
+                        disabled={!saveName.trim() || isSaving}
+                      >
+                        {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+                        Salvar
                       </Button>
                     </div>
-                    {savedConfigs.length > 0 && (
-                      <>
-                        <p className="text-[0.7rem] text-muted-foreground font-medium border-t dark:border-slate-700 pt-2">Projetos salvos</p>
-                        <div className="space-y-1 max-h-52 overflow-y-auto -mr-1 pr-1">
-                          {savedConfigs.map(cfg => (
-                            <div key={cfg.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 group">
-                              <button className="flex-1 text-left min-w-0" onClick={() => handleLoadConfig(cfg)}>
-                                <p className="text-xs font-medium truncate">{cfg.name}</p>
-                                <p className="text-[0.62rem] text-muted-foreground">
-                                  {new Date(cfg.savedAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}
-                                </p>
-                              </button>
-                              <button
-                                onClick={() => handleDeleteConfig(cfg.id)}
-                                className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 p-0.5 shrink-0"
-                                title="Excluir"
-                              >
-                                <X className="h-3.5 w-3.5" />
-                              </button>
-                            </div>
-                          ))}
+
+                    {/* ── Lista de projetos ── */}
+                    <div className="border-t dark:border-slate-700 pt-2 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <p className="text-[0.7rem] text-muted-foreground font-medium">
+                          Projetos salvos
+                          {savedConfigs.length > 0 && <span className="ml-1 text-muted-foreground/60">({savedConfigs.length})</span>}
+                        </p>
+                      </div>
+
+                      {/* Campo de busca */}
+                      {savedConfigs.length > 3 && (
+                        <div className="relative">
+                          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                          <input
+                            type="text"
+                            placeholder="Buscar projeto..."
+                            value={scenarioSearch}
+                            onChange={e => setScenarioSearch(e.target.value)}
+                            className="w-full pl-6 pr-2 py-1 rounded-md border border-input bg-background text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800"
+                          />
                         </div>
-                      </>
-                    )}
-                    {savedConfigs.length === 0 && (
-                      <p className="text-xs text-center text-muted-foreground py-2">Nenhum projeto salvo ainda.</p>
-                    )}
+                      )}
+
+                      {scenariosLoading ? (
+                        <div className="flex justify-center py-4">
+                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                        </div>
+                      ) : (
+                        <div className="space-y-1 max-h-52 overflow-y-auto -mr-1 pr-1">
+                          {savedConfigs
+                            .filter(cfg => cfg.name.toLowerCase().includes(scenarioSearch.toLowerCase()))
+                            .map(cfg => (
+                              <div key={cfg.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 group">
+                                <button className="flex-1 text-left min-w-0" onClick={() => handleLoadConfig(cfg)}>
+                                  <p className="text-xs font-medium truncate">{cfg.name}</p>
+                                  <p className="text-[0.62rem] text-muted-foreground">
+                                    {new Date(cfg.updated_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}
+                                  </p>
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteConfig(cfg.id, cfg.name)}
+                                  className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 p-0.5 shrink-0"
+                                  title="Excluir projeto"
+                                >
+                                  <X className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
+                            ))}
+                          {savedConfigs.filter(cfg => cfg.name.toLowerCase().includes(scenarioSearch.toLowerCase())).length === 0 && (
+                            <p className="text-xs text-center text-muted-foreground py-3">
+                              {scenarioSearch ? "Nenhum projeto encontrado." : "Nenhum projeto salvo ainda."}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
