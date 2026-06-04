@@ -48,9 +48,15 @@ def _find_datasets_dir() -> Path:
 _DATASETS_DIR = _find_datasets_dir()
 
 
+def _examples_use_webdav() -> bool:
+    """Datasets de exemplo sempre vêm do WebDAV quando a URL estiver configurada,
+    independente do storage_backend principal (que pode ser 'local' para uploads dos clientes)."""
+    return bool(settings.webdav_url)
+
+
 async def _read_example_bytes(filename: str) -> bytes:
-    """Lê um dataset de exemplo do WebDAV (produção) ou do filesystem (desenvolvimento)."""
-    if settings.storage_backend == "webdav":
+    """Lê um dataset de exemplo do servidor de arquivos WebDAV ou do filesystem local."""
+    if _examples_use_webdav():
         url = f"{settings.webdav_url.rstrip('/')}/{_WEBDAV_EXAMPLES_PATH}/{filename}"
         async with httpx.AsyncClient(timeout=60) as client:
             resp = await client.get(url)
@@ -68,13 +74,12 @@ async def _read_example_bytes(filename: str) -> bytes:
 
 async def _example_available(filename: str) -> bool:
     """Verifica se o dataset de exemplo existe e tem conteúdo (tamanho > 0)."""
-    if settings.storage_backend == "webdav":
+    if _examples_use_webdav():
         url = f"{settings.webdav_url.rstrip('/')}/{_WEBDAV_EXAMPLES_PATH}/{filename}"
         async with httpx.AsyncClient(timeout=10) as client:
             resp = await client.head(url)
             if resp.status_code != 200:
                 return False
-            # Checa Content-Length se disponível
             content_length = resp.headers.get("content-length")
             if content_length is not None and int(content_length) == 0:
                 return False

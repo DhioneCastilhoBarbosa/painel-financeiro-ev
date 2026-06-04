@@ -109,7 +109,8 @@ async def save_scenario(
         updated_at=datetime.now(UTC),
     )
     db.add(scenario)
-    await db.flush()
+    await db.commit()
+    await db.refresh(scenario)
     return scenario
 
 
@@ -133,6 +134,8 @@ async def update_scenario(
     sc.inputs = body.inputs
     sc.results = body.results
     sc.updated_at = datetime.now(UTC)
+    await db.commit()
+    await db.refresh(sc)
     return sc
 
 
@@ -142,6 +145,7 @@ async def delete_scenario(
 ):
     sc = await _get_scenario_or_404(scenario_id, current_user.organization_id, db)
     await db.delete(sc)
+    await db.commit()
 
 
 @router.post("/scenarios/{scenario_id}/share")

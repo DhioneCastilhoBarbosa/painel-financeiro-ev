@@ -739,12 +739,20 @@ export default function TeamPage() {
                 )} />
                 <FormField control={form.control} name="roleKey" render={({ field }) => {
                   const hasCustom = (customRoles?.length ?? 0) > 0;
+                  // Resolve o label em português explicitamente para garantir exibição correta
+                  const selectedLabel = field.value
+                    ? (BUILTIN_INVITE_OPTIONS.find(o => o.key === field.value)?.label
+                      ?? customRoles?.find(r => r.id === field.value)?.name
+                      ?? field.value)
+                    : null;
                   return (
                     <FormItem>
                       <Select value={field.value} onValueChange={field.onChange}>
                         <FormControl>
                           <SelectTrigger className="w-44">
-                            <SelectValue placeholder="Selecionar cargo" />
+                            {selectedLabel
+                              ? <span>{selectedLabel}</span>
+                              : <span className="text-muted-foreground">Selecionar cargo</span>}
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
