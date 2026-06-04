@@ -8,9 +8,9 @@ import { Toaster } from "sonner";
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 
 const BASE_URL = "https://financedash.com.br";
-const TITLE    = "FinanceDash — Gestão Financeira de Eletropostos";
+const TITLE    = "Intelbras Finance — Gestão Financeira para Eletropostos";
 const DESCRIPTION =
-  "Plataforma SaaS para gestão financeira de eletropostos no Brasil. " +
+  "Plataforma Intelbras para gestão financeira de eletropostos no Brasil. " +
   "Simule gratuitamente o ROI, payback e receita de carregadores AC e DC. " +
   "Relatórios, KPIs e análise de investimento para operadores de estações de recarga de veículos elétricos.";
 
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
   title: {
     default: TITLE,
-    template: "%s | FinanceDash",
+    template: "%s | Intelbras Finance",
   },
   description: DESCRIPTION,
 
@@ -36,18 +36,18 @@ export const metadata: Metadata = {
     // Mercado
     "mobilidade elétrica Brasil", "veículo elétrico Brasil", "recarga EV Brasil",
     // Produto
-    "FinanceDash", "software gestão eletroposto", "SaaS eletroposto",
+    "Intelbras Finance", "Intelbras", "software gestão eletroposto", "SaaS eletroposto",
   ],
 
-  authors: [{ name: "FinanceDash", url: BASE_URL }],
-  creator: "FinanceDash",
-  publisher: "FinanceDash",
+  authors: [{ name: "Intelbras", url: BASE_URL }],
+  creator: "Intelbras",
+  publisher: "Intelbras",
 
   openGraph: {
     type: "website",
     locale: "pt_BR",
     url: BASE_URL,
-    siteName: "FinanceDash",
+    siteName: "Intelbras Finance",
     title: TITLE,
     description: DESCRIPTION,
     images: [
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
         url: `${BASE_URL}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "FinanceDash — Gestão Financeira de Eletropostos",
+        alt: "Intelbras Finance — Gestão Financeira para Eletropostos",
       },
     ],
   },

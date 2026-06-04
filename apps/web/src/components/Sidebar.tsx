@@ -5,12 +5,12 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
   BarChart3, FileSpreadsheet, TrendingUp, Zap, Settings,
-  ChevronLeft, ChevronRight, LogOut, Users, Moon, Sun, FileText, Building2, UserCircle, CreditCard, Target, Wallet, BookOpen,
+  ChevronLeft, ChevronRight, LogOut, Users, Moon, Sun, FileText, Building2, UserCircle, CreditCard, Target, Wallet, BookOpen, ShieldAlert,
 } from "lucide-react";
 import { Logo, LogoIcon } from "@/components/Logo";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/AuthContext";
-import { canAccess, ROLE_LABELS } from "@/lib/permissions";
+import { canAccess, isIntelbrasmaster, ROLE_LABELS } from "@/lib/permissions";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -57,6 +57,7 @@ export function Sidebar() {
     .toUpperCase() ?? "?";
 
   const visibleNav = NAV.filter(({ href }) => canAccess(user, href));
+  const showAdmin = isIntelbrasmaster(user);
 
   return (
     <TooltipProvider delay={0}>
@@ -135,6 +136,22 @@ export function Sidebar() {
         >
           {!collapsed ? (
             <>
+              {/* Painel Admin — apenas Mestres Intelbras */}
+              {showAdmin && (
+                <Link
+                  href="/dashboard/admin"
+                  className={cn(
+                    "flex w-full items-center gap-2 px-2 py-1.5 text-sm rounded-lg transition-colors",
+                    pathname.startsWith("/dashboard/admin")
+                      ? "bg-amber-500/20 text-amber-400"
+                      : "hover:bg-white/10 text-amber-400/80 hover:text-amber-300"
+                  )}
+                >
+                  <ShieldAlert className="h-4 w-4 shrink-0" />
+                  <span>Painel Admin</span>
+                </Link>
+              )}
+
               {/* Manual — apenas para usuários Mestre */}
               {user?.is_master && (
                 <Link

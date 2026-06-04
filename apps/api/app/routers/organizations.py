@@ -3,6 +3,7 @@ import uuid
 from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -25,6 +26,10 @@ from app.schemas.organization import (
 from app.services.audit_service import log_action
 
 router = APIRouter()
+
+
+class MasterGrantRequest(BaseModel):
+    is_master: bool
 
 PLAN_LIMITS = {
     "trial": {"users": 3, "files": 5},
@@ -60,6 +65,17 @@ async def update_org(
 
     org = await db.get(Organization, current_user.organization_id)
     if body.name:
+        # Garante unicidade e impede uso do nome reservado
+        if body.name.strip().lower() == "intelbras":
+            raise HTTPException(status_code=400, detail="O nome 'Intelbras' é reservado")
+        existing_name = await db.scalar(
+            select(Organization).where(
+                Organization.name == body.name,
+                Organization.id != current_user.organization_id,
+            )
+        )
+        if existing_name:
+            raise HTTPException(status_code=409, detail="Já existe uma organização com esse nome")
         org.name = body.name
     if body.settings is not None:
         changed = {k: v for k, v in body.settings.items() if org.settings.get(k) != v}
@@ -351,3 +367,37 @@ async def delete_cost_config(
     if not config or str(config.organization_id) != str(current_user.organization_id):
         raise HTTPException(status_code=404, detail="Configuração não encontrada")
     await db.delete(config)
+
+
+# ─── Master grant / revoke ────────────────────────────────────────────────────
+
+@router.patch("/members/{user_id}/master", summary="Conceder ou revogar cargo de Mestre (apenas Mestres podem fazer isso)")
+async def set_member_master(
+    user_id: str,
+    body: MasterGrantRequest,
+    current_user: CurrentUser,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Somente usuários com `is_master=true` podem conceder ou revogar o cargo de Mestre.
+    Não é possível remover o próprio cargo.
+    """
+    if not current_user.is_master:
+        raise HTTPException(status_code=403, detail="Apenas usuários Mestres podem gerenciar este cargo")
+
+    member = await db.get(User, user_id)
+    if not member or str(member.organization_id) != str(current_user.organization_id):
+        raise HTTPException(status_code=404, detail="Membro não encontrado")
+
+    if str(member.id) == str(current_user.id) and not body.is_master:
+        raise HTTPException(status_code=400, detail="Não é possível remover seu próprio cargo de Mestre")
+
+    old = member.is_master
+    member.is_master = body.is_master
+    action = "grant_master" if body.is_master else "revoke_master"
+    await log_action(
+        db, current_user.organization_id, current_user.id, current_user.email,
+        action, "user", user_id,
+        f"email={member.email} is_master: {old} → {body.is_master}",
+    )
+    return {"message": f"Cargo de Mestre {'concedido' if body.is_master else 'revogado'} com sucesso"}

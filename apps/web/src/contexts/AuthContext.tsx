@@ -30,7 +30,6 @@ function isPublicRoute(path: string): boolean {
     "/register",
     "/forgot-password",
     "/solucao",
-    "/manual",
   ];
   return prefixes.some((p) => path === p || path.startsWith(`${p}/`));
 }

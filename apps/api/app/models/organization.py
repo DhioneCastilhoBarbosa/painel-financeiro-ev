@@ -4,7 +4,7 @@ import uuid
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, String
+from sqlalchemy import Boolean, DateTime, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -20,10 +20,12 @@ if TYPE_CHECKING:
 
 class Organization(Base):
     __tablename__ = "organizations"
+    __table_args__ = (UniqueConstraint("name", name="uq_organizations_name"),)
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     slug: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
+    is_mother: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
     plan: Mapped[str] = mapped_column(String(50), default="trial")
     status: Mapped[str] = mapped_column(String(50), default="active")
     settings: Mapped[dict] = mapped_column(JSONB, default=dict)

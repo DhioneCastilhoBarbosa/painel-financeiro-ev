@@ -12,6 +12,7 @@ export interface User {
   role: "owner" | "admin" | "analyst" | "viewer";
   organization_id: string;
   organization_name: string;
+  organization_is_mother: boolean;
   email_verified: boolean;
   is_master: boolean;
   custom_role_id: string | null;

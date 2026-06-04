@@ -17,7 +17,7 @@ from app.core.logging_config import setup_logging
 from app.core.ratelimit import limiter
 from app.core.redis import close_redis, get_redis
 from app.routers import (
-    alerts, analytics, audit, auth, billing, capex,
+    admin, alerts, analytics, audit, auth, billing, capex,
     custom_roles, files, leads, organizations, payback,
     public, user_notes,
 )
@@ -173,6 +173,13 @@ _TAGS_METADATA = [
         "name": "audit",
         "description": "Log de auditoria de ações dos usuários (somente leitura, owner/admin).",
     },
+    {
+        "name": "admin",
+        "description": (
+            "Painel de Administrador — exclusivo para usuários **Mestres** da organização Intelbras. "
+            "Permite gerenciar todas as organizações, usuários, planos e acessos da plataforma."
+        ),
+    },
 ]
 
 
@@ -287,6 +294,9 @@ app.include_router(capex.router,      prefix="/api/v1/capex",        tags=["cape
 app.include_router(alerts.router,     prefix="/api/v1/alerts",       tags=["alerts"])
 app.include_router(user_notes.router, prefix="/api/v1/user-notes",   tags=["user-notes"])
 app.include_router(audit.router,      prefix="/api/v1/audit",        tags=["audit"])
+
+# Painel de Administrador — exclusivo para Mestres da organização Intelbras
+app.include_router(admin.router,      prefix="/api/v1/admin",        tags=["admin"])
 
 
 # ─── Health checks ─────────────────────────────────────────────────────────────

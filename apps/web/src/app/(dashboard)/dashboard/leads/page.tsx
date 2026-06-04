@@ -553,7 +553,7 @@ export default function LeadsPage() {
                           </div>
                         )}
                         <div className="flex gap-2">
-                          <a href={`mailto:${lead.email}?subject=Análise de Investimento FinanceDash&body=Olá ${lead.name},`}
+                          <a href={`mailto:${lead.email}?subject=Análise de Investimento Intelbras Finance&body=Olá ${lead.name},`}
                             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 transition-colors">
                             <Mail className="h-3.5 w-3.5" />Enviar e-mail
                           </a>

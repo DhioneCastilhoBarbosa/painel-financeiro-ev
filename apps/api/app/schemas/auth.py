@@ -109,6 +109,7 @@ class UserResponse(BaseModel):
     role: str
     organization_id: str
     organization_name: str
+    organization_is_mother: bool = False
     email_verified: bool
     is_master: bool = False
     custom_role_id: str | None = None
