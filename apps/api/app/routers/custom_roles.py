@@ -96,6 +96,9 @@ async def list_roles(current_user: CurrentUser, db: AsyncSession = Depends(get_d
     return [_serialize(r, member_counts.get(str(r.id), 0)) for r in roles]
 
 
+_RESERVED_ROLE_NAMES = {"master", "owner", "admin", "analyst", "viewer"}
+
+
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_role(
     body: CustomRoleCreate,
@@ -103,6 +106,12 @@ async def create_role(
     db: AsyncSession = Depends(get_db),
 ):
     _require_admin(current_user)
+
+    if body.name.strip().lower() in _RESERVED_ROLE_NAMES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"O nome '{body.name.strip()}' é reservado pelo sistema. Use outro nome para o cargo.",
+        )
 
     # Garante que apenas permissões válidas entram
     perms = {p: bool(body.permissions.get(p, False)) for p in ALL_PERMISSIONS}
@@ -144,7 +153,13 @@ async def update_role(
         raise HTTPException(status_code=404, detail="Role não encontrado")
 
     if body.name is not None:
-        role.name = body.name.strip()
+        new_name = body.name.strip()
+        if new_name.lower() in _RESERVED_ROLE_NAMES:
+            raise HTTPException(
+                status_code=400,
+                detail=f"O nome '{new_name}' é reservado pelo sistema. Use outro nome para o cargo.",
+            )
+        role.name = new_name
     if body.description is not None:
         role.description = body.description
     if body.permissions is not None:

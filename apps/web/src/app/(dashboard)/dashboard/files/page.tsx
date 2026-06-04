@@ -187,10 +187,12 @@ export default function FilesPage() {
                   key={ex.name}
                   className="flex items-center gap-4 p-3 rounded-lg border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
-                  <FileSpreadsheet className="h-8 w-8 text-blue-500 shrink-0" />
+                  <FileSpreadsheet className={`h-8 w-8 shrink-0 ${ex.available ? "text-blue-500" : "text-slate-300 dark:text-slate-600"}`} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium">{ex.name}</p>
-                    <p className="text-xs text-muted-foreground">{ex.filename}</p>
+                    <p className={`text-sm font-medium ${!ex.available ? "text-muted-foreground" : ""}`}>{ex.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {ex.available ? ex.filename : "Dataset não disponível neste ambiente"}
+                    </p>
                   </div>
                   <Button
                     variant="outline"
@@ -198,6 +200,7 @@ export default function FilesPage() {
                     className="shrink-0"
                     disabled={!ex.available || loadingExample === ex.name}
                     onClick={() => loadExample(ex.name)}
+                    title={!ex.available ? "Dataset não instalado no servidor" : undefined}
                   >
                     {loadingExample === ex.name ? (
                       <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Carregando...</>

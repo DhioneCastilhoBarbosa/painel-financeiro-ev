@@ -67,14 +67,21 @@ async def _read_example_bytes(filename: str) -> bytes:
 
 
 async def _example_available(filename: str) -> bool:
-    """Verifica se o dataset de exemplo está disponível."""
+    """Verifica se o dataset de exemplo existe e tem conteúdo (tamanho > 0)."""
     if settings.storage_backend == "webdav":
         url = f"{settings.webdav_url.rstrip('/')}/{_WEBDAV_EXAMPLES_PATH}/{filename}"
         async with httpx.AsyncClient(timeout=10) as client:
             resp = await client.head(url)
-            return resp.status_code == 200
+            if resp.status_code != 200:
+                return False
+            # Checa Content-Length se disponível
+            content_length = resp.headers.get("content-length")
+            if content_length is not None and int(content_length) == 0:
+                return False
+            return True
     else:
-        return (_DATASETS_DIR / filename).exists()
+        path = _DATASETS_DIR / filename
+        return path.exists() and path.stat().st_size > 0
 
 
 router = APIRouter()
