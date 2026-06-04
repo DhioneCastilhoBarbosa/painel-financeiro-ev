@@ -13,9 +13,9 @@ Capacidades:
   • Ver estatísticas globais da plataforma
   • Conceder / revogar cargo de Mestre em qualquer org
 """
+
 from __future__ import annotations
 
-import uuid
 from datetime import UTC, datetime
 from typing import Any
 
@@ -30,13 +30,14 @@ from app.models.charging_session import ChargingSession
 from app.models.data_file import DataFile
 from app.models.organization import Organization
 from app.models.subscription import Subscription
-from app.models.user import User, UserRole
+from app.models.user import User
 from app.services.audit_service import log_action
 
 router = APIRouter()
 
 
 # ─── Dependency ───────────────────────────────────────────────────────────────
+
 
 async def require_intelbras_master(
     current_user: CurrentUser,
@@ -62,6 +63,7 @@ _AdminUser = Depends(require_intelbras_master)
 
 # ─── Schemas ──────────────────────────────────────────────────────────────────
 
+
 class OrgStatusUpdate(BaseModel):
     status: str  # active | suspended | blocked
     reason: str | None = None
@@ -76,6 +78,7 @@ class AdminMasterUpdate(BaseModel):
 
 
 # ─── Endpoints ────────────────────────────────────────────────────────────────
+
 
 @router.get("/stats", summary="Estatísticas globais da plataforma")
 async def global_stats(
@@ -123,22 +126,22 @@ async def list_all_organizations(
         file_count = await db.scalar(
             select(func.count(DataFile.id)).where(DataFile.organization_id == org.id)
         )
-        sub = await db.scalar(
-            select(Subscription).where(Subscription.organization_id == org.id)
+        sub = await db.scalar(select(Subscription).where(Subscription.organization_id == org.id))
+        rows.append(
+            {
+                "id": str(org.id),
+                "name": org.name,
+                "slug": org.slug,
+                "plan": org.plan,
+                "status": org.status,
+                "is_mother": org.is_mother,
+                "created_at": org.created_at,
+                "trial_ends_at": org.trial_ends_at,
+                "users": user_count or 0,
+                "files": file_count or 0,
+                "subscription_status": sub.status if sub else None,
+            }
         )
-        rows.append({
-            "id": str(org.id),
-            "name": org.name,
-            "slug": org.slug,
-            "plan": org.plan,
-            "status": org.status,
-            "is_mother": org.is_mother,
-            "created_at": org.created_at,
-            "trial_ends_at": org.trial_ends_at,
-            "users": user_count or 0,
-            "files": file_count or 0,
-            "subscription_status": sub.status if sub else None,
-        })
     return rows
 
 
@@ -158,7 +161,10 @@ async def get_organization_detail(
     users = users_result.scalars().all()
 
     files_result = await db.execute(
-        select(DataFile).where(DataFile.organization_id == org.id).order_by(DataFile.created_at.desc()).limit(20)
+        select(DataFile)
+        .where(DataFile.organization_id == org.id)
+        .order_by(DataFile.created_at.desc())
+        .limit(20)
     )
     files = files_result.scalars().all()
 
@@ -228,9 +234,15 @@ async def update_organization_status(
     old_status = org.status
     org.status = body.status
     await log_action(
-        db, admin.organization_id, admin.id, admin.email,
-        "admin_update_org_status", "organization", str(org.id),
-        f"org={org.name} {old_status} → {body.status}" + (f" reason={body.reason}" if body.reason else ""),
+        db,
+        admin.organization_id,
+        admin.id,
+        admin.email,
+        "admin_update_org_status",
+        "organization",
+        str(org.id),
+        f"org={org.name} {old_status} → {body.status}"
+        + (f" reason={body.reason}" if body.reason else ""),
     )
     return {"message": f"Status da organização '{org.name}' atualizado para '{body.status}'"}
 
@@ -248,13 +260,20 @@ async def update_organization_plan(
 
     allowed_plans = {"trial", "starter", "pro", "enterprise", "free"}
     if body.plan not in allowed_plans:
-        raise HTTPException(status_code=400, detail=f"Plano inválido. Use: {', '.join(allowed_plans)}")
+        raise HTTPException(
+            status_code=400, detail=f"Plano inválido. Use: {', '.join(allowed_plans)}"
+        )
 
     old_plan = org.plan
     org.plan = body.plan
     await log_action(
-        db, admin.organization_id, admin.id, admin.email,
-        "admin_update_org_plan", "organization", str(org.id),
+        db,
+        admin.organization_id,
+        admin.id,
+        admin.email,
+        "admin_update_org_plan",
+        "organization",
+        str(org.id),
         f"org={org.name} {old_plan} → {body.plan}",
     )
     return {"message": f"Plano da organização '{org.name}' atualizado para '{body.plan}'"}
@@ -271,9 +290,7 @@ async def list_all_users(
 ) -> list[dict[str, Any]]:
     q = select(User, Organization).join(Organization, User.organization_id == Organization.id)
     if search:
-        q = q.where(
-            User.name.ilike(f"%{search}%") | User.email.ilike(f"%{search}%")
-        )
+        q = q.where(User.name.ilike(f"%{search}%") | User.email.ilike(f"%{search}%"))
     if org_id:
         q = q.where(User.organization_id == org_id)
     q = q.order_by(User.created_at.desc()).offset((page - 1) * page_size).limit(page_size)
@@ -298,7 +315,9 @@ async def list_all_users(
     ]
 
 
-@router.patch("/users/{user_id}/master", summary="Conceder ou revogar cargo de Mestre (cross-tenant)")
+@router.patch(
+    "/users/{user_id}/master", summary="Conceder ou revogar cargo de Mestre (cross-tenant)"
+)
 async def admin_set_user_master(
     user_id: str,
     body: AdminMasterUpdate,
@@ -310,14 +329,23 @@ async def admin_set_user_master(
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
     if str(member.id) == str(admin.id) and not body.is_master:
-        raise HTTPException(status_code=400, detail="Não é possível remover seu próprio cargo de Mestre")
+        raise HTTPException(
+            status_code=400, detail="Não é possível remover seu próprio cargo de Mestre"
+        )
 
     old = member.is_master
     member.is_master = body.is_master
     action = "admin_grant_master" if body.is_master else "admin_revoke_master"
     await log_action(
-        db, admin.organization_id, admin.id, admin.email,
-        action, "user", user_id,
+        db,
+        admin.organization_id,
+        admin.id,
+        admin.email,
+        action,
+        "user",
+        user_id,
         f"email={member.email} org={member.organization_id} is_master: {old} → {body.is_master}",
     )
-    return {"message": f"Cargo de Mestre {'concedido' if body.is_master else 'revogado'} para {member.email}"}
+    return {
+        "message": f"Cargo de Mestre {'concedido' if body.is_master else 'revogado'} para {member.email}"
+    }

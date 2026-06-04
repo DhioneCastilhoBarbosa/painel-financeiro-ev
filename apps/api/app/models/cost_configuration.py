@@ -19,7 +19,10 @@ class CostConfiguration(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     organization_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False, index=True
+        UUID(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     is_default: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -41,7 +44,9 @@ class CostConfiguration(Base):
 
     # ── Split ─────────────────────────────────────────────────────────────────
     revenue_split_pct: Mapped[float] = mapped_column(Float, default=0.0)
-    revenue_split_base: Mapped[str] = mapped_column(String(20), default="revenue")  # revenue|ebitda|profit
+    revenue_split_base: Mapped[str] = mapped_column(
+        String(20), default="revenue"
+    )  # revenue|ebitda|profit
 
     # ── Impostos ─────────────────────────────────────────────────────────────
     tax_rate_pct: Mapped[float] = mapped_column(Float, default=0.0)
@@ -60,4 +65,6 @@ class CostConfiguration(Base):
         onupdate=lambda: datetime.now(UTC),
     )
 
-    organization: Mapped[Organization] = relationship("Organization", back_populates="cost_configurations")
+    organization: Mapped[Organization] = relationship(
+        "Organization", back_populates="cost_configurations"
+    )

@@ -39,6 +39,7 @@ router = APIRouter()
 
 # ─── Guards de permissão ──────────────────────────────────────────────────────
 
+
 async def _check_permission(user, db: AsyncSession, perm: str) -> None:
     """Lança 403 se o usuário não tiver a permissão solicitada.
 
@@ -76,6 +77,7 @@ async def _require_manage_leads(user, db: AsyncSession) -> None:
 
 # ─── Helper ───────────────────────────────────────────────────────────────────
 
+
 def _lead_to_list_item(lead: Lead) -> LeadListItem:
     sim = lead.simulation_result
     return LeadListItem(
@@ -101,7 +103,12 @@ def _lead_to_list_item(lead: Lead) -> LeadListItem:
 
 # ─── Leads ───────────────────────────────────────────────────────────────────
 
-@router.get("", response_model=list[LeadListItem], summary="Listar leads do CRM com filtros (estado, setor, tipo de carregador)")
+
+@router.get(
+    "",
+    response_model=list[LeadListItem],
+    summary="Listar leads do CRM com filtros (estado, setor, tipo de carregador)",
+)
 async def list_leads(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
@@ -135,24 +142,52 @@ async def export_leads_csv(
 
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow([
-        "Data", "Nome", "CNPJ", "E-mail", "Telefone", "Estado", "Cidade",
-        "Setor", "Cargo", "Carregador", "Pontos",
-        "Receita/mês (R$)", "Lucro/mês (R$)",
-        "Payback (meses)", "ROI 5 anos (%)", "VPL 5 anos (R$)",
-        "Mensagem (formulário)", "Mensagem (especialista)",
-    ])
+    writer.writerow(
+        [
+            "Data",
+            "Nome",
+            "CNPJ",
+            "E-mail",
+            "Telefone",
+            "Estado",
+            "Cidade",
+            "Setor",
+            "Cargo",
+            "Carregador",
+            "Pontos",
+            "Receita/mês (R$)",
+            "Lucro/mês (R$)",
+            "Payback (meses)",
+            "ROI 5 anos (%)",
+            "VPL 5 anos (R$)",
+            "Mensagem (formulário)",
+            "Mensagem (especialista)",
+        ]
+    )
     for lead in leads:
         sim = lead.simulation_result
-        writer.writerow([
-            lead.created_at.strftime("%Y-%m-%d %H:%M"),
-            lead.name, lead.cnpj or "", lead.email, lead.phone, lead.state, lead.city,
-            lead.sector, lead.position, lead.charger_type, lead.num_chargers,
-            sim.get("monthly_revenue", ""), sim.get("monthly_net", ""),
-            sim.get("payback_months", ""), sim.get("roi_5y_pct", ""),
-            sim.get("npv_5y", ""),
-            lead.message or "", lead.specialist_message or "",
-        ])
+        writer.writerow(
+            [
+                lead.created_at.strftime("%Y-%m-%d %H:%M"),
+                lead.name,
+                lead.cnpj or "",
+                lead.email,
+                lead.phone,
+                lead.state,
+                lead.city,
+                lead.sector,
+                lead.position,
+                lead.charger_type,
+                lead.num_chargers,
+                sim.get("monthly_revenue", ""),
+                sim.get("monthly_net", ""),
+                sim.get("payback_months", ""),
+                sim.get("roi_5y_pct", ""),
+                sim.get("npv_5y", ""),
+                lead.message or "",
+                lead.specialist_message or "",
+            ]
+        )
 
     output.seek(0)
     ts = datetime.now().strftime("%Y%m%d_%H%M")
@@ -200,6 +235,7 @@ async def get_lead(
 
 # ─── Simulator Config ─────────────────────────────────────────────────────────
 
+
 @router.get("/config/simulator", response_model=SimulatorConfigResponse)
 async def get_simulator_config(
     current_user: CurrentUser,
@@ -244,6 +280,7 @@ async def update_simulator_config(
 
 # ─── Notification Emails ──────────────────────────────────────────────────────
 
+
 @router.get("/config/notification-emails", response_model=list[NotificationEmailResponse])
 async def list_notification_emails(
     current_user: CurrentUser,
@@ -254,7 +291,9 @@ async def list_notification_emails(
     return result.scalars().all()
 
 
-@router.post("/config/notification-emails", response_model=NotificationEmailResponse, status_code=201)
+@router.post(
+    "/config/notification-emails", response_model=NotificationEmailResponse, status_code=201
+)
 async def add_notification_email(
     body: NotificationEmailRequest,
     current_user: CurrentUser,

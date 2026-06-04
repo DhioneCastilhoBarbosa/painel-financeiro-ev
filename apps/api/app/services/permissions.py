@@ -6,6 +6,7 @@ Hierarquia:
 
 owner / admin têm todas as permissões sempre.
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -15,20 +16,20 @@ if TYPE_CHECKING:
     from app.models.user import User
 
 ALL_PERMISSIONS = [
-    "view_dashboard",    # Dashboard / KPIs / séries temporais
-    "view_stations",     # Estações & Conectores
-    "view_users",        # Análise de usuários
-    "view_investment",   # Análise de investimento
-    "import_files",      # Importar arquivos
-    "delete_files",      # Excluir arquivos
-    "manage_alerts",     # Configurar alertas
-    "manage_settings",   # Configurações e custos
-    "manage_team",       # Convidar / remover membros
-    "view_billing",      # Cobrança e plano
-    "view_audit",        # Log de auditoria
+    "view_dashboard",  # Dashboard / KPIs / séries temporais
+    "view_stations",  # Estações & Conectores
+    "view_users",  # Análise de usuários
+    "view_investment",  # Análise de investimento
+    "import_files",  # Importar arquivos
+    "delete_files",  # Excluir arquivos
+    "manage_alerts",  # Configurar alertas
+    "manage_settings",  # Configurações e custos
+    "manage_team",  # Convidar / remover membros
+    "view_billing",  # Cobrança e plano
+    "view_audit",  # Log de auditoria
     # ── Leads (simulador público / CRM) ────────────────────────────────────
-    "view_leads",        # Ver lista de leads e exportar
-    "manage_leads",      # Configurar simulador e e-mails de notificação
+    "view_leads",  # Ver lista de leads e exportar
+    "manage_leads",  # Configurar simulador e e-mails de notificação
 ]
 
 # Permissões padrão por built-in role

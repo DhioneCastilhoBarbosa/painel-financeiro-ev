@@ -88,9 +88,7 @@ async def require_active_plan(
         )
 
     # ── Plano pago — verificar status da assinatura Stripe ──────────────────
-    sub = await db.scalar(
-        select(Subscription).where(Subscription.organization_id == org.id)
-    )
+    sub = await db.scalar(select(Subscription).where(Subscription.organization_id == org.id))
     if sub:
         if sub.status == SubscriptionStatus.active:
             return  # Assinatura paga e ativa
@@ -120,7 +118,9 @@ async def require_active_plan(
 def require_roles(*roles: UserRole):
     async def _check(current_user: CurrentUser) -> User:
         if current_user.role not in roles:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Permissão insuficiente")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="Permissão insuficiente"
+            )
         return current_user
 
     return Depends(_check)

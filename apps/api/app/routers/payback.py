@@ -114,7 +114,9 @@ async def save_scenario(
 
 
 @router.get("/scenarios/{scenario_id}", response_model=ScenarioResponse)
-async def get_scenario(scenario_id: str, current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
+async def get_scenario(
+    scenario_id: str, current_user: CurrentUser, db: AsyncSession = Depends(get_db)
+):
     sc = await _get_scenario_or_404(scenario_id, current_user.organization_id, db)
     return sc
 
@@ -135,13 +137,17 @@ async def update_scenario(
 
 
 @router.delete("/scenarios/{scenario_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_scenario(scenario_id: str, current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
+async def delete_scenario(
+    scenario_id: str, current_user: CurrentUser, db: AsyncSession = Depends(get_db)
+):
     sc = await _get_scenario_or_404(scenario_id, current_user.organization_id, db)
     await db.delete(sc)
 
 
 @router.post("/scenarios/{scenario_id}/share")
-async def share_scenario(scenario_id: str, current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
+async def share_scenario(
+    scenario_id: str, current_user: CurrentUser, db: AsyncSession = Depends(get_db)
+):
     sc = await _get_scenario_or_404(scenario_id, current_user.organization_id, db)
     if not sc.share_token:
         sc.share_token = secrets.token_urlsafe(24)
@@ -160,7 +166,9 @@ async def get_shared_scenario(share_token: str, db: AsyncSession = Depends(get_d
     return {"name": sc.name, "inputs": sc.inputs, "results": sc.results}
 
 
-async def _get_scenario_or_404(scenario_id: str, organization_id, db: AsyncSession) -> PaybackScenario:
+async def _get_scenario_or_404(
+    scenario_id: str, organization_id, db: AsyncSession
+) -> PaybackScenario:
     sc = await db.get(PaybackScenario, scenario_id)
     if not sc or str(sc.organization_id) != str(organization_id):
         raise HTTPException(status_code=404, detail="Cenário não encontrado")

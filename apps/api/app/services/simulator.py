@@ -2,6 +2,7 @@
 Serviço de simulação simplificada de investimento em estações de recarga.
 Usado pela API pública (landing page) para calcular retorno estimado.
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -144,12 +145,15 @@ def run_simulation_multi(
     for item in charger_items:
         ct: str = item["charger_type"]
         n: int = item["num_chargers"]
-        charger = charger_configs.get(ct, {
-            "price_brl": 50_000,
-            "power_kw": 50.0,
-            "avg_sessions_day": 5,
-            "avg_duration_min": 40,
-        })
+        charger = charger_configs.get(
+            ct,
+            {
+                "price_brl": 50_000,
+                "power_kw": 50.0,
+                "avg_sessions_day": 5,
+                "avg_duration_min": 40,
+            },
+        )
 
         kwh_session = charger["power_kw"] * (charger["avg_duration_min"] / 60.0)
         monthly_sessions = charger["avg_sessions_day"] * 30 * n
@@ -183,12 +187,14 @@ def run_simulation_multi(
         total_net_nominal += net
 
         if m <= 24:
-            monthly_projections.append({
-                "month": m,
-                "revenue": round(rev, 2),
-                "net": round(net, 2),
-                "cumulative": round(cumulative, 2),
-            })
+            monthly_projections.append(
+                {
+                    "month": m,
+                    "revenue": round(rev, 2),
+                    "net": round(net, 2),
+                    "cumulative": round(cumulative, 2),
+                }
+            )
 
     roi_5y = ((total_net_nominal / total_capex) - 1) * 100 if total_capex > 0 else 0.0
     irr_approx = (roi_5y / 100) / projection_years if projection_years > 0 else 0.0

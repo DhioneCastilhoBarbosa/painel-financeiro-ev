@@ -65,7 +65,14 @@ async def upsert_note(
         )
         db.add(note)
     await db.flush()
-    await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                     "save_user_note", "user_note", user_tag,
-                     f"length={len(body.content)}")
+    await log_action(
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        "save_user_note",
+        "user_note",
+        user_tag,
+        f"length={len(body.content)}",
+    )
     return {"user_tag": user_tag, "content": note.content, "updated_at": note.updated_at}

@@ -67,6 +67,7 @@ def _clear_refresh_cookie(response: Response) -> None:
 
 def _slug_from_name(name: str) -> str:
     import re
+
     slug = re.sub(r"[^a-z0-9]+", "-", name.lower().strip()).strip("-")
     return slug[:80] + "-" + secrets.token_hex(4)
 
@@ -104,7 +105,9 @@ async def register(request: Request, body: RegisterRequest, db: AsyncSession = D
         select(Organization).where(Organization.name == body.organization_name)
     )
     if name_taken:
-        raise HTTPException(status_code=409, detail="Já existe uma organização com esse nome. Escolha outro.")
+        raise HTTPException(
+            status_code=409, detail="Já existe uma organização com esse nome. Escolha outro."
+        )
 
     org = Organization(
         id=uuid.uuid4(),
@@ -143,6 +146,7 @@ async def register(request: Request, body: RegisterRequest, db: AsyncSession = D
     await redis.setex(f"verify:{verify_token}", 3600, str(user.id))
 
     from app.services.email import send_verify_email
+
     await send_verify_email(body.email, body.name, verify_token)
 
     return {"message": "Cadastro realizado. Verifique seu e-mail para ativar a conta."}
@@ -160,7 +164,9 @@ async def register(request: Request, body: RegisterRequest, db: AsyncSession = D
         "\n\n**Rate limit:** 10 requisições/minuto por IP."
     ),
     responses={
-        200: {"description": "Login realizado. Access token retornado no corpo, refresh token em cookie."},
+        200: {
+            "description": "Login realizado. Access token retornado no corpo, refresh token em cookie."
+        },
         401: {"description": "Credenciais inválidas"},
         403: {"description": "Conta desativada"},
         429: {"description": "Muitas tentativas — aguarde 1 minuto"},
@@ -308,6 +314,7 @@ async def forgot_password(
         redis = get_redis()
         await redis.setex(f"{RESET_TOKEN_PREFIX}{reset_token}", 3600, str(user.id))
         from app.services.email import send_reset_password_email
+
         await send_reset_password_email(body.email, user.name, reset_token)
 
     return {"message": "Se o e-mail estiver cadastrado, você receberá as instruções"}
@@ -361,7 +368,8 @@ async def me(current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
     org = await db.get(Organization, current_user.organization_id)
     custom_role = (
         await db.get(CustomRole, current_user.custom_role_id)
-        if current_user.custom_role_id else None
+        if current_user.custom_role_id
+        else None
     )
     permissions = resolve_permissions(current_user, custom_role)
     return UserResponse(
@@ -400,7 +408,9 @@ async def update_me(
         if not verify_password(body.current_password, user.password_hash):
             raise HTTPException(status_code=400, detail="Senha atual incorreta")
         if len(body.new_password) < 8:
-            raise HTTPException(status_code=400, detail="Nova senha deve ter pelo menos 8 caracteres")
+            raise HTTPException(
+                status_code=400, detail="Nova senha deve ter pelo menos 8 caracteres"
+            )
         user.password_hash = hash_password(body.new_password)
 
     await db.commit()

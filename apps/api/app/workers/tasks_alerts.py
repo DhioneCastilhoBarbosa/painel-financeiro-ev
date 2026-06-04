@@ -9,6 +9,7 @@ Correções aplicadas:
   • Cooldown de 24h: alertas já disparados ontem não re-disparam
   • Envia e-mail de notificação quando um alerta é acionado
 """
+
 from __future__ import annotations
 
 import logging
@@ -51,12 +52,13 @@ def _get_session_factory() -> sessionmaker:
     )
     return sessionmaker(bind=engine)
 
+
 # ── Labels e formatação ────────────────────────────────────────────────────────
 _METRIC_LABELS: dict[str, str] = {
-    "revenue_day":      "Receita do dia",
-    "revenue_session":  "Receita por sessão",
-    "sessions_day":     "Sessões do dia",
-    "occupancy_pct":    "Ocupação (%)",
+    "revenue_day": "Receita do dia",
+    "revenue_session": "Receita por sessão",
+    "sessions_day": "Sessões do dia",
+    "occupancy_pct": "Ocupação (%)",
 }
 
 _OPERATOR_LABELS: dict[str, str] = {
@@ -90,6 +92,7 @@ def _send_alert_email(
     """Envia e-mail de alerta disparado (chamada síncrona)."""
     try:
         from app.services.email import send_alert_triggered_email_sync
+
         send_alert_triggered_email_sync(
             to=to,
             alert_name=alert_name,
@@ -106,39 +109,49 @@ def _send_alert_email(
 
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def _compute_metrics(org_id, yesterday: date) -> dict:
     with _get_session_factory()() as db:
-        rows = db.execute(
-            select(ChargingSession).where(
-                ChargingSession.organization_id == org_id,
-                ChargingSession.started_at >= yesterday,
-                ChargingSession.started_at < yesterday + timedelta(days=1),
+        rows = (
+            db.execute(
+                select(ChargingSession).where(
+                    ChargingSession.organization_id == org_id,
+                    ChargingSession.started_at >= yesterday,
+                    ChargingSession.started_at < yesterday + timedelta(days=1),
+                )
             )
-        ).scalars().all()
+            .scalars()
+            .all()
+        )
 
     if not rows:
-        return {"revenue_day": 0.0, "revenue_session": 0.0, "sessions_day": 0.0, "occupancy_pct": 0.0}
+        return {
+            "revenue_day": 0.0,
+            "revenue_session": 0.0,
+            "sessions_day": 0.0,
+            "occupancy_pct": 0.0,
+        }
 
     records = [
         {
-            "revenue_total":    float(r.revenue_total or 0),
-            "is_paid":          r.is_paid,
+            "revenue_total": float(r.revenue_total or 0),
+            "is_paid": r.is_paid,
             "duration_minutes": r.duration_minutes or 0,
         }
         for r in rows
     ]
     df = pd.DataFrame(records)
     paid = df[df["is_paid"]]
-    revenue_day     = float(paid["revenue_total"].sum())
-    sessions_day    = float(len(paid))
+    revenue_day = float(paid["revenue_total"].sum())
+    sessions_day = float(len(paid))
     revenue_session = revenue_day / sessions_day if sessions_day > 0 else 0.0
-    occupancy_pct   = float(df["duration_minutes"].sum() / (24 * 60) * 100)
+    occupancy_pct = float(df["duration_minutes"].sum() / (24 * 60) * 100)
 
     return {
-        "revenue_day":     revenue_day,
+        "revenue_day": revenue_day,
         "revenue_session": revenue_session,
-        "sessions_day":    sessions_day,
-        "occupancy_pct":   occupancy_pct,
+        "sessions_day": sessions_day,
+        "occupancy_pct": occupancy_pct,
     }
 
 
@@ -146,13 +159,11 @@ def _compute_metrics(org_id, yesterday: date) -> dict:
 def evaluate_all_organizations():
     """Avalia alertas de todas as organizações contra os dados de ontem."""
     yesterday = date.today() - timedelta(days=1)
-    now       = datetime.now(UTC)
-    cooldown  = timedelta(hours=ALERT_COOLDOWN_HOURS)
+    now = datetime.now(UTC)
+    cooldown = timedelta(hours=ALERT_COOLDOWN_HOURS)
 
     with _get_session_factory()() as db:
-        orgs = db.execute(
-            select(Organization.id, Organization.name)
-        ).all()
+        orgs = db.execute(select(Organization.id, Organization.name)).all()
 
     triggered_total = 0
 
@@ -161,23 +172,26 @@ def evaluate_all_organizations():
             metrics = _compute_metrics(org_id, yesterday)
 
             with _get_session_factory()() as db:
-                alerts = db.execute(
-                    select(Alert).where(
-                        Alert.organization_id == org_id,
-                        Alert.is_active.is_(True),
+                alerts = (
+                    db.execute(
+                        select(Alert).where(
+                            Alert.organization_id == org_id,
+                            Alert.is_active.is_(True),
+                        )
                     )
-                ).scalars().all()
+                    .scalars()
+                    .all()
+                )
 
                 for alert in alerts:
                     # ── Cooldown: não re-dispara se já foi acionado nas últimas 24h ──
                     if alert.last_triggered_at and (now - alert.last_triggered_at) < cooldown:
                         continue
 
-                    value     = metrics.get(alert.metric, 0.0)
+                    value = metrics.get(alert.metric, 0.0)
                     threshold = float(alert.threshold)
-                    fired = (
-                        (alert.operator == "below" and value < threshold)
-                        or (alert.operator == "above" and value > threshold)
+                    fired = (alert.operator == "below" and value < threshold) or (
+                        alert.operator == "above" and value > threshold
                     )
 
                     if not fired:
@@ -191,14 +205,14 @@ def evaluate_all_organizations():
                         creator = db.get(User, alert.created_by)
                         if creator and creator.email:
                             _send_alert_email(
-                                to           = creator.email,
-                                alert_name   = alert.name,
-                                metric       = alert.metric,
-                                operator     = alert.operator,
-                                threshold    = threshold,
-                                value        = value,
-                                org_name     = org_name,
-                                evaluation_date = yesterday,
+                                to=creator.email,
+                                alert_name=alert.name,
+                                metric=alert.metric,
+                                operator=alert.operator,
+                                threshold=threshold,
+                                value=value,
+                                org_name=org_name,
+                                evaluation_date=yesterday,
                             )
 
                 db.commit()
@@ -208,6 +222,6 @@ def evaluate_all_organizations():
 
     return {
         "evaluated_orgs": len(orgs),
-        "triggered":      triggered_total,
-        "date":           str(yesterday),
+        "triggered": triggered_total,
+        "date": str(yesterday),
     }

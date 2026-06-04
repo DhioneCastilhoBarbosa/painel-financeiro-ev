@@ -83,8 +83,16 @@ async def create_alert(
     )
     db.add(alert)
     await db.flush()
-    await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                     "create_alert", "alert", str(alert.id), f"name={body.name} metric={body.metric} operator={body.operator} threshold={body.threshold}")
+    await log_action(
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        "create_alert",
+        "alert",
+        str(alert.id),
+        f"name={body.name} metric={body.metric} operator={body.operator} threshold={body.threshold}",
+    )
     return _serialize(alert)
 
 
@@ -108,8 +116,16 @@ async def update_alert(
     alert.threshold = body.threshold
     alert.channel = body.channel
     alert.is_active = body.is_active
-    await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                     "update_alert", "alert", alert_id, f"name={body.name} metric={body.metric} operator={body.operator} threshold={body.threshold}")
+    await log_action(
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        "update_alert",
+        "alert",
+        alert_id,
+        f"name={body.name} metric={body.metric} operator={body.operator} threshold={body.threshold}",
+    )
     return _serialize(alert)
 
 
@@ -159,19 +175,22 @@ async def evaluate_alerts(
         for alert in active_alerts:
             value = empty_metrics.get(alert.metric, 0.0)
             threshold = float(alert.threshold)
-            fired = (alert.operator == "below" and value < threshold) or \
-                    (alert.operator == "above" and value > threshold)
+            fired = (alert.operator == "below" and value < threshold) or (
+                alert.operator == "above" and value > threshold
+            )
             if fired:
                 alert.last_triggered_at = datetime.now(UTC)
-                triggered.append({
-                    "id": str(alert.id),
-                    "name": alert.name,
-                    "metric": alert.metric,
-                    "operator": alert.operator,
-                    "threshold": threshold,
-                    "current_value": round(value, 2),
-                    "channel": alert.channel,
-                })
+                triggered.append(
+                    {
+                        "id": str(alert.id),
+                        "name": alert.name,
+                        "metric": alert.metric,
+                        "operator": alert.operator,
+                        "threshold": threshold,
+                        "current_value": round(value, 2),
+                        "channel": alert.channel,
+                    }
+                )
         await db.flush()
         return {
             "triggered": triggered,
@@ -212,22 +231,29 @@ async def evaluate_alerts(
     for alert in active_alerts:
         value = metrics.get(alert.metric, 0.0)
         threshold = float(alert.threshold)
-        fired = (alert.operator == "below" and value < threshold) or \
-                (alert.operator == "above" and value > threshold)
+        fired = (alert.operator == "below" and value < threshold) or (
+            alert.operator == "above" and value > threshold
+        )
         if fired:
             alert.last_triggered_at = datetime.now(UTC)
-            triggered.append({
-                "id": str(alert.id),
-                "name": alert.name,
-                "metric": alert.metric,
-                "operator": alert.operator,
-                "threshold": threshold,
-                "current_value": round(value, 2),
-                "channel": alert.channel,
-            })
+            triggered.append(
+                {
+                    "id": str(alert.id),
+                    "name": alert.name,
+                    "metric": alert.metric,
+                    "operator": alert.operator,
+                    "threshold": threshold,
+                    "current_value": round(value, 2),
+                    "channel": alert.channel,
+                }
+            )
 
     await db.flush()
-    return {"triggered": triggered, "evaluated_at": datetime.now(UTC).isoformat(), "metrics": metrics}
+    return {
+        "triggered": triggered,
+        "evaluated_at": datetime.now(UTC).isoformat(),
+        "metrics": metrics,
+    }
 
 
 @router.delete("/{alert_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -243,6 +269,14 @@ async def delete_alert(
     if not alert or str(alert.organization_id) != str(current_user.organization_id):
         raise HTTPException(status_code=404, detail="Alerta não encontrado")
 
-    await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                     "delete_alert", "alert", alert_id, f"name={alert.name}")
+    await log_action(
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        "delete_alert",
+        "alert",
+        alert_id,
+        f"name={alert.name}",
+    )
     await db.delete(alert)

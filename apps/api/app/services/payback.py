@@ -10,8 +10,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-
 # ─── Input schema ─────────────────────────────────────────────────────────────
+
 
 @dataclass
 class PaybackInputs:
@@ -24,14 +24,14 @@ class PaybackInputs:
     payment_mode: str = "upfront"
 
     # Custos operacionais
-    platform_fee_pct: float = 8.0       # % da receita
+    platform_fee_pct: float = 8.0  # % da receita
     platform_fixed_monthly: float = 50.0  # R$/mês/unidade
     energy_cost_per_kwh: float = 0.75
-    tax_pct: float = 6.0                # Simples Nacional %
-    maintenance_monthly: float = 100.0   # R$/mês/unidade
-    revenue_split_pct: float = 0.0       # % para o estabelecimento
+    tax_pct: float = 6.0  # Simples Nacional %
+    maintenance_monthly: float = 100.0  # R$/mês/unidade
+    revenue_split_pct: float = 0.0  # % para o estabelecimento
     depreciation_years: int = 10
-    discount_rate_annual: float = 12.0   # % a.a. (taxa de desconto / renda fixa)
+    discount_rate_annual: float = 12.0  # % a.a. (taxa de desconto / renda fixa)
 
     # Receita
     tariff_per_kwh: float = 1.80
@@ -49,6 +49,7 @@ class PaybackInputs:
 
 # ─── Cálculo por cenário ──────────────────────────────────────────────────────
 
+
 def _monthly_rate(annual_rate_pct: float) -> float:
     return (1 + annual_rate_pct / 100) ** (1 / 12) - 1
 
@@ -59,13 +60,19 @@ def _calc_scenario(inputs: PaybackInputs, occupancy_pct: float) -> dict[str, Any
     inv_unit = inputs.hardware_cost + inputs.installation_cost
     inv_total = inv_unit * inputs.n_chargers
     inv_display = inv_total if inputs.portfolio_view else inv_unit
-    inst_display = inputs.installation_cost * inputs.n_chargers if inputs.portfolio_view else inputs.installation_cost
+    inst_display = (
+        inputs.installation_cost * inputs.n_chargers
+        if inputs.portfolio_view
+        else inputs.installation_cost
+    )
 
     n_inst = max(1, inputs.installments)
     parcelado = n_inst > 1
 
     # Sessões por mês por unidade
-    sessions_month = (inputs.operating_hours_per_day * 30 * 60 / max(inputs.avg_session_duration_min, 1)) * (occupancy_pct / 100)
+    sessions_month = (
+        inputs.operating_hours_per_day * 30 * 60 / max(inputs.avg_session_duration_min, 1)
+    ) * (occupancy_pct / 100)
     kwh_month = sessions_month * inputs.avg_kwh_per_session
 
     # Receita bruta
@@ -95,7 +102,9 @@ def _calc_scenario(inputs: PaybackInputs, occupancy_pct: float) -> dict[str, Any
     payback_months: int | None = None
 
     for month in range(1, 241):
-        hw_installment = (inputs.hardware_cost / n_inst) * mult if parcelado and month <= n_inst else 0.0
+        hw_installment = (
+            (inputs.hardware_cost / n_inst) * mult if parcelado and month <= n_inst else 0.0
+        )
         cash_in = monthly_fcf * mult
         hist.append(hist[-1] + cash_in - hw_installment)
         if payback_months is None and hist[-1] >= 0:
@@ -134,6 +143,7 @@ def _calc_scenario(inputs: PaybackInputs, occupancy_pct: float) -> dict[str, Any
 
 # ─── VPL & TIR ────────────────────────────────────────────────────────────────
 
+
 def _npv(scenario: dict, inputs: PaybackInputs) -> float:
     """Valor Presente Líquido ao longo da vida útil do equipamento."""
     horizon = inputs.depreciation_years * 12
@@ -141,8 +151,14 @@ def _npv(scenario: dict, inputs: PaybackInputs) -> float:
     n_inst = max(1, inputs.installments)
     parcelado = n_inst > 1
 
-    hw_display = inputs.hardware_cost * inputs.n_chargers if inputs.portfolio_view else inputs.hardware_cost
-    inst_display = inputs.installation_cost * inputs.n_chargers if inputs.portfolio_view else inputs.installation_cost
+    hw_display = (
+        inputs.hardware_cost * inputs.n_chargers if inputs.portfolio_view else inputs.hardware_cost
+    )
+    inst_display = (
+        inputs.installation_cost * inputs.n_chargers
+        if inputs.portfolio_view
+        else inputs.installation_cost
+    )
     hw_installment = hw_display / n_inst if parcelado else 0.0
 
     pv = -inst_display if parcelado else -scenario["investment_display"]
@@ -195,7 +211,9 @@ def _dcf_chart(scenario: dict, inputs: PaybackInputs) -> list[dict]:
     n_inst = max(1, inputs.installments)
     parcelado = n_inst > 1
 
-    hw_display = inputs.hardware_cost * inputs.n_chargers if inputs.portfolio_view else inputs.hardware_cost
+    hw_display = (
+        inputs.hardware_cost * inputs.n_chargers if inputs.portfolio_view else inputs.hardware_cost
+    )
     hw_installment = hw_display / n_inst if parcelado else 0.0
 
     result = []
@@ -203,15 +221,18 @@ def _dcf_chart(scenario: dict, inputs: PaybackInputs) -> list[dict]:
         installment = hw_installment if parcelado and month <= n_inst else 0.0
         nominal_cf = scenario["monthly_fcf"] - installment
         discounted_cf = nominal_cf / (1 + rf_m) ** month
-        result.append({
-            "month": month,
-            "nominal_cf": round(nominal_cf, 2),
-            "discounted_cf": round(discounted_cf, 2),
-        })
+        result.append(
+            {
+                "month": month,
+                "nominal_cf": round(nominal_cf, 2),
+                "discounted_cf": round(discounted_cf, 2),
+            }
+        )
     return result
 
 
 # ─── Projeção de longo prazo ──────────────────────────────────────────────────
+
 
 def _long_term_projection(scenario: dict, inputs: PaybackInputs, years: int = 20) -> list[dict]:
     """Projeção anual por até 20 anos."""
@@ -228,17 +249,19 @@ def _long_term_projection(scenario: dict, inputs: PaybackInputs, years: int = 20
         cumulative_ebit += annual_ebit
         roic = (cumulative_ebit / inv_display * 100) if inv_display > 0 else 0.0
 
-        rows.append({
-            "year": year,
-            "gross_revenue": round(annual_revenue, 2),
-            "ebitda": round(annual_ebitda, 2),
-            "ebitda_margin_pct": round(scenario["ebitda_margin_pct"], 1),
-            "depreciation": round(annual_depreciation, 2),
-            "ebit": round(annual_ebit, 2),
-            "net_income": round(annual_net, 2),
-            "net_margin_pct": round(scenario["net_margin_pct"], 1),
-            "cumulative_roic_pct": round(roic, 1),
-        })
+        rows.append(
+            {
+                "year": year,
+                "gross_revenue": round(annual_revenue, 2),
+                "ebitda": round(annual_ebitda, 2),
+                "ebitda_margin_pct": round(scenario["ebitda_margin_pct"], 1),
+                "depreciation": round(annual_depreciation, 2),
+                "ebit": round(annual_ebit, 2),
+                "net_income": round(annual_net, 2),
+                "net_margin_pct": round(scenario["net_margin_pct"], 1),
+                "cumulative_roic_pct": round(roic, 1),
+            }
+        )
     return rows
 
 
@@ -267,16 +290,18 @@ def calculate(inputs: PaybackInputs) -> dict[str, Any]:
         dcf = _dcf_chart(sc, inputs)
         projection = _long_term_projection(sc, inputs)
 
-        scenarios_out.append({
-            **sc,
-            "npv": npv,
-            "npv_positive": npv >= 0,
-            "irr_annual_pct": irr,
-            "irr_beats_benchmark": (irr is not None and irr > inputs.discount_rate_annual),
-            "dcf_chart": dcf,
-            "long_term_projection": projection,
-            "label": _occ_label(occ, inputs.real_occupancy_pct),
-        })
+        scenarios_out.append(
+            {
+                **sc,
+                "npv": npv,
+                "npv_positive": npv >= 0,
+                "irr_annual_pct": irr,
+                "irr_beats_benchmark": (irr is not None and irr > inputs.discount_rate_annual),
+                "dcf_chart": dcf,
+                "long_term_projection": projection,
+                "label": _occ_label(occ, inputs.real_occupancy_pct),
+            }
+        )
 
     # Fixed income benchmark (renda fixa) — retorno acumulado mês a mês
     rf_m = _monthly_rate(inputs.discount_rate_annual)
@@ -304,7 +329,12 @@ def calculate(inputs: PaybackInputs) -> dict[str, Any]:
 
 
 def _occ_label(occ: float, real_occ: float | None) -> str:
-    labels = {10: "Conservador (10%)", 20: "Moderado (20%)", 40: "Otimista (40%)", 60: "Agressivo (60%)"}
+    labels = {
+        10: "Conservador (10%)",
+        20: "Moderado (20%)",
+        40: "Otimista (40%)",
+        60: "Agressivo (60%)",
+    }
     if real_occ is not None and abs(occ - real_occ) < 0.01:
         return f"Real observado ({occ:.1f}%)"
     return labels.get(int(occ), f"{occ:.1f}%")

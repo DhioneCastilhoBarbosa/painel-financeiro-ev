@@ -31,6 +31,7 @@ router = APIRouter()
 class MasterGrantRequest(BaseModel):
     is_master: bool
 
+
 PLAN_LIMITS = {
     "trial": {"users": 3, "files": 5},
     "starter": {"users": 3, "files": 5},
@@ -82,11 +83,27 @@ async def update_org(
         org.settings = {**org.settings, **body.settings}
         if changed:
             details = ", ".join(f"{k}={v}" for k, v in changed.items())
-            await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                             "update_settings", "organization", str(org.id), details)
+            await log_action(
+                db,
+                current_user.organization_id,
+                current_user.id,
+                current_user.email,
+                "update_settings",
+                "organization",
+                str(org.id),
+                details,
+            )
     if body.name:
-        await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                         "update_org_name", "organization", str(org.id), f"name={body.name}")
+        await log_action(
+            db,
+            current_user.organization_id,
+            current_user.id,
+            current_user.email,
+            "update_org_name",
+            "organization",
+            str(org.id),
+            f"name={body.name}",
+        )
     return {"message": "Organização atualizada"}
 
 
@@ -114,7 +131,9 @@ async def invite_member(
     )
     limit = PLAN_LIMITS.get(org.plan, {}).get("users", 3)
     if user_count >= limit:
-        raise HTTPException(status_code=403, detail=f"Limite de {limit} usuários atingido no plano {org.plan}")
+        raise HTTPException(
+            status_code=403, detail=f"Limite de {limit} usuários atingido no plano {org.plan}"
+        )
 
     # Verifica se já é membro
     existing = await db.scalar(select(User).where(User.email == body.email))
@@ -126,6 +145,7 @@ async def invite_member(
     custom_role_name = None
     if body.custom_role_id:
         from app.models.custom_role import CustomRole
+
         cr = await db.get(CustomRole, body.custom_role_id)
         if cr and str(cr.organization_id) == str(current_user.organization_id):
             resolved_custom_role_id = cr.id
@@ -146,13 +166,27 @@ async def invite_member(
     await db.flush()
 
     from app.services.email import send_invite_email
-    role_labels = {"owner": "Proprietário", "admin": "Administrador", "analyst": "Analista", "viewer": "Visualizador"}
+
+    role_labels = {
+        "owner": "Proprietário",
+        "admin": "Administrador",
+        "analyst": "Analista",
+        "viewer": "Visualizador",
+    }
     display_role = custom_role_name or role_labels.get(body.role, body.role)
     await send_invite_email(body.email, org.name, display_role, token)
 
-    await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                     "invite_member", "invitation", str(invite.id),
-                     f"email={body.email} role={body.role}" + (f" cargo={custom_role_name}" if custom_role_name else ""))
+    await log_action(
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        "invite_member",
+        "invitation",
+        str(invite.id),
+        f"email={body.email} role={body.role}"
+        + (f" cargo={custom_role_name}" if custom_role_name else ""),
+    )
 
     return {"message": "Convite enviado", "token": token}
 
@@ -195,9 +229,16 @@ async def cancel_invitation(
     if not invite or str(invite.organization_id) != str(current_user.organization_id):
         raise HTTPException(status_code=404, detail="Convite não encontrado")
 
-    await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                     "cancel_invitation", "invitation", invitation_id,
-                     f"email={invite.email} role={invite.role}")
+    await log_action(
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        "cancel_invitation",
+        "invitation",
+        invitation_id,
+        f"email={invite.email} role={invite.role}",
+    )
     await db.delete(invite)
 
 
@@ -220,9 +261,16 @@ async def update_member_role(
 
     old_role = member.role
     member.role = body.role
-    await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                     "update_member_role", "user", user_id,
-                     f"email={member.email} {old_role} → {body.role}")
+    await log_action(
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        "update_member_role",
+        "user",
+        user_id,
+        f"email={member.email} {old_role} → {body.role}",
+    )
     return {"message": "Role atualizada"}
 
 
@@ -253,9 +301,16 @@ async def remove_member(
         if owner_count <= 1:
             raise HTTPException(status_code=400, detail="Não é possível remover o único owner")
 
-    await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                     "remove_member", "user", user_id,
-                     f"email={member.email} role={member.role}")
+    await log_action(
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        "remove_member",
+        "user",
+        user_id,
+        f"email={member.email} role={member.role}",
+    )
     member.is_active = False
 
 
@@ -268,7 +323,9 @@ async def get_usage(current_user: CurrentUser, db: AsyncSession = Depends(get_db
         )
     )
     file_count = await db.scalar(
-        select(func.count(DataFile.id)).where(DataFile.organization_id == current_user.organization_id)
+        select(func.count(DataFile.id)).where(
+            DataFile.organization_id == current_user.organization_id
+        )
     )
     limits = PLAN_LIMITS.get(org.plan, PLAN_LIMITS["starter"])
     return UsageResponse(
@@ -283,15 +340,20 @@ async def get_usage(current_user: CurrentUser, db: AsyncSession = Depends(get_db
 
 # ─── Cost Configurations ─────────────────────────────────────────────────────
 
+
 @router.get("/cost-configs", response_model=list[CostConfigResponse])
 async def list_cost_configs(current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
     result = await db.execute(
-        select(CostConfiguration).where(CostConfiguration.organization_id == current_user.organization_id)
+        select(CostConfiguration).where(
+            CostConfiguration.organization_id == current_user.organization_id
+        )
     )
     return result.scalars().all()
 
 
-@router.post("/cost-configs", response_model=CostConfigResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/cost-configs", response_model=CostConfigResponse, status_code=status.HTTP_201_CREATED
+)
 async def create_cost_config(
     body: CostConfigRequest,
     current_user: CurrentUser,
@@ -371,7 +433,11 @@ async def delete_cost_config(
 
 # ─── Master grant / revoke ────────────────────────────────────────────────────
 
-@router.patch("/members/{user_id}/master", summary="Conceder ou revogar cargo de Mestre (apenas Mestres podem fazer isso)")
+
+@router.patch(
+    "/members/{user_id}/master",
+    summary="Conceder ou revogar cargo de Mestre (apenas Mestres podem fazer isso)",
+)
 async def set_member_master(
     user_id: str,
     body: MasterGrantRequest,
@@ -383,21 +449,32 @@ async def set_member_master(
     Não é possível remover o próprio cargo.
     """
     if not current_user.is_master:
-        raise HTTPException(status_code=403, detail="Apenas usuários Mestres podem gerenciar este cargo")
+        raise HTTPException(
+            status_code=403, detail="Apenas usuários Mestres podem gerenciar este cargo"
+        )
 
     member = await db.get(User, user_id)
     if not member or str(member.organization_id) != str(current_user.organization_id):
         raise HTTPException(status_code=404, detail="Membro não encontrado")
 
     if str(member.id) == str(current_user.id) and not body.is_master:
-        raise HTTPException(status_code=400, detail="Não é possível remover seu próprio cargo de Mestre")
+        raise HTTPException(
+            status_code=400, detail="Não é possível remover seu próprio cargo de Mestre"
+        )
 
     old = member.is_master
     member.is_master = body.is_master
     action = "grant_master" if body.is_master else "revoke_master"
     await log_action(
-        db, current_user.organization_id, current_user.id, current_user.email,
-        action, "user", user_id,
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        action,
+        "user",
+        user_id,
         f"email={member.email} is_master: {old} → {body.is_master}",
     )
-    return {"message": f"Cargo de Mestre {'concedido' if body.is_master else 'revogado'} com sucesso"}
+    return {
+        "message": f"Cargo de Mestre {'concedido' if body.is_master else 'revogado'} com sucesso"
+    }

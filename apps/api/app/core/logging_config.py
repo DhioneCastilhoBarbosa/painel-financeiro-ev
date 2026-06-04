@@ -8,6 +8,7 @@ Uso:
     from app.core.logging_config import setup_logging
     setup_logging()   # chamar uma vez no startup da aplicação
 """
+
 from __future__ import annotations
 
 import logging
@@ -31,19 +32,36 @@ class _JsonFormatter(logging.Formatter):
         from datetime import UTC, datetime
 
         payload: dict = {
-            "ts":      datetime.fromtimestamp(record.created, tz=UTC).isoformat(),
-            "level":   record.levelname,
-            "logger":  record.name,
-            "msg":     record.getMessage(),
+            "ts": datetime.fromtimestamp(record.created, tz=UTC).isoformat(),
+            "level": record.levelname,
+            "logger": record.name,
+            "msg": record.getMessage(),
         }
 
         # Contexto extra (passado via logger.info(..., extra={...}))
         for key in vars(record):
             if key not in (
-                "name", "msg", "args", "levelname", "levelno", "pathname",
-                "filename", "module", "exc_info", "exc_text", "stack_info",
-                "lineno", "funcName", "created", "msecs", "relativeCreated",
-                "thread", "threadName", "processName", "process", "message",
+                "name",
+                "msg",
+                "args",
+                "levelname",
+                "levelno",
+                "pathname",
+                "filename",
+                "module",
+                "exc_info",
+                "exc_text",
+                "stack_info",
+                "lineno",
+                "funcName",
+                "created",
+                "msecs",
+                "relativeCreated",
+                "thread",
+                "threadName",
+                "processName",
+                "process",
+                "message",
             ):
                 payload[key] = getattr(record, key)
 
@@ -82,8 +100,6 @@ def setup_logging() -> None:
 
     # Silencia loggers muito verbosos
     for noisy in ("uvicorn.access", "sqlalchemy.engine", "httpx"):
-        logging.getLogger(noisy).setLevel(
-            logging.INFO if settings.debug else logging.WARNING
-        )
+        logging.getLogger(noisy).setLevel(logging.INFO if settings.debug else logging.WARNING)
 
     logging.getLogger("uvicorn.error").setLevel(logging.INFO)

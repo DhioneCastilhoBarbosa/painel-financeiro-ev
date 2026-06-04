@@ -1,4 +1,5 @@
 """Utility to write audit log entries from any router."""
+
 from __future__ import annotations
 
 import uuid

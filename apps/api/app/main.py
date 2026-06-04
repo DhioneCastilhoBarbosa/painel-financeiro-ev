@@ -17,9 +17,20 @@ from app.core.logging_config import setup_logging
 from app.core.ratelimit import limiter
 from app.core.redis import close_redis, get_redis
 from app.routers import (
-    admin, alerts, analytics, audit, auth, billing, capex,
-    custom_roles, files, leads, organizations, payback,
-    public, user_notes,
+    admin,
+    alerts,
+    analytics,
+    audit,
+    auth,
+    billing,
+    capex,
+    custom_roles,
+    files,
+    leads,
+    organizations,
+    payback,
+    public,
+    user_notes,
 )
 
 # ─── Inicialização ─────────────────────────────────────────────────────────────
@@ -85,13 +96,13 @@ Os endpoints de analytics aceitam query params comuns:
 - `connectors` — tipos de conector (multi-valor)
 """,
     contact={
-        "name":  "FinanceDash",
-        "url":   "https://financedash.com.br",
+        "name": "FinanceDash",
+        "url": "https://financedash.com.br",
         "email": "api@financedash.com.br",
     },
     license_info={
         "name": "Proprietário — uso restrito",
-        "url":  "https://financedash.com.br/termos",
+        "url": "https://financedash.com.br/termos",
     },
     # Docs acessíveis sempre — protegidos por middleware de token em produção
     docs_url="/api/docs",
@@ -203,22 +214,28 @@ def _build_openapi():
     schema.setdefault("components", {})
     schema["components"]["securitySchemes"] = {
         "BearerAuth": {
-            "type":         "http",
-            "scheme":       "bearer",
+            "type": "http",
+            "scheme": "bearer",
             "bearerFormat": "JWT",
-            "description":  "Token JWT obtido via `POST /api/v1/auth/login`. Expira em 15 minutos.",
+            "description": "Token JWT obtido via `POST /api/v1/auth/login`. Expira em 15 minutos.",
         }
     }
 
     # Aplica o security a todos os endpoints, exceto os públicos
     PUBLIC_PATHS = {
-        "/health", "/health/detailed",
-        "/api/v1/auth/register", "/api/v1/auth/login",
-        "/api/v1/auth/refresh", "/api/v1/auth/verify-email",
-        "/api/v1/auth/forgot-password", "/api/v1/auth/reset-password",
-        "/api/v1/public/config", "/api/v1/public/simulate",
+        "/health",
+        "/health/detailed",
+        "/api/v1/auth/register",
+        "/api/v1/auth/login",
+        "/api/v1/auth/refresh",
+        "/api/v1/auth/verify-email",
+        "/api/v1/auth/forgot-password",
+        "/api/v1/auth/reset-password",
+        "/api/v1/public/config",
+        "/api/v1/public/simulate",
         "/api/v1/public/enterprise-contact",
-        "/api/v1/billing/plans", "/api/v1/billing/webhook",
+        "/api/v1/billing/plans",
+        "/api/v1/billing/webhook",
     }
     for path, path_item in schema.get("paths", {}).items():
         if path in PUBLIC_PATHS:
@@ -236,6 +253,7 @@ app.openapi = _build_openapi  # type: ignore[method-assign]
 
 # ─── Middleware: proteção da UI Swagger em produção ────────────────────────────
 
+
 @app.middleware("http")
 async def _protect_docs(request: Request, call_next):
     """
@@ -246,13 +264,12 @@ async def _protect_docs(request: Request, call_next):
     if settings.docs_access_token:
         _DOC_PATHS = {"/api/docs", "/api/redoc", "/api/openapi.json"}
         if request.url.path in _DOC_PATHS:
-            provided = (
-                request.query_params.get("token")
-                or request.headers.get("X-Docs-Token")
-            )
+            provided = request.query_params.get("token") or request.headers.get("X-Docs-Token")
             if provided != settings.docs_access_token:
                 return JSONResponse(
-                    {"detail": "Acesso não autorizado. Informe o token correto via ?token=<valor>."},
+                    {
+                        "detail": "Acesso não autorizado. Informe o token correto via ?token=<valor>."
+                    },
                     status_code=401,
                 )
     return await call_next(request)
@@ -275,31 +292,36 @@ app.add_middleware(
 # ─── Routers ──────────────────────────────────────────────────────────────────
 
 # Sem restrição de plano
-app.include_router(auth.router,          prefix="/api/v1/auth",             tags=["auth"])
-app.include_router(organizations.router, prefix="/api/v1/org",              tags=["organizations"])
-app.include_router(billing.router,       prefix="/api/v1/billing",          tags=["billing"])
-app.include_router(custom_roles.router,  prefix="/api/v1/org/custom-roles", tags=["custom-roles"])
-app.include_router(public.router,        prefix="/api/v1/public",           tags=["public"])
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(organizations.router, prefix="/api/v1/org", tags=["organizations"])
+app.include_router(billing.router, prefix="/api/v1/billing", tags=["billing"])
+app.include_router(custom_roles.router, prefix="/api/v1/org/custom-roles", tags=["custom-roles"])
+app.include_router(public.router, prefix="/api/v1/public", tags=["public"])
 
 # Exigem plano ativo (trial ou pago) — retornam 402 se expirado/cancelado
 _plan_dep = [Depends(require_active_plan)]
 
-app.include_router(analytics.router,  prefix="/api/v1/analytics",   tags=["analytics"],   dependencies=_plan_dep)
-app.include_router(payback.router,    prefix="/api/v1/payback",      tags=["payback"],     dependencies=_plan_dep)
-app.include_router(files.router,      prefix="/api/v1/files",        tags=["files"],       dependencies=_plan_dep)
-app.include_router(leads.router,      prefix="/api/v1/leads",        tags=["leads"],       dependencies=_plan_dep)
-app.include_router(capex.router,      prefix="/api/v1/capex",        tags=["capex"],       dependencies=_plan_dep)
+app.include_router(
+    analytics.router, prefix="/api/v1/analytics", tags=["analytics"], dependencies=_plan_dep
+)
+app.include_router(
+    payback.router, prefix="/api/v1/payback", tags=["payback"], dependencies=_plan_dep
+)
+app.include_router(files.router, prefix="/api/v1/files", tags=["files"], dependencies=_plan_dep)
+app.include_router(leads.router, prefix="/api/v1/leads", tags=["leads"], dependencies=_plan_dep)
+app.include_router(capex.router, prefix="/api/v1/capex", tags=["capex"], dependencies=_plan_dep)
 
 # Gestão — acessíveis mesmo com trial expirado
-app.include_router(alerts.router,     prefix="/api/v1/alerts",       tags=["alerts"])
-app.include_router(user_notes.router, prefix="/api/v1/user-notes",   tags=["user-notes"])
-app.include_router(audit.router,      prefix="/api/v1/audit",        tags=["audit"])
+app.include_router(alerts.router, prefix="/api/v1/alerts", tags=["alerts"])
+app.include_router(user_notes.router, prefix="/api/v1/user-notes", tags=["user-notes"])
+app.include_router(audit.router, prefix="/api/v1/audit", tags=["audit"])
 
 # Painel de Administrador — exclusivo para Mestres da organização Intelbras
-app.include_router(admin.router,      prefix="/api/v1/admin",        tags=["admin"])
+app.include_router(admin.router, prefix="/api/v1/admin", tags=["admin"])
 
 
 # ─── Health checks ─────────────────────────────────────────────────────────────
+
 
 @app.get("/health", tags=["health"], summary="Liveness probe", include_in_schema=True)
 async def health():

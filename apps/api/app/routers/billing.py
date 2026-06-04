@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 _stripe_available = bool(settings.stripe_secret_key)
 if _stripe_available:
     import stripe as _stripe
+
     _stripe.api_key = settings.stripe_secret_key
 
 PLANS = [
@@ -126,6 +127,7 @@ async def create_checkout(
         session_params["customer_email"] = current_user.email
 
     import stripe as _s
+
     session = _s.checkout.Session.create(**session_params)
     return {"checkout_url": session.url}
 
@@ -148,6 +150,7 @@ async def create_portal(
         raise HTTPException(status_code=400, detail="Nenhuma assinatura ativa encontrada")
 
     import stripe as _s
+
     session = _s.billing_portal.Session.create(
         customer=sub.stripe_customer_id,
         return_url=f"{settings.allowed_origins.split(',')[0].strip()}/dashboard/billing",
@@ -164,6 +167,7 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
     sig = request.headers.get("stripe-signature", "")
 
     import stripe as _s
+
     try:
         event = _s.Webhook.construct_event(payload, sig, settings.stripe_webhook_secret)
     except (_s.error.SignatureVerificationError, ValueError) as exc:
@@ -190,6 +194,7 @@ async def _handle_subscription_upsert(stripe_sub: dict, db: AsyncSession) -> Non
         return
 
     import uuid
+
     try:
         org_id = uuid.UUID(org_id_str)
     except ValueError:
@@ -220,7 +225,9 @@ async def _handle_subscription_upsert(stripe_sub: dict, db: AsyncSession) -> Non
     sub.plan = plan
     sub.status = sub_status
     if stripe_sub.get("current_period_start"):
-        sub.current_period_start = datetime.fromtimestamp(stripe_sub["current_period_start"], tz=UTC)
+        sub.current_period_start = datetime.fromtimestamp(
+            stripe_sub["current_period_start"], tz=UTC
+        )
     if stripe_sub.get("current_period_end"):
         sub.current_period_end = datetime.fromtimestamp(stripe_sub["current_period_end"], tz=UTC)
 
@@ -238,6 +245,7 @@ async def _handle_subscription_deleted(stripe_sub: dict, db: AsyncSession) -> No
         return
 
     import uuid
+
     try:
         org_id = uuid.UUID(org_id_str)
     except ValueError:

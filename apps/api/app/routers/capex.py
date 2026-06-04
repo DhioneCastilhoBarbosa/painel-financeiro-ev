@@ -28,6 +28,7 @@ router = APIRouter()
 
 # ─── Performance helper ───────────────────────────────────────────────────────
 
+
 async def _compute_performance(
     rec: ChargerCapex,
     db: AsyncSession,
@@ -36,7 +37,9 @@ async def _compute_performance(
     """Calcula métricas reais usando dados de sessão ou estimativa manual."""
 
     installed_dt = datetime(
-        rec.installed_at.year, rec.installed_at.month, rec.installed_at.day,
+        rec.installed_at.year,
+        rec.installed_at.month,
+        rec.installed_at.day,
         tzinfo=UTC,
     )
     now = datetime.now(UTC)
@@ -66,10 +69,9 @@ async def _compute_performance(
 
         # Média mensal: últimos 90 dias
         cutoff_90d = datetime.now(UTC)
-        cutoff_90d = cutoff_90d.replace(
-            hour=0, minute=0, second=0, microsecond=0
-        )
+        cutoff_90d = cutoff_90d.replace(hour=0, minute=0, second=0, microsecond=0)
         from datetime import timedelta
+
         cutoff_90d = cutoff_90d - timedelta(days=90)
         recent = await db.execute(
             select(func.coalesce(func.sum(ChargingSession.revenue_total), 0.0)).where(
@@ -88,9 +90,9 @@ async def _compute_performance(
 
     # ── Custo e lucro ─────────────────────────────────────────────────────────
     opex_total = revenue_total * rec.opex_pct
-    tax_total  = revenue_total * rec.tax_pct
-    net_total  = revenue_total - opex_total - tax_total
-    cumulative = net_total - rec.capex_brl   # negativo = ainda em payback
+    tax_total = revenue_total * rec.tax_pct
+    net_total = revenue_total - opex_total - tax_total
+    cumulative = net_total - rec.capex_brl  # negativo = ainda em payback
 
     # ── Projeção de payback ───────────────────────────────────────────────────
     net_rate = monthly_revenue_avg * (1 - rec.opex_pct - rec.tax_pct)  # lucro/mês
@@ -126,6 +128,7 @@ async def _compute_performance(
 
 
 # ─── Endpoints ────────────────────────────────────────────────────────────────
+
 
 @router.get("", response_model=list[ChargerCapexResponse])
 async def list_capex(

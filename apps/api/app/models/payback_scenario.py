@@ -19,11 +19,18 @@ class PaybackScenario(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     organization_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False, index=True
+        UUID(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
-    created_by: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    created_by: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
+    )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-    share_token: Mapped[str | None] = mapped_column(String(255), unique=True, nullable=True, index=True)
+    share_token: Mapped[str | None] = mapped_column(
+        String(255), unique=True, nullable=True, index=True
+    )
 
     # Todos os inputs e outputs em JSONB para flexibilidade
     inputs: Mapped[dict] = mapped_column(JSONB, default=dict)
@@ -38,4 +45,6 @@ class PaybackScenario(Base):
         onupdate=lambda: datetime.now(UTC),
     )
 
-    organization: Mapped[Organization] = relationship("Organization", back_populates="payback_scenarios")
+    organization: Mapped[Organization] = relationship(
+        "Organization", back_populates="payback_scenarios"
+    )

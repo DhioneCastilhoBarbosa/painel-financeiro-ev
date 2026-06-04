@@ -25,14 +25,22 @@ class ChargingSession(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), default=uuid.uuid4)
     organization_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False, index=True
+        UUID(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     file_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("data_files.id", ondelete="CASCADE"), nullable=False, index=True
+        UUID(as_uuid=True),
+        ForeignKey("data_files.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
 
     # Temporal
-    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, index=True
+    )
     ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     duration_minutes: Mapped[float | None] = mapped_column(Float, nullable=True)
 
@@ -54,8 +62,12 @@ class ChargingSession(Base):
     energy_kwh: Mapped[float] = mapped_column(Numeric(10, 4), default=0)
 
     # Payment
-    payment_status: Mapped[str | None] = mapped_column(String(50), nullable=True)  # paid|pending|rejected
-    payment_method: Mapped[str | None] = mapped_column(String(50), nullable=True)  # pagbank|wallet|voucher|manual
+    payment_status: Mapped[str | None] = mapped_column(
+        String(50), nullable=True
+    )  # paid|pending|rejected
+    payment_method: Mapped[str | None] = mapped_column(
+        String(50), nullable=True
+    )  # pagbank|wallet|voucher|manual
     is_paid: Mapped[bool] = mapped_column(Boolean, default=False)
     has_voucher: Mapped[bool] = mapped_column(Boolean, default=False)
 

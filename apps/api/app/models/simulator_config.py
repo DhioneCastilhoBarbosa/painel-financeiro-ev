@@ -57,7 +57,9 @@ class SimulatorConfig(Base):
     __tablename__ = "simulator_config"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    charger_configs: Mapped[dict] = mapped_column(JSONB, nullable=False, default=lambda: DEFAULT_CHARGER_CONFIGS)
+    charger_configs: Mapped[dict] = mapped_column(
+        JSONB, nullable=False, default=lambda: DEFAULT_CHARGER_CONFIGS
+    )
     price_per_kwh: Mapped[float] = mapped_column(Float, nullable=False, default=0.85)
     opex_pct: Mapped[float] = mapped_column(Float, nullable=False, default=0.25)
     growth_pct_month: Mapped[float] = mapped_column(Float, nullable=False, default=0.03)

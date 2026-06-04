@@ -21,11 +21,11 @@ from app.services.audit_service import log_action
 
 # Pre-defined example datasets — lidos do WebDAV (_examples/) ou do filesystem local
 EXAMPLE_DATASETS = {
-    "Supermercados — Cidade":           "4AC-supermercados-cidade-jan-abr.xlsx",
-    "Posto Cidade — Metrópole":         "1AC-1DC30-postocidade-metropole-jan-abr.xlsx",
+    "Supermercados — Cidade": "4AC-supermercados-cidade-jan-abr.xlsx",
+    "Posto Cidade — Metrópole": "1AC-1DC30-postocidade-metropole-jan-abr.xlsx",
     "Posto Cidade — Turismo (AC+DC60)": "2AC-1DC60-postocidade-turismo-jan-abr.xlsx",
-    "Posto Cidade — Turismo (DC30)":    "2DC30-postocidade-turismo-jan-abr.xlsx",
-    "Posto Cidade — Nordeste":          "1AC-1DC60-postocidade-nordeste-jan-abr.xlsx",
+    "Posto Cidade — Turismo (DC30)": "2DC30-postocidade-turismo-jan-abr.xlsx",
+    "Posto Cidade — Nordeste": "1AC-1DC60-postocidade-nordeste-jan-abr.xlsx",
 }
 
 # Pasta especial no WebDAV que armazena os datasets de exemplo (não é uma org)
@@ -43,6 +43,7 @@ def _find_datasets_dir() -> Path:
     if fallback.exists():
         return fallback
     return local
+
 
 _DATASETS_DIR = _find_datasets_dir()
 
@@ -75,6 +76,7 @@ async def _example_available(filename: str) -> bool:
     else:
         return (_DATASETS_DIR / filename).exists()
 
+
 router = APIRouter()
 
 ALLOWED_EXTENSIONS = {".xlsx", ".xls"}
@@ -89,6 +91,7 @@ PLAN_FILE_LIMITS = {
 
 
 # ─── Background processing ────────────────────────────────────────────────────
+
 
 async def _process_file_background(file_id: str, storage_key: str, organization_id: str) -> None:
     """Processa arquivo Excel em background após a resposta ser enviada ao cliente."""
@@ -140,6 +143,7 @@ async def _process_file_background(file_id: str, storage_key: str, organization_
 #   {org_id}/payback/{scenario_id}.json  ← análises de payback (reservado)
 #   {org_id}/reports/{report_id}.pdf     ← relatórios gerados (reservado)
 
+
 def _storage_key(org_id: str, file_type: str, file_id: str, ext: str) -> str:
     """Retorna o caminho organizado por tipo de arquivo dentro da pasta da org."""
     return f"{org_id}/{file_type}/{file_id}{ext}"
@@ -158,7 +162,9 @@ async def _ensure_webdav_dir(org_id: str, file_type: str) -> None:
         # Cria pasta da org
         await client.request("MKCOL", f"{settings.webdav_url.rstrip('/')}/{org_id}/", auth=auth)
         # Cria subpasta de tipo
-        await client.request("MKCOL", f"{settings.webdav_url.rstrip('/')}/{org_id}/{file_type}/", auth=auth)
+        await client.request(
+            "MKCOL", f"{settings.webdav_url.rstrip('/')}/{org_id}/{file_type}/", auth=auth
+        )
         # Erros 405 (já existe) e 301 são ignorados — apenas exceções de rede propagam
 
 
@@ -187,6 +193,7 @@ async def _save_to_storage(key: str, content: bytes, file_type: str = "datasets"
                 raise RuntimeError(f"WebDAV PUT falhou: {resp.status_code} {resp.text[:200]}")
     else:
         import boto3
+
         client = boto3.client(
             "s3",
             endpoint_url=f"https://{settings.r2_account_id}.r2.cloudflarestorage.com",
@@ -212,6 +219,7 @@ async def _read_from_storage(storage_key: str) -> bytes:
             return resp.content
     else:
         import boto3
+
         client = boto3.client(
             "s3",
             endpoint_url=f"https://{settings.r2_account_id}.r2.cloudflarestorage.com",
@@ -235,6 +243,7 @@ async def _delete_from_storage(key: str) -> None:
             # Ignora 404 — arquivo pode já ter sido removido
     else:
         import boto3
+
         client = boto3.client(
             "s3",
             endpoint_url=f"https://{settings.r2_account_id}.r2.cloudflarestorage.com",
@@ -253,6 +262,7 @@ async def _get_file_or_404(file_id: str, organization_id, db: AsyncSession) -> D
 
 # ─── Endpoints ────────────────────────────────────────────────────────────────
 
+
 @router.get("/examples", summary="Listar datasets de exemplo disponíveis (demos pré-carregados)")
 async def list_examples():
     results = []
@@ -262,7 +272,12 @@ async def list_examples():
     return results
 
 
-@router.post("/examples/{dataset_name}/load", response_model=FileResponse, status_code=status.HTTP_201_CREATED, summary="Carregar dataset de exemplo para demonstração")
+@router.post(
+    "/examples/{dataset_name}/load",
+    response_model=FileResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Carregar dataset de exemplo para demonstração",
+)
 async def load_example(
     dataset_name: str,
     background_tasks: BackgroundTasks,
@@ -275,15 +290,23 @@ async def load_example(
 
     try:
         content = await _read_example_bytes(filename)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Arquivo de exemplo não encontrado no servidor")
+    except FileNotFoundError as err:
+        raise HTTPException(
+            status_code=404, detail="Arquivo de exemplo não encontrado no servidor"
+        ) from err
     except Exception as exc:
-        raise HTTPException(status_code=503, detail=f"Erro ao acessar arquivo de exemplo: {exc}")
+        raise HTTPException(
+            status_code=503, detail=f"Erro ao acessar arquivo de exemplo: {exc}"
+        ) from exc
 
     org = await db.get(Organization, current_user.organization_id)
-    existing_count = len((await db.execute(
-        select(DataFile.id).where(DataFile.organization_id == current_user.organization_id)
-    )).all())
+    existing_count = len(
+        (
+            await db.execute(
+                select(DataFile.id).where(DataFile.organization_id == current_user.organization_id)
+            )
+        ).all()
+    )
     limit = PLAN_FILE_LIMITS.get(org.plan, 5)
     if existing_count >= limit:
         raise HTTPException(
@@ -311,9 +334,16 @@ async def load_example(
     db.add(data_file)
     await db.commit()
 
-    await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                     "upload_file", "data_file", file_id,
-                     f"filename=[Exemplo] {dataset_name}.xlsx size={len(content)}")
+    await log_action(
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        "upload_file",
+        "data_file",
+        file_id,
+        f"filename=[Exemplo] {dataset_name}.xlsx size={len(content)}",
+    )
     background_tasks.add_task(
         _process_file_background, file_id, storage_key, str(current_user.organization_id)
     )
@@ -351,9 +381,13 @@ async def upload_file(
         raise HTTPException(status_code=413, detail="Arquivo excede o limite de 50 MB")
 
     org = await db.get(Organization, current_user.organization_id)
-    existing_count = len((await db.execute(
-        select(DataFile.id).where(DataFile.organization_id == current_user.organization_id)
-    )).all())
+    existing_count = len(
+        (
+            await db.execute(
+                select(DataFile.id).where(DataFile.organization_id == current_user.organization_id)
+            )
+        ).all()
+    )
     limit = PLAN_FILE_LIMITS.get(org.plan, 5)
     if existing_count >= limit:
         raise HTTPException(
@@ -380,16 +414,27 @@ async def upload_file(
     db.add(data_file)
     await db.commit()
 
-    await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                     "upload_file", "data_file", file_id,
-                     f"filename={file.filename} size={len(content)}")
+    await log_action(
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        "upload_file",
+        "data_file",
+        file_id,
+        f"filename={file.filename} size={len(content)}",
+    )
     background_tasks.add_task(
         _process_file_background, file_id, storage_key, str(current_user.organization_id)
     )
     return data_file
 
 
-@router.get("", response_model=list[FileResponse], summary="Listar arquivos da organização com status de processamento")
+@router.get(
+    "",
+    response_model=list[FileResponse],
+    summary="Listar arquivos da organização com status de processamento",
+)
 async def list_files(current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
     result = await db.execute(
         select(DataFile)
@@ -399,23 +444,42 @@ async def list_files(current_user: CurrentUser, db: AsyncSession = Depends(get_d
     return result.scalars().all()
 
 
-@router.get("/{file_id}", response_model=FileResponse, summary="Detalhes de um arquivo específico (status, linhas, datas, estações)")
+@router.get(
+    "/{file_id}",
+    response_model=FileResponse,
+    summary="Detalhes de um arquivo específico (status, linhas, datas, estações)",
+)
 async def get_file(file_id: str, current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
     return await _get_file_or_404(file_id, current_user.organization_id, db)
 
 
-@router.delete("/{file_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Excluir arquivo e seus dados de sessão do banco")
+@router.delete(
+    "/{file_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Excluir arquivo e seus dados de sessão do banco",
+)
 async def delete_file(file_id: str, current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
     f = await _get_file_or_404(file_id, current_user.organization_id, db)
-    await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                     "delete_file", "data_file", file_id,
-                     f"filename={f.original_filename}")
+    await log_action(
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        "delete_file",
+        "data_file",
+        file_id,
+        f"filename={f.original_filename}",
+    )
     with contextlib.suppress(Exception):
         await _delete_from_storage(f.storage_key)
     await db.delete(f)
 
 
-@router.post("/{file_id}/reprocess", response_model=FileResponse, summary="Reprocessar um arquivo em status de erro")
+@router.post(
+    "/{file_id}/reprocess",
+    response_model=FileResponse,
+    summary="Reprocessar um arquivo em status de erro",
+)
 async def reprocess_file(
     file_id: str,
     background_tasks: BackgroundTasks,
