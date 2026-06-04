@@ -80,7 +80,7 @@ export function AlertBell() {
         variant="ghost"
         size="icon"
         className="h-8 w-8 relative"
-        onClick={() => (open ? setOpen(false) : evaluate())}
+        onClick={() => (open ? setOpen(false) : result ? setOpen(true) : evaluate())}
         title="Verificar alertas"
       >
         {loading ? (
