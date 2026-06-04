@@ -37,6 +37,7 @@ router = APIRouter()
 
 # ─── Helper ───────────────────────────────────────────────────────────────────
 
+
 async def _get_config(db: AsyncSession) -> dict:
     result = await db.execute(
         select(SimulatorConfig).where(SimulatorConfig.is_active.is_(True)).limit(1)
@@ -62,6 +63,7 @@ async def _get_config(db: AsyncSession) -> dict:
 
 
 # ─── Endpoints ────────────────────────────────────────────────────────────────
+
 
 @router.get(
     "/config",
@@ -130,10 +132,12 @@ async def submit_lead(
             raise HTTPException(
                 status_code=422,
                 detail=f"Tipo(s) de carregador inválido(s): {', '.join(invalid)}. "
-                       f"Opções: {', '.join(sorted(valid_types))}",
+                f"Opções: {', '.join(sorted(valid_types))}",
             )
-        items = [{"charger_type": i.charger_type, "num_chargers": i.num_chargers}
-                 for i in body.charger_items]
+        items = [
+            {"charger_type": i.charger_type, "num_chargers": i.num_chargers}
+            for i in body.charger_items
+        ]
         sim = run_simulation_multi(items, config)
         lead_charger_type = sim.pop("charger_type_label", sim["charger_type"])[:50]
         lead_num_chargers = sim["num_chargers"]
@@ -182,10 +186,16 @@ async def submit_lead(
             continue
         await send_lead_notification_email(
             notif.email,
-            body.name, body.email, body.phone,
-            body.state, body.city,
-            lead_charger_type, body.sector, body.position,
-            lead_num_chargers, sim,
+            body.name,
+            body.email,
+            body.phone,
+            body.state,
+            body.city,
+            lead_charger_type,
+            body.sector,
+            body.position,
+            lead_num_chargers,
+            sim,
             cnpj=body.cnpj,
             message=body.message,
         )
@@ -241,9 +251,13 @@ async def add_specialist_message(
             continue
         await send_specialist_contact_notification(
             notif.email,
-            lead.name, lead.email, lead.phone,
-            lead.charger_type, lead.sector,
-            body.message, str(lead.id),
+            lead.name,
+            lead.email,
+            lead.phone,
+            lead.charger_type,
+            lead.sector,
+            body.message,
+            str(lead.id),
         )
 
     return {"ok": True}
@@ -269,7 +283,7 @@ async def enterprise_contact(
         email=body.email,
         phone=body.phone,
         state="N/A",
-        city=body.company or "N/A",   # usa empresa no campo cidade para identificação
+        city=body.company or "N/A",  # usa empresa no campo cidade para identificação
         charger_type="Plano Enterprise",
         sector="Dashboard Financeiro",
         position=body.position,
@@ -293,10 +307,16 @@ async def enterprise_contact(
             continue
         await send_lead_notification_email(
             notif.email,
-            body.name, body.email, body.phone,
-            "N/A", body.company or "N/A",
-            "Plano Enterprise", "Dashboard Financeiro", body.position,
-            1, {"source": "enterprise_contact"},
+            body.name,
+            body.email,
+            body.phone,
+            "N/A",
+            body.company or "N/A",
+            "Plano Enterprise",
+            "Dashboard Financeiro",
+            body.position,
+            1,
+            {"source": "enterprise_contact"},
             cnpj=body.cnpj,
             message=body.message,
         )

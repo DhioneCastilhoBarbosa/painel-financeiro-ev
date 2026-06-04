@@ -10,9 +10,9 @@ class RegisterRequest(BaseModel):
     model_config = {
         "json_schema_extra": {
             "example": {
-                "name":              "João Silva",
-                "email":             "joao@empresa.com.br",
-                "password":          "SenhaForte123!",
+                "name": "João Silva",
+                "email": "joao@empresa.com.br",
+                "password": "SenhaForte123!",
                 "organization_name": "Rede Eletropostos SP",
             }
         }
@@ -40,7 +40,7 @@ class LoginRequest(BaseModel):
     model_config = {
         "json_schema_extra": {
             "example": {
-                "email":    "joao@empresa.com.br",
+                "email": "joao@empresa.com.br",
                 "password": "SenhaForte123!",
             }
         }
@@ -55,7 +55,7 @@ class TokenResponse(BaseModel):
         "json_schema_extra": {
             "example": {
                 "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                "token_type":   "bearer",
+                "token_type": "bearer",
             }
         }
     }
@@ -68,9 +68,7 @@ class RefreshRequest(BaseModel):
 class ForgotPasswordRequest(BaseModel):
     email: EmailStr
 
-    model_config = {
-        "json_schema_extra": {"example": {"email": "joao@empresa.com.br"}}
-    }
+    model_config = {"json_schema_extra": {"example": {"email": "joao@empresa.com.br"}}}
 
 
 class ResetPasswordRequest(BaseModel):
@@ -80,7 +78,7 @@ class ResetPasswordRequest(BaseModel):
     model_config = {
         "json_schema_extra": {
             "example": {
-                "token":        "eyJhbGciOiJIUzI1NiJ9...",
+                "token": "eyJhbGciOiJIUzI1NiJ9...",
                 "new_password": "NovaSenhaForte456!",
             }
         }
@@ -97,9 +95,7 @@ class ResetPasswordRequest(BaseModel):
 class VerifyEmailRequest(BaseModel):
     token: str
 
-    model_config = {
-        "json_schema_extra": {"example": {"token": "eyJhbGciOiJIUzI1NiJ9..."}}
-    }
+    model_config = {"json_schema_extra": {"example": {"token": "eyJhbGciOiJIUzI1NiJ9..."}}}
 
 
 class UserResponse(BaseModel):
@@ -120,19 +116,19 @@ class UserResponse(BaseModel):
         "from_attributes": True,
         "json_schema_extra": {
             "example": {
-                "id":                "550e8400-e29b-41d4-a716-446655440000",
-                "email":             "joao@empresa.com.br",
-                "name":              "João Silva",
-                "role":              "owner",
-                "organization_id":   "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+                "id": "550e8400-e29b-41d4-a716-446655440000",
+                "email": "joao@empresa.com.br",
+                "name": "João Silva",
+                "role": "owner",
+                "organization_id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
                 "organization_name": "Rede Eletropostos SP",
-                "email_verified":    True,
-                "custom_role_id":    None,
-                "custom_role_name":  None,
+                "email_verified": True,
+                "custom_role_id": None,
+                "custom_role_name": None,
                 "permissions": {
                     "view_dashboard": True,
-                    "import_files":   True,
-                    "manage_team":    True,
+                    "import_files": True,
+                    "manage_team": True,
                 },
             }
         },
@@ -147,9 +143,9 @@ class UpdateProfileRequest(BaseModel):
     model_config = {
         "json_schema_extra": {
             "example": {
-                "name":             "João A. Silva",
+                "name": "João A. Silva",
                 "current_password": "SenhaAtual123!",
-                "new_password":     "NovaSenha456!",
+                "new_password": "NovaSenha456!",
             }
         }
     }

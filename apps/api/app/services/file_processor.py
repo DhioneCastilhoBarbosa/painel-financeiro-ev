@@ -14,6 +14,7 @@ import pandas as pd
 
 # ─── Parsers ─────────────────────────────────────────────────────────────────
 
+
 def _parse_start_date(value: str) -> datetime | None:
     """Extrai a data de início do campo 'Inicio - Fim' (ex: '15/01/2025 08:30 - 09:15')."""
     if not isinstance(value, str):
@@ -73,8 +74,10 @@ def _col(df: pd.DataFrame, *names: str) -> str | None:
 
 # ─── Normalização principal ───────────────────────────────────────────────────
 
+
 def read_excel(file_bytes: bytes) -> pd.DataFrame:
     import io
+
     return pd.read_excel(io.BytesIO(file_bytes), engine="openpyxl")
 
 
@@ -112,8 +115,13 @@ def normalize(df: pd.DataFrame) -> pd.DataFrame:
     df["user_tag"] = df[user_col] if user_col else None
 
     # Revenue
-    for col in ["Receita(R$)", "Energia(kWh)", "Valor Ociosidade",
-                "Receita(R$) por Início de Recarga", "Receita(R$) por kWh"]:
+    for col in [
+        "Receita(R$)",
+        "Energia(kWh)",
+        "Valor Ociosidade",
+        "Receita(R$) por Início de Recarga",
+        "Receita(R$) por kWh",
+    ]:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0.0)
         else:
@@ -132,8 +140,10 @@ def normalize(df: pd.DataFrame) -> pd.DataFrame:
 
     df["is_paid"] = (df[paid_col].str.lower() == "sim") if paid_col else False
     df["payment_status"] = df.apply(
-        lambda r: "paid" if r["is_paid"] else (
-            "pending" if (status_col and r.get(status_col) == "pending") else "rejected"
+        lambda r: (
+            "paid"
+            if r["is_paid"]
+            else ("pending" if (status_col and r.get(status_col) == "pending") else "rejected")
         ),
         axis=1,
     )
@@ -171,27 +181,35 @@ def to_session_dicts(
 
     for _, row in normalized.iterrows():
         ended = row.get("ended_at")
-        records.append({
-            "organization_id": organization_id,
-            "file_id": file_id,
-            "started_at": row["started_at"],
-            "ended_at": ended if (ended is not None and not pd.isna(ended)) else None,
-            "duration_minutes": float(row["duration_minutes"]) if pd.notna(row["duration_minutes"]) else None,
-            "station_name": str(row["station_name"]) if pd.notna(row["station_name"]) else None,
-            "connector_type": str(row["connector_type"]) if pd.notna(row["connector_type"]) else None,
-            "user_name": str(row["user_name"]) if pd.notna(row.get("user_name")) else None,
-            "user_tag": str(row["user_tag"]) if pd.notna(row["user_tag"]) else None,
-            "revenue_total": float(row["revenue_total"]),
-            "revenue_start_fee": float(row["revenue_start_fee"]),
-            "revenue_energy": float(row["revenue_energy"]),
-            "revenue_idle": float(row["revenue_idle"]),
-            "energy_kwh": float(row["energy_kwh"]),
-            "payment_status": row["payment_status"],
-            "payment_method": row.get("payment_method") if pd.notna(row.get("payment_method")) else None,
-            "is_paid": bool(row["is_paid"]),
-            "has_voucher": bool(row["has_voucher"]),
-            "raw": {},
-        })
+        records.append(
+            {
+                "organization_id": organization_id,
+                "file_id": file_id,
+                "started_at": row["started_at"],
+                "ended_at": ended if (ended is not None and not pd.isna(ended)) else None,
+                "duration_minutes": float(row["duration_minutes"])
+                if pd.notna(row["duration_minutes"])
+                else None,
+                "station_name": str(row["station_name"]) if pd.notna(row["station_name"]) else None,
+                "connector_type": str(row["connector_type"])
+                if pd.notna(row["connector_type"])
+                else None,
+                "user_name": str(row["user_name"]) if pd.notna(row.get("user_name")) else None,
+                "user_tag": str(row["user_tag"]) if pd.notna(row["user_tag"]) else None,
+                "revenue_total": float(row["revenue_total"]),
+                "revenue_start_fee": float(row["revenue_start_fee"]),
+                "revenue_energy": float(row["revenue_energy"]),
+                "revenue_idle": float(row["revenue_idle"]),
+                "energy_kwh": float(row["energy_kwh"]),
+                "payment_status": row["payment_status"],
+                "payment_method": row.get("payment_method")
+                if pd.notna(row.get("payment_method"))
+                else None,
+                "is_paid": bool(row["is_paid"]),
+                "has_voucher": bool(row["has_voucher"]),
+                "raw": {},
+            }
+        )
 
     return records
 

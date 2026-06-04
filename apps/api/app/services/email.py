@@ -3,6 +3,7 @@ Serviço de e-mail via Resend.
 Todas as funções são no-op silenciosas quando RESEND_API_KEY não está configurado,
 para que o desenvolvimento local funcione sem conta Resend.
 """
+
 from __future__ import annotations
 
 import logging
@@ -15,6 +16,7 @@ logger = logging.getLogger(__name__)
 _resend_available = bool(settings.resend_api_key)
 if _resend_available:
     import resend as _resend
+
     _resend.api_key = settings.resend_api_key
 
 
@@ -33,12 +35,15 @@ def _send_sync(to: str, subject: str, html: str) -> bool:
         return False
     try:
         import resend as _resend
-        _resend.Emails.send({
-            "from": _from(),
-            "to": to,
-            "subject": subject,
-            "html": html,
-        })
+
+        _resend.Emails.send(
+            {
+                "from": _from(),
+                "to": to,
+                "subject": subject,
+                "html": html,
+            }
+        )
         return True
     except Exception as exc:
         logger.error("Erro ao enviar e-mail para %s: %s", to, exc)
@@ -84,7 +89,7 @@ async def send_verify_email(to: str, name: str, token: str) -> bool:
         f"""<p>Olá, <strong>{name}</strong>!</p>
 <p>Obrigado por criar sua conta no FinanceDash. Clique no botão abaixo para verificar seu e-mail e ativar sua conta.</p>
 <p style="text-align:center"><a href="{url}" class="btn">Verificar e-mail</a></p>
-<p style="font-size:13px;color:#64748b">Se você não criou uma conta no FinanceDash, ignore este e-mail.<br>O link expira em <strong>1 hora</strong>.</p>"""
+<p style="font-size:13px;color:#64748b">Se você não criou uma conta no FinanceDash, ignore este e-mail.<br>O link expira em <strong>1 hora</strong>.</p>""",
     )
     return await _send(to, "Verifique seu e-mail — FinanceDash", html)
 
@@ -96,7 +101,7 @@ async def send_reset_password_email(to: str, name: str, token: str) -> bool:
         f"""<p>Olá, <strong>{name}</strong>!</p>
 <p>Recebemos uma solicitação de redefinição de senha para sua conta. Clique no botão abaixo para criar uma nova senha.</p>
 <p style="text-align:center"><a href="{url}" class="btn">Redefinir senha</a></p>
-<p style="font-size:13px;color:#64748b">Se você não solicitou a redefinição, ignore este e-mail. Sua senha não será alterada.<br>O link expira em <strong>1 hora</strong>.</p>"""
+<p style="font-size:13px;color:#64748b">Se você não solicitou a redefinição, ignore este e-mail. Sua senha não será alterada.<br>O link expira em <strong>1 hora</strong>.</p>""",
     )
     return await _send(to, "Redefinição de senha — FinanceDash", html)
 
@@ -108,7 +113,7 @@ async def send_invite_email(to: str, org_name: str, role_label: str, token: str)
         f"""<p>Você recebeu um convite para ingressar na organização <strong>{org_name}</strong> no FinanceDash como <strong>{role_label}</strong>.</p>
 <p>Clique no botão abaixo para aceitar o convite e criar sua conta.</p>
 <p style="text-align:center"><a href="{url}" class="btn">Aceitar convite</a></p>
-<p style="font-size:13px;color:#64748b">O link expira em <strong>48 horas</strong>. Se você não esperava este convite, ignore este e-mail.</p>"""
+<p style="font-size:13px;color:#64748b">O link expira em <strong>48 horas</strong>. Se você não esperava este convite, ignore este e-mail.</p>""",
     )
     return await _send(to, f"Convite para {org_name} — FinanceDash", html)
 
@@ -119,20 +124,27 @@ async def send_trial_ending_email(to: str, name: str, days_left: int) -> bool:
         f"""<p>Olá, <strong>{name}</strong>!</p>
 <p>Seu período de teste gratuito do FinanceDash termina em <strong>{days_left} dia{"s" if days_left != 1 else ""}</strong>.</p>
 <p>Para continuar usando todas as funcionalidades, escolha um plano:</p>
-<p style="text-align:center"><a href="{_app_url()}/dashboard/billing" class="btn">Ver planos</a></p>"""
+<p style="text-align:center"><a href="{_app_url()}/dashboard/billing" class="btn">Ver planos</a></p>""",
     )
     return await _send(to, "Seu trial termina em breve — FinanceDash", html)
 
 
 # ─── Lead / Simulador ─────────────────────────────────────────────────────────
 
+
 def _fmt_brl(value: float) -> str:
     return f"R$ {value:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
-async def send_lead_confirmation_email(to: str, name: str, sim: dict, message: str | None = None) -> bool:
+async def send_lead_confirmation_email(
+    to: str, name: str, sim: dict, message: str | None = None
+) -> bool:
     payback = sim.get("payback_months")
-    payback_str = f"{payback:.0f} meses (~{sim.get('payback_years', 0):.1f} anos)" if payback else "Acima de 5 anos"
+    payback_str = (
+        f"{payback:.0f} meses (~{sim.get('payback_years', 0):.1f} anos)"
+        if payback
+        else "Acima de 5 anos"
+    )
     html = _base_template(
         f"Sua análise de investimento está aqui, {name.split()[0]}!",
         f"""
@@ -141,19 +153,19 @@ async def send_lead_confirmation_email(to: str, name: str, sim: dict, message: s
 <table style="width:100%;border-collapse:collapse;margin:20px 0">
   <tr style="background:#f1f5f9">
     <td style="padding:10px 14px;font-size:13px;color:#64748b">Modelo selecionado</td>
-    <td style="padding:10px 14px;font-weight:700;color:#1e293b">{sim.get('charger_type','—')} × {sim.get('num_chargers',1)} pontos</td>
+    <td style="padding:10px 14px;font-weight:700;color:#1e293b">{sim.get("charger_type", "—")} × {sim.get("num_chargers", 1)} pontos</td>
   </tr>
   <tr>
     <td style="padding:10px 14px;font-size:13px;color:#64748b">Investimento (CAPEX)</td>
-    <td style="padding:10px 14px;font-weight:700;color:#1e293b">{_fmt_brl(sim.get('capex', 0))}</td>
+    <td style="padding:10px 14px;font-weight:700;color:#1e293b">{_fmt_brl(sim.get("capex", 0))}</td>
   </tr>
   <tr style="background:#f1f5f9">
     <td style="padding:10px 14px;font-size:13px;color:#64748b">Receita mensal estimada</td>
-    <td style="padding:10px 14px;font-weight:700;color:#059669">{_fmt_brl(sim.get('monthly_revenue', 0))}</td>
+    <td style="padding:10px 14px;font-weight:700;color:#059669">{_fmt_brl(sim.get("monthly_revenue", 0))}</td>
   </tr>
   <tr>
     <td style="padding:10px 14px;font-size:13px;color:#64748b">Lucro líquido mensal</td>
-    <td style="padding:10px 14px;font-weight:700;color:#059669">{_fmt_brl(sim.get('monthly_net', 0))}</td>
+    <td style="padding:10px 14px;font-weight:700;color:#059669">{_fmt_brl(sim.get("monthly_net", 0))}</td>
   </tr>
   <tr style="background:#f1f5f9">
     <td style="padding:10px 14px;font-size:13px;color:#64748b">Payback estimado</td>
@@ -161,11 +173,11 @@ async def send_lead_confirmation_email(to: str, name: str, sim: dict, message: s
   </tr>
   <tr>
     <td style="padding:10px 14px;font-size:13px;color:#64748b">VPL em 5 anos</td>
-    <td style="padding:10px 14px;font-weight:700;color:#2563eb">{_fmt_brl(sim.get('npv_5y', 0))}</td>
+    <td style="padding:10px 14px;font-weight:700;color:#2563eb">{_fmt_brl(sim.get("npv_5y", 0))}</td>
   </tr>
   <tr style="background:#f1f5f9">
     <td style="padding:10px 14px;font-size:13px;color:#64748b">ROI em 5 anos</td>
-    <td style="padding:10px 14px;font-weight:700;color:#2563eb">{sim.get('roi_5y_pct', 0):.1f}%</td>
+    <td style="padding:10px 14px;font-weight:700;color:#2563eb">{sim.get("roi_5y_pct", 0):.1f}%</td>
   </tr>
 </table>
 
@@ -176,7 +188,7 @@ async def send_lead_confirmation_email(to: str, name: str, sim: dict, message: s
 
 <p>Quer uma análise personalizada e detalhada para o seu negócio? Nossa equipe está pronta para ajudar.</p>
 <p style="text-align:center"><a href="mailto:contato@financedash.com.br" class="btn">Falar com especialista</a></p>
-"""
+""",
     )
     return await _send(to, "📊 Sua simulação de ROI em estações de recarga — FinanceDash", html)
 
@@ -212,19 +224,21 @@ async def send_lead_notification_email(
   <tr><td style="padding:8px 14px;font-size:13px;color:#64748b">Localização</td><td style="padding:8px 14px">{city} / {state}</td></tr>
   <tr style="background:#f8fafc"><td style="padding:8px 14px;font-size:13px;color:#64748b">Setor</td><td style="padding:8px 14px">{sector}</td></tr>
   <tr><td style="padding:8px 14px;font-size:13px;color:#64748b">Cargo</td><td style="padding:8px 14px">{position}</td></tr>
-  {f'<tr style="background:#fff9e6"><td style="padding:8px 14px;font-size:13px;color:#64748b">Mensagem</td><td style="padding:8px 14px;font-style:italic">{message}</td></tr>' if message else ''}
+  {f'<tr style="background:#fff9e6"><td style="padding:8px 14px;font-size:13px;color:#64748b">Mensagem</td><td style="padding:8px 14px;font-style:italic">{message}</td></tr>' if message else ""}
 
   <tr style="background:#eff6ff"><td colspan="2" style="padding:8px 14px;font-weight:700;color:#1e40af;font-size:13px">SIMULAÇÃO</td></tr>
   <tr><td style="padding:8px 14px;font-size:13px;color:#64748b">Carregador</td><td style="padding:8px 14px;font-weight:600">{charger_type} × {num_chargers} pontos</td></tr>
-  <tr><td style="padding:8px 14px;font-size:13px;color:#64748b">Receita/mês</td><td style="padding:8px 14px;color:#059669;font-weight:600">{_fmt_brl(sim.get('monthly_revenue',0))}</td></tr>
+  <tr><td style="padding:8px 14px;font-size:13px;color:#64748b">Receita/mês</td><td style="padding:8px 14px;color:#059669;font-weight:600">{_fmt_brl(sim.get("monthly_revenue", 0))}</td></tr>
   <tr style="background:#f8fafc"><td style="padding:8px 14px;font-size:13px;color:#64748b">Payback</td><td style="padding:8px 14px;font-weight:600">{payback_str}</td></tr>
-  <tr><td style="padding:8px 14px;font-size:13px;color:#64748b">ROI 5 anos</td><td style="padding:8px 14px;font-weight:600">{sim.get('roi_5y_pct',0):.1f}%</td></tr>
+  <tr><td style="padding:8px 14px;font-size:13px;color:#64748b">ROI 5 anos</td><td style="padding:8px 14px;font-weight:600">{sim.get("roi_5y_pct", 0):.1f}%</td></tr>
 </table>
 
 <p style="text-align:center"><a href="{_app_url()}/dashboard/leads" class="btn">Ver todos os leads</a></p>
-"""
+""",
     )
-    return await _send(to, f"🔔 Novo lead: {lead_name} ({charger_type} × {num_chargers}) — FinanceDash", html)
+    return await _send(
+        to, f"🔔 Novo lead: {lead_name} ({charger_type} × {num_chargers}) — FinanceDash", html
+    )
 
 
 async def send_specialist_contact_notification(
@@ -253,12 +267,13 @@ async def send_specialist_contact_notification(
 </table>
 
 <p style="text-align:center"><a href="{_app_url()}/dashboard/leads" class="btn">Ver lead no CRM</a></p>
-"""
+""",
     )
     return await _send(to, f"💬 {lead_name} quer falar com especialista — FinanceDash", html)
 
 
 # ─── Alertas ──────────────────────────────────────────────────────────────────
+
 
 def send_alert_triggered_email_sync(
     to: str,
@@ -309,6 +324,6 @@ def send_alert_triggered_email_sync(
 <p style="text-align:center">
   <a href="{_app_url()}/dashboard" class="btn">Acessar Dashboard</a>
 </p>
-"""
+""",
     )
     return _send_sync(to, f"⚠️ Alerta: {alert_name} — {org_name} | FinanceDash", html)

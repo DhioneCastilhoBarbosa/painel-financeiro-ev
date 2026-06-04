@@ -48,6 +48,7 @@ def _read_from_storage(storage_key: str) -> bytes:
         return path.read_bytes()
     else:
         import boto3
+
         client = boto3.client(
             "s3",
             endpoint_url=f"https://{settings.r2_account_id}.r2.cloudflarestorage.com",
@@ -72,7 +73,9 @@ def process_file(self, file_id: str, storage_key: str, organization_id: str):
         data_file = db.get(DataFile, file_id)
         if not data_file:
             # Registro ainda não commitado — retry com backoff curto
-            raise self.retry(countdown=2, exc=RuntimeError(f"DataFile {file_id} not found, retrying"))
+            raise self.retry(
+                countdown=2, exc=RuntimeError(f"DataFile {file_id} not found, retrying")
+            )
 
         data_file.status = FileStatus.processing
         db.commit()

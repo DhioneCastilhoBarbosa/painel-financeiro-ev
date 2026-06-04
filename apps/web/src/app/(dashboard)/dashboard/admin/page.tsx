@@ -258,7 +258,7 @@ export default function AdminPage() {
                         <div className="flex items-center gap-2 shrink-0">
                           <Select
                             value={org.plan}
-                            onValueChange={(v) => updateOrgPlan(org.id, v)}
+                            onValueChange={(v) => { if (v) updateOrgPlan(org.id, v); }}
                             disabled={loadingAction === `plan-${org.id}`}
                           >
                             <SelectTrigger className="h-8 w-32 text-xs">

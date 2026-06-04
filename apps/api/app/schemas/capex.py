@@ -1,4 +1,3 @@
-
 from datetime import date, datetime
 from uuid import UUID
 
@@ -36,20 +35,20 @@ class CapexPerformance(BaseModel):
 
     months_elapsed: float
     # Receita
-    revenue_total: float       # desde installed_at (de sessões ou estimativa)
-    monthly_revenue_avg: float # média dos últimos 90 dias ou estimativa
+    revenue_total: float  # desde installed_at (de sessões ou estimativa)
+    monthly_revenue_avg: float  # média dos últimos 90 dias ou estimativa
     # Custos
     opex_total: float
     tax_total: float
-    net_total: float           # receita - opex - impostos
+    net_total: float  # receita - opex - impostos
     # Posição acumulada (negativa = ainda em payback)
-    cumulative: float          # net_total - capex_brl
+    cumulative: float  # net_total - capex_brl
     # Projeção
-    payback_months: float | None   # total de meses estimados para payback
-    months_remaining: float | None # meses restantes (None se já recuperou)
-    progress_pct: float            # 0-100, quanto do CAPEX já foi recuperado
+    payback_months: float | None  # total de meses estimados para payback
+    months_remaining: float | None  # meses restantes (None se já recuperou)
+    progress_pct: float  # 0-100, quanto do CAPEX já foi recuperado
     # Fonte dos dados
-    data_source: str               # "sessions" | "estimate" | "none"
+    data_source: str  # "sessions" | "estimate" | "none"
     sessions_count: int
 
 

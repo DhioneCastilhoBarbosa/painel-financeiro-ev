@@ -1,4 +1,3 @@
-
 from datetime import datetime
 from typing import Any
 from uuid import UUID
@@ -8,13 +7,16 @@ from pydantic import BaseModel, EmailStr, Field
 
 class ChargerItem(BaseModel):
     """Um tipo de carregador com sua quantidade na simulação multi-carregador."""
+
     charger_type: str = Field(..., min_length=1, max_length=50)
     num_chargers: int = Field(default=1, ge=1, le=500)
 
 
 class LeadRequest(BaseModel):
     name: str = Field(..., min_length=2, max_length=200)
-    cnpj: str = Field(..., min_length=11, max_length=20)  # aceita CPF (11 dígitos raw) ou CNPJ (18 chars formatado)
+    cnpj: str = Field(
+        ..., min_length=11, max_length=20
+    )  # aceita CPF (11 dígitos raw) ou CNPJ (18 chars formatado)
     email: EmailStr
     phone: str = Field(..., min_length=10, max_length=20)
     state: str = Field(..., min_length=2, max_length=50)
@@ -31,6 +33,7 @@ class LeadRequest(BaseModel):
 
 class EnterpriseContactRequest(BaseModel):
     """Contato do formulário Enterprise da página /solucao."""
+
     name: str = Field(..., min_length=2, max_length=200)
     cnpj: str = Field(..., min_length=11, max_length=20)
     email: EmailStr

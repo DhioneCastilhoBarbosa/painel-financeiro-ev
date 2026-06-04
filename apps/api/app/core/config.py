@@ -13,6 +13,7 @@ def _find_env_file() -> str | None:
             return str(candidate)
     return None
 
+
 _ENV_FILE = _find_env_file()
 
 
@@ -27,7 +28,9 @@ class Settings(BaseSettings):
     app_url: str = "http://localhost:3000"
 
     # Database
-    database_url: str = "postgresql+asyncpg://financedash:financedash_dev@localhost:5432/financedash"
+    database_url: str = (
+        "postgresql+asyncpg://financedash:financedash_dev@localhost:5432/financedash"
+    )
 
     # Redis
     redis_url: str = "redis://localhost:6379/0"

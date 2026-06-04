@@ -6,6 +6,7 @@ Em produção atrás de nginx / AWS ALB, o IP real do cliente chega no header
 X-Forwarded-For. Sem isso, TODOS os requests apareceriam vir do IP do proxy,
 tornando o rate limiting ineficaz.
 """
+
 from slowapi import Limiter
 from starlette.requests import Request
 

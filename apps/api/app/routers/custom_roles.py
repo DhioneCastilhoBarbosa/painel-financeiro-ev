@@ -19,6 +19,7 @@ router = APIRouter()
 
 # ── Schemas ──────────────────────────────────────────────────────────────────
 
+
 class CustomRoleCreate(BaseModel):
     name: str
     description: str | None = None
@@ -49,6 +50,7 @@ class AssignRoleRequest(BaseModel):
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
+
 def _require_admin(current_user: User) -> None:
     if current_user.role not in (UserRole.owner, UserRole.admin):
         raise HTTPException(status_code=403, detail="Apenas administradores podem gerenciar roles")
@@ -67,6 +69,7 @@ def _serialize(role: CustomRole, member_count: int = 0) -> dict:
 
 
 # ── Endpoints ─────────────────────────────────────────────────────────────────
+
 
 @router.get("")
 async def list_roles(current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
@@ -114,8 +117,16 @@ async def create_role(
     db.add(role)
     await db.flush()
 
-    await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                     "create_custom_role", "custom_role", str(role.id), f"name={role.name}")
+    await log_action(
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        "create_custom_role",
+        "custom_role",
+        str(role.id),
+        f"name={role.name}",
+    )
     await db.commit()
     return _serialize(role)
 
@@ -139,8 +150,16 @@ async def update_role(
     if body.permissions is not None:
         role.permissions = {p: bool(body.permissions.get(p, False)) for p in ALL_PERMISSIONS}
 
-    await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                     "update_custom_role", "custom_role", role_id, f"name={role.name}")
+    await log_action(
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        "update_custom_role",
+        "custom_role",
+        role_id,
+        f"name={role.name}",
+    )
     await db.commit()
     return _serialize(role)
 
@@ -157,8 +176,16 @@ async def delete_role(
         raise HTTPException(status_code=404, detail="Role não encontrado")
 
     # Membros com este role voltam para o built-in (SET NULL via FK)
-    await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                     "delete_custom_role", "custom_role", role_id, f"name={role.name}")
+    await log_action(
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        "delete_custom_role",
+        "custom_role",
+        role_id,
+        f"name={role.name}",
+    )
     await db.delete(role)
     await db.commit()
 
@@ -183,9 +210,16 @@ async def assign_role_to_member(
         raise HTTPException(status_code=400, detail="owner e admin não podem receber custom roles")
 
     member.custom_role_id = role.id
-    await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                     "assign_custom_role", "user", user_id,
-                     f"email={member.email} role={role.name}")
+    await log_action(
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        "assign_custom_role",
+        "user",
+        user_id,
+        f"email={member.email} role={role.name}",
+    )
     await db.commit()
     return {"message": "Role atribuído"}
 
@@ -204,6 +238,14 @@ async def remove_role_from_member(
         raise HTTPException(status_code=404, detail="Membro não encontrado")
 
     member.custom_role_id = None
-    await log_action(db, current_user.organization_id, current_user.id, current_user.email,
-                     "remove_custom_role", "user", user_id, f"email={member.email}")
+    await log_action(
+        db,
+        current_user.organization_id,
+        current_user.id,
+        current_user.email,
+        "remove_custom_role",
+        "user",
+        user_id,
+        f"email={member.email}",
+    )
     await db.commit()

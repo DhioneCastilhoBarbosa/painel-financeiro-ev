@@ -15,6 +15,7 @@ import pandas as pd
 
 # ─── Tipos auxiliares ─────────────────────────────────────────────────────────
 
+
 @dataclass
 class CostConfig:
     energy_cost_per_kwh: float = 0.75
@@ -28,6 +29,7 @@ class CostConfig:
 
 
 # ─── KPIs ─────────────────────────────────────────────────────────────────────
+
 
 def compute_kpis(df: pd.DataFrame) -> dict[str, Any]:
     """
@@ -47,7 +49,9 @@ def compute_kpis(df: pd.DataFrame) -> dict[str, Any]:
     total_rev = paid["revenue_total"].sum()
     pending_rev = df[df["payment_status"] == "pending"]["revenue_total"].sum()
 
-    user_counts = df.groupby("user_tag").size() if "user_tag" in df.columns else pd.Series(dtype=int)
+    user_counts = (
+        df.groupby("user_tag").size() if "user_tag" in df.columns else pd.Series(dtype=int)
+    )
 
     kwh_total = energy["energy_kwh"].sum()
     rev_per_kwh = (
@@ -96,16 +100,37 @@ def compute_kpis(df: pd.DataFrame) -> dict[str, Any]:
 
 def _empty_kpis() -> dict[str, Any]:
     keys = [
-        "total_sessions", "paid_sessions", "revenue", "pending_rev", "energy_kwh",
-        "avg_kwh", "avg_ticket", "rev_per_kwh", "rev_per_day", "kwh_per_day",
-        "sessions_per_day", "days", "conversion", "approval", "rejection_rate",
-        "unique_users", "one_time", "power_users", "power_rev_pct", "idle_rev",
-        "idle_sessions", "start_fee_rev", "energy_rev", "proj_annual", "rejected_sessions",
+        "total_sessions",
+        "paid_sessions",
+        "revenue",
+        "pending_rev",
+        "energy_kwh",
+        "avg_kwh",
+        "avg_ticket",
+        "rev_per_kwh",
+        "rev_per_day",
+        "kwh_per_day",
+        "sessions_per_day",
+        "days",
+        "conversion",
+        "approval",
+        "rejection_rate",
+        "unique_users",
+        "one_time",
+        "power_users",
+        "power_rev_pct",
+        "idle_rev",
+        "idle_sessions",
+        "start_fee_rev",
+        "energy_rev",
+        "proj_annual",
+        "rejected_sessions",
     ]
     return {k: 0 for k in keys}
 
 
 # ─── Time series ──────────────────────────────────────────────────────────────
+
 
 def daily_revenue(df: pd.DataFrame) -> list[dict]:
     """Retorna série diária de receita e sessões para o gráfico principal."""
@@ -113,11 +138,15 @@ def daily_revenue(df: pd.DataFrame) -> list[dict]:
         return []
     paid = df[df["is_paid"]].copy()
     paid["date"] = paid["started_at"].dt.date
-    daily = paid.groupby("date").agg(
-        revenue=("revenue_total", "sum"),
-        sessions=("revenue_total", "count"),
-        kwh=("energy_kwh", "sum"),
-    ).reset_index()
+    daily = (
+        paid.groupby("date")
+        .agg(
+            revenue=("revenue_total", "sum"),
+            sessions=("revenue_total", "count"),
+            kwh=("energy_kwh", "sum"),
+        )
+        .reset_index()
+    )
     return [
         {
             "date": str(r["date"]),
@@ -135,11 +164,15 @@ def monthly_revenue(df: pd.DataFrame) -> list[dict]:
         return []
     paid = df[df["is_paid"]].copy()
     paid["month"] = paid["started_at"].dt.to_period("M")
-    monthly = paid.groupby("month").agg(
-        revenue=("revenue_total", "sum"),
-        sessions=("revenue_total", "count"),
-        kwh=("energy_kwh", "sum"),
-    ).reset_index()
+    monthly = (
+        paid.groupby("month")
+        .agg(
+            revenue=("revenue_total", "sum"),
+            sessions=("revenue_total", "count"),
+            kwh=("energy_kwh", "sum"),
+        )
+        .reset_index()
+    )
     return [
         {
             "date": r["month"].to_timestamp().strftime("%Y-%m-%d"),
@@ -159,22 +192,28 @@ def weekly_revenue(df: pd.DataFrame) -> list[dict]:
     paid = df[df["is_paid"]].copy()
     paid["week"] = paid["started_at"].dt.isocalendar().week.astype(int)
     paid["year"] = paid["started_at"].dt.isocalendar().year.astype(int)
-    weekly = paid.groupby(["year", "week"]).agg(
-        revenue=("revenue_total", "sum"),
-        sessions=("revenue_total", "count"),
-        kwh=("energy_kwh", "sum"),
-    ).reset_index()
+    weekly = (
+        paid.groupby(["year", "week"])
+        .agg(
+            revenue=("revenue_total", "sum"),
+            sessions=("revenue_total", "count"),
+            kwh=("energy_kwh", "sum"),
+        )
+        .reset_index()
+    )
     result = []
     for _, r in weekly.iterrows():
         year, week = int(r["year"]), int(r["week"])
         week_start = date.fromisocalendar(year, week, 1)
-        result.append({
-            "date": week_start.isoformat(),
-            "week": f"{year}-W{week:02d}",
-            "revenue": float(r["revenue"]),
-            "sessions": int(r["sessions"]),
-            "kwh": float(r["kwh"]),
-        })
+        result.append(
+            {
+                "date": week_start.isoformat(),
+                "week": f"{year}-W{week:02d}",
+                "revenue": float(r["revenue"]),
+                "sessions": int(r["sessions"]),
+                "kwh": float(r["kwh"]),
+            }
+        )
     return result
 
 
@@ -184,10 +223,15 @@ def hourly_distribution(df: pd.DataFrame) -> list[dict]:
         return [{"hour": h, "sessions": 0, "revenue": 0.0} for h in range(24)]
     df = df.copy()
     df["hour"] = df["started_at"].dt.hour
-    agg = df.groupby("hour").agg(
-        sessions=("started_at", "count"),
-        revenue=("revenue_total", "sum"),
-    ).reindex(range(24), fill_value=0).reset_index()
+    agg = (
+        df.groupby("hour")
+        .agg(
+            sessions=("started_at", "count"),
+            revenue=("revenue_total", "sum"),
+        )
+        .reindex(range(24), fill_value=0)
+        .reset_index()
+    )
     return [
         {"hour": int(r["hour"]), "sessions": int(r["sessions"]), "revenue": float(r["revenue"])}
         for _, r in agg.iterrows()
@@ -195,6 +239,7 @@ def hourly_distribution(df: pd.DataFrame) -> list[dict]:
 
 
 # ─── Estações ─────────────────────────────────────────────────────────────────
+
 
 def station_ranking(df: pd.DataFrame, top_n: int = 15) -> list[dict]:
     """Top estações por receita."""
@@ -204,7 +249,11 @@ def station_ranking(df: pd.DataFrame, top_n: int = 15) -> list[dict]:
     days = max(df["started_at"].dt.date.nunique(), 1)
     agg = (
         paid.groupby("station_name")
-        .agg(revenue=("revenue_total", "sum"), sessions=("started_at", "count"), kwh=("energy_kwh", "sum"))
+        .agg(
+            revenue=("revenue_total", "sum"),
+            sessions=("started_at", "count"),
+            kwh=("energy_kwh", "sum"),
+        )
         .reset_index()
         .sort_values("revenue", ascending=False)
         .head(top_n)
@@ -248,6 +297,7 @@ def occupancy_rate(df: pd.DataFrame, operating_hours: int = 24, top_n: int = 15)
 
 # ─── Usuários ─────────────────────────────────────────────────────────────────
 
+
 def user_segmentation(df: pd.DataFrame) -> dict[str, Any]:
     """Segmenta usuários por frequência de uso."""
     if df.empty or "user_tag" not in df.columns:
@@ -266,13 +316,18 @@ def user_segmentation(df: pd.DataFrame) -> dict[str, Any]:
 
     return {
         "segments": [
-            {"label": label, "users": int(seg_count.get(label, 0)), "revenue": float(seg_rev.get(label, 0))}
+            {
+                "label": label,
+                "users": int(seg_count.get(label, 0)),
+                "revenue": float(seg_rev.get(label, 0)),
+            }
             for label in labels
         ],
     }
 
 
 # ─── Pagamentos ───────────────────────────────────────────────────────────────
+
 
 def payment_breakdown(df: pd.DataFrame) -> dict[str, Any]:
     """Funil de conversão e breakdown por método de pagamento."""
@@ -293,12 +348,20 @@ def payment_breakdown(df: pd.DataFrame) -> dict[str, Any]:
     methods: list[dict] = []
     if "payment_method" in df.columns:
         paid = df[df["is_paid"]]
-        method_agg = paid.groupby("payment_method").agg(
-            sessions=("started_at", "count"),
-            revenue=("revenue_total", "sum"),
-        ).reset_index()
+        method_agg = (
+            paid.groupby("payment_method")
+            .agg(
+                sessions=("started_at", "count"),
+                revenue=("revenue_total", "sum"),
+            )
+            .reset_index()
+        )
         methods = [
-            {"method": r["payment_method"], "sessions": int(r["sessions"]), "revenue": float(r["revenue"])}
+            {
+                "method": r["payment_method"],
+                "sessions": int(r["sessions"]),
+                "revenue": float(r["revenue"]),
+            }
             for _, r in method_agg.iterrows()
         ]
 
@@ -319,23 +382,29 @@ def revenue_sources(df: pd.DataFrame) -> dict[str, Any]:
     # Semanal
     paid["week"] = paid["started_at"].dt.isocalendar().week.astype(int)
     paid["year"] = paid["started_at"].dt.isocalendar().year.astype(int)
-    weekly = paid.groupby(["year", "week"]).agg(
-        start_fee=("revenue_start_fee", "sum"),
-        energy=("revenue_energy", "sum"),
-        idle=("revenue_idle", "sum"),
-    ).reset_index()
+    weekly = (
+        paid.groupby(["year", "week"])
+        .agg(
+            start_fee=("revenue_start_fee", "sum"),
+            energy=("revenue_energy", "sum"),
+            idle=("revenue_idle", "sum"),
+        )
+        .reset_index()
+    )
 
     weekly_list = []
     for _, r in weekly.iterrows():
         year, week = int(r["year"]), int(r["week"])
         week_start = date.fromisocalendar(year, week, 1)
-        weekly_list.append({
-            "date": week_start.isoformat(),
-            "week": f"{year}-W{week:02d}",
-            "start_fee": float(r["start_fee"]),
-            "energy": float(r["energy"]),
-            "idle": float(r["idle"]),
-        })
+        weekly_list.append(
+            {
+                "date": week_start.isoformat(),
+                "week": f"{year}-W{week:02d}",
+                "start_fee": float(r["start_fee"]),
+                "energy": float(r["energy"]),
+                "idle": float(r["idle"]),
+            }
+        )
 
     return {
         "start_fee": start_fee,
@@ -350,11 +419,15 @@ def connector_breakdown(df: pd.DataFrame) -> list[dict]:
     """Sessões e receita por tipo de conector."""
     if df.empty or "connector_type" not in df.columns:
         return []
-    agg = df.groupby("connector_type").agg(
-        sessions=("started_at", "count"),
-        revenue=("revenue_total", "sum"),
-        kwh=("energy_kwh", "sum"),
-    ).reset_index()
+    agg = (
+        df.groupby("connector_type")
+        .agg(
+            sessions=("started_at", "count"),
+            revenue=("revenue_total", "sum"),
+            kwh=("energy_kwh", "sum"),
+        )
+        .reset_index()
+    )
     return [
         {
             "connector_type": r["connector_type"],
@@ -392,6 +465,7 @@ def weekday_patterns(df: pd.DataFrame) -> list[dict]:
 
 
 # ─── DRE ─────────────────────────────────────────────────────────────────────
+
 
 def _period_label(period_start: date, granularity: str) -> str:
     if granularity == "weekly":
@@ -454,38 +528,49 @@ def compute_dre(
         revenue_split = net_revenue * cost_config.revenue_split_pct
         maintenance = cost_config.maintenance_monthly * (days_in_period / 30)
 
-        total_costs = energy_cost + operational_cost + platform_fee + platform_fixed + tax + revenue_split + maintenance
+        total_costs = (
+            energy_cost
+            + operational_cost
+            + platform_fee
+            + platform_fixed
+            + tax
+            + revenue_split
+            + maintenance
+        )
 
         ebitda = net_revenue - total_costs
         depreciation = 0.0  # calculado no payback, não aqui
         ebit = ebitda - depreciation
 
-        rows.append({
-            "period": _period_label(period, granularity),
-            "period_start": period.isoformat(),
-            "sessions": sessions,
-            "kwh": round(kwh, 2),
-            "gross_revenue": round(gross_revenue, 2),
-            "voucher_discount": round(voucher_discount, 2),
-            "net_revenue": round(net_revenue, 2),
-            "energy_cost": round(energy_cost, 2),
-            "operational_cost": round(operational_cost, 2),
-            "platform_fee": round(platform_fee, 2),
-            "platform_fixed": round(platform_fixed, 2),
-            "tax": round(tax, 2),
-            "revenue_split": round(revenue_split, 2),
-            "maintenance": round(maintenance, 2),
-            "total_costs": round(total_costs, 2),
-            "ebitda": round(ebitda, 2),
-            "ebitda_margin_pct": round(ebitda / net_revenue * 100, 1) if net_revenue else 0.0,
-            "ebit": round(ebit, 2),
-            "net_margin_pct": round(ebit / net_revenue * 100, 1) if net_revenue else 0.0,
-        })
+        rows.append(
+            {
+                "period": _period_label(period, granularity),
+                "period_start": period.isoformat(),
+                "sessions": sessions,
+                "kwh": round(kwh, 2),
+                "gross_revenue": round(gross_revenue, 2),
+                "voucher_discount": round(voucher_discount, 2),
+                "net_revenue": round(net_revenue, 2),
+                "energy_cost": round(energy_cost, 2),
+                "operational_cost": round(operational_cost, 2),
+                "platform_fee": round(platform_fee, 2),
+                "platform_fixed": round(platform_fixed, 2),
+                "tax": round(tax, 2),
+                "revenue_split": round(revenue_split, 2),
+                "maintenance": round(maintenance, 2),
+                "total_costs": round(total_costs, 2),
+                "ebitda": round(ebitda, 2),
+                "ebitda_margin_pct": round(ebitda / net_revenue * 100, 1) if net_revenue else 0.0,
+                "ebit": round(ebit, 2),
+                "net_margin_pct": round(ebit / net_revenue * 100, 1) if net_revenue else 0.0,
+            }
+        )
 
     return rows
 
 
 # ─── Insights ─────────────────────────────────────────────────────────────────
+
 
 def generate_insights(df: pd.DataFrame, kpis: dict) -> list[dict]:
     """Gera insights automáticos baseados nos dados."""
@@ -493,105 +578,127 @@ def generate_insights(df: pd.DataFrame, kpis: dict) -> list[dict]:
 
     # Conversão / reprovação
     if kpis.get("conversion", 0) < 70:
-        insights.append({
-            "type": "warning",
-            "severity": "warning",
-            "title": "Taxa de conversão baixa",
-            "body": f"Taxa de aprovação de {kpis['conversion']:.1f}% indica oportunidade de melhoria no processo de pagamento.",
-        })
+        insights.append(
+            {
+                "type": "warning",
+                "severity": "warning",
+                "title": "Taxa de conversão baixa",
+                "body": f"Taxa de aprovação de {kpis['conversion']:.1f}% indica oportunidade de melhoria no processo de pagamento.",
+            }
+        )
     elif kpis.get("conversion", 0) >= 90:
-        insights.append({
-            "type": "success",
-            "severity": "success",
-            "title": "Excelente taxa de conversão",
-            "body": f"Aprovação de {kpis['conversion']:.1f}% — sua integração de gateway está performando muito bem.",
-        })
+        insights.append(
+            {
+                "type": "success",
+                "severity": "success",
+                "title": "Excelente taxa de conversão",
+                "body": f"Aprovação de {kpis['conversion']:.1f}% — sua integração de gateway está performando muito bem.",
+            }
+        )
 
     # Taxa de reprovação
     if kpis.get("rejection_rate", 0) > 15:
-        insights.append({
-            "type": "warning",
-            "severity": "warning",
-            "title": "Alta taxa de reprovação de pagamento",
-            "body": f"{kpis['rejection_rate']:.1f}% dos pagamentos não foram aprovados ({kpis.get('rejected_sessions', 0)} sessões). Verifique configuração do gateway.",
-        })
+        insights.append(
+            {
+                "type": "warning",
+                "severity": "warning",
+                "title": "Alta taxa de reprovação de pagamento",
+                "body": f"{kpis['rejection_rate']:.1f}% dos pagamentos não foram aprovados ({kpis.get('rejected_sessions', 0)} sessões). Verifique configuração do gateway.",
+            }
+        )
 
     # Power users
     if kpis.get("power_rev_pct", 0) > 60:
-        insights.append({
-            "type": "info",
-            "severity": "info",
-            "title": "Alta concentração em power users",
-            "body": f"Power users (5+ sessões) representam {kpis['power_rev_pct']:.1f}% da receita. Considere programa de fidelidade.",
-        })
+        insights.append(
+            {
+                "type": "info",
+                "severity": "info",
+                "title": "Alta concentração em power users",
+                "body": f"Power users (5+ sessões) representam {kpis['power_rev_pct']:.1f}% da receita. Considere programa de fidelidade.",
+            }
+        )
 
     # One-time users
     if kpis.get("unique_users", 0) > 0:
         one_time_pct = kpis.get("one_time", 0) / kpis["unique_users"] * 100
         if one_time_pct > 60:
-            insights.append({
-                "type": "info",
-                "severity": "info",
-                "title": "Maioria de usuários esporádicos",
-                "body": f"{one_time_pct:.0f}% dos usuários carregaram apenas uma vez. Estratégias de retenção podem aumentar receita recorrente.",
-            })
+            insights.append(
+                {
+                    "type": "info",
+                    "severity": "info",
+                    "title": "Maioria de usuários esporádicos",
+                    "body": f"{one_time_pct:.0f}% dos usuários carregaram apenas uma vez. Estratégias de retenção podem aumentar receita recorrente.",
+                }
+            )
 
     # Ociosidade
     if kpis.get("idle_rev", 0) > 0:
         idle_pct = kpis["idle_rev"] / kpis["revenue"] * 100 if kpis.get("revenue") else 0
-        insights.append({
-            "type": "success",
-            "severity": "success",
-            "title": "Receita de ociosidade ativa",
-            "body": f"R$ {kpis['idle_rev']:,.2f} em taxas de ociosidade ({idle_pct:.1f}% da receita).",
-        })
+        insights.append(
+            {
+                "type": "success",
+                "severity": "success",
+                "title": "Receita de ociosidade ativa",
+                "body": f"R$ {kpis['idle_rev']:,.2f} em taxas de ociosidade ({idle_pct:.1f}% da receita).",
+            }
+        )
 
     # Receita pendente
     if kpis.get("pending_rev", 0) > kpis.get("revenue", 1) * 0.1:
-        insights.append({
-            "type": "warning",
-            "severity": "warning",
-            "title": "Receita pendente elevada",
-            "body": f"R$ {kpis['pending_rev']:,.2f} em pagamentos com status pending — verifique integração e inadimplência.",
-        })
+        insights.append(
+            {
+                "type": "warning",
+                "severity": "warning",
+                "title": "Receita pendente elevada",
+                "body": f"R$ {kpis['pending_rev']:,.2f} em pagamentos com status pending — verifique integração e inadimplência.",
+            }
+        )
 
     # Eficiência energética
     rev_per_kwh = kpis.get("rev_per_kwh", 0)
     if rev_per_kwh > 0:
         if rev_per_kwh >= 2.0:
-            insights.append({
-                "type": "success",
-                "severity": "success",
-                "title": "Alta receita por kWh",
-                "body": f"R$ {rev_per_kwh:.2f}/kWh médio — precificação otimizada e boa eficiência de monetização.",
-            })
+            insights.append(
+                {
+                    "type": "success",
+                    "severity": "success",
+                    "title": "Alta receita por kWh",
+                    "body": f"R$ {rev_per_kwh:.2f}/kWh médio — precificação otimizada e boa eficiência de monetização.",
+                }
+            )
         elif rev_per_kwh < 1.0:
-            insights.append({
-                "type": "warning",
-                "severity": "warning",
-                "title": "Baixa receita por kWh",
-                "body": f"R$ {rev_per_kwh:.2f}/kWh médio está abaixo do esperado. Revise a tabela de preços.",
-            })
+            insights.append(
+                {
+                    "type": "warning",
+                    "severity": "warning",
+                    "title": "Baixa receita por kWh",
+                    "body": f"R$ {rev_per_kwh:.2f}/kWh médio está abaixo do esperado. Revise a tabela de preços.",
+                }
+            )
 
     # Projeção anual
     proj = kpis.get("proj_annual", 0)
     if proj > 0 and kpis.get("days", 0) >= 30:
-        insights.append({
-            "type": "info",
-            "severity": "info",
-            "title": "Projeção anual calculada",
-            "body": f"Com base nos últimos {kpis['days']} dias, a receita anual projetada é de R$ {proj:,.0f}.",
-        })
+        insights.append(
+            {
+                "type": "info",
+                "severity": "info",
+                "title": "Projeção anual calculada",
+                "body": f"Com base nos últimos {kpis['days']} dias, a receita anual projetada é de R$ {proj:,.0f}.",
+            }
+        )
 
     # Sessões por dia
     spd = kpis.get("sessions_per_day", 0)
     if spd > 0 and spd < 2 and kpis.get("days", 0) >= 14:
-        insights.append({
-            "type": "warning",
-            "severity": "warning",
-            "title": "Baixa utilização diária",
-            "body": f"Média de {spd:.1f} sessões/dia. Avalie campanhas de divulgação ou ajuste de localização dos pontos.",
-        })
+        insights.append(
+            {
+                "type": "warning",
+                "severity": "warning",
+                "title": "Baixa utilização diária",
+                "body": f"Média de {spd:.1f} sessões/dia. Avalie campanhas de divulgação ou ajuste de localização dos pontos.",
+            }
+        )
 
     # Concentração de receita por horário
     if not df.empty:
@@ -601,24 +708,38 @@ def generate_insights(df: pd.DataFrame, kpis: dict) -> list[dict]:
             peak_hour = df_copy.groupby("hour")["revenue_total"].sum().idxmax()
             peak_rev_pct = (
                 df_copy[df_copy["hour"] == peak_hour]["revenue_total"].sum()
-                / df_copy["revenue_total"].sum() * 100
+                / df_copy["revenue_total"].sum()
+                * 100
             )
             if peak_rev_pct > 20:
-                insights.append({
-                    "type": "info",
-                    "severity": "info",
-                    "title": f"Pico de receita às {int(peak_hour)}h",
-                    "body": f"{peak_rev_pct:.0f}% da receita se concentra nessa hora. Considere preços dinâmicos para redistribuir demanda.",
-                })
+                insights.append(
+                    {
+                        "type": "info",
+                        "severity": "info",
+                        "title": f"Pico de receita às {int(peak_hour)}h",
+                        "body": f"{peak_rev_pct:.0f}% da receita se concentra nessa hora. Considere preços dinâmicos para redistribuir demanda.",
+                    }
+                )
 
     return insights
 
 
 # ─── Análise aprofundada de usuários ─────────────────────────────────────────
 
+
 def user_deep_analysis(df: pd.DataFrame) -> dict[str, Any]:
     """Top users, voucher behavior, user base evolution, churn."""
-    EMPTY = {"top_users": [], "voucher": {"total_sessions": 0, "total_users": 0, "retained_users": 0, "retention_rate": 0.0, "by_segment": []}, "evolution": {"weekly": [], "monthly": [], "quarterly": []}}
+    EMPTY = {
+        "top_users": [],
+        "voucher": {
+            "total_sessions": 0,
+            "total_users": 0,
+            "retained_users": 0,
+            "retention_rate": 0.0,
+            "by_segment": [],
+        },
+        "evolution": {"weekly": [], "monthly": [], "quarterly": []},
+    }
     if df.empty or "user_tag" not in df.columns:
         return EMPTY
 
@@ -629,18 +750,26 @@ def user_deep_analysis(df: pd.DataFrame) -> dict[str, Any]:
     has_voucher_col = "has_voucher" in df.columns
 
     # ── Top 20 users ──────────────────────────────────────────────────────────
-    user_stats = paid.groupby("user_tag").agg(
-        sessions=("started_at", "count"),
-        revenue=("revenue_total", "sum"),
-        avg_duration=("duration_minutes", "mean"),
-        kwh=("energy_kwh", "sum"),
-        voucher_sessions=("has_voucher", "sum") if has_voucher_col else ("started_at", lambda _: 0),
-    ).reset_index()
+    user_stats = (
+        paid.groupby("user_tag")
+        .agg(
+            sessions=("started_at", "count"),
+            revenue=("revenue_total", "sum"),
+            avg_duration=("duration_minutes", "mean"),
+            kwh=("energy_kwh", "sum"),
+            voucher_sessions=("has_voucher", "sum")
+            if has_voucher_col
+            else ("started_at", lambda _: 0),
+        )
+        .reset_index()
+    )
 
     all_sessions = df.groupby("user_tag").size().rename("total_sessions")
     user_stats = user_stats.join(all_sessions, on="user_tag", how="left").fillna(0)
     user_stats["avg_ticket"] = user_stats["revenue"] / user_stats["sessions"].clip(lower=1)
-    user_stats["voucher_pct"] = user_stats["voucher_sessions"] / user_stats["sessions"].clip(lower=1) * 100
+    user_stats["voucher_pct"] = (
+        user_stats["voucher_sessions"] / user_stats["sessions"].clip(lower=1) * 100
+    )
 
     # Resolve user_name per tag (last non-null value)
     has_name_col = "user_name" in df.columns
@@ -660,7 +789,9 @@ def user_deep_analysis(df: pd.DataFrame) -> dict[str, Any]:
         {
             "user_name": str(r["user_name"]) if pd.notna(r["user_name"]) else None,
             "user_tag": str(r["user_tag"]),
-            "display_label": str(r["user_name"]) if pd.notna(r["user_name"]) else str(r["user_tag"])[:14],
+            "display_label": str(r["user_name"])
+            if pd.notna(r["user_name"])
+            else str(r["user_tag"])[:14],
             "sessions": int(r["sessions"]),
             "revenue": round(float(r["revenue"]), 2),
             "avg_ticket": round(float(r["avg_ticket"]), 2),
@@ -687,12 +818,18 @@ def user_deep_analysis(df: pd.DataFrame) -> dict[str, Any]:
             if len(back) > 0:
                 retained += 1
 
-        retention_rate = round(retained / total_voucher_users * 100, 1) if total_voucher_users else 0.0
+        retention_rate = (
+            round(retained / total_voucher_users * 100, 1) if total_voucher_users else 0.0
+        )
 
-        all_u = df.groupby("user_tag").agg(
-            total_s=("started_at", "count"),
-            v_s=("has_voucher", "sum"),
-        ).reset_index()
+        all_u = (
+            df.groupby("user_tag")
+            .agg(
+                total_s=("started_at", "count"),
+                v_s=("has_voucher", "sum"),
+            )
+            .reset_index()
+        )
 
         def _seg(n: int) -> str:
             if n == 1:
@@ -705,11 +842,15 @@ def user_deep_analysis(df: pd.DataFrame) -> dict[str, Any]:
 
         ORDER = ["1 sessão", "2–4", "5–9", "10+"]
         all_u["seg"] = all_u["total_s"].apply(_seg)
-        seg_agg = all_u.groupby("seg").agg(
-            total_users=("user_tag", "count"),
-            users_with_voucher=("v_s", lambda x: (x > 0).sum()),
-            voucher_sessions=("v_s", "sum"),
-        ).reset_index()
+        seg_agg = (
+            all_u.groupby("seg")
+            .agg(
+                total_users=("user_tag", "count"),
+                users_with_voucher=("v_s", lambda x: (x > 0).sum()),
+                voucher_sessions=("v_s", "sum"),
+            )
+            .reset_index()
+        )
         seg_agg["_ord"] = seg_agg["seg"].apply(lambda s: ORDER.index(s) if s in ORDER else 99)
         seg_agg = seg_agg.sort_values("_ord")
 
@@ -719,7 +860,9 @@ def user_deep_analysis(df: pd.DataFrame) -> dict[str, Any]:
                 "total_users": int(r["total_users"]),
                 "users_with_voucher": int(r["users_with_voucher"]),
                 "voucher_sessions": int(r["voucher_sessions"]),
-                "voucher_pct": round(r["users_with_voucher"] / r["total_users"] * 100, 1) if r["total_users"] > 0 else 0.0,
+                "voucher_pct": round(r["users_with_voucher"] / r["total_users"] * 100, 1)
+                if r["total_users"] > 0
+                else 0.0,
             }
             for _, r in seg_agg.iterrows()
         ]
@@ -741,26 +884,26 @@ def user_deep_analysis(df: pd.DataFrame) -> dict[str, Any]:
             churned = len(prev - users)
             churn_rate = round(churned / len(prev) * 100, 1) if prev else 0.0
             seen |= users
-            rows.append({
-                "period": label_fn(period),
-                "active": len(users),
-                "new": new,
-                "returning": returning,
-                "churned": churned,
-                "churn_rate": churn_rate,
-            })
+            rows.append(
+                {
+                    "period": label_fn(period),
+                    "active": len(users),
+                    "new": new,
+                    "returning": returning,
+                    "churned": churned,
+                    "churn_rate": churn_rate,
+                }
+            )
             prev = users
         return rows
 
     df["_wk"] = df["started_at"].dt.to_period("W").apply(lambda p: p.start_time.date().isoformat())
     df["_mo"] = df["started_at"].dt.to_period("M").apply(lambda p: p.start_time.strftime("%b/%Y"))
-    df["_qt"] = df["started_at"].apply(
-        lambda dt: f"T{(dt.month - 1) // 3 + 1}/{dt.year}"
-    )
+    df["_qt"] = df["started_at"].apply(lambda dt: f"T{(dt.month - 1) // 3 + 1}/{dt.year}")
 
-    weekly_ev  = _evolution(df, "_wk", lambda p: p)
+    weekly_ev = _evolution(df, "_wk", lambda p: p)
     monthly_ev = _evolution(df, "_mo", lambda p: p)
-    qtrly_ev   = _evolution(df, "_qt", lambda p: p)
+    qtrly_ev = _evolution(df, "_qt", lambda p: p)
 
     return {
         "top_users": top_users,
@@ -781,6 +924,7 @@ def user_deep_analysis(df: pd.DataFrame) -> dict[str, Any]:
 
 # ─── Churn de estações ───────────────────────────────────────────────────────
 
+
 def station_churn(df: pd.DataFrame, threshold_pct: float = 30.0) -> list[dict]:
     """Estações com queda de sessões MoM > threshold_pct% no período disponível."""
     if df.empty or "station_name" not in df.columns:
@@ -793,12 +937,18 @@ def station_churn(df: pd.DataFrame, threshold_pct: float = 30.0) -> list[dict]:
         return []
 
     prev_month, curr_month = months[-2], months[-1]
-    prev_counts = df[df["month"] == prev_month].groupby("station_name").size().rename("prev_sessions")
-    curr_counts = df[df["month"] == curr_month].groupby("station_name").size().rename("curr_sessions")
+    prev_counts = (
+        df[df["month"] == prev_month].groupby("station_name").size().rename("prev_sessions")
+    )
+    curr_counts = (
+        df[df["month"] == curr_month].groupby("station_name").size().rename("curr_sessions")
+    )
 
     merged = prev_counts.to_frame().join(curr_counts, how="outer").fillna(0)
     merged["change_pct"] = (
-        (merged["curr_sessions"] - merged["prev_sessions"]) / merged["prev_sessions"].clip(lower=1) * 100
+        (merged["curr_sessions"] - merged["prev_sessions"])
+        / merged["prev_sessions"].clip(lower=1)
+        * 100
     )
 
     churned = (
@@ -822,6 +972,7 @@ def station_churn(df: pd.DataFrame, threshold_pct: float = 30.0) -> list[dict]:
 
 # ─── Heatmap dia × hora ───────────────────────────────────────────────────────
 
+
 def session_heatmap(df: pd.DataFrame) -> list[dict]:
     """Matriz 7×24 de contagens de sessões por dia da semana × hora do dia."""
     if df.empty:
@@ -841,6 +992,7 @@ def session_heatmap(df: pd.DataFrame) -> list[dict]:
 
 # ─── Duração de sessões ───────────────────────────────────────────────────────
 
+
 def session_duration_stats(df: pd.DataFrame) -> dict[str, Any]:
     """Distribuição de duração das sessões e ticket médio por faixa."""
     if df.empty or "duration_minutes" not in df.columns:
@@ -854,18 +1006,27 @@ def session_duration_stats(df: pd.DataFrame) -> dict[str, Any]:
     median_duration = float(d["duration_minutes"].median())
 
     BINS = [0, 15, 30, 60, 90, 120, 180, float("inf")]
-    LABELS = ["0–15 min", "15–30 min", "30–60 min", "60–90 min", "90–120 min", "120–180 min", "180+ min"]
+    LABELS = [
+        "0–15 min",
+        "15–30 min",
+        "30–60 min",
+        "60–90 min",
+        "90–120 min",
+        "120–180 min",
+        "180+ min",
+    ]
 
     d["_bucket"] = pd.cut(d["duration_minutes"], bins=BINS, labels=LABELS, right=True)
     paid_d = d[d["is_paid"]].copy()
 
     sessions_by_bucket = d.groupby("_bucket", observed=True).size().rename("sessions")
-    ticket_by_bucket = paid_d.groupby("_bucket", observed=True)["revenue_total"].mean().rename("avg_ticket")
+    ticket_by_bucket = (
+        paid_d.groupby("_bucket", observed=True)["revenue_total"].mean().rename("avg_ticket")
+    )
     kwh_by_bucket = paid_d.groupby("_bucket", observed=True)["energy_kwh"].mean().rename("avg_kwh")
 
     result = (
-        sessions_by_bucket
-        .to_frame()
+        sessions_by_bucket.to_frame()
         .join(ticket_by_bucket, how="left")
         .join(kwh_by_bucket, how="left")
         .fillna(0)

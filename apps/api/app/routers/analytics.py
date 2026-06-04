@@ -3,7 +3,6 @@ Endpoints de analytics — todos os dados do dashboard financeiro.
 Queries no banco → pandas → services/analytics.py → JSON.
 """
 
-
 from datetime import date
 
 import pandas as pd
@@ -86,14 +85,14 @@ async def _load_df(
         # Converte UTC → fuso local e remove tzinfo: todos os .dt.hour/.dt.date
         # nas funções de analytics passam a operar no horário local da organização.
         df["started_at"] = (
-            pd.to_datetime(df["started_at"], utc=True)
-            .dt.tz_convert(tz)
-            .dt.tz_localize(None)
+            pd.to_datetime(df["started_at"], utc=True).dt.tz_convert(tz).dt.tz_localize(None)
         )
     return df
 
 
-async def _load_cost_config(cost_config_id: str | None, organization_id, db: AsyncSession) -> CostConfig:
+async def _load_cost_config(
+    cost_config_id: str | None, organization_id, db: AsyncSession
+) -> CostConfig:
     if cost_config_id:
         cfg = await db.get(CostConfiguration, cost_config_id)
         if cfg and str(cfg.organization_id) == str(organization_id):
@@ -112,6 +111,7 @@ async def _load_cost_config(cost_config_id: str | None, organization_id, db: Asy
 
 # ─── Filter params helper ─────────────────────────────────────────────────────
 
+
 def _filter_params(
     date_from: date | None = Query(None),
     date_to: date | None = Query(None),
@@ -119,12 +119,21 @@ def _filter_params(
     stations: list[str] | None = Query(None),
     connectors: list[str] | None = Query(None),
 ):
-    return {"date_from": date_from, "date_to": date_to, "file_ids": files, "stations": stations, "connectors": connectors}
+    return {
+        "date_from": date_from,
+        "date_to": date_to,
+        "file_ids": files,
+        "stations": stations,
+        "connectors": connectors,
+    }
 
 
 # ─── Endpoints ────────────────────────────────────────────────────────────────
 
-@router.get("/kpis", summary="KPIs principais do dashboard (receita, sessões, kWh, conversão, etc.)")
+
+@router.get(
+    "/kpis", summary="KPIs principais do dashboard (receita, sessões, kWh, conversão, etc.)"
+)
 async def get_kpis(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
@@ -184,7 +193,9 @@ async def get_users(
     return analytics.user_segmentation(df)
 
 
-@router.get("/payments", summary="Breakdown de pagamentos: funil, métodos (PagBank, carteira, voucher)")
+@router.get(
+    "/payments", summary="Breakdown de pagamentos: funil, métodos (PagBank, carteira, voucher)"
+)
 async def get_payments(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
@@ -194,7 +205,9 @@ async def get_payments(
     return analytics.payment_breakdown(df)
 
 
-@router.get("/revenue-sources", summary="Fontes de receita: energy charge, start fee, idle fee por semana")
+@router.get(
+    "/revenue-sources", summary="Fontes de receita: energy charge, start fee, idle fee por semana"
+)
 async def get_revenue_sources(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
@@ -237,7 +250,9 @@ async def get_dre(
     return analytics.compute_dre(df, cost_cfg, granularity)
 
 
-@router.get("/insights", summary="Insights automáticos gerados sobre anomalias e tendências dos KPIs")
+@router.get(
+    "/insights", summary="Insights automáticos gerados sobre anomalias e tendências dos KPIs"
+)
 async def get_insights(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
@@ -248,7 +263,10 @@ async def get_insights(
     return analytics.generate_insights(df, kpis)
 
 
-@router.get("/users-deep", summary="Análise profunda de usuários: recência, frequência, LTV (RFM simplificado)")
+@router.get(
+    "/users-deep",
+    summary="Análise profunda de usuários: recência, frequência, LTV (RFM simplificado)",
+)
 async def get_users_deep(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
@@ -258,7 +276,9 @@ async def get_users_deep(
     return analytics.user_deep_analysis(df)
 
 
-@router.get("/session-duration", summary="Estatísticas de duração de sessão: média, percentis, distribuição")
+@router.get(
+    "/session-duration", summary="Estatísticas de duração de sessão: média, percentis, distribuição"
+)
 async def get_session_duration(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
@@ -268,7 +288,9 @@ async def get_session_duration(
     return analytics.session_duration_stats(df)
 
 
-@router.get("/stations/churn", summary="Estações com queda de uso abaixo de um limiar configurável (%)")
+@router.get(
+    "/stations/churn", summary="Estações com queda de uso abaixo de um limiar configurável (%)"
+)
 async def get_station_churn(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
@@ -279,7 +301,10 @@ async def get_station_churn(
     return analytics.station_churn(df, threshold)
 
 
-@router.get("/stations/{station_name}/detail", summary="Detalhamento de uma estação: série diária, top usuários e conectores")
+@router.get(
+    "/stations/{station_name}/detail",
+    summary="Detalhamento de uma estação: série diária, top usuários e conectores",
+)
 async def get_station_detail(
     station_name: str,
     current_user: CurrentUser,
@@ -323,10 +348,18 @@ async def get_station_detail(
         }
         for _, row in grp.iterrows()
     ]
-    return {"timeseries": timeseries, "top_users": top_users, "connectors": connectors, "kpis": kpis}
+    return {
+        "timeseries": timeseries,
+        "top_users": top_users,
+        "connectors": connectors,
+        "kpis": kpis,
+    }
 
 
-@router.get("/users/{user_tag}/detail", summary="Histórico completo de sessões e métricas de um usuário específico")
+@router.get(
+    "/users/{user_tag}/detail",
+    summary="Histórico completo de sessões e métricas de um usuário específico",
+)
 async def get_user_detail(
     user_tag: str,
     current_user: CurrentUser,
@@ -366,9 +399,7 @@ async def get_user_detail(
     df = pd.DataFrame(records)
     _tz = await _get_org_tz(current_user.organization_id, db)
     df["started_at"] = (
-        pd.to_datetime(df["started_at"], utc=True)
-        .dt.tz_convert(_tz)
-        .dt.tz_localize(None)
+        pd.to_datetime(df["started_at"], utc=True).dt.tz_convert(_tz).dt.tz_localize(None)
     )
     df["date"] = df["started_at"].dt.date
 
@@ -377,7 +408,9 @@ async def get_user_detail(
         "paid_sessions": int(df["is_paid"].sum()),
         "revenue": round(float(df.loc[df["is_paid"], "revenue_total"].sum()), 2),
         "kwh": round(float(df["energy_kwh"].sum()), 1),
-        "avg_ticket": round(float(df.loc[df["is_paid"], "revenue_total"].mean() if df["is_paid"].any() else 0), 2),
+        "avg_ticket": round(
+            float(df.loc[df["is_paid"], "revenue_total"].mean() if df["is_paid"].any() else 0), 2
+        ),
         "avg_duration": round(float(df["duration_minutes"].mean()), 0),
         "voucher_pct": round(float(df["has_voucher"].mean() * 100), 1),
         "user_name": sessions[0].user_name or user_tag,
@@ -392,7 +425,11 @@ async def get_user_detail(
         .sort_values("date")
     )
     timeseries = [
-        {"date": str(r["date"]), "revenue": round(float(r["revenue"]), 2), "sessions": int(r["sessions"])}
+        {
+            "date": str(r["date"]),
+            "revenue": round(float(r["revenue"]), 2),
+            "sessions": int(r["sessions"]),
+        }
         for _, r in daily.iterrows()
     ]
 
@@ -405,16 +442,26 @@ async def get_user_detail(
         .head(10)
     )
     stations = [
-        {"station": r["station_name"], "sessions": int(r["sessions"]), "revenue": round(float(r["revenue"]), 2)}
+        {
+            "station": r["station_name"],
+            "sessions": int(r["sessions"]),
+            "revenue": round(float(r["revenue"]), 2),
+        }
         for _, r in stn.iterrows()
     ]
 
     # 20 most recent sessions
-    recent = (
-        df.sort_values("started_at", ascending=False)
-        .head(20)
-        [["started_at", "station_name", "revenue_total", "energy_kwh", "duration_minutes", "payment_status", "has_voucher"]]
-    )
+    recent = df.sort_values("started_at", ascending=False).head(20)[
+        [
+            "started_at",
+            "station_name",
+            "revenue_total",
+            "energy_kwh",
+            "duration_minutes",
+            "payment_status",
+            "has_voucher",
+        ]
+    ]
     recent_sessions = [
         {
             "date": r["started_at"].strftime("%Y-%m-%d %H:%M"),
@@ -427,10 +474,17 @@ async def get_user_detail(
         }
         for _, r in recent.iterrows()
     ]
-    return {"kpis": kpis, "timeseries": timeseries, "stations": stations, "recent_sessions": recent_sessions}
+    return {
+        "kpis": kpis,
+        "timeseries": timeseries,
+        "stations": stations,
+        "recent_sessions": recent_sessions,
+    }
 
 
-@router.get("/forecast", summary="Previsão de receita: regressão linear com intervalo de confiança 95%")
+@router.get(
+    "/forecast", summary="Previsão de receita: regressão linear com intervalo de confiança 95%"
+)
 async def get_forecast(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
@@ -474,12 +528,14 @@ async def get_forecast(
         xi = len(revenues) - 1 + i
         yhat = max(0.0, float(a * xi + b))
         margin = 1.96 * residual_std * (1 + i / len(revenues)) ** 0.5
-        forecast.append({
-            "date": str(last_date + timedelta(days=i)),
-            "revenue": round(yhat, 2),
-            "lower": round(max(0.0, yhat - margin), 2),
-            "upper": round(yhat + margin, 2),
-        })
+        forecast.append(
+            {
+                "date": str(last_date + timedelta(days=i)),
+                "revenue": round(yhat, 2),
+                "lower": round(max(0.0, yhat - margin), 2),
+                "upper": round(yhat + margin, 2),
+            }
+        )
 
     return {"historical": daily, "forecast": forecast, "r2": round(r2, 3)}
 
@@ -536,9 +592,13 @@ async def get_cohort(
         size = int(cohort_sizes.get(cohort, 0))
         row: dict = {"cohort": str(cohort), "size": size, "retention": {}}
         for offset in range(max_offset + 1):
-            val = retention[(retention["cohort"] == cohort) & (retention["period_offset"] == offset)]
+            val = retention[
+                (retention["cohort"] == cohort) & (retention["period_offset"] == offset)
+            ]
             if not val.empty and size > 0:
-                row["retention"][f"M+{offset}"] = round(float(val["users"].values[0]) / size * 100, 1)
+                row["retention"][f"M+{offset}"] = round(
+                    float(val["users"].values[0]) / size * 100, 1
+                )
             else:
                 row["retention"][f"M+{offset}"] = None
         cohorts_out.append(row)
