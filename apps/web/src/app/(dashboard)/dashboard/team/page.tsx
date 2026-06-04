@@ -7,7 +7,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import {
   Loader2, Mail, UserPlus, Trash2, Crown, ShieldCheck,
-  Plus, Pencil, ChevronDown, ChevronUp, Users,
+  Plus, Pencil, ChevronDown, ChevronUp, Users, Eye,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -90,6 +90,103 @@ const ALL_PERMISSIONS = Object.keys(PERMISSION_LABELS) as Permission[];
 const EMPTY_PERMISSIONS: Record<Permission, boolean> = Object.fromEntries(
   ALL_PERMISSIONS.map((p) => [p, false])
 ) as Record<Permission, boolean>;
+
+// ── Cargos integrados — descrição de acesso ───────────────────────────────────
+
+interface BuiltinRoleInfo {
+  key: string;
+  label: string;
+  description: string;
+  color: string;
+  access: { label: string; allowed: boolean }[];
+}
+
+const BUILTIN_ROLES_INFO: BuiltinRoleInfo[] = [
+  {
+    key: "owner",
+    label: "Proprietário",
+    description: "Acesso total à plataforma, incluindo cobrança e exclusão de dados.",
+    color: "text-purple-700 bg-purple-50 border-purple-200 dark:text-purple-400 dark:bg-purple-950/40 dark:border-purple-800",
+    access: [
+      { label: "Visão Geral (KPIs)",          allowed: true  },
+      { label: "Receita (série temporal)",     allowed: true  },
+      { label: "Estações & Conectores",        allowed: true  },
+      { label: "Análise de Usuários",          allowed: true  },
+      { label: "DRE",                          allowed: true  },
+      { label: "Análise de Investimento",      allowed: true  },
+      { label: "CAPEX por Carregador",         allowed: true  },
+      { label: "Relatório PDF",                allowed: true  },
+      { label: "Arquivos (importar/excluir)",  allowed: true  },
+      { label: "Leads / CRM",                  allowed: true  },
+      { label: "Gerenciar Equipe",             allowed: true  },
+      { label: "Configurações e Custos",       allowed: true  },
+      { label: "Plano & Cobrança",             allowed: true  },
+    ],
+  },
+  {
+    key: "admin",
+    label: "Administrador",
+    description: "Acesso completo exceto Cobrança. Pode gerenciar equipe, arquivos e configurações.",
+    color: "text-blue-700 bg-blue-50 border-blue-200 dark:text-blue-400 dark:bg-blue-950/40 dark:border-blue-800",
+    access: [
+      { label: "Visão Geral (KPIs)",          allowed: true  },
+      { label: "Receita (série temporal)",     allowed: true  },
+      { label: "Estações & Conectores",        allowed: true  },
+      { label: "Análise de Usuários",          allowed: true  },
+      { label: "DRE",                          allowed: true  },
+      { label: "Análise de Investimento",      allowed: true  },
+      { label: "CAPEX por Carregador",         allowed: true  },
+      { label: "Relatório PDF",                allowed: true  },
+      { label: "Arquivos (importar/excluir)",  allowed: true  },
+      { label: "Leads / CRM",                  allowed: true  },
+      { label: "Gerenciar Equipe",             allowed: true  },
+      { label: "Configurações e Custos",       allowed: true  },
+      { label: "Plano & Cobrança",             allowed: false },
+    ],
+  },
+  {
+    key: "analyst",
+    label: "Analista",
+    description: "Acesso aos painéis analíticos e importação de arquivos. Sem acesso à equipe ou configurações.",
+    color: "text-green-700 bg-green-50 border-green-200 dark:text-green-400 dark:bg-green-950/40 dark:border-green-800",
+    access: [
+      { label: "Visão Geral (KPIs)",          allowed: true  },
+      { label: "Receita (série temporal)",     allowed: true  },
+      { label: "Estações & Conectores",        allowed: true  },
+      { label: "Análise de Usuários",          allowed: true  },
+      { label: "DRE",                          allowed: true  },
+      { label: "Análise de Investimento",      allowed: true  },
+      { label: "CAPEX por Carregador",         allowed: true  },
+      { label: "Relatório PDF",                allowed: true  },
+      { label: "Arquivos (importar/excluir)",  allowed: false },
+      { label: "Leads / CRM",                  allowed: false },
+      { label: "Gerenciar Equipe",             allowed: false },
+      { label: "Configurações e Custos",       allowed: false },
+      { label: "Plano & Cobrança",             allowed: false },
+    ],
+  },
+  {
+    key: "viewer",
+    label: "Visualizador",
+    description: "Acesso somente à Visão Geral e ao Relatório PDF. Ideal para stakeholders externos.",
+    color: "text-slate-700 bg-slate-50 border-slate-200 dark:text-slate-300 dark:bg-slate-800 dark:border-slate-700",
+    access: [
+      { label: "Visão Geral (KPIs)",          allowed: true  },
+      { label: "Receita (série temporal)",     allowed: false },
+      { label: "Estações & Conectores",        allowed: false },
+      { label: "Análise de Usuários",          allowed: false },
+      { label: "DRE",                          allowed: false },
+      { label: "Análise de Investimento",      allowed: false },
+      { label: "CAPEX por Carregador",         allowed: false },
+      { label: "Relatório PDF",                allowed: true  },
+      { label: "Arquivos (importar/excluir)",  allowed: false },
+      { label: "Leads / CRM",                  allowed: false },
+      { label: "Gerenciar Equipe",             allowed: false },
+      { label: "Configurações e Custos",       allowed: false },
+      { label: "Plano & Cobrança",             allowed: false },
+    ],
+  },
+];
 
 interface Member {
   id: string;
@@ -209,6 +306,7 @@ export default function TeamPage() {
   const [editingRole, setEditingRole] = useState<CustomRole | null>(null);
   const [savingRole, setSavingRole] = useState(false);
   const [expandedRole, setExpandedRole] = useState<string | null>(null);
+  const [expandedBuiltin, setExpandedBuiltin] = useState<string | null>(null);
   const [assigningMember, setAssigningMember] = useState<{ memberId: string; roleId: string } | null>(null);
 
   const form = useForm<InviteData>({
@@ -374,6 +472,51 @@ export default function TeamPage() {
           </CardHeader>
 
           <CardContent className="space-y-3">
+
+            {/* ── Cargos integrados ──────────────────────────────────────── */}
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">
+                <Eye className="h-3.5 w-3.5" />
+                Cargos padrão do sistema
+              </p>
+              <div className="space-y-1.5">
+                {BUILTIN_ROLES_INFO.map((role) => (
+                  <div key={role.key} className="rounded-lg border dark:border-slate-800 overflow-hidden">
+                    <button
+                      type="button"
+                      className="w-full flex items-center gap-3 p-3 text-left hover:bg-muted/40 transition-colors"
+                      onClick={() => setExpandedBuiltin(expandedBuiltin === role.key ? null : role.key)}
+                    >
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border shrink-0 ${role.color}`}>
+                        {role.label}
+                      </span>
+                      <p className="text-xs text-muted-foreground flex-1 text-left">{role.description}</p>
+                      {expandedBuiltin === role.key
+                        ? <ChevronUp className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                        : <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />}
+                    </button>
+
+                    {expandedBuiltin === role.key && (
+                      <div className="border-t dark:border-slate-800 px-3 pb-3 pt-2 bg-muted/20">
+                        <div className="grid grid-cols-2 gap-x-6 gap-y-1">
+                          {role.access.map(({ label, allowed }) => (
+                            <div key={label} className="flex items-center gap-2 text-xs py-0.5">
+                              <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${allowed ? "bg-emerald-500" : "bg-slate-300 dark:bg-slate-600"}`} />
+                              <span className={allowed ? "text-foreground" : "text-muted-foreground line-through"}>
+                                {label}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <Separator />
+
             {/* Formulário de criação/edição */}
             {showRoleEditor && (
               <div className="rounded-lg border border-blue-200 dark:border-blue-900 bg-blue-50/40 dark:bg-blue-950/20 p-4">
@@ -389,7 +532,11 @@ export default function TeamPage() {
               </div>
             )}
 
-            {/* Lista de roles existentes */}
+            {/* Lista de cargos personalizados */}
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Cargos personalizados
+            </p>
             {rolesLoading ? (
               <div className="space-y-2">{Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-12" />)}</div>
             ) : !customRoles?.length ? (
