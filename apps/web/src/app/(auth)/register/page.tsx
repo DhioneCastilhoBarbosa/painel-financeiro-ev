@@ -24,6 +24,7 @@ const schema = z.object({
   email:             z.string().email("E-mail inválido"),
   password:          z.string().min(8, "Senha deve ter pelo menos 8 caracteres"),
   confirm_password:  z.string(),
+  invite_code:       z.string().length(16, "O código deve ter exatamente 16 caracteres").optional().or(z.literal("")),
 }).refine((d) => d.password === d.confirm_password, {
   message: "As senhas não coincidem",
   path: ["confirm_password"],
@@ -37,7 +38,7 @@ export default function RegisterPage() {
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", organization_name: "", email: "", password: "", confirm_password: "" },
+    defaultValues: { name: "", organization_name: "", email: "", password: "", confirm_password: "", invite_code: "" },
   });
 
   const onSubmit = async (values: FormData) => {
@@ -48,6 +49,7 @@ export default function RegisterPage() {
         email:             values.email,
         password:          values.password,
         organization_name: values.organization_name,
+        invite_code:       values.invite_code?.toUpperCase().trim() || undefined,
       });
       toast.success("Conta criada! Verifique seu e-mail para ativar.");
       router.push("/login");
@@ -128,6 +130,25 @@ export default function RegisterPage() {
                 </FormItem>
               )} />
             </div>
+
+            <FormField control={form.control} name="invite_code" render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-1.5">
+                  Código de convite
+                  <span className="text-xs font-normal text-muted-foreground">(opcional)</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="XXXX-XXXX-XXXX-XXXX"
+                    maxLength={16}
+                    className="font-mono tracking-widest uppercase"
+                    {...field}
+                    onChange={(e) => field.onChange(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
 
             <Button type="submit" className="w-full font-semibold" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

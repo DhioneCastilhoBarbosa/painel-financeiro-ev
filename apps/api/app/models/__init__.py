@@ -1,5 +1,6 @@
 from app.models.alert import Alert
 from app.models.charger_capex import ChargerCapex
+from app.models.org_invite_code import OrgInviteCode
 from app.models.charging_session import ChargingSession
 from app.models.cost_configuration import CostConfiguration
 from app.models.data_file import DataFile, FileStatus
@@ -24,4 +25,5 @@ __all__ = [
     "SubscriptionStatus",
     "Alert",
     "ChargerCapex",
+    "OrgInviteCode",
 ]

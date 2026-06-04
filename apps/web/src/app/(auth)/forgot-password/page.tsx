@@ -6,10 +6,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -28,6 +27,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import api, { apiErrMsg } from "@/lib/api";
+
+const GREEN = "#06CB3F";
+const DARK  = "#163134";
 
 const schema = z.object({
   email: z.string().email("E-mail inválido"),
@@ -58,67 +60,83 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center space-y-2">
-          <Logo className="mx-auto h-8" />
-          <CardTitle>Esqueci minha senha</CardTitle>
-          <CardDescription>
-            {sent
-              ? "Verifique sua caixa de entrada e o spam."
-              : "Informe o e-mail da sua conta para receber o link de redefinição."}
-          </CardDescription>
-        </CardHeader>
-        {!sent && (
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <CardContent>
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>E-mail</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          autoComplete="email"
-                          placeholder="voce@empresa.com"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-              <CardFooter className="flex flex-col gap-3">
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Enviar link
-                </Button>
-                <Link
-                  href="/login"
-                  className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Voltar ao login
-                </Link>
-              </CardFooter>
-            </form>
-          </Form>
-        )}
-        {sent && (
-          <CardFooter>
-            <Link
-              href="/login"
-              className={cn(buttonVariants({ variant: "outline" }), "w-full")}
-            >
+    <Card className="w-full max-w-md shadow-2xl border-0">
+      <CardHeader className="text-center space-y-3 pb-6">
+        {/* Logo + back */}
+        <div className="relative flex justify-center items-center">
+          <Link
+            href="/login"
+            className="absolute left-0 flex items-center gap-1.5 text-xs font-medium transition-colors hover:opacity-70"
+            style={{ color: DARK }}
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Voltar
+          </Link>
+          <Logo height={36} />
+        </div>
+
+        {/* Divider accent */}
+        <div className="flex justify-center">
+          <div className="h-0.5 w-10 rounded-full" style={{ backgroundColor: GREEN }} />
+        </div>
+
+        <CardTitle className="text-xl">
+          {sent ? "E-mail enviado" : "Esqueci minha senha"}
+        </CardTitle>
+        <CardDescription>
+          {sent
+            ? "Verifique sua caixa de entrada e a pasta de spam."
+            : "Informe o e-mail da sua conta para receber o link de redefinição."}
+        </CardDescription>
+      </CardHeader>
+
+      {!sent ? (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <CardContent>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>E-mail</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        autoComplete="email"
+                        placeholder="voce@empresa.com"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+            <CardFooter className="flex flex-col gap-3 pb-6">
+              <Button
+                type="submit"
+                className="w-full font-semibold"
+                disabled={loading}
+                style={{ backgroundColor: DARK }}
+              >
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Enviar link de redefinição
+              </Button>
+            </CardFooter>
+          </form>
+        </Form>
+      ) : (
+        <CardContent className="pb-6 text-center">
+          <CheckCircle2 className="h-12 w-12 mx-auto mb-4" style={{ color: GREEN }} />
+          <Button asChild variant="outline" className="w-full mt-2">
+            <Link href="/login">
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Voltar ao login
             </Link>
-          </CardFooter>
-        )}
-      </Card>
-    </div>
+          </Button>
+        </CardContent>
+      )}
+    </Card>
   );
 }

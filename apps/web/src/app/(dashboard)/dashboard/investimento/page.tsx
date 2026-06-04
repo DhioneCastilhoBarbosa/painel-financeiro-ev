@@ -964,7 +964,7 @@ export default function InvestimentoPage() {
           <div className="hidden print:flex items-start justify-between px-0 pt-0 pb-4 mb-2 border-b border-gray-300">
             <div>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/intelbras-logo.svg" alt="Intelbras" height={28} style={{ display: "block", marginBottom: "6px" }} />
+              <img src="/intelbras-logo.svg" alt="Intelbras" height={9} style={{ display: "block", marginBottom: "6px" }} />
               <h1 className="text-lg font-bold text-black">Análise de Investimento — Infraestrutura EV</h1>
               <p className="text-xs text-gray-500">
                 {inputs.n_chargers} carregador{inputs.n_chargers !== 1 ? "es" : ""} · {inputs.n_chargers * inputs.power_kw} kW instalados · Horizonte {inputs.horizon_years} anos

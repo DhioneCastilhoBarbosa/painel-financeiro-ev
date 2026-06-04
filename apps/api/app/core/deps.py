@@ -63,6 +63,10 @@ async def require_active_plan(
     if not org:
         return  # Organização inválida — não bloqueia (erro de dados)
 
+    # Organização mãe (Intelbras) tem plano enterprise ilimitado — nunca bloqueada
+    if org.is_mother:
+        return
+
     now = datetime.now(UTC)
 
     # ── Trial local ─────────────────────────────────────────────────────────

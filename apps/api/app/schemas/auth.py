@@ -6,6 +6,7 @@ class RegisterRequest(BaseModel):
     email: EmailStr
     password: str
     organization_name: str
+    invite_code: str | None = None  # obrigatório se plataforma exigir
 
     model_config = {
         "json_schema_extra": {

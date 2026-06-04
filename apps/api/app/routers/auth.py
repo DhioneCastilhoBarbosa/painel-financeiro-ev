@@ -21,6 +21,7 @@ from app.core.security import (
     verify_password,
 )
 from app.models.custom_role import CustomRole
+from app.models.org_invite_code import OrgInviteCode
 from app.models.organization import Organization
 from app.models.subscription import Subscription, SubscriptionPlan, SubscriptionStatus
 from app.models.user import User, UserRole
@@ -91,9 +92,24 @@ def _slug_from_name(name: str) -> str:
 )
 @limiter.limit("5/minute")
 async def register(request: Request, body: RegisterRequest, db: AsyncSession = Depends(get_db)):
+    from datetime import UTC as _UTC
+
     existing = await db.scalar(select(User).where(User.email == body.email))
     if existing:
         raise HTTPException(status_code=409, detail="E-mail já cadastrado")
+
+    # ── Validar código de convite ────────────────────────────────────────────
+    invite: OrgInviteCode | None = None
+    if body.invite_code:
+        invite = await db.scalar(
+            select(OrgInviteCode).where(OrgInviteCode.code == body.invite_code.upper().strip())
+        )
+        if not invite:
+            raise HTTPException(status_code=400, detail="Código de convite inválido.")
+        if invite.used_at:
+            raise HTTPException(status_code=400, detail="Este código de convite já foi utilizado.")
+        if invite.expires_at < datetime.now(_UTC):
+            raise HTTPException(status_code=400, detail="Este código de convite expirou.")
 
     # Protege o nome reservado "Intelbras" e garante unicidade de nome
     if body.organization_name.strip().lower() == "intelbras":
@@ -139,6 +155,12 @@ async def register(request: Request, body: RegisterRequest, db: AsyncSession = D
     )
     db.add(subscription)
     await db.flush()
+
+    # Marca o código de convite como utilizado (se foi fornecido)
+    if invite:
+        invite.used_at = datetime.now(UTC)
+        invite.used_by_organization_id = org.id
+        invite.used_by_user_id = user.id
 
     # Envia e-mail de verificação (token com 1h de validade)
     verify_token = create_email_token(body.email, "verify")

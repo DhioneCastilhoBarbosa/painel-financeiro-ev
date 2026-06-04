@@ -6,6 +6,7 @@ import {
   Building2, Users, FileSpreadsheet, Activity,
   CheckCircle2, XCircle, AlertTriangle, Search,
   ChevronDown, ChevronUp, ShieldAlert, Crown,
+  Link2, Trash2, Copy, Clock,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { isIntelbrasmaster } from "@/lib/permissions";
 import { formatDate } from "@/lib/format";
 import useSWR, { mutate } from "swr";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const fetcher = (url: string) => api.get(url).then((r) => r.data);
 
@@ -59,6 +61,21 @@ interface UserRow {
   last_login_at: string | null;
 }
 
+interface InviteCode {
+  id: string;
+  code: string;
+  validity_days: number;
+  created_at: string;
+  expires_at: string;
+  expired: boolean;
+  used: boolean;
+  used_at: string | null;
+  used_by_organization: string | null;
+  used_by_user_name: string | null;
+  used_by_user_email: string | null;
+  creator_email: string | null;
+}
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const STATUS_BADGE: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
@@ -78,11 +95,13 @@ const PLAN_LABEL: Record<string, string> = {
 
 export default function AdminPage() {
   const { user } = useAuth();
-  const [tab, setTab] = useState<"orgs" | "users">("orgs");
+  const [tab, setTab] = useState<"orgs" | "users" | "invites">("orgs");
   const [orgSearch, setOrgSearch] = useState("");
   const [userSearch, setUserSearch] = useState("");
   const [expandedOrg, setExpandedOrg] = useState<string | null>(null);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
+  const [inviteValidity, setInviteValidity] = useState(7);
+  const [creatingCode, setCreatingCode] = useState(false);
 
   // Guard
   if (!isIntelbrasmaster(user)) {
@@ -110,8 +129,42 @@ export default function AdminPage() {
     fetcher,
     { keepPreviousData: true }
   );
+  const { data: inviteCodes, isLoading: codesLoading } = useSWR<InviteCode[]>(
+    "/admin/invite-codes", fetcher
+  );
 
   // ─── Actions ─────────────────────────────────────────────────────────────
+
+  async function createInviteCode() {
+    setCreatingCode(true);
+    try {
+      await api.post("/admin/invite-codes", { validity_days: inviteValidity });
+      toast.success("Código de convite gerado");
+      mutate("/admin/invite-codes");
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { detail?: string } } };
+      toast.error(err?.response?.data?.detail ?? "Erro ao gerar código");
+    } finally {
+      setCreatingCode(false);
+    }
+  }
+
+  async function deleteInviteCode(codeId: string) {
+    if (!confirm("Revogar este código? Ele não poderá mais ser usado.")) return;
+    try {
+      await api.delete(`/admin/invite-codes/${codeId}`);
+      toast.success("Código revogado");
+      mutate("/admin/invite-codes");
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { detail?: string } } };
+      toast.error(err?.response?.data?.detail ?? "Erro ao revogar código");
+    }
+  }
+
+  function copyCode(code: string) {
+    navigator.clipboard.writeText(code);
+    toast.success("Código copiado!");
+  }
 
   async function updateOrgStatus(orgId: string, newStatus: string) {
     setLoadingAction(`status-${orgId}`);
@@ -167,7 +220,7 @@ export default function AdminPage() {
         <div>
           <h1 className="text-2xl font-bold">Painel de Administrador</h1>
           <p className="text-sm text-muted-foreground">
-            Gestão global da plataforma — exclusivo para Mestres Intelbras
+            Gestão global da plataforma — exclusivo para Administradores Intelbras
           </p>
         </div>
       </div>
@@ -194,7 +247,7 @@ export default function AdminPage() {
 
       {/* Tabs */}
       <div className="flex gap-2 border-b">
-        {(["orgs", "users"] as const).map((t) => (
+        {(["orgs", "users", "invites"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -204,7 +257,7 @@ export default function AdminPage() {
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
-            {t === "orgs" ? "Organizações" : "Usuários"}
+            {t === "orgs" ? "Organizações" : t === "users" ? "Usuários" : "Convites"}
           </button>
         ))}
       </div>
@@ -409,6 +462,151 @@ export default function AdminPage() {
             </div>
           )}
         </div>
+      )}
+
+      {/* ── Convites ── */}
+      {tab === "invites" && (
+        <TooltipProvider>
+          <div className="space-y-4">
+            {/* Gerador */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Link2 className="h-4 w-4 text-amber-500" />
+                  <CardTitle className="text-base">Gerar Código de Convite</CardTitle>
+                </div>
+                <CardDescription className="text-xs">
+                  O código permite criar uma nova organização no sistema e dá acesso ao Trial gratuito.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-end gap-3">
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground block mb-1">Validade (dias)</label>
+                    <Select
+                      value={String(inviteValidity)}
+                      onValueChange={(v) => setInviteValidity(Number(v))}
+                    >
+                      <SelectTrigger className="w-36">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {[1, 3, 7, 14, 30, 60, 90].map((d) => (
+                          <SelectItem key={d} value={String(d)}>{d} {d === 1 ? "dia" : "dias"}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button onClick={createInviteCode} disabled={creatingCode} className="gap-1.5">
+                    {creatingCode
+                      ? <><span className="h-3.5 w-3.5 border-2 border-t-transparent rounded-full animate-spin" />Gerando…</>
+                      : <><Link2 className="h-3.5 w-3.5" />Gerar código</>
+                    }
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Lista de códigos */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Códigos gerados</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                {codesLoading ? (
+                  <div className="p-4 space-y-2">
+                    {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-12" />)}
+                  </div>
+                ) : !inviteCodes?.length ? (
+                  <p className="text-sm text-muted-foreground text-center py-8">
+                    Nenhum código gerado ainda.
+                  </p>
+                ) : (
+                  <div className="divide-y">
+                    {inviteCodes.map((c) => {
+                      const statusLabel = c.used
+                        ? "Usado"
+                        : c.expired
+                        ? "Expirado"
+                        : "Disponível";
+                      const statusColor = c.used
+                        ? "text-blue-700 bg-blue-50 border-blue-200 dark:text-blue-400 dark:bg-blue-950/40 dark:border-blue-800"
+                        : c.expired
+                        ? "text-slate-500 bg-slate-100 border-slate-200 dark:text-slate-400 dark:bg-slate-800 dark:border-slate-700"
+                        : "text-emerald-700 bg-emerald-50 border-emerald-200 dark:text-emerald-400 dark:bg-emerald-950/40 dark:border-emerald-800";
+
+                      return (
+                        <div key={c.id} className="flex items-start gap-4 px-4 py-3">
+                          {/* Código */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <code className="text-sm font-mono font-bold tracking-widest text-foreground">
+                                {c.code}
+                              </code>
+                              <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${statusColor}`}>
+                                {statusLabel}
+                              </span>
+                              {!c.used && !c.expired && (
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      onClick={() => copyCode(c.code)}
+                                      className="p-1 rounded hover:bg-muted transition-colors"
+                                    >
+                                      <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>Copiar código</TooltipContent>
+                                </Tooltip>
+                              )}
+                            </div>
+
+                            <div className="mt-1 text-xs text-muted-foreground space-y-0.5">
+                              <div className="flex items-center gap-1">
+                                <Clock className="h-3 w-3" />
+                                <span>
+                                  {c.used
+                                    ? `Usado em ${formatDate(c.used_at!)}`
+                                    : c.expired
+                                    ? `Expirou em ${formatDate(c.expires_at)}`
+                                    : `Expira em ${formatDate(c.expires_at)}`}
+                                  {" · "}{c.validity_days} dias
+                                </span>
+                              </div>
+                              {c.used && c.used_by_organization && (
+                                <p>
+                                  <span className="font-medium">Organização:</span> {c.used_by_organization}
+                                  {c.used_by_user_name && (
+                                    <> · <span className="font-medium">Usuário:</span> {c.used_by_user_name} ({c.used_by_user_email})</>
+                                  )}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Revogar */}
+                          {!c.used && !c.expired && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button
+                                  onClick={() => deleteInviteCode(c.id)}
+                                  className="p-1.5 rounded hover:bg-red-50 dark:hover:bg-red-950/40 text-red-500 transition-colors shrink-0 mt-0.5"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent>Revogar código</TooltipContent>
+                            </Tooltip>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TooltipProvider>
       )}
     </div>
   );

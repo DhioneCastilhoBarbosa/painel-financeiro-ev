@@ -16,11 +16,14 @@ Capacidades:
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+import secrets
+import string
+import uuid
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -28,6 +31,7 @@ from app.core.database import get_db
 from app.core.deps import CurrentUser
 from app.models.charging_session import ChargingSession
 from app.models.data_file import DataFile
+from app.models.org_invite_code import OrgInviteCode
 from app.models.organization import Organization
 from app.models.subscription import Subscription
 from app.models.user import User
@@ -75,6 +79,10 @@ class OrgPlanUpdate(BaseModel):
 
 class AdminMasterUpdate(BaseModel):
     is_master: bool
+
+
+class InviteCodeCreate(BaseModel):
+    validity_days: int = Field(default=7, ge=1, le=365, description="Validade em dias (1-365)")
 
 
 # ─── Endpoints ────────────────────────────────────────────────────────────────
@@ -349,3 +357,128 @@ async def admin_set_user_master(
     return {
         "message": f"Cargo de Mestre {'concedido' if body.is_master else 'revogado'} para {member.email}"
     }
+
+
+# ─── Invite Codes ─────────────────────────────────────────────────────────────
+
+_CODE_ALPHABET = string.ascii_uppercase + string.digits  # A-Z 0-9
+
+
+def _generate_code() -> str:
+    """Gera um código único de 16 caracteres alfanuméricos (maiúsculas + dígitos)."""
+    return "".join(secrets.choice(_CODE_ALPHABET) for _ in range(16))
+
+
+def _serialize_invite_code(code: OrgInviteCode) -> dict[str, Any]:
+    now = datetime.now(UTC)
+    expired = code.expires_at < now and not code.used_at
+    return {
+        "id": str(code.id),
+        "code": code.code,
+        "validity_days": code.validity_days,
+        "created_at": code.created_at,
+        "expires_at": code.expires_at,
+        "expired": expired,
+        "used": code.used_at is not None,
+        "used_at": code.used_at,
+        "used_by_organization": code.used_by_org.name if code.used_by_org else None,
+        "used_by_user_name": code.used_by_user.name if code.used_by_user else None,
+        "used_by_user_email": code.used_by_user.email if code.used_by_user else None,
+        "creator_email": code.creator.email if code.creator else None,
+    }
+
+
+@router.get("/invite-codes", summary="Listar códigos de convite")
+async def list_invite_codes(
+    admin: User = _AdminUser,
+    db: AsyncSession = Depends(get_db),
+) -> list[dict[str, Any]]:
+    result = await db.execute(
+        select(OrgInviteCode)
+        .order_by(OrgInviteCode.created_at.desc())
+        .limit(200)
+    )
+    codes = result.scalars().all()
+
+    # eager-load relations manually
+    for c in codes:
+        if c.created_by:
+            await db.get(User, c.created_by)
+        if c.used_by_organization_id:
+            await db.get(Organization, c.used_by_organization_id)
+        if c.used_by_user_id:
+            await db.get(User, c.used_by_user_id)
+
+    return [_serialize_invite_code(c) for c in codes]
+
+
+@router.post(
+    "/invite-codes",
+    status_code=status.HTTP_201_CREATED,
+    summary="Criar novo código de convite",
+)
+async def create_invite_code(
+    body: InviteCodeCreate,
+    admin: User = _AdminUser,
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    # Garante código único — tenta até 5 vezes (colisão improvável)
+    for _ in range(5):
+        candidate = _generate_code()
+        existing = await db.scalar(
+            select(OrgInviteCode).where(OrgInviteCode.code == candidate)
+        )
+        if not existing:
+            break
+    else:
+        raise HTTPException(status_code=500, detail="Não foi possível gerar código único")
+
+    now = datetime.now(UTC)
+    invite = OrgInviteCode(
+        id=uuid.uuid4(),
+        code=candidate,
+        created_by=admin.id,
+        validity_days=body.validity_days,
+        expires_at=now + timedelta(days=body.validity_days),
+        created_at=now,
+    )
+    db.add(invite)
+
+    await log_action(
+        db, admin.organization_id, admin.id, admin.email,
+        "create_invite_code", "org_invite_code", str(invite.id),
+        f"code={candidate} validity_days={body.validity_days}",
+    )
+    await db.commit()
+    await db.refresh(invite)
+
+    # load relations
+    if invite.created_by:
+        await db.get(User, invite.created_by)
+
+    return _serialize_invite_code(invite)
+
+
+@router.delete(
+    "/invite-codes/{code_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Revogar código de convite",
+)
+async def delete_invite_code(
+    code_id: str,
+    admin: User = _AdminUser,
+    db: AsyncSession = Depends(get_db),
+) -> None:
+    invite = await db.get(OrgInviteCode, code_id)
+    if not invite:
+        raise HTTPException(status_code=404, detail="Código não encontrado")
+    if invite.used_at:
+        raise HTTPException(status_code=400, detail="Código já utilizado — não pode ser revogado")
+
+    await log_action(
+        db, admin.organization_id, admin.id, admin.email,
+        "delete_invite_code", "org_invite_code", code_id,
+        f"code={invite.code}",
+    )
+    await db.delete(invite)
+    await db.commit()
