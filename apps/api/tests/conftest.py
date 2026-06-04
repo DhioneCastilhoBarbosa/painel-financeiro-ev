@@ -4,7 +4,6 @@ Fixtures compartilhadas para todos os testes.
 Setup do banco de dados de teste:
   - Usa TEST_DATABASE_URL (padrão: cria banco _test baseado no DATABASE_URL do .env)
   - Cria as tabelas via SQLAlchemy Base.metadata.create_all (sem migrations)
-  - Cada teste roda em uma transação rollback — isolamento total
   - Overrides o get_db do FastAPI para usar a sessão de teste
 
 Requisitos para rodar localmente:
@@ -14,7 +13,6 @@ Requisitos para rodar localmente:
 """
 from __future__ import annotations
 
-import asyncio
 import os
 import uuid
 from typing import AsyncGenerator
@@ -38,14 +36,6 @@ TEST_DATABASE_URL = os.getenv("TEST_DATABASE_URL", _DEFAULT_TEST_DB)
 
 
 # ── Engine de teste (criado uma vez por sessão de testes) ───────────────────
-
-@pytest.fixture(scope="session")
-def event_loop():
-    """Event loop compartilhado por toda a sessão de testes."""
-    loop = asyncio.new_event_loop()
-    yield loop
-    loop.close()
-
 
 @pytest_asyncio.fixture(scope="session")
 async def test_engine():
@@ -78,10 +68,11 @@ async def db(test_engine) -> AsyncGenerator[AsyncSession, None]:
         await session.rollback()
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="session")
 async def client(test_engine) -> AsyncGenerator[AsyncClient, None]:
     """
     AsyncClient apontando para a aplicação FastAPI com o banco de testes injetado.
+    Session-scoped para compartilhar o mesmo event loop e pool de conexões.
     """
     from app.core.database import get_db
     from app.main import app
@@ -110,9 +101,9 @@ async def client(test_engine) -> AsyncGenerator[AsyncClient, None]:
 
 # ── Helpers de autenticação ─────────────────────────────────────────────────
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="session")
 async def registered_user(client: AsyncClient) -> dict:
-    """Cria e retorna um usuário registrado."""
+    """Cria e retorna um usuário registrado (uma vez por sessão de testes)."""
     payload = {
         "name":              "Usuário Teste",
         "email":             f"test_{uuid.uuid4().hex[:8]}@example.com",
@@ -124,9 +115,9 @@ async def registered_user(client: AsyncClient) -> dict:
     return payload
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="session")
 async def auth_headers(client: AsyncClient, registered_user: dict) -> dict:
-    """Headers com Bearer token de um usuário autenticado."""
+    """Headers com Bearer token de um usuário autenticado (uma vez por sessão)."""
     resp = await client.post(
         "/api/v1/auth/login",
         json={"email": registered_user["email"], "password": registered_user["password"]},
