@@ -38,6 +38,14 @@ async def get_current_user(
     user = await db.get(User, user_id)
     if not user or not user.is_active:
         raise exc
+
+    org = await db.get(Organization, user.organization_id)
+    if org and org.status == "blocked":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Organização bloqueada. Entre em contato com o suporte Intelbras.",
+        )
+
     return user
 
 

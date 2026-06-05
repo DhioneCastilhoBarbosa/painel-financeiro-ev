@@ -159,7 +159,7 @@ export default function RelatorioPage() {
             <div>
               {/* Logo Intelbras */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/intelbras-logo.svg" alt="Intelbras" height={11} style={{ display: "block", marginBottom: "10px" }} />
+              <img src="/intelbras-logo.svg" alt="Intelbras" style={{ display: "block", marginBottom: "10px", width: "73mm", height: "auto" }} />
               <h1 className="text-2xl font-bold">Relatório Financeiro Executivo</h1>
               <p className="text-sm font-medium mt-0.5" style={{ color: "#029d39" }}>
                 Intelbras Finance — Gestão Financeira para Eletropostos

@@ -197,11 +197,9 @@ async def list_invitations(current_user: CurrentUser, db: AsyncSession = Depends
         raise HTTPException(status_code=403, detail="Permissão insuficiente")
 
     result = await db.execute(
-        select(Invitation).where(
-            Invitation.organization_id == current_user.organization_id,
-            Invitation.accepted_at.is_(None),
-            Invitation.expires_at > datetime.now(UTC),
-        )
+        select(Invitation)
+        .where(Invitation.organization_id == current_user.organization_id)
+        .order_by(Invitation.created_at.desc())
     )
     invites = result.scalars().all()
 
@@ -216,6 +214,7 @@ async def list_invitations(current_user: CurrentUser, db: AsyncSession = Depends
         )
         custom_role_names = {str(row.id): row.name for row in cr_result}
 
+    now = datetime.now(UTC)
     return [
         {
             "id": str(inv.id),
@@ -224,8 +223,11 @@ async def list_invitations(current_user: CurrentUser, db: AsyncSession = Depends
             "custom_role_name": custom_role_names.get(str(inv.custom_role_id))
             if inv.custom_role_id
             else None,
+            "token": inv.token,
             "created_at": inv.created_at,
             "expires_at": inv.expires_at,
+            "accepted_at": inv.accepted_at,
+            "status": "concluído" if inv.accepted_at else ("expirado" if inv.expires_at <= now else "pendente"),
         }
         for inv in invites
     ]

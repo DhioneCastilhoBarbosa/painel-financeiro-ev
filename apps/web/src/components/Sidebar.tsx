@@ -165,11 +165,12 @@ export function Sidebar() {
                 </Link>
               )}
 
-              {/* Theme toggle */}
+              {/* Theme toggle (temporarily disabled) */}
               <button
-                className="flex w-full items-center gap-2 px-2 py-1.5 text-sm rounded-lg transition-colors hover:bg-white/10"
+                className="flex w-full items-center gap-2 px-2 py-1.5 text-sm rounded-lg opacity-40 cursor-not-allowed"
                 style={{ color: "rgba(255,255,255,0.6)" }}
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                disabled
+                title="Alternância de tema temporariamente desativada"
               >
                 {theme === "dark"
                   ? <Sun className="h-4 w-4" />
@@ -236,15 +237,15 @@ export function Sidebar() {
                 <TooltipTrigger
                   render={
                     <button
-                      className="flex w-full items-center justify-center py-1.5 rounded-lg hover:bg-white/10 transition-colors"
+                      className="flex w-full items-center justify-center py-1.5 rounded-lg opacity-40 cursor-not-allowed"
                       style={{ color: "rgba(255,255,255,0.6)" }}
-                      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                      disabled
                     />
                   }
                 >
                   {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                 </TooltipTrigger>
-                <TooltipContent side="right">Alternar tema</TooltipContent>
+                <TooltipContent side="right">Alternância de tema temporariamente desativada</TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger

@@ -7,7 +7,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import {
   Loader2, Mail, UserPlus, Trash2, Crown, ShieldCheck,
-  Plus, Pencil, ChevronDown, ChevronUp, Users, Eye,
+  Plus, Pencil, ChevronDown, ChevronUp, Users, Eye, Copy,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -202,7 +202,10 @@ interface Invitation {
   email: string;
   custom_role_name?: string | null;
   role: string;
+  token: string;
   expires_at: string;
+  accepted_at: string | null;
+  status: "pendente" | "expirado" | "concluído";
 }
 
 // ── Componente RoleEditor ─────────────────────────────────────────────────────
@@ -682,40 +685,70 @@ export default function TeamPage() {
         </CardContent>
       </Card>
 
-      {/* ── Convites pendentes ────────────────────────────────────────────── */}
-      {(invitations?.length ?? 0) > 0 && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Mail className="h-4 w-4" />
-              Convites Pendentes
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {invLoading
-              ? Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-12" />)
-              : invitations?.map((inv) => (
-                <div key={inv.id} className="flex items-center gap-3 py-2 border-b last:border-0 dark:border-slate-800">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{inv.email}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {inv.custom_role_name ?? BUILTIN_ROLE_LABELS[inv.role] ?? inv.role} · Expira {formatDate(inv.expires_at)}
-                    </p>
+      {/* ── Convites ─────────────────────────────────────────────────────── */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Mail className="h-4 w-4" />
+            Convites
+          </CardTitle>
+          <CardDescription>Histórico de convites enviados para este tenant</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {invLoading
+            ? Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-14" />)
+            : !invitations || invitations.length === 0
+            ? <p className="text-sm text-muted-foreground py-4 text-center">Nenhum convite enviado ainda.</p>
+            : invitations.map((inv) => {
+                const statusStyles: Record<string, string> = {
+                  pendente:  "text-amber-600 border-amber-200 dark:text-amber-400 dark:border-amber-800",
+                  expirado:  "text-red-600 border-red-200 dark:text-red-400 dark:border-red-800",
+                  concluído: "text-green-600 border-green-200 dark:text-green-400 dark:border-green-800",
+                };
+                const statusLabel: Record<string, string> = {
+                  pendente: "Pendente", expirado: "Expirado", concluído: "Concluído",
+                };
+                return (
+                  <div key={inv.id} className="flex items-start gap-3 py-2 border-b last:border-0 dark:border-slate-800">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{inv.email}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {inv.custom_role_name ?? BUILTIN_ROLE_LABELS[inv.role] ?? inv.role}
+                        {inv.status === "concluído"
+                          ? ` · Aceito em ${formatDate(inv.accepted_at!)}`
+                          : ` · Expira ${formatDate(inv.expires_at)}`}
+                      </p>
+                      {inv.status === "pendente" && (
+                        <div className="flex items-center gap-1 mt-1">
+                          <span className="text-[0.6rem] font-mono text-muted-foreground truncate max-w-[180px]" title={inv.token}>
+                            Código: {inv.token.slice(0, 8).toUpperCase()}…
+                          </span>
+                          <button
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                            title="Copiar código de convite"
+                            onClick={() => { navigator.clipboard.writeText(inv.token); toast.success("Código copiado!"); }}
+                          >
+                            <Copy className="h-3 w-3" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    <Badge variant="outline" className={statusStyles[inv.status]}>
+                      {statusLabel[inv.status]}
+                    </Badge>
+                    {canManage && inv.status === "pendente" && (
+                      <Button
+                        variant="ghost" size="icon" className="h-7 w-7 text-red-500 shrink-0"
+                        onClick={() => cancelInvite(inv.id)}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    )}
                   </div>
-                  <Badge variant="outline" className="text-amber-600 border-amber-200 dark:text-amber-400 dark:border-amber-800">Pendente</Badge>
-                  {canManage && (
-                    <Button
-                      variant="ghost" size="icon" className="h-7 w-7 text-red-500"
-                      onClick={() => cancelInvite(inv.id)}
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  )}
-                </div>
-              ))}
-          </CardContent>
-        </Card>
-      )}
+                );
+              })}
+        </CardContent>
+      </Card>
 
       {/* ── Convidar membro ───────────────────────────────────────────────── */}
       {canManage && (

@@ -166,7 +166,9 @@ export default function SettingsPage() {
   const { data: configs, isLoading } = useSWR<CostConfig[]>("/org/cost-configs", fetcher);
   const { data: org, mutate: mutateOrg } = useSWR<{ settings?: { operating_hours?: number; operating_hours_start?: number; operating_hours_end?: number; timezone?: string; currency?: string } }>("/org", fetcher);
   const { data: alerts, isLoading: alertsLoading } = useSWR<AlertItem[]>(canManage ? "/alerts" : null, fetcher);
-  const { data: auditLog } = useAuditLog(50);
+  const { data: auditLog } = useAuditLog(200);
+  const [auditPage, setAuditPage] = useState(0);
+  const AUDIT_PAGE_SIZE = 20;
   const [creating, setCreating] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -1000,32 +1002,48 @@ export default function SettingsPage() {
               </div>
             ) : auditLog.length === 0 ? (
               <p className="text-sm text-muted-foreground py-4 text-center">Nenhuma ação registrada ainda.</p>
-            ) : (
-              <div className="divide-y dark:divide-slate-800 text-xs">
-                {auditLog.map((entry: { id: string; user_email: string; action: string; entity_type: string | null; entity_id: string | null; details: string | null; created_at: string }) => (
-                  <div key={entry.id} className="flex items-start gap-3 py-2.5">
-                    <div className="shrink-0 mt-0.5 w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                      <ShieldCheck className="h-3 w-3 text-muted-foreground" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-foreground">
-                        <span className="text-blue-600 dark:text-blue-400">{entry.user_email}</span>
-                        {" · "}<span className="font-mono">{entry.action}</span>
-                        {entry.entity_type && <span className="text-muted-foreground"> ({entry.entity_type}{entry.entity_id ? ` ${entry.entity_id.slice(0, 8)}` : ""})</span>}
-                      </p>
-                      {entry.details && (
-                        <p className="text-muted-foreground truncate">{entry.details}</p>
-                      )}
-                    </div>
-                    <time className="shrink-0 text-muted-foreground tabular-nums">
-                      {new Date(entry.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}
-                      {" "}
-                      {new Date(entry.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
-                    </time>
+            ) : (() => {
+              type AuditEntry = { id: string; user_email: string; action: string; entity_type: string | null; entity_id: string | null; details: string | null; created_at: string };
+              const totalPages = Math.ceil(auditLog.length / AUDIT_PAGE_SIZE);
+              const pageEntries: AuditEntry[] = auditLog.slice(auditPage * AUDIT_PAGE_SIZE, (auditPage + 1) * AUDIT_PAGE_SIZE);
+              return (
+                <>
+                  <div className="divide-y dark:divide-slate-800 text-xs">
+                    {pageEntries.map((entry: AuditEntry) => (
+                      <div key={entry.id} className="flex items-start gap-3 py-2.5">
+                        <div className="shrink-0 mt-0.5 w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                          <ShieldCheck className="h-3 w-3 text-muted-foreground" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-foreground">
+                            <span className="text-blue-600 dark:text-blue-400">{entry.user_email}</span>
+                            {" · "}<span className="font-mono">{entry.action}</span>
+                            {entry.entity_type && <span className="text-muted-foreground"> ({entry.entity_type}{entry.entity_id ? ` ${entry.entity_id.slice(0, 8)}` : ""})</span>}
+                          </p>
+                          {entry.details && (
+                            <p className="text-muted-foreground truncate">{entry.details}</p>
+                          )}
+                        </div>
+                        <time className="shrink-0 text-muted-foreground tabular-nums">
+                          {new Date(entry.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}
+                          {" "}
+                          {new Date(entry.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                        </time>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            )}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-between pt-3 border-t dark:border-slate-800 text-xs text-muted-foreground">
+                      <span>{auditPage * AUDIT_PAGE_SIZE + 1}–{Math.min((auditPage + 1) * AUDIT_PAGE_SIZE, auditLog.length)} de {auditLog.length}</span>
+                      <div className="flex gap-1">
+                        <Button variant="outline" size="sm" className="h-7 px-2 text-xs" disabled={auditPage === 0} onClick={() => setAuditPage(p => p - 1)}>Anterior</Button>
+                        <Button variant="outline" size="sm" className="h-7 px-2 text-xs" disabled={auditPage >= totalPages - 1} onClick={() => setAuditPage(p => p + 1)}>Próxima</Button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </CardContent>
         </Card>
       )}

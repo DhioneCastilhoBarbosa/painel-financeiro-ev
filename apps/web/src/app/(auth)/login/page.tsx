@@ -154,12 +154,13 @@ export default function LoginPage() {
 
       <CardFooter className="justify-center text-sm text-muted-foreground pb-6">
         Não tem conta?{" "}
-        <span
-          className="ml-1 font-semibold opacity-40 cursor-not-allowed select-none"
-          title="Cadastros temporariamente suspensos"
+        <Link
+          href="/register"
+          className="ml-1 font-semibold hover:underline transition-colors"
+          style={{ color: GREEN }}
         >
           Cadastre-se grátis
-        </span>
+        </Link>
       </CardFooter>
     </Card>
   );

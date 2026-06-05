@@ -79,24 +79,25 @@ async def save_scenario(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
 ):
-    # Limite de cenários por plano
+    # Limite de cenários por plano (org mãe não tem limite)
     from sqlalchemy import func
 
     from app.models.organization import Organization
 
     org = await db.get(Organization, current_user.organization_id)
-    count = await db.scalar(
-        select(func.count(PaybackScenario.id)).where(
-            PaybackScenario.organization_id == current_user.organization_id
+    if not org.is_mother:
+        count = await db.scalar(
+            select(func.count(PaybackScenario.id)).where(
+                PaybackScenario.organization_id == current_user.organization_id
+            )
         )
-    )
-    limits = {"trial": 3, "starter": 3, "pro": 20, "enterprise": 9999}
-    limit = limits.get(org.plan, 3)
-    if count >= limit:
-        raise HTTPException(
-            status_code=403,
-            detail=f"Limite de {limit} cenários atingido no plano {org.plan}",
-        )
+        limits = {"trial": 3, "starter": 3, "pro": 20, "enterprise": 9999}
+        limit = limits.get(org.plan, 3)
+        if count >= limit:
+            raise HTTPException(
+                status_code=403,
+                detail=f"Limite de {limit} cenários atingido no plano {org.plan}",
+            )
 
     scenario = PaybackScenario(
         id=str(uuid.uuid4()),

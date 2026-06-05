@@ -207,6 +207,10 @@ async def login(
     if not user.is_active:
         raise HTTPException(status_code=403, detail="Conta desativada")
 
+    org = await db.get(Organization, user.organization_id)
+    if org and org.status == "blocked":
+        raise HTTPException(status_code=403, detail="Organização bloqueada. Entre em contato com o suporte Intelbras.")
+
     user.last_login_at = datetime.now(UTC)
 
     access = create_access_token(str(user.id), str(user.organization_id))
