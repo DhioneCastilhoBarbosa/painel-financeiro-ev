@@ -469,7 +469,7 @@ async def delete_invite_code(
     code_id: str,
     admin: User = _AdminUser,
     db: AsyncSession = Depends(get_db),
-) -> None:
+):
     invite = await db.get(OrgInviteCode, code_id)
     if not invite:
         raise HTTPException(status_code=404, detail="Código não encontrado")
