@@ -394,9 +394,7 @@ async def list_invite_codes(
     db: AsyncSession = Depends(get_db),
 ) -> list[dict[str, Any]]:
     result = await db.execute(
-        select(OrgInviteCode)
-        .order_by(OrgInviteCode.created_at.desc())
-        .limit(200)
+        select(OrgInviteCode).order_by(OrgInviteCode.created_at.desc()).limit(200)
     )
     codes = result.scalars().all()
 
@@ -425,9 +423,7 @@ async def create_invite_code(
     # Garante código único — tenta até 5 vezes (colisão improvável)
     for _ in range(5):
         candidate = _generate_code()
-        existing = await db.scalar(
-            select(OrgInviteCode).where(OrgInviteCode.code == candidate)
-        )
+        existing = await db.scalar(select(OrgInviteCode).where(OrgInviteCode.code == candidate))
         if not existing:
             break
     else:
@@ -445,8 +441,13 @@ async def create_invite_code(
     db.add(invite)
 
     await log_action(
-        db, admin.organization_id, admin.id, admin.email,
-        "create_invite_code", "org_invite_code", str(invite.id),
+        db,
+        admin.organization_id,
+        admin.id,
+        admin.email,
+        "create_invite_code",
+        "org_invite_code",
+        str(invite.id),
         f"code={candidate} validity_days={body.validity_days}",
     )
     await db.commit()
@@ -476,8 +477,13 @@ async def delete_invite_code(
         raise HTTPException(status_code=400, detail="Código já utilizado — não pode ser revogado")
 
     await log_action(
-        db, admin.organization_id, admin.id, admin.email,
-        "delete_invite_code", "org_invite_code", code_id,
+        db,
+        admin.organization_id,
+        admin.id,
+        admin.email,
+        "delete_invite_code",
+        "org_invite_code",
+        code_id,
         f"code={invite.code}",
     )
     await db.delete(invite)

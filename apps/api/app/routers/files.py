@@ -310,7 +310,10 @@ async def load_example(
         ) from exc
 
     if len(content) == 0:
-        raise HTTPException(status_code=422, detail="O arquivo de exemplo está vazio no servidor. Contate o suporte.")
+        raise HTTPException(
+            status_code=422,
+            detail="O arquivo de exemplo está vazio no servidor. Contate o suporte.",
+        )
 
     org = await db.get(Organization, current_user.organization_id)
     existing_count = len(
