@@ -91,10 +91,10 @@ def read_excel(file_bytes: bytes) -> pd.DataFrame:
     # Try xlrd for legacy .xls binary format
     try:
         return pd.read_excel(io.BytesIO(file_bytes), engine="xlrd")
-    except Exception:
+    except Exception as err:
         raise ValueError(
             "Formato de arquivo não suportado. Envie um arquivo .xlsx (Excel 2007+) ou .xls válido."
-        )
+        ) from err
 
 
 def normalize(df: pd.DataFrame) -> pd.DataFrame:

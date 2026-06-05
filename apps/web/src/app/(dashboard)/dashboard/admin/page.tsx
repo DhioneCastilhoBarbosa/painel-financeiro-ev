@@ -548,13 +548,15 @@ export default function AdminPage() {
                               </span>
                               {!c.used && !c.expired && (
                                 <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <button
-                                      onClick={() => copyCode(c.code)}
-                                      className="p-1 rounded hover:bg-muted transition-colors"
-                                    >
-                                      <Copy className="h-3.5 w-3.5 text-muted-foreground" />
-                                    </button>
+                                  <TooltipTrigger
+                                    render={
+                                      <button
+                                        onClick={() => copyCode(c.code)}
+                                        className="p-1 rounded hover:bg-muted transition-colors"
+                                      />
+                                    }
+                                  >
+                                    <Copy className="h-3.5 w-3.5 text-muted-foreground" />
                                   </TooltipTrigger>
                                   <TooltipContent>Copiar código</TooltipContent>
                                 </Tooltip>
@@ -587,13 +589,15 @@ export default function AdminPage() {
                           {/* Revogar */}
                           {!c.used && !c.expired && (
                             <Tooltip>
-                              <TooltipTrigger asChild>
-                                <button
-                                  onClick={() => deleteInviteCode(c.id)}
-                                  className="p-1.5 rounded hover:bg-red-50 dark:hover:bg-red-950/40 text-red-500 transition-colors shrink-0 mt-0.5"
-                                >
-                                  <Trash2 className="h-3.5 w-3.5" />
-                                </button>
+                              <TooltipTrigger
+                                render={
+                                  <button
+                                    onClick={() => deleteInviteCode(c.id)}
+                                    className="p-1.5 rounded hover:bg-red-50 dark:hover:bg-red-950/40 text-red-500 transition-colors shrink-0 mt-0.5"
+                                  />
+                                }
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
                               </TooltipTrigger>
                               <TooltipContent>Revogar código</TooltipContent>
                             </Tooltip>

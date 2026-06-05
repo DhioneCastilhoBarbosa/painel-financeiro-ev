@@ -81,9 +81,7 @@ async def _example_available(filename: str) -> bool:
             if resp.status_code != 200:
                 return False
             content_length = resp.headers.get("content-length")
-            if content_length is not None and int(content_length) == 0:
-                return False
-            return True
+            return content_length is None or int(content_length) > 0
     else:
         path = _DATASETS_DIR / filename
         return path.exists() and path.stat().st_size > 0
