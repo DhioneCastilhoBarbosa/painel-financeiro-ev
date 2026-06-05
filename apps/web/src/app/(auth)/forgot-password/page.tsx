@@ -8,7 +8,8 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -129,12 +130,13 @@ export default function ForgotPasswordPage() {
       ) : (
         <CardContent className="pb-6 text-center">
           <CheckCircle2 className="h-12 w-12 mx-auto mb-4" style={{ color: GREEN }} />
-          <Button asChild variant="outline" className="w-full mt-2">
-            <Link href="/login">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Voltar ao login
-            </Link>
-          </Button>
+          <Link
+            href="/login"
+            className={cn(buttonVariants({ variant: "outline" }), "w-full mt-2")}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar ao login
+          </Link>
         </CardContent>
       )}
     </Card>
