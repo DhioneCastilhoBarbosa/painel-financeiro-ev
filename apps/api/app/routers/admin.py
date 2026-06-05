@@ -22,7 +22,7 @@ import uuid
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -463,6 +463,7 @@ async def create_invite_code(
 @router.delete(
     "/invite-codes/{code_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    response_class=Response,
     summary="Revogar código de convite",
 )
 async def delete_invite_code(
@@ -488,3 +489,4 @@ async def delete_invite_code(
     )
     await db.delete(invite)
     await db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
