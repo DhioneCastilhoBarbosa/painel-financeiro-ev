@@ -245,11 +245,204 @@ function PrintParameters({ inputs, results, capex }: { inputs: ProjectInputs; re
   );
 }
 
+// ─── Simplified Analysis ──────────────────────────────────────────────────────
+
+interface SimpleInputs {
+  n_chargers: number;
+  power_kw: number;
+  capex_total: number;
+  tariff_per_kwh: number;
+  energy_cost_per_kwh: number;
+  occupancy_pct: number;
+  hours_per_day: number;
+  monthly_opex: number;
+  revenue_split_pct: number;
+}
+
+const DEFAULT_SIMPLE: SimpleInputs = {
+  n_chargers: 1,
+  power_kw: 60,
+  capex_total: 93500,
+  tariff_per_kwh: 2.20,
+  energy_cost_per_kwh: 0.72,
+  occupancy_pct: 30,
+  hours_per_day: 10,
+  monthly_opex: 300,
+  revenue_split_pct: 0,
+};
+
+function calcSimple(s: SimpleInputs) {
+  const monthly_kwh = s.n_chargers * s.power_kw * s.hours_per_day * 30 * (s.occupancy_pct / 100);
+  const monthly_revenue = monthly_kwh * s.tariff_per_kwh;
+  const monthly_energy = monthly_kwh * s.energy_cost_per_kwh;
+  const monthly_split = monthly_revenue * (s.revenue_split_pct / 100);
+  const monthly_net = monthly_revenue - monthly_energy - s.monthly_opex - monthly_split;
+  const payback_months = monthly_net > 0 ? s.capex_total / monthly_net : null;
+  const roi_1y = monthly_net > 0 ? ((monthly_net * 12) / s.capex_total) * 100 : 0;
+  const horizon = Math.min(84, Math.ceil((payback_months ?? 60) * 2.5));
+  const chart = Array.from({ length: horizon + 1 }, (_, i) => ({
+    mes: i,
+    acumulado: Math.round(monthly_net * i - s.capex_total),
+  }));
+  return { monthly_kwh, monthly_revenue, monthly_energy, monthly_split, monthly_net, payback_months, roi_1y, chart };
+}
+
+function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) => string }) {
+  const [s, setS] = useState<SimpleInputs>(DEFAULT_SIMPLE);
+  const r = useMemo(() => calcSimple(s), [s]);
+  const setV = (k: keyof SimpleInputs, v: number) => setS(prev => ({ ...prev, [k]: v }));
+  const fmtPb = (m: number | null) => {
+    if (!m) return "Sem retorno";
+    if (m > 120) return "> 10 anos";
+    const y = Math.floor(m / 12), mo = Math.round(m % 12);
+    return y > 0 ? `${y}a ${mo}m` : `${Math.round(m)} meses`;
+  };
+
+  const paybackColor = !r.payback_months ? "red"
+    : r.payback_months <= 24 ? "emerald"
+    : r.payback_months <= 48 ? "blue"
+    : r.payback_months <= 72 ? "amber" : "red";
+
+  return (
+    <div className="flex flex-1 min-h-0 overflow-hidden">
+      {/* Inputs */}
+      <aside className="w-72 shrink-0 border-r dark:border-slate-800 overflow-y-auto bg-slate-50/50 dark:bg-slate-900/50 p-4 space-y-3">
+        <div>
+          <h2 className="font-semibold text-sm flex items-center gap-2">
+            <Target className="h-4 w-4 text-blue-600" />
+            Parâmetros Essenciais
+          </h2>
+          <p className="text-[0.7rem] text-muted-foreground mt-0.5">Preencha os valores principais do projeto</p>
+        </div>
+        <NumField label="Qtd. carregadores" value={s.n_chargers} onChange={v => setV("n_chargers", v)} min={1}
+          help="Número total de carregadores instalados." />
+        <NumField label="Potência (kW/unid.)" value={s.power_kw} onChange={v => setV("power_kw", v)} suffix="kW"
+          help="Potência nominal de cada carregador." />
+        <NumField label="CAPEX total" value={s.capex_total} onChange={v => setV("capex_total", v)} prefix="R$"
+          help="Investimento inicial total: equipamentos, infraestrutura, instalação e homologações." />
+        <Separator />
+        <NumField label="Tarifa cobrada" value={s.tariff_per_kwh} onChange={v => setV("tariff_per_kwh", v)} prefix="R$" suffix="/kWh" step={0.05}
+          help="Preço cobrado ao usuário final por kWh carregado." />
+        <NumField label="Custo de energia" value={s.energy_cost_per_kwh} onChange={v => setV("energy_cost_per_kwh", v)} prefix="R$" suffix="/kWh" step={0.01}
+          help="Tarifa de energia elétrica paga à concessionária." />
+        <NumField label="Ocupação estimada" value={s.occupancy_pct} onChange={v => setV("occupancy_pct", Math.min(100, v))} suffix="%" step={5}
+          help="% do tempo que os carregadores ficam em uso. Ex.: 30% = em uso 7,2h/dia." />
+        <NumField label="Horas de operação/dia" value={s.hours_per_day} onChange={v => setV("hours_per_day", Math.min(24, v))} suffix="h" step={0.5}
+          help="Horas por dia em que o ponto fica aberto ao público." />
+        <Separator />
+        <NumField label="OPEX mensal (fixo)" value={s.monthly_opex} onChange={v => setV("monthly_opex", v)} prefix="R$"
+          help="Soma de todos os custos fixos mensais: manutenção, internet, aluguel, etc." />
+        <NumField label="Split de receita" value={s.revenue_split_pct} onChange={v => setV("revenue_split_pct", Math.min(100, v))} suffix="%" step={1}
+          help="% da receita repassada ao dono do espaço (estabelecimento parceiro). 0 = sem split." />
+      </aside>
+
+      {/* Results */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-5">
+        <div>
+          <h1 className="text-xl font-bold">Análise Simplificada de Retorno</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Payback simples (não descontado) · estimativa rápida do retorno do investimento</p>
+        </div>
+
+        {/* KPI cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { label: "Receita mensal (est.)", value: formatCurrency(r.monthly_revenue), color: "blue" as const },
+            { label: "Custo mensal total", value: formatCurrency(r.monthly_energy + s.monthly_opex + r.monthly_split), color: "amber" as const },
+            { label: "Lucro líquido/mês", value: formatCurrency(r.monthly_net), color: r.monthly_net >= 0 ? "emerald" as const : "red" as const },
+            { label: "Payback simples", value: fmtPb(r.payback_months), color: paybackColor as "emerald" | "blue" | "amber" | "red" | "slate" | "purple" },
+          ].map(({ label, value, color }) => (
+            <KpiCard key={label} label={label} value={value} color={color} />
+          ))}
+        </div>
+
+        {/* Breakdown */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-sm">Receita × Custos (mensal)</CardTitle></CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              {[
+                ["kWh produzido/mês", `${Math.round(r.monthly_kwh).toLocaleString("pt-BR")} kWh`, ""],
+                ["Receita bruta", formatCurrency(r.monthly_revenue), "text-blue-600 dark:text-blue-400"],
+                ["(-) Custo de energia", formatCurrency(r.monthly_energy), "text-red-500"],
+                ["(-) OPEX fixo", formatCurrency(s.monthly_opex), "text-red-500"],
+                ...(r.monthly_split > 0 ? [["(-) Split parceiro", formatCurrency(r.monthly_split), "text-red-500"] as [string, string, string]] : []),
+                ["= Lucro líquido/mês", formatCurrency(r.monthly_net), r.monthly_net >= 0 ? "text-emerald-600 dark:text-emerald-400 font-bold" : "text-red-600 font-bold"],
+                ["ROI anual estimado", `${r.roi_1y.toFixed(1)}%`, r.roi_1y >= 20 ? "text-emerald-600" : "text-amber-600"],
+              ].map(([label, val, cls]) => (
+                <div key={label} className="flex justify-between border-b last:border-0 pb-1.5 last:pb-0 dark:border-slate-800">
+                  <span className="text-muted-foreground">{label}</span>
+                  <span className={`font-medium ${cls}`}>{val}</span>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-sm">Resumo do Investimento</CardTitle></CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              {[
+                ["CAPEX total", formatCurrency(s.capex_total), ""],
+                ["Lucro mensal líquido", formatCurrency(r.monthly_net), r.monthly_net >= 0 ? "text-emerald-600" : "text-red-500"],
+                ["Payback simples", fmtPb(r.payback_months), r.payback_months && r.payback_months <= 48 ? "text-emerald-600 font-bold" : "text-amber-600 font-bold"],
+                ["ROI 1º ano", `${r.roi_1y.toFixed(1)}%`, ""],
+                ["Capacidade instalada", `${s.n_chargers * s.power_kw} kW`, ""],
+              ].map(([label, val, cls]) => (
+                <div key={label} className="flex justify-between border-b last:border-0 pb-1.5 last:pb-0 dark:border-slate-800">
+                  <span className="text-muted-foreground">{label}</span>
+                  <span className={`font-medium ${cls}`}>{val}</span>
+                </div>
+              ))}
+              {r.monthly_net <= 0 && (
+                <p className="text-xs text-red-500 pt-1">⚠ O projeto não gera retorno com os parâmetros atuais. Revise a tarifa, ocupação ou OPEX.</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Break-even chart */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Recuperação do Investimento (acumulado)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={240}>
+              <BarChart data={r.chart} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                <XAxis dataKey="mes" tick={{ fontSize: 10 }} tickFormatter={(v) => `M${v}`} interval={Math.ceil(r.chart.length / 10)} />
+                <YAxis tick={{ fontSize: 10 }} tickFormatter={(v: number) => `${v >= 0 ? "" : "-"}R$${Math.abs(v) >= 1000 ? `${Math.round(Math.abs(v) / 1000)}k` : Math.abs(v)}`} width={72} />
+                <RechartTooltip
+                  formatter={(v: number) => [formatCurrency(v + s.capex_total) + ` (acum. ${v >= 0 ? "+" : ""}${formatCurrency(v)})`, "Saldo vs CAPEX"]}
+                  labelFormatter={(l) => `Mês ${l}`}
+                />
+                <ReferenceLine y={0} stroke="#ef4444" strokeWidth={2} strokeDasharray="4 2" label={{ value: "Break-even", position: "insideTopRight", fontSize: 10, fill: "#ef4444" }} />
+                <Bar dataKey="acumulado" radius={[2, 2, 0, 0]}>
+                  {r.chart.map((entry, i) => (
+                    <Cell key={i} fill={entry.acumulado >= 0 ? "#10b981" : "#3b82f6"} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+            <p className="text-[0.65rem] text-muted-foreground mt-2 text-center">
+              Barras azuis = capital ainda não recuperado · Barras verdes = lucro após payback · Linha vermelha = ponto de equilíbrio
+            </p>
+          </CardContent>
+        </Card>
+
+        <p className="text-xs text-muted-foreground pb-4">
+          ℹ️ Esta análise usa <strong>payback simples</strong> (não descontado), sem considerar taxa de juros, inflação ou valor do dinheiro no tempo.
+          Para análise completa com VPL, TIR e sensibilidade, use a <strong>Análise Avançada</strong>.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function InvestimentoPage() {
   const { user } = useAuth();
   const [inputs, setInputs] = useState<ProjectInputs>(DEFAULT_INPUTS);
+  const [analysisMode, setAnalysisMode] = useState<"simple" | "advanced">("simple");
   const [fillMsg, setFillMsg] = useState<string | null>(null);
   const [showFillPanel, setShowFillPanel] = useState(false);
   const [fillConnectorType, setFillConnectorType] = useState<string>("all");
@@ -479,7 +672,33 @@ export default function InvestimentoPage() {
 
   return (
     <TooltipProvider delay={200}>
-      <div className="flex h-full min-h-0">
+      <div className="flex flex-col h-full min-h-0">
+        {/* ── Mode toggle bar ── */}
+        <div className="flex items-center gap-3 px-4 py-2 border-b dark:border-slate-800 bg-background shrink-0">
+          <span className="text-xs font-medium text-muted-foreground">Análise:</span>
+          <div className="flex rounded-lg overflow-hidden border dark:border-slate-700 text-xs">
+            {(["simple", "advanced"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => setAnalysisMode(m)}
+                className={`px-3 py-1.5 transition-colors font-medium ${analysisMode === m
+                  ? "bg-blue-600 text-white"
+                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+              >
+                {m === "simple" ? "Simplificada" : "Avançada"}
+              </button>
+            ))}
+          </div>
+          {analysisMode === "simple" && (
+            <span className="text-[0.65rem] text-muted-foreground">Payback simples · ideal para avaliação rápida</span>
+          )}
+        </div>
+
+        {analysisMode === "simple" ? (
+          <SimplifiedAnalysis formatCurrency={formatCurrency} />
+        ) : (
+        <div className="flex flex-1 min-h-0">
         {/* ── LEFT PANEL: Inputs ── */}
         <aside data-input-panel className="w-72 shrink-0 border-r dark:border-slate-800 overflow-y-auto bg-slate-50/50 dark:bg-slate-900/50">
           <div className="p-4 border-b dark:border-slate-800">
@@ -567,27 +786,64 @@ export default function InvestimentoPage() {
               </div>
 
               <Separator />
-              <div className="flex items-center gap-1.5">
-                <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">Composição do CAPEX</p>
-                <Help text="Todos os valores abaixo são o custo TOTAL da obra completa (todos os carregadores juntos), não por unidade." />
+              <div className="flex items-center justify-between gap-1.5">
+                <div className="flex items-center gap-1.5">
+                  <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">Composição do CAPEX</p>
+                  <Help text="'Total': insira o valor global do investimento. 'Detalhado': especifique cada componente." />
+                </div>
+                <div className="flex rounded-md border dark:border-slate-700 overflow-hidden text-[0.6rem]">
+                  {(["total", "detailed"] as const).map((m) => (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => {
+                        if (m === "total" && (inputs.capex_override ?? 0) === 0) {
+                          set("capex_override", calcCapex(inputs));
+                        }
+                        set("capex_mode", m);
+                      }}
+                      className={`px-2 py-1 transition-colors ${(inputs.capex_mode ?? "detailed") === m
+                        ? "bg-blue-600 text-white font-medium"
+                        : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+                    >
+                      {m === "total" ? "Total" : "Detalhado"}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <NumField label="Carregadores" value={inputs.charger_value} onChange={v => set("charger_value", v)} prefix="R$"
-                help="Custo total de aquisição de todos os equipamentos de recarga (hardware)." />
-              <NumField label="Infraestrutura elétrica" value={inputs.electrical_infra} onChange={v => set("electrical_infra", v)} prefix="R$"
-                help="Cabeamento, quadros elétricos, eletrodutos e materiais para distribuição de energia até os carregadores." />
-              <NumField label="Obra civil" value={inputs.civil_work} onChange={v => set("civil_work", v)} prefix="R$"
-                help="Adequação do espaço físico: alvenaria, piso, proteção física dos equipamentos." />
-              <NumField label="Transformador" value={inputs.transformer} onChange={v => set("transformer", v)} prefix="R$"
-                help="Transformador de energia elétrica, quando necessário para adequar a tensão ou aumentar a demanda disponível." />
-              <NumField label="Proteção elétrica" value={inputs.electrical_protection} onChange={v => set("electrical_protection", v)} prefix="R$"
-                help="Dispositivos de proteção: DPS, disjuntores, aterramento e SPDA (para-raios)." />
-              <NumField label="Homologações" value={inputs.homologation} onChange={v => set("homologation", v)} prefix="R$"
-                help="Taxas e projetos de aprovação junto à concessionária de energia, prefeitura e órgãos reguladores." />
-              <NumField label="Software/Backend" value={inputs.software_backend} onChange={v => set("software_backend", v)} prefix="R$"
-                help="Licença ou implantação de plataforma OCPP/OCPI para gestão e monitoramento remoto dos carregadores." />
-              <NumField label="Instalação" value={inputs.installation} onChange={v => set("installation", v)} prefix="R$"
-                help="Mão de obra de instalação, comissionamento e testes dos equipamentos." />
-              <NumField label="Outros" value={inputs.other_capex} onChange={v => set("other_capex", v)} prefix="R$" />
+
+              {(inputs.capex_mode ?? "detailed") === "total" ? (
+                <>
+                  <NumField label="CAPEX Total" value={inputs.capex_override ?? 0} onChange={v => set("capex_override", v)} prefix="R$"
+                    help="Valor total do investimento inicial (carregadores, infra, instalação, etc.). Para especificar cada componente, alterne para 'Detalhado'." />
+                  <p className="text-[0.6rem] text-muted-foreground -mt-1">
+                    Equivalente detalhado: {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(
+                      inputs.charger_value + inputs.electrical_infra + inputs.civil_work + inputs.transformer +
+                      inputs.electrical_protection + inputs.homologation + inputs.software_backend + inputs.installation + inputs.other_capex
+                    )} (soma dos campos detalhados)
+                  </p>
+                </>
+              ) : (
+                <>
+                  <NumField label="Carregadores" value={inputs.charger_value} onChange={v => set("charger_value", v)} prefix="R$"
+                    help="Custo total de aquisição de todos os equipamentos de recarga (hardware)." />
+                  <NumField label="Infraestrutura elétrica" value={inputs.electrical_infra} onChange={v => set("electrical_infra", v)} prefix="R$"
+                    help="Cabeamento, quadros elétricos, eletrodutos e materiais para distribuição de energia até os carregadores." />
+                  <NumField label="Obra civil" value={inputs.civil_work} onChange={v => set("civil_work", v)} prefix="R$"
+                    help="Adequação do espaço físico: alvenaria, piso, proteção física dos equipamentos." />
+                  <NumField label="Transformador" value={inputs.transformer} onChange={v => set("transformer", v)} prefix="R$"
+                    help="Transformador de energia elétrica, quando necessário para adequar a tensão ou aumentar a demanda disponível." />
+                  <NumField label="Proteção elétrica" value={inputs.electrical_protection} onChange={v => set("electrical_protection", v)} prefix="R$"
+                    help="Dispositivos de proteção: DPS, disjuntores, aterramento e SPDA (para-raios)." />
+                  <NumField label="Homologações" value={inputs.homologation} onChange={v => set("homologation", v)} prefix="R$"
+                    help="Taxas e projetos de aprovação junto à concessionária de energia, prefeitura e órgãos reguladores." />
+                  <NumField label="Software/Backend" value={inputs.software_backend} onChange={v => set("software_backend", v)} prefix="R$"
+                    help="Licença ou implantação de plataforma OCPP/OCPI para gestão e monitoramento remoto dos carregadores." />
+                  <NumField label="Instalação" value={inputs.installation} onChange={v => set("installation", v)} prefix="R$"
+                    help="Mão de obra de instalação, comissionamento e testes dos equipamentos." />
+                  <NumField label="Outros" value={inputs.other_capex} onChange={v => set("other_capex", v)} prefix="R$" />
+                </>
+              )}
 
               <Separator />
               <div className="flex items-center gap-1.5">
@@ -1434,6 +1690,8 @@ export default function InvestimentoPage() {
 
           </div>
         </main>
+        </div>
+        )}
       </div>
     </TooltipProvider>
   );

@@ -114,7 +114,9 @@ export default function TimeseriesPage() {
 
   const hasForecast = forecastEnabled && (forecastData?.forecast?.length ?? 0) > 0;
 
-  // Merge historical + forecast into single array for the combined chart
+  // Merge historical + forecast into single array for the combined chart.
+  // When granularity is weekly/monthly the daily forecast points are aggregated
+  // into buckets so the projection bars align with the historical series.
   const forecastChartData = useMemo(() => {
     const hist = (mergedTs ?? []).map((d) => ({
       ...d,
@@ -123,19 +125,59 @@ export default function TimeseriesPage() {
       fc_lower: null as number | null,
     }));
     if (!hasForecast) return hist;
-    const fc = (forecastData!.forecast as Array<{ date: string; revenue: number; lower: number; upper: number }>).map((d) => ({
-      date: d.date,
-      revenue: null as number | null,
-      sessions: null as number | null,
-      prev_revenue: null as number | null,
-      prev_sessions: null as number | null,
-      prev_date: null as string | null,
-      forecast_rev: d.revenue,
-      fc_upper: d.upper,
-      fc_lower: d.lower,
-    }));
+
+    type FcDay = { date: string; revenue: number; lower: number; upper: number };
+    const rawFc = forecastData!.forecast as FcDay[];
+
+    if (granularity === "daily") {
+      const fc = rawFc.map((d) => ({
+        date: d.date,
+        revenue: null as number | null,
+        sessions: null as number | null,
+        prev_revenue: null as number | null,
+        prev_sessions: null as number | null,
+        prev_date: null as string | null,
+        forecast_rev: d.revenue,
+        fc_upper: d.upper,
+        fc_lower: d.lower,
+      }));
+      return [...hist, ...fc];
+    }
+
+    // Aggregate daily forecast points into weekly / monthly buckets (sum values)
+    const bucket = new Map<string, { sum: number; upper: number; lower: number }>();
+    for (const d of rawFc) {
+      let key: string;
+      if (granularity === "weekly") {
+        const dt = new Date(d.date + "T00:00:00");
+        const dow = dt.getDay(); // 0 = Sun
+        const diff = dt.getDate() - dow + (dow === 0 ? -6 : 1); // back to Monday
+        const mon = new Date(dt);
+        mon.setDate(diff);
+        key = mon.toISOString().slice(0, 10);
+      } else {
+        key = d.date.slice(0, 7) + "-01"; // monthly: YYYY-MM-01
+      }
+      const prev = bucket.get(key) ?? { sum: 0, upper: 0, lower: 0 };
+      bucket.set(key, { sum: prev.sum + d.revenue, upper: prev.upper + d.upper, lower: prev.lower + d.lower });
+    }
+
+    const fc = Array.from(bucket.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, g]) => ({
+        date,
+        revenue: null as number | null,
+        sessions: null as number | null,
+        prev_revenue: null as number | null,
+        prev_sessions: null as number | null,
+        prev_date: null as string | null,
+        forecast_rev: g.sum,
+        fc_upper: g.upper,
+        fc_lower: g.lower,
+      }));
+
     return [...hist, ...fc];
-  }, [mergedTs, hasForecast, forecastData]);
+  }, [mergedTs, hasForecast, forecastData, granularity]);
 
   const granLabel = granularity === "daily" ? "por dia" : granularity === "weekly" ? "por semana" : "por mês";
   const canCompare = Boolean(filters.date_from && filters.date_to);

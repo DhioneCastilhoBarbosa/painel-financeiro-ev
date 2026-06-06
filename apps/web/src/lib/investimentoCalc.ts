@@ -61,6 +61,10 @@ export interface ProjectInputs {
   charger_installments: number;  // installments for charger_value only
   other_installments: number;    // installments for remaining CAPEX
   payment_interest_rate_pct: number; // monthly interest rate applied to all financing (% a.m.)
+
+  // CAPEX entry mode: "total" = single field; "detailed" = itemized components
+  capex_mode?: "total" | "detailed";
+  capex_override?: number; // used when capex_mode === "total"
 }
 
 export const DEFAULT_INPUTS: ProjectInputs = {
@@ -119,6 +123,9 @@ export const DEFAULT_INPUTS: ProjectInputs = {
   charger_installments: 1,
   other_installments: 1,
   payment_interest_rate_pct: 0,
+
+  capex_mode: "detailed",
+  capex_override: 0,
 };
 
 export interface MonthlyPoint {
@@ -208,6 +215,9 @@ export interface ProjectResults {
 // ─── Calculation helpers ───────────────────────────────────────────────────────
 
 export function calcCapex(inputs: ProjectInputs): number {
+  if (inputs.capex_mode === "total" && (inputs.capex_override ?? 0) > 0) {
+    return inputs.capex_override!;
+  }
   return (
     inputs.charger_value + inputs.electrical_infra + inputs.civil_work +
     inputs.transformer + inputs.electrical_protection + inputs.homologation +

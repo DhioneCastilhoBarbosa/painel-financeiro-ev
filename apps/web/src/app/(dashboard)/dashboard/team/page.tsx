@@ -719,14 +719,34 @@ export default function TeamPage() {
                           : ` · Expira ${formatDate(inv.expires_at)}`}
                       </p>
                       {inv.status === "pendente" && (
-                        <div className="flex items-center gap-1 mt-1">
-                          <span className="text-[0.6rem] font-mono text-muted-foreground truncate max-w-[180px]" title={inv.token}>
-                            Código: {inv.token.slice(0, 8).toUpperCase()}…
-                          </span>
+                        <div className="flex items-start gap-1 mt-1">
+                          <code className="text-[0.6rem] font-mono text-muted-foreground break-all bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded flex-1 leading-relaxed select-all">
+                            {inv.token}
+                          </code>
                           <button
-                            className="text-muted-foreground hover:text-foreground transition-colors"
+                            type="button"
+                            className="shrink-0 mt-0.5 text-muted-foreground hover:text-foreground transition-colors"
                             title="Copiar código de convite"
-                            onClick={() => { navigator.clipboard.writeText(inv.token); toast.success("Código copiado!"); }}
+                            onClick={() => {
+                              const copy = (text: string) => {
+                                if (navigator.clipboard && window.isSecureContext) {
+                                  navigator.clipboard.writeText(text).then(() => toast.success("Código copiado!")).catch(() => {
+                                    const ta = document.createElement("textarea");
+                                    ta.value = text; ta.style.cssText = "position:fixed;opacity:0";
+                                    document.body.appendChild(ta); ta.focus(); ta.select();
+                                    try { document.execCommand("copy"); toast.success("Código copiado!"); } catch { toast.error("Copie manualmente."); }
+                                    document.body.removeChild(ta);
+                                  });
+                                } else {
+                                  const ta = document.createElement("textarea");
+                                  ta.value = text; ta.style.cssText = "position:fixed;opacity:0";
+                                  document.body.appendChild(ta); ta.focus(); ta.select();
+                                  try { document.execCommand("copy"); toast.success("Código copiado!"); } catch { toast.error("Copie manualmente: selecione o código acima."); }
+                                  document.body.removeChild(ta);
+                                }
+                              };
+                              copy(inv.token);
+                            }}
                           >
                             <Copy className="h-3 w-3" />
                           </button>
