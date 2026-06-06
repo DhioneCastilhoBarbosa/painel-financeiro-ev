@@ -1,0 +1,105 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# docker-compose.dev.yml — Desenvolvimento local com hot-reload
+#
+# Uso:
+#   docker compose -f docker-compose.dev.yml up -d
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  db:
+    image: timescale/timescaledb:latest-pg16
+    container_name: financedash_db_dev
+    environment:
+      POSTGRES_USER:     ${POSTGRES_USER:-financedash}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-financedash_dev}
+      POSTGRES_DB:       ${POSTGRES_DB:-financedash}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+      - ./infra/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U financedash"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: financedash_redis_dev
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data_dev:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: financedash_api_dev
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://financedash:financedash_dev@db:5432/financedash
+      REDIS_URL: redis://redis:6379/0
+      DATASETS_DIR: /datasets
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./apps/api:/app
+      - uploads_data_dev:/app/uploads
+      - ./datasets:/datasets
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  worker:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: financedash_worker_dev
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://financedash:financedash_dev@db:5432/financedash
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - ./apps/api:/app
+      - uploads_data_dev:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A app.workers.celery_app worker --loglevel=info --concurrency=2
+
+  web:
+    image: node:20-alpine
+    container_name: financedash_web_dev
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/web:/app
+      - web_node_modules_dev:/app/node_modules
+    environment:
+      NODE_ENV: development
+      INTERNAL_API_URL: http://api:8000
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+    depends_on:
+      - api
+    command: sh -c "npm install --legacy-peer-deps --prefer-offline && npm run dev"
+
+volumes:
+  postgres_data_dev:
+  redis_data_dev:
+  uploads_data_dev:
+  web_node_modules_dev:
