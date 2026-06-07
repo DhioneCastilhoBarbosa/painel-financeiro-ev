@@ -1,6 +1,6 @@
 'use client';
-import { useState, useCallback } from 'react';
-import { MapContainer, TileLayer, useMapEvents, ZoomControl } from 'react-leaflet';
+import { useState, useCallback, useEffect } from 'react';
+import { MapContainer, TileLayer, useMapEvents, ZoomControl, useMap } from 'react-leaflet';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -8,7 +8,7 @@ import { useIBGEData } from '@/hooks/useIBGEData';
 import { useABVEData } from '@/hooks/useABVEData';
 import { useOpenChargeMap } from '@/hooks/useOpenChargeMap';
 import { useOverpassData } from '@/hooks/useOverpassData';
-import { useOpportunityScore } from '@/hooks/useOpportunityScore';
+import { useOpportunityScore, UF_CENTROIDS } from '@/hooks/useOpportunityScore';
 import { DEFAULT_WEIGHTS } from '@/utils/scoring';
 import type { ScoreWeights, UFScore } from '@/utils/scoring';
 
@@ -47,6 +47,22 @@ const DEFAULT_LAYERS: LayerVisibility = {
   heatmap: false,
 };
 
+// Zooms the map when filterUF changes
+function MapController({ filterUF }: { filterUF: string }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!filterUF) {
+      map.flyTo(INITIAL_CENTER, INITIAL_ZOOM, { duration: 1.2 });
+    } else {
+      const centroid = UF_CENTROIDS[filterUF];
+      if (centroid) map.flyTo(centroid, 7, { duration: 1.2 });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterUF]);
+  return null;
+}
+
+// Triggers Overpass fetch when map moves
 function BoundsWatcher({ onBoundsChange }: {
   onBoundsChange: (s: number, w: number, n: number, e: number) => void;
 }) {
@@ -93,6 +109,11 @@ export default function InstallationMap() {
     [layers.poi, layers.fuel, layers.traffic, fetchForBounds]
   );
 
+  // When a layer needing Overpass is first enabled, trigger immediate fetch
+  const handleLayersChange = useCallback((next: LayerVisibility) => {
+    setLayers(next);
+  }, []);
+
   const handleExport = () => {
     const rows = [
       ['uf', 'nome', 'lat', 'lng', 'score', 'renda', 'frota', 'eletropostos', 'gap_abve'],
@@ -118,43 +139,42 @@ export default function InstallationMap() {
 
   const handleSelectUF = (_score: UFScore) => { /* popup handles display */ };
 
-  const isLoading = ibgeLoading || abveLoading;
+  // GeoJSON layers need the IBGE polygons — show them only after load
+  const geoReady = !!geojson;
 
   return (
     <div style={{ position: 'relative', height: '100%', width: '100%' }}>
-      {/* Loading overlay */}
-      {isLoading && (
-        <div className="absolute inset-0 z-[2000] bg-white/70 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-3">
-            <div className="w-8 h-8 border-4 border-[#06CB3F] border-t-transparent rounded-full animate-spin" />
-            <p className="text-sm text-gray-600">Carregando dados…</p>
-          </div>
+      {/* Non-blocking loading indicator (top-left chip) */}
+      {(ibgeLoading || abveLoading) && (
+        <div className="absolute top-3 left-3 z-[1000] flex items-center gap-2 bg-white/90 border border-gray-200 rounded-full px-3 py-1.5 shadow text-xs text-gray-600">
+          <span className="w-3 h-3 border-2 border-[#06CB3F] border-t-transparent rounded-full animate-spin inline-block" />
+          {ibgeLoading ? 'Carregando mapa do IBGE…' : 'Carregando dados ABVE…'}
         </div>
       )}
 
-      {/* API error */}
+      {/* IBGE API error (non-blocking) */}
       {ibgeError && (
-        <div className="absolute top-4 left-4 z-[1000] bg-red-50 border border-red-300 text-red-700 text-xs rounded-lg px-3 py-2 max-w-xs">
-          ⚠ Erro IBGE: {ibgeError}
+        <div className="absolute top-3 left-3 z-[1000] bg-red-50 border border-red-300 text-red-700 text-xs rounded-lg px-3 py-2 max-w-xs">
+          ⚠ IBGE indisponível: choropleth desativado. {ibgeError}
         </div>
       )}
 
       {/* Mock data notice */}
-      {usingMock && (
-        <div className="absolute bottom-8 left-4 z-[1000] bg-amber-50 border border-amber-300 text-amber-700 text-xs rounded-lg px-3 py-2">
-          ⚡ Dados de demonstração. Configure <code>NEXT_PUBLIC_OPEN_CHARGE_MAP_KEY</code>.
+      {usingMock && !ibgeLoading && (
+        <div className="absolute bottom-10 left-3 z-[1000] bg-amber-50 border border-amber-300 text-amber-700 text-xs rounded-lg px-3 py-2">
+          ⚡ Eletropostos: demonstração. Configure <code className="font-mono">NEXT_PUBLIC_OPEN_CHARGE_MAP_KEY</code>.
         </div>
       )}
 
-      {/* Map */}
-      {/* @ts-expect-error react-leaflet v4 types diverge from runtime API */}
+      {/* Map — always visible, no blocking overlay */}
+      {/* @ts-expect-error react-leaflet v4 types */}
       <MapContainer
         center={INITIAL_CENTER}
         zoom={INITIAL_ZOOM}
         zoomControl={false}
         style={{ height: '100%', width: '100%' }}
       >
-        {/* @ts-expect-error react-leaflet v4 prop types */}
+        {/* @ts-expect-error react-leaflet v4 types */}
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -162,26 +182,31 @@ export default function InstallationMap() {
         />
         <ZoomControl position="bottomright" />
         <BoundsWatcher onBoundsChange={handleBoundsChange} />
+        <MapController filterUF={filterUF} />
 
-        {geojson && layers.income && Object.keys(incomeByUF).length > 0 && (
-          <IncomeLayer geojson={geojson} incomeByUF={incomeByUF} />
+        {/* Choropleth layers — need IBGE GeoJSON */}
+        {geoReady && layers.income && Object.keys(incomeByUF).length > 0 && (
+          <IncomeLayer geojson={geojson!} incomeByUF={incomeByUF} />
         )}
-        {geojson && layers.fleet && frotasPorUF.length > 0 && (
-          <FleetLayer geojson={geojson} frotasPorUF={frotasPorUF} />
+        {geoReady && layers.fleet && frotasPorUF.length > 0 && (
+          <FleetLayer geojson={geojson!} frotasPorUF={frotasPorUF} />
         )}
-        {geojson && layers.abveGap && gapScores.length > 0 && (
+        {/* ABVEGap shows circles immediately (no geojson needed), upgradesn to choropleth when IBGE loads */}
+        {layers.abveGap && gapScores.length > 0 && (
           <ABVEGapLayer geojson={geojson} gapScores={gapScores} />
         )}
-        {geojson && layers.score && filteredScores.length > 0 && (
-          <ScoreLayer geojson={geojson} scores={filteredScores} onSelectUF={handleSelectUF} />
+        {geoReady && layers.score && filteredScores.length > 0 && (
+          <ScoreLayer geojson={geojson!} scores={filteredScores} onSelectUF={handleSelectUF} />
         )}
         {layers.heatmap && filteredScores.length > 0 && (
           <HeatmapLayer scores={filteredScores} />
         )}
 
+        {/* Point layers — always available */}
         {layers.chargers && <ChargerLayer chargers={chargers} />}
         {layers.chargers && <ChargerCoverageLayer chargers={chargers} />}
 
+        {/* Overpass layers (dynamic by bbox) */}
         <PoiLayer
           pois={overpass.pois}
           fuelStations={overpass.fuelStations}
@@ -194,13 +219,16 @@ export default function InstallationMap() {
       {/* Control panel */}
       <MapSidebar
         layers={layers}
-        onLayersChange={setLayers}
+        onLayersChange={handleLayersChange}
         weights={weights}
         onWeightsChange={setWeights}
         top10={filteredTop10}
+        allScores={scores}
         onExport={handleExport}
         filterUF={filterUF}
         onFilterUFChange={setFilterUF}
+        ibgeLoading={ibgeLoading}
+        abveLoading={abveLoading}
       />
     </div>
   );

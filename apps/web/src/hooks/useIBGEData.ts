@@ -26,9 +26,16 @@ const GEO_URL =
   'https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo+json&resolucao=2';
 const INCOME_URL =
   'https://servicodados.ibge.gov.br/api/v3/agregados/6579/periodos/2021/variaveis/9058?localidades=N3[all]';
+const TIMEOUT_MS = 20_000;
 
 let geoCache: IBGEGeoJSON | null = null;
 let incomeCache: IncomeByUF | null = null;
+
+function fetchWithTimeout(url: string, ms: number): Promise<Response> {
+  const ctrl = new AbortController();
+  const id = setTimeout(() => ctrl.abort(), ms);
+  return fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(id));
+}
 
 export function useIBGEData() {
   const [geojson, setGeojson] = useState<IBGEGeoJSON | null>(geoCache);
@@ -39,30 +46,31 @@ export function useIBGEData() {
   useEffect(() => {
     if (geoCache && incomeCache) return;
 
-    Promise.all([
-      geoCache
-        ? Promise.resolve(geoCache)
-        : fetch(GEO_URL).then((r) => {
-            if (!r.ok) throw new Error('Falha ao carregar mapa IBGE');
+    const geoPromise = geoCache
+      ? Promise.resolve(geoCache)
+      : fetchWithTimeout(GEO_URL, TIMEOUT_MS)
+          .then((r) => {
+            if (!r.ok) throw new Error(`IBGE GeoJSON HTTP ${r.status}`);
             return r.json() as Promise<IBGEGeoJSON>;
-          }),
-      incomeCache
-        ? Promise.resolve(incomeCache)
-        : fetch(INCOME_URL)
-            .then((r) => r.json())
-            .then((raw) => {
-              const income: IncomeByUF = {};
-              const series =
-                raw?.[0]?.resultados?.[0]?.series ?? [];
-              for (const s of series) {
-                const code: string = s?.localidade?.id;
-                const sigla = UF_CODE_TO_SIGLA[code];
-                const val = s?.serie?.['2021'];
-                if (sigla && val) income[sigla] = parseFloat(val) || 0;
-              }
-              return income;
-            }),
-    ])
+          });
+
+    const incomePromise = incomeCache
+      ? Promise.resolve(incomeCache)
+      : fetchWithTimeout(INCOME_URL, TIMEOUT_MS)
+          .then((r) => r.json())
+          .then((raw): IncomeByUF => {
+            const income: IncomeByUF = {};
+            const series = raw?.[0]?.resultados?.[0]?.series ?? [];
+            for (const s of series) {
+              const code: string = s?.localidade?.id;
+              const sigla = UF_CODE_TO_SIGLA[code];
+              const val = s?.serie?.['2021'];
+              if (sigla && val) income[sigla] = parseFloat(val) || 0;
+            }
+            return income;
+          });
+
+    Promise.all([geoPromise, incomePromise])
       .then(([geo, income]) => {
         geoCache = geo as IBGEGeoJSON;
         incomeCache = income as IncomeByUF;
@@ -71,8 +79,12 @@ export function useIBGEData() {
         setLoading(false);
       })
       .catch((err: Error) => {
-        setError(err.message);
+        const msg = err.name === 'AbortError'
+          ? 'Timeout: IBGE demorou mais de 20s. Camadas de mapa desativadas.'
+          : err.message;
+        setError(msg);
         setLoading(false);
+        // Proceed without IBGE — point layers still work
       });
   }, []);
 
