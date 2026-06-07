@@ -21,6 +21,7 @@ from app.core.security import (
     verify_password,
 )
 from app.models.custom_role import CustomRole
+from app.models.invitation import Invitation
 from app.models.org_invite_code import OrgInviteCode
 from app.models.organization import Organization
 from app.models.subscription import Subscription, SubscriptionPlan, SubscriptionStatus
@@ -73,6 +74,50 @@ def _slug_from_name(name: str) -> str:
     return slug[:80] + "-" + secrets.token_hex(4)
 
 
+@router.get(
+    "/invite-lookup",
+    summary="Verificar código ou token de convite",
+    description=(
+        "Retorna informações sobre um código de convite de organização (`OrgInviteCode`) "
+        "ou token de convite de membro (`Invitation`). Use antes do cadastro para "
+        "pré-preencher o nome da organização na tela de registro."
+    ),
+)
+async def invite_lookup(token: str, db: AsyncSession = Depends(get_db)):
+    from datetime import UTC as _UTC
+
+    now = datetime.now(_UTC)
+
+    # 1. Verifica se é token de Invitation (convite de membro para org existente)
+    inv = await db.scalar(select(Invitation).where(Invitation.token == token))
+    if inv:
+        if inv.accepted_at:
+            return {"valid": False, "error": "Este convite já foi utilizado."}
+        if inv.expires_at < now:
+            return {"valid": False, "error": "Este convite expirou."}
+        org = await db.get(Organization, inv.organization_id)
+        return {
+            "valid": True,
+            "type": "invitation",
+            "org_name": org.name if org else "",
+            "email": inv.email,
+            "role": inv.role,
+        }
+
+    # 2. Verifica se é código de OrgInviteCode (cria nova org)
+    code = await db.scalar(
+        select(OrgInviteCode).where(OrgInviteCode.code == token.upper().strip())
+    )
+    if code:
+        if code.used_at:
+            return {"valid": False, "error": "Este código já foi utilizado."}
+        if code.expires_at < now:
+            return {"valid": False, "error": "Este código expirou."}
+        return {"valid": True, "type": "org_invite_code"}
+
+    return {"valid": False, "error": "Código ou token de convite não encontrado."}
+
+
 @router.post(
     "/register",
     status_code=status.HTTP_201_CREATED,
@@ -98,19 +143,56 @@ async def register(request: Request, body: RegisterRequest, db: AsyncSession = D
     if existing:
         raise HTTPException(status_code=409, detail="E-mail já cadastrado")
 
-    # ── Validar código de convite ────────────────────────────────────────────
-    invite: OrgInviteCode | None = None
-    if body.invite_code:
-        invite = await db.scalar(
-            select(OrgInviteCode).where(OrgInviteCode.code == body.invite_code.upper().strip())
-        )
-        if not invite:
-            raise HTTPException(status_code=400, detail="Código de convite inválido.")
-        if invite.used_at:
-            raise HTTPException(status_code=400, detail="Este código de convite já foi utilizado.")
-        if invite.expires_at < datetime.now(_UTC):
-            raise HTTPException(status_code=400, detail="Este código de convite expirou.")
+    # ── Validar código/token de convite ──────────────────────────────────────
+    invitation: Invitation | None = None   # token de convite de membro (junta org existente)
+    invite: OrgInviteCode | None = None    # código de convite de org (cria nova org)
 
+    if body.invite_code:
+        # Tenta primeiro como Invitation token (convite de membro)
+        invitation = await db.scalar(
+            select(Invitation).where(Invitation.token == body.invite_code)
+        )
+        if invitation:
+            if invitation.accepted_at:
+                raise HTTPException(status_code=400, detail="Este convite já foi utilizado.")
+            if invitation.expires_at < datetime.now(_UTC):
+                raise HTTPException(status_code=400, detail="Este convite expirou.")
+        else:
+            # Tenta como OrgInviteCode (cria nova organização)
+            invite = await db.scalar(
+                select(OrgInviteCode).where(OrgInviteCode.code == body.invite_code.upper().strip())
+            )
+            if not invite:
+                raise HTTPException(status_code=400, detail="Código de convite inválido.")
+            if invite.used_at:
+                raise HTTPException(status_code=400, detail="Este código de convite já foi utilizado.")
+            if invite.expires_at < datetime.now(_UTC):
+                raise HTTPException(status_code=400, detail="Este código de convite expirou.")
+
+    # ── Fluxo A: Convite de membro — ingressa em organização existente ───────
+    if invitation:
+        org = await db.get(Organization, invitation.organization_id)
+        if not org:
+            raise HTTPException(status_code=400, detail="Organização do convite não encontrada.")
+
+        user = User(
+            id=uuid.uuid4(),
+            organization_id=org.id,
+            email=body.email,
+            password_hash=hash_password(body.password),
+            name=body.name,
+            role=UserRole(invitation.role),
+            custom_role_id=invitation.custom_role_id,
+            email_verified_at=datetime.now(UTC),  # convite via e-mail confirma o endereço
+        )
+        db.add(user)
+        await db.flush()
+
+        invitation.accepted_at = datetime.now(UTC)
+
+        return {"message": "Conta criada e vinculada à organização. Você já pode entrar.", "joined_org": True}
+
+    # ── Fluxo B: Cria nova organização ───────────────────────────────────────
     # Protege o nome reservado "Intelbras" e garante unicidade de nome
     if body.organization_name.strip().lower() == "intelbras":
         raise HTTPException(
@@ -156,7 +238,7 @@ async def register(request: Request, body: RegisterRequest, db: AsyncSession = D
     db.add(subscription)
     await db.flush()
 
-    # Marca o código de convite como utilizado (se foi fornecido)
+    # Marca o código de convite de org como utilizado
     if invite:
         invite.used_at = datetime.now(UTC)
         invite.used_by_organization_id = org.id

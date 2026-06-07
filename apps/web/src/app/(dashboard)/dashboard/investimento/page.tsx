@@ -13,7 +13,7 @@ import { DownloadableChart } from "@/components/DownloadableChart";
 import { TimeRangeSlider } from "@/components/TimeRangeSlider";
 import { formatCurrency, formatPct } from "@/lib/format";
 import {
-  computeProject, calcCapex, pmt, DEFAULT_INPUTS,
+  computeProject, calcCapex, calcFixedOpex, pmt, DEFAULT_INPUTS,
   type ProjectInputs, type ProjectResults, type OccupancyScenarioResult,
 } from "@/lib/investimentoCalc";
 import api, { apiErrMsg } from "@/lib/api";
@@ -254,7 +254,6 @@ interface SimpleInputs {
   tariff_per_kwh: number;
   energy_cost_per_kwh: number;
   occupancy_pct: number;
-  hours_per_day: number;
   monthly_opex: number;
   revenue_split_pct: number;
 }
@@ -266,13 +265,13 @@ const DEFAULT_SIMPLE: SimpleInputs = {
   tariff_per_kwh: 2.20,
   energy_cost_per_kwh: 0.72,
   occupancy_pct: 30,
-  hours_per_day: 10,
   monthly_opex: 300,
   revenue_split_pct: 0,
 };
 
 function calcSimple(s: SimpleInputs) {
-  const monthly_kwh = s.n_chargers * s.power_kw * s.hours_per_day * 30 * (s.occupancy_pct / 100);
+  // Sempre considera 24h/dia; ocupação representa o % do tempo em uso
+  const monthly_kwh = s.n_chargers * s.power_kw * 24 * 30 * (s.occupancy_pct / 100);
   const monthly_revenue = monthly_kwh * s.tariff_per_kwh;
   const monthly_energy = monthly_kwh * s.energy_cost_per_kwh;
   const monthly_split = monthly_revenue * (s.revenue_split_pct / 100);
@@ -326,9 +325,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
         <NumField label="Custo de energia" value={s.energy_cost_per_kwh} onChange={v => setV("energy_cost_per_kwh", v)} prefix="R$" suffix="/kWh" step={0.01}
           help="Tarifa de energia elétrica paga à concessionária." />
         <NumField label="Ocupação estimada" value={s.occupancy_pct} onChange={v => setV("occupancy_pct", Math.min(100, v))} suffix="%" step={5}
-          help="% do tempo que os carregadores ficam em uso. Ex.: 30% = em uso 7,2h/dia." />
-        <NumField label="Horas de operação/dia" value={s.hours_per_day} onChange={v => setV("hours_per_day", Math.min(24, v))} suffix="h" step={0.5}
-          help="Horas por dia em que o ponto fica aberto ao público." />
+          help="% do tempo total (24h/dia) que os carregadores ficam em uso efetivo. Ex.: 30% = em uso ~7,2h/dia." />
         <Separator />
         <NumField label="OPEX mensal (fixo)" value={s.monthly_opex} onChange={v => setV("monthly_opex", v)} prefix="R$"
           help="Soma de todos os custos fixos mensais: manutenção, internet, aluguel, etc." />
@@ -1123,21 +1120,60 @@ export default function InvestimentoPage() {
               <NumField label="Demanda contratada" value={inputs.demand_cost} onChange={v => set("demand_cost", v)} prefix="R$" suffix="/mês"
                 help="Custo fixo mensal da demanda elétrica contratada junto à concessionária, independente do consumo real. Comum em contratos comerciais." />
               <Separator />
-              <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">Custos Fixos Mensais</p>
-              <NumField label="Internet" value={inputs.internet_monthly} onChange={v => set("internet_monthly", v)} prefix="R$" suffix="/mês" />
-              <NumField label="Backend/OCPP" value={inputs.backend_monthly} onChange={v => set("backend_monthly", v)} prefix="R$" suffix="/mês"
-                help="Mensalidade da plataforma de gestão de recarga (software como serviço / SaaS OCPP)." />
-              <NumField label="Manutenção preventiva" value={inputs.preventive_maintenance} onChange={v => set("preventive_maintenance", v)} prefix="R$" suffix="/mês"
-                help="Visitas técnicas periódicas para limpeza, verificação e atualização dos equipamentos." />
-              <NumField label="Manutenção corretiva" value={inputs.corrective_maintenance} onChange={v => set("corrective_maintenance", v)} prefix="R$" suffix="/mês"
-                help="Provisão mensal para reparos não planejados. Recomenda-se de 1 a 2% do CAPEX por ano." />
-              <NumField label="Aluguel fixo" value={inputs.rent} onChange={v => set("rent", v)} prefix="R$" suffix="/mês"
-                help="Aluguel fixo mensal do espaço onde os carregadores estão instalados, se aplicável." />
+              <div className="flex items-center justify-between gap-1.5">
+                <div className="flex items-center gap-1.5">
+                  <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">Custos Fixos Mensais</p>
+                  <Help text="'Total': insira a soma de todos os custos fixos mensais (exceto energia). 'Detalhado': especifique cada item." />
+                </div>
+                <div className="flex rounded-md border dark:border-slate-700 overflow-hidden text-[0.6rem]">
+                  {(["total", "detailed"] as const).map((m) => (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => {
+                        if (m === "total" && inputs.opex_fixed_override === undefined) {
+                          set("opex_fixed_override", calcFixedOpex(inputs));
+                        }
+                        set("opex_mode", m);
+                      }}
+                      className={`px-2 py-1 transition-colors ${(inputs.opex_mode ?? "total") === m
+                        ? "bg-blue-600 text-white font-medium"
+                        : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+                    >
+                      {m === "total" ? "Total" : "Detalhado"}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-              <NumField label="Seguro" value={inputs.insurance} onChange={v => set("insurance", v)} prefix="R$" suffix="/mês" />
-              <NumField label="Custos administrativos" value={inputs.admin_costs} onChange={v => set("admin_costs", v)} prefix="R$" suffix="/mês"
-                help="Custos de gestão: contador, taxas bancárias, suporte ao cliente, etc." />
-              <NumField label="Outros" value={inputs.other_opex} onChange={v => set("other_opex", v)} prefix="R$" suffix="/mês" />
+              {(inputs.opex_mode ?? "total") === "total" ? (
+                <>
+                  <NumField label="OPEX fixo mensal total" value={inputs.opex_fixed_override ?? 240} onChange={v => set("opex_fixed_override", v)} prefix="R$" suffix="/mês"
+                    help="Soma de todos os custos fixos mensais: internet, manutenção, aluguel, seguro, administrativo, etc. Exclui energia e taxas variáveis." />
+                  <p className="text-[0.6rem] text-muted-foreground -mt-1">
+                    Equivalente detalhado: {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(
+                      inputs.internet_monthly + inputs.backend_monthly + inputs.preventive_maintenance +
+                      inputs.corrective_maintenance + inputs.rent + inputs.insurance + inputs.admin_costs + inputs.other_opex
+                    )}/mês (soma dos campos detalhados)
+                  </p>
+                </>
+              ) : (
+                <>
+                  <NumField label="Internet" value={inputs.internet_monthly} onChange={v => set("internet_monthly", v)} prefix="R$" suffix="/mês" />
+                  <NumField label="Backend/OCPP" value={inputs.backend_monthly} onChange={v => set("backend_monthly", v)} prefix="R$" suffix="/mês"
+                    help="Mensalidade da plataforma de gestão de recarga (software como serviço / SaaS OCPP)." />
+                  <NumField label="Manutenção preventiva" value={inputs.preventive_maintenance} onChange={v => set("preventive_maintenance", v)} prefix="R$" suffix="/mês"
+                    help="Visitas técnicas periódicas para limpeza, verificação e atualização dos equipamentos." />
+                  <NumField label="Manutenção corretiva" value={inputs.corrective_maintenance} onChange={v => set("corrective_maintenance", v)} prefix="R$" suffix="/mês"
+                    help="Provisão mensal para reparos não planejados. Recomenda-se de 1 a 2% do CAPEX por ano." />
+                  <NumField label="Aluguel fixo" value={inputs.rent} onChange={v => set("rent", v)} prefix="R$" suffix="/mês"
+                    help="Aluguel fixo mensal do espaço onde os carregadores estão instalados, se aplicável." />
+                  <NumField label="Seguro" value={inputs.insurance} onChange={v => set("insurance", v)} prefix="R$" suffix="/mês" />
+                  <NumField label="Custos administrativos" value={inputs.admin_costs} onChange={v => set("admin_costs", v)} prefix="R$" suffix="/mês"
+                    help="Custos de gestão: contador, taxas bancárias, suporte ao cliente, etc." />
+                  <NumField label="Outros" value={inputs.other_opex} onChange={v => set("other_opex", v)} prefix="R$" suffix="/mês" />
+                </>
+              )}
               <Separator />
               <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">Variáveis (% da receita)</p>
               <NumField label="Taxa gateway de pagamento" value={inputs.payment_gateway_pct} onChange={v => set("payment_gateway_pct", v)} step={0.1} suffix="%"

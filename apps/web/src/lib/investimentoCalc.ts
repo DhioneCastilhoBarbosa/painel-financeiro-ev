@@ -65,6 +65,10 @@ export interface ProjectInputs {
   // CAPEX entry mode: "total" = single field; "detailed" = itemized components
   capex_mode?: "total" | "detailed";
   capex_override?: number; // used when capex_mode === "total"
+
+  // OPEX fixed-costs entry mode: "total" = single monthly field; "detailed" = itemized
+  opex_mode?: "total" | "detailed";
+  opex_fixed_override?: number; // used when opex_mode === "total" (monthly fixed opex, excl. energy & variable %)
 }
 
 export const DEFAULT_INPUTS: ProjectInputs = {
@@ -124,8 +128,12 @@ export const DEFAULT_INPUTS: ProjectInputs = {
   other_installments: 1,
   payment_interest_rate_pct: 0,
 
-  capex_mode: "detailed",
-  capex_override: 0,
+  // Default: total mode for both CAPEX and OPEX (simpler UX)
+  capex_mode: "total",
+  capex_override: 93500, // sum of all default individual CAPEX fields
+
+  opex_mode: "total",
+  opex_fixed_override: 240, // sum of all default individual fixed OPEX fields (excl. energy)
 };
 
 export interface MonthlyPoint {
@@ -225,6 +233,18 @@ export function calcCapex(inputs: ProjectInputs): number {
   );
 }
 
+/** Returns total monthly fixed OPEX (excluding energy costs and variable-% items). */
+export function calcFixedOpex(inputs: ProjectInputs): number {
+  if (inputs.opex_mode === "total" && (inputs.opex_fixed_override ?? 0) >= 0 && inputs.opex_fixed_override !== undefined) {
+    return inputs.opex_fixed_override;
+  }
+  return (
+    inputs.internet_monthly + inputs.backend_monthly +
+    inputs.preventive_maintenance + inputs.corrective_maintenance +
+    inputs.rent + inputs.insurance + inputs.admin_costs + inputs.other_opex
+  );
+}
+
 function occupancyAt(t: number, inputs: ProjectInputs): number {
   const { initial_occupancy_pct: init, target_occupancy_12m_pct: target, monthly_growth_pct } = inputs;
   if (t <= 12) return init + (target - init) * (t / 12);
@@ -253,10 +273,7 @@ function calcMonth(
   const energy_cost = inputs.energy_tariff * energyMult * kwh + inputs.demand_cost;
   const gateway = revenue * (inputs.payment_gateway_pct / 100);
   const default_loss = revenue * (inputs.default_rate_pct / 100);
-  const fixed_opex =
-    inputs.internet_monthly + inputs.backend_monthly +
-    inputs.preventive_maintenance + inputs.corrective_maintenance +
-    inputs.rent + inputs.insurance + inputs.admin_costs + inputs.other_opex;
+  const fixed_opex = calcFixedOpex(inputs);
 
   const opex_base = energy_cost + gateway + default_loss + fixed_opex;
 
