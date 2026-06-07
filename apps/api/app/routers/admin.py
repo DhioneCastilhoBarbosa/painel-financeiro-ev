@@ -81,6 +81,10 @@ class AdminMasterUpdate(BaseModel):
     is_master: bool
 
 
+class AdminUserStatusUpdate(BaseModel):
+    is_active: bool
+
+
 class InviteCodeCreate(BaseModel):
     validity_days: int = Field(default=7, ge=1, le=365, description="Validade em dias (1-365)")
 
@@ -287,6 +291,37 @@ async def update_organization_plan(
     return {"message": f"Plano da organização '{org.name}' atualizado para '{body.plan}'"}
 
 
+@router.delete(
+    "/organizations/{org_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Excluir organização",
+)
+async def delete_organization(
+    org_id: str,
+    admin: User = _AdminUser,
+    db: AsyncSession = Depends(get_db),
+) -> Response:
+    org = await db.get(Organization, org_id)
+    if not org:
+        raise HTTPException(status_code=404, detail="Organização não encontrada")
+    if org.is_mother:
+        raise HTTPException(status_code=400, detail="A organização mãe não pode ser excluída")
+
+    await log_action(
+        db,
+        admin.organization_id,
+        admin.id,
+        admin.email,
+        "admin_delete_org",
+        "organization",
+        str(org.id),
+        f"org={org.name}",
+    )
+    await db.delete(org)
+    await db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
 @router.get("/users", summary="Listar todos os usuários (cross-tenant)")
 async def list_all_users(
     _: User = _AdminUser,
@@ -357,6 +392,36 @@ async def admin_set_user_master(
     return {
         "message": f"Cargo de Mestre {'concedido' if body.is_master else 'revogado'} para {member.email}"
     }
+
+
+@router.patch("/users/{user_id}/status", summary="Bloquear ou ativar usuário")
+async def admin_update_user_status(
+    user_id: str,
+    body: AdminUserStatusUpdate,
+    admin: User = _AdminUser,
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    member = await db.get(User, user_id)
+    if not member:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    if str(member.id) == str(admin.id) and not body.is_active:
+        raise HTTPException(status_code=400, detail="Não é possível bloquear seu próprio usuário")
+
+    old_status = member.is_active
+    member.is_active = body.is_active
+    action = "admin_activate_user" if body.is_active else "admin_block_user"
+    await log_action(
+        db,
+        admin.organization_id,
+        admin.id,
+        admin.email,
+        action,
+        "user",
+        user_id,
+        f"email={member.email} is_active: {old_status} → {body.is_active}",
+    )
+    await db.commit()
+    return {"message": f"Usuário {'ativado' if body.is_active else 'bloqueado'}: {member.email}"}
 
 
 # ─── Invite Codes ─────────────────────────────────────────────────────────────

@@ -194,6 +194,38 @@ export default function AdminPage() {
     }
   }
 
+  async function deleteOrg(orgId: string, orgName: string) {
+    if (!confirm(`Excluir permanentemente a organização "${orgName}"?\n\nTodos os dados serão removidos. Esta ação é irreversível.`)) return;
+    setLoadingAction(`delete-${orgId}`);
+    try {
+      await api.delete(`/admin/organizations/${orgId}`);
+      toast.success(`Organização "${orgName}" excluída`);
+      mutate((key: unknown) => typeof key === "string" && key.startsWith("/admin/organizations"));
+      mutate("/admin/stats");
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { detail?: string } } };
+      toast.error(err?.response?.data?.detail ?? "Erro ao excluir organização");
+    } finally {
+      setLoadingAction(null);
+    }
+  }
+
+  async function toggleUserStatus(userId: string, currentIsActive: boolean, userEmail: string) {
+    const action = currentIsActive ? "bloquear" : "ativar";
+    if (!confirm(`Deseja ${action} o usuário ${userEmail}?`)) return;
+    setLoadingAction(`user-status-${userId}`);
+    try {
+      await api.patch(`/admin/users/${userId}/status`, { is_active: !currentIsActive });
+      toast.success(`Usuário ${currentIsActive ? "bloqueado" : "ativado"}: ${userEmail}`);
+      mutate((key: unknown) => typeof key === "string" && key.startsWith("/admin/users"));
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { detail?: string } } };
+      toast.error(err?.response?.data?.detail ?? "Erro ao atualizar status do usuário");
+    } finally {
+      setLoadingAction(null);
+    }
+  }
+
   async function toggleMaster(userId: string, currentIsMaster: boolean, userEmail: string) {
     const newValue = !currentIsMaster;
     if (!confirm(`${newValue ? "Conceder" : "Revogar"} cargo de Mestre para ${userEmail}?`)) return;
@@ -307,48 +339,60 @@ export default function AdminPage() {
                       </div>
 
                       {/* Actions */}
-                      {!org.is_mother && (
-                        <div className="flex items-center gap-2 shrink-0">
-                          <Select
-                            value={org.plan}
-                            onValueChange={(v) => { if (v) updateOrgPlan(org.id, v); }}
-                            disabled={loadingAction === `plan-${org.id}`}
-                          >
-                            <SelectTrigger className="h-8 w-32 text-xs">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {["trial", "starter", "pro", "enterprise", "free"].map((p) => (
-                                <SelectItem key={p} value={p} className="text-xs">
-                                  {PLAN_LABEL[p]}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Select
+                          value={org.plan}
+                          onValueChange={(v) => { if (v) updateOrgPlan(org.id, v); }}
+                          disabled={loadingAction === `plan-${org.id}`}
+                        >
+                          <SelectTrigger className="h-8 w-32 text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {["trial", "starter", "pro", "enterprise", "free"].map((p) => (
+                              <SelectItem key={p} value={p} className="text-xs">
+                                {PLAN_LABEL[p]}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
 
-                          {org.status === "active" ? (
+                        {!org.is_mother && (
+                          <>
+                            {org.status === "active" ? (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 text-xs border-destructive text-destructive hover:bg-destructive/10"
+                                onClick={() => updateOrgStatus(org.id, "blocked")}
+                                disabled={loadingAction === `status-${org.id}`}
+                              >
+                                <XCircle className="h-3.5 w-3.5 mr-1" /> Bloquear
+                              </Button>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 text-xs"
+                                onClick={() => updateOrgStatus(org.id, "active")}
+                                disabled={loadingAction === `status-${org.id}`}
+                              >
+                                <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Ativar
+                              </Button>
+                            )}
                             <Button
                               size="sm"
-                              variant="outline"
-                              className="h-8 text-xs border-destructive text-destructive hover:bg-destructive/10"
-                              onClick={() => updateOrgStatus(org.id, "blocked")}
-                              disabled={loadingAction === `status-${org.id}`}
+                              variant="ghost"
+                              className="h-8 text-xs text-destructive hover:bg-destructive/10"
+                              onClick={() => deleteOrg(org.id, org.name)}
+                              disabled={loadingAction === `delete-${org.id}`}
+                              title="Excluir organização permanentemente"
                             >
-                              <XCircle className="h-3.5 w-3.5 mr-1" /> Bloquear
+                              <Trash2 className="h-3.5 w-3.5" />
                             </Button>
-                          ) : (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="h-8 text-xs"
-                              onClick={() => updateOrgStatus(org.id, "active")}
-                              disabled={loadingAction === `status-${org.id}`}
-                            >
-                              <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Ativar
-                            </Button>
-                          )}
-                        </div>
-                      )}
+                          </>
+                        )}
+                      </div>
 
                       {/* Expand */}
                       <button
@@ -397,7 +441,7 @@ export default function AdminPage() {
                 <thead className="bg-muted/50">
                   <tr>
                     {["Nome", "E-mail", "Organização", "Cargo", "Status", "Último login", "Ações"].map((h) => (
-                      <th key={h} className="px-4 py-2 text-left font-medium text-muted-foreground text-xs">{h}</th>
+                      <th key={h} className={`px-4 py-2 text-left font-medium text-muted-foreground text-xs ${h === "Ações" ? "min-w-[200px]" : ""}`}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -437,16 +481,29 @@ export default function AdminPage() {
                         {u.last_login_at ? formatDate(u.last_login_at) : "—"}
                       </td>
                       <td className="px-4 py-2.5">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className={`h-7 text-xs ${u.is_master ? "text-destructive" : "text-amber-600"}`}
-                          disabled={loadingAction === `master-${u.id}`}
-                          onClick={() => toggleMaster(u.id, u.is_master, u.email)}
-                        >
-                          <Crown className="h-3.5 w-3.5 mr-1" />
-                          {u.is_master ? "Revogar Mestre" : "Tornar Mestre"}
-                        </Button>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className={`h-7 text-xs ${u.is_active ? "text-destructive hover:bg-destructive/10" : "text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"}`}
+                            disabled={loadingAction === `user-status-${u.id}`}
+                            onClick={() => toggleUserStatus(u.id, u.is_active, u.email)}
+                            title={u.is_active ? "Bloquear usuário" : "Ativar usuário"}
+                          >
+                            {u.is_active ? <XCircle className="h-3.5 w-3.5 mr-1" /> : <CheckCircle2 className="h-3.5 w-3.5 mr-1" />}
+                            {u.is_active ? "Bloquear" : "Ativar"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className={`h-7 text-xs ${u.is_master ? "text-destructive" : "text-amber-600"}`}
+                            disabled={loadingAction === `master-${u.id}`}
+                            onClick={() => toggleMaster(u.id, u.is_master, u.email)}
+                          >
+                            <Crown className="h-3.5 w-3.5 mr-1" />
+                            {u.is_master ? "Revogar Mestre" : "Mestre"}
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}

@@ -298,7 +298,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     return y > 0 ? `${y}a ${mo}m` : `${Math.round(m)} meses`;
   };
 
-  const paybackColor = !r.payback_months ? "red"
+  const pbColor = !r.payback_months ? "red"
     : r.payback_months <= 24 ? "emerald"
     : r.payback_months <= 48 ? "blue"
     : r.payback_months <= 72 ? "amber" : "red";
@@ -349,7 +349,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
             { label: "Receita mensal (est.)", value: formatCurrency(r.monthly_revenue), color: "blue" as const },
             { label: "Custo mensal total", value: formatCurrency(r.monthly_energy + s.monthly_opex + r.monthly_split), color: "amber" as const },
             { label: "Lucro líquido/mês", value: formatCurrency(r.monthly_net), color: r.monthly_net >= 0 ? "emerald" as const : "red" as const },
-            { label: "Payback simples", value: fmtPb(r.payback_months), color: paybackColor as "emerald" | "blue" | "amber" | "red" | "slate" | "purple" },
+            { label: "Payback simples", value: fmtPb(r.payback_months), color: pbColor as "emerald" | "blue" | "amber" | "red" | "slate" | "purple" },
           ].map(({ label, value, color }) => (
             <KpiCard key={label} label={label} value={value} color={color} />
           ))}
@@ -1220,7 +1220,7 @@ export default function InvestimentoPage() {
           <div className="hidden print:flex items-start justify-between px-0 pt-0 pb-4 mb-2 border-b border-gray-300">
             <div>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/intelbras-logo.svg" alt="Intelbras" height={9} style={{ display: "block", marginBottom: "6px" }} />
+              <img src="/intelbras-logo.svg" alt="Intelbras" style={{ display: "block", marginBottom: "6px", width: "55mm", height: "auto" }} />
               <h1 className="text-lg font-bold text-black">Análise de Investimento — Infraestrutura EV</h1>
               <p className="text-xs text-gray-500">
                 {inputs.n_chargers} carregador{inputs.n_chargers !== 1 ? "es" : ""} · {inputs.n_chargers * inputs.power_kw} kW instalados · Horizonte {inputs.horizon_years} anos

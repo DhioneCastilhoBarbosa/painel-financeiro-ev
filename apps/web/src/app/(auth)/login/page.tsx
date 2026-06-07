@@ -58,8 +58,15 @@ export default function LoginPage() {
     try {
       await login(values.email, values.password);
       router.push("/dashboard");
-    } catch {
-      toast.error("E-mail ou senha incorretos");
+    } catch (err: unknown) {
+      const httpErr = err as { response?: { status?: number; data?: { detail?: string } } };
+      const httpStatus = httpErr?.response?.status;
+      const detail = httpErr?.response?.data?.detail;
+      if (httpStatus === 403) {
+        toast.error(detail ?? "Acesso bloqueado. Entre em contato com o suporte Intelbras.", { duration: 6000 });
+      } else {
+        toast.error("E-mail ou senha incorretos");
+      }
     } finally {
       setLoading(false);
     }
