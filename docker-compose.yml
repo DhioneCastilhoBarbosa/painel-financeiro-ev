@@ -51,6 +51,7 @@ services:
     build:
       context: ./apps/api
       dockerfile: Dockerfile
+      pull: true   # sempre baixa imagem base atualizada → garante rebuild no Dokploy
     image: financedash-api:latest
     container_name: financedash_api
     restart: always
@@ -132,6 +133,7 @@ services:
     build:
       context: ./apps/web
       dockerfile: Dockerfile
+      pull: true   # sempre baixa imagem base atualizada → garante rebuild no Dokploy
       args:
         NEXT_PUBLIC_API_URL: ""          # browser usa /api/* na mesma origem
         INTERNAL_API_URL: http://api:8000

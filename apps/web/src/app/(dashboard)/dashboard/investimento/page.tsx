@@ -302,10 +302,109 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     : r.payback_months <= 48 ? "blue"
     : r.payback_months <= 72 ? "amber" : "red";
 
+  // ── Save / Load / Export ───────────────────────────────────────────────────
+  const simpleFileRef = useRef<HTMLInputElement>(null);
+  const [showSavePanel, setShowSavePanel] = useState(false);
+  const [saveName, setSaveName] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const { data: allScenarios = [], isLoading: scenariosLoading } = useSWR<SavedConfig[]>(
+    "/payback/scenarios",
+    (url: string) => api.get(url).then(rr => rr.data),
+  );
+  // Filter only "simple" scenarios
+  const simpleSavedConfigs = useMemo(
+    () => allScenarios.filter(c => (c.inputs as Record<string, unknown>)._mode === "simple"),
+    [allScenarios]
+  );
+
+  function handleSimplePrint() {
+    const sidebar = document.querySelector<HTMLElement>("[data-sidebar]");
+    const aside = document.querySelector<HTMLElement>(".simplified-aside");
+    const toUnclip = Array.from(document.querySelectorAll<HTMLElement>(".h-screen,.h-full,.min-h-0,.overflow-hidden,.overflow-y-auto"));
+    const savedSidebar = sidebar ? sidebar.style.display : null;
+    const savedAside = aside ? aside.style.display : null;
+    const savedUnclip = toUnclip.map(el => ({ el, v: el.style.cssText }));
+    if (sidebar) sidebar.style.display = "none";
+    if (aside) aside.style.display = "none";
+    toUnclip.forEach(el => { el.style.height = "auto"; el.style.maxHeight = "none"; el.style.minHeight = "0"; el.style.overflow = "visible"; });
+    const restore = () => {
+      if (sidebar && savedSidebar !== null) sidebar.style.display = savedSidebar;
+      if (aside && savedAside !== null) aside.style.display = savedAside;
+      savedUnclip.forEach(({ el, v }) => { el.style.cssText = v; });
+      window.removeEventListener("afterprint", restore);
+    };
+    window.addEventListener("afterprint", restore);
+    window.print();
+  }
+
+  function handleExportSimple() {
+    const blob = new Blob(
+      [JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), inputs: { _mode: "simple", ...s }, results: r }, null, 2)],
+      { type: "application/json" }
+    );
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `analise-simples-${new Date().toISOString().slice(0, 10)}.fdproj`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function handleImportSimple(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const parsed = JSON.parse(ev.target?.result as string);
+        const data = parsed.inputs ?? parsed;
+        if (data._mode !== "simple") { toast.error("Este arquivo é de uma análise avançada. Use na aba Avançada."); return; }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { _mode, ...rest } = data;
+        setS(prev => ({ ...DEFAULT_SIMPLE, ...prev, ...rest }));
+        toast.success("Projeto importado");
+      } catch { toast.error("Arquivo inválido. Importe um .fdproj exportado por esta ferramenta."); }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  }
+
+  async function handleSaveSimple() {
+    if (!saveName.trim()) return;
+    setIsSaving(true);
+    try {
+      await api.post("/payback/scenarios", { name: saveName.trim(), inputs: { _mode: "simple", ...s }, results: r });
+      await swrMutate("/payback/scenarios");
+      setSaveName("");
+      toast.success("Projeto salvo");
+    } catch (err) { toast.error(apiErrMsg(err, "Erro ao salvar")); }
+    finally { setIsSaving(false); }
+  }
+
+  function handleLoadSimple(cfg: SavedConfig) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { _mode, ...rest } = cfg.inputs as Record<string, unknown>;
+    setS(prev => ({ ...DEFAULT_SIMPLE, ...prev, ...(rest as Partial<SimpleInputs>) }));
+    setShowSavePanel(false);
+    toast.success(`Projeto "${cfg.name}" carregado`);
+  }
+
+  async function handleDeleteSimple(id: string, name: string) {
+    if (!confirm(`Excluir o projeto "${name}"?`)) return;
+    try {
+      await api.delete(`/payback/scenarios/${id}`);
+      await swrMutate("/payback/scenarios");
+      toast.success("Projeto excluído");
+    } catch (err) { toast.error(apiErrMsg(err, "Erro ao excluir")); }
+  }
+
   return (
     <div className="flex flex-1 min-h-0 overflow-hidden">
+      {/* hidden file input for import */}
+      <input ref={simpleFileRef} type="file" accept=".fdproj,.json" className="hidden" onChange={handleImportSimple} />
+
       {/* Inputs */}
-      <aside className="w-72 shrink-0 border-r dark:border-slate-800 overflow-y-auto bg-slate-50/50 dark:bg-slate-900/50 p-4 space-y-3">
+      <aside className="simplified-aside w-72 shrink-0 border-r dark:border-slate-800 overflow-y-auto bg-slate-50/50 dark:bg-slate-900/50 p-4 space-y-3 print:hidden">
         <div>
           <h2 className="font-semibold text-sm flex items-center gap-2">
             <Target className="h-4 w-4 text-blue-600" />
@@ -335,10 +434,88 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
 
       {/* Results */}
       <div className="flex-1 overflow-y-auto p-6 space-y-5">
-        <div>
-          <h1 className="text-xl font-bold">Análise Simplificada de Retorno</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Payback simples (não descontado) · estimativa rápida do retorno do investimento</p>
+        {/* Print-only header */}
+        <div className="hidden print:flex items-start justify-between pb-4 mb-2 border-b border-gray-300">
+          <div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/intelbras-logo.svg" alt="Intelbras" style={{ display: "block", marginBottom: "6px", width: "55mm", height: "auto" }} />
+            <h1 className="text-lg font-bold text-black">Análise Simplificada de Investimento — EV</h1>
+            <p className="text-xs text-gray-500">{s.n_chargers} carregador{s.n_chargers !== 1 ? "es" : ""} · {s.n_chargers * s.power_kw} kW · CAPEX {formatCurrency(s.capex_total)}</p>
+          </div>
+          <div className="text-right text-xs text-gray-500">
+            <p>Gerado em {new Date().toLocaleDateString("pt-BR")}</p>
+            <p>Intelbras Finance</p>
+          </div>
         </div>
+
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-xl font-bold">Análise Simplificada de Retorno</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">Payback simples (não descontado) · estimativa rápida do retorno do investimento</p>
+          </div>
+          {/* Action bar */}
+          <div className="flex items-center gap-2 flex-wrap print:hidden shrink-0">
+            <Button size="sm" variant="outline" className="text-xs gap-1.5 h-8" onClick={handleSimplePrint}>
+              <Printer className="h-3.5 w-3.5" /> PDF
+            </Button>
+            <Button size="sm" variant="outline" className="text-xs gap-1.5 h-8" onClick={handleExportSimple}>
+              <Download className="h-3.5 w-3.5" /> .fdproj
+            </Button>
+            <Button size="sm" variant="outline" className="text-xs gap-1.5 h-8" onClick={() => simpleFileRef.current?.click()}>
+              <Upload className="h-3.5 w-3.5" /> Importar
+            </Button>
+            <Button
+              size="sm"
+              variant={showSavePanel ? "default" : "outline"}
+              className="text-xs gap-1.5 h-8"
+              onClick={() => setShowSavePanel(p => !p)}
+            >
+              <FolderOpen className="h-3.5 w-3.5" /> Projetos
+            </Button>
+          </div>
+        </div>
+
+        {/* Save panel */}
+        {showSavePanel && (
+          <Card className="border-blue-200 dark:border-blue-800 print:hidden">
+            <CardContent className="pt-4 pb-3 space-y-3">
+              <div className="flex gap-2">
+                <input
+                  className="flex-1 rounded-md border border-input bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700"
+                  placeholder="Nome do projeto..."
+                  value={saveName}
+                  onChange={e => setSaveName(e.target.value)}
+                  onKeyDown={e => { if (e.key === "Enter") handleSaveSimple(); }}
+                />
+                <Button size="sm" onClick={handleSaveSimple} disabled={isSaving || !saveName.trim()}>
+                  {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5 mr-1" />}
+                  Salvar
+                </Button>
+              </div>
+              {scenariosLoading ? (
+                <div className="h-8 bg-muted rounded animate-pulse" />
+              ) : simpleSavedConfigs.length === 0 ? (
+                <p className="text-xs text-muted-foreground">Nenhum projeto salvo ainda.</p>
+              ) : (
+                <div className="space-y-1 max-h-48 overflow-y-auto">
+                  {simpleSavedConfigs.map(cfg => (
+                    <div key={cfg.id} className="flex items-center gap-2 py-1 border-b last:border-0 dark:border-slate-800 text-xs">
+                      <span className="flex-1 truncate font-medium">{cfg.name}</span>
+                      <span className="text-muted-foreground shrink-0">{new Date(cfg.created_at).toLocaleDateString("pt-BR")}</span>
+                      <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={() => handleLoadSimple(cfg)}>
+                        <FolderOpen className="h-3 w-3 mr-1" /> Abrir
+                      </Button>
+                      <Button size="sm" variant="ghost" className="h-6 px-2 text-xs text-destructive" onClick={() => handleDeleteSimple(cfg.id, cfg.name)}>
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
 
         {/* KPI cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -1214,16 +1391,21 @@ export default function InvestimentoPage() {
               <NumField label="Alíquota efetiva de imposto" value={inputs.tax_rate_pct} onChange={v => set("tax_rate_pct", Math.max(0, Math.min(100, v)))} step={0.5} suffix="%" />
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5">
-                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400 flex-1">Base de cálculo do imposto</label>
-                  <Help text="Simples Nacional: imposto sobre a receita bruta (independe de lucro ou prejuízo). Lucro Presumido/Real: imposto somente quando há lucro operacional (EBIT > 0), com benefício do escudo fiscal da depreciação." />
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400 flex-1">Regime tributário</label>
+                  <Help text="SN (Simples Nacional): imposto sobre a receita bruta. LP (Lucro Presumido): imposto sobre lucro presumido (~15%). LR (Lucro Real): imposto sobre lucro real apurado (25–34%)." />
                 </div>
                 <select
-                  value={inputs.tax_base}
-                  onChange={e => set("tax_base", e.target.value as "revenue" | "profit")}
+                  value={inputs.tax_regime ?? (inputs.tax_base === "revenue" ? "SN" : "LP")}
+                  onChange={e => {
+                    const regime = e.target.value as "SN" | "LP" | "LR";
+                    set("tax_regime", regime);
+                    set("tax_base", regime === "SN" ? "revenue" : "profit");
+                  }}
                   className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
                 >
-                  <option value="revenue">Simples Nacional — sobre a receita</option>
-                  <option value="profit">Lucro Presumido / Real — sobre o lucro</option>
+                  <option value="SN">SN — Simples Nacional (sobre a receita)</option>
+                  <option value="LP">LP — Lucro Presumido (sobre o lucro)</option>
+                  <option value="LR">LR — Lucro Real (sobre o lucro)</option>
                 </select>
               </div>
               <div className="rounded-lg bg-slate-100 dark:bg-slate-800/50 p-3 space-y-1.5 text-xs text-muted-foreground">
@@ -1289,7 +1471,7 @@ export default function InvestimentoPage() {
                 {inputs.payment_split === "separate" && (inputs.charger_installments > 1 || inputs.other_installments > 1) && (
                   <Badge variant="outline" className="text-xs">Carregador {inputs.charger_installments}× · Obra {inputs.other_installments}×</Badge>
                 )}
-                {inputs.tax_rate_pct > 0 && <Badge variant="outline" className="text-xs">IR {inputs.tax_rate_pct}%</Badge>}
+                {inputs.tax_rate_pct > 0 && <Badge variant="outline" className="text-xs">Imposto {inputs.tax_rate_pct}% · {inputs.tax_regime ?? (inputs.tax_base === "revenue" ? "SN" : "LP/LR")}</Badge>}
                 {hasRealData && <Badge variant="secondary" className="text-xs gap-1"><Database className="h-3 w-3" />Dados reais</Badge>}
               </div>
             </div>

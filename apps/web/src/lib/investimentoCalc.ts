@@ -50,6 +50,7 @@ export interface ProjectInputs {
   // Taxes
   tax_rate_pct: number;
   tax_base: "revenue" | "profit"; // "revenue" = Simples (sobre receita); "profit" = Lucro Presumido/Real (sobre EBIT)
+  tax_regime?: "SN" | "LP" | "LR"; // Regime tributário: Simples Nacional, Lucro Presumido, Lucro Real
 
   // Parameters
   discount_rate_pct: number;
@@ -118,6 +119,7 @@ export const DEFAULT_INPUTS: ProjectInputs = {
 
   tax_rate_pct: 8,
   tax_base: "profit",
+  tax_regime: "LP",
 
   discount_rate_pct: 12,
   fixed_income_rate_pct: 12,
