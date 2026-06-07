@@ -1,0 +1,28 @@
+uf,nome_estado,total_eletropostos,pontos_ac,pontos_dc,pontos_rapido,ano_referencia
+SP,São Paulo,2100,1400,500,200,2024
+RJ,Rio de Janeiro,750,500,180,70,2024
+MG,Minas Gerais,480,320,120,40,2024
+RS,Rio Grande do Sul,300,200,75,25,2024
+PR,Paraná,340,230,85,25,2024
+SC,Santa Catarina,390,260,95,35,2024
+DF,Distrito Federal,260,175,65,20,2024
+BA,Bahia,155,100,42,13,2024
+GO,Goiás,125,82,33,10,2024
+CE,Ceará,88,58,22,8,2024
+ES,Espírito Santo,78,52,20,6,2024
+PE,Pernambuco,118,78,30,10,2024
+AM,Amazonas,34,22,10,2,2024
+MT,Mato Grosso,44,30,10,4,2024
+MS,Mato Grosso do Sul,38,25,10,3,2024
+PA,Pará,29,19,8,2,2024
+RN,Rio Grande do Norte,43,29,11,3,2024
+AL,Alagoas,24,16,6,2,2024
+PB,Paraíba,19,12,6,1,2024
+SE,Sergipe,19,12,6,1,2024
+MA,Maranhão,28,19,7,2,2024
+PI,Piauí,14,9,4,1,2024
+TO,Tocantins,17,11,5,1,2024
+RO,Rondônia,11,7,3,1,2024
+AC,Acre,7,5,2,0,2024
+AP,Amapá,9,6,2,1,2024
+RR,Roraima,7,5,2,0,2024

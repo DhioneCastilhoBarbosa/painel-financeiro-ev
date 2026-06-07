@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
   BarChart3, FileSpreadsheet, TrendingUp, Zap, Settings,
-  ChevronLeft, ChevronRight, LogOut, Users, Moon, Sun, FileText, Building2, UserCircle, CreditCard, Target, Wallet, BookOpen, ShieldAlert,
+  ChevronLeft, ChevronRight, LogOut, Users, Moon, Sun, FileText, Building2, UserCircle, CreditCard, Target, Wallet, BookOpen, ShieldAlert, MapPin,
 } from "lucide-react";
 import { Logo, LogoIcon } from "@/components/Logo";
 import { useTheme } from "next-themes";
@@ -27,6 +27,7 @@ const NAV = [
   { href: "/dashboard/usuarios",    label: "Usuários",          icon: Users },
   { href: "/dashboard/dre",         label: "DRE",               icon: BarChart3 },
   { href: "/dashboard/investimento",label: "Análise de Invest.", icon: Building2 },
+  { href: "/dashboard/map",           label: "Mapa de Instalação",  icon: MapPin },
   { href: "/dashboard/capex",        label: "CAPEX por Carregador", icon: Wallet },
   { href: "/dashboard/relatorio",   label: "Relatório PDF",     icon: FileText },
   { href: "/dashboard/files",       label: "Arquivos",          icon: FileSpreadsheet },

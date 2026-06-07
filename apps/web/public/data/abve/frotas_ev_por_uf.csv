@@ -1,0 +1,28 @@
+uf,nome_estado,total_veiculos_ev,total_hibridos,total_phev,ano_referencia
+SP,São Paulo,18000,22000,5000,2024
+RJ,Rio de Janeiro,5500,6500,900,2024
+MG,Minas Gerais,3500,5000,700,2024
+RS,Rio Grande do Sul,2800,3500,500,2024
+PR,Paraná,3200,4200,600,2024
+SC,Santa Catarina,2500,3200,450,2024
+DF,Distrito Federal,2000,2800,400,2024
+BA,Bahia,1100,1500,200,2024
+GO,Goiás,850,1300,180,2024
+CE,Ceará,680,1000,150,2024
+ES,Espírito Santo,450,600,80,2024
+PE,Pernambuco,520,780,100,2024
+AM,Amazonas,350,500,60,2024
+MT,Mato Grosso,300,450,50,2024
+MS,Mato Grosso do Sul,250,380,45,2024
+PA,Pará,200,350,40,2024
+RN,Rio Grande do Norte,180,280,35,2024
+AL,Alagoas,140,220,25,2024
+PB,Paraíba,120,190,22,2024
+SE,Sergipe,110,175,20,2024
+MA,Maranhão,150,240,28,2024
+PI,Piauí,90,145,18,2024
+TO,Tocantins,70,115,15,2024
+RO,Rondônia,60,100,12,2024
+AC,Acre,40,65,8,2024
+AP,Amapá,35,55,7,2024
+RR,Roraima,30,50,6,2024

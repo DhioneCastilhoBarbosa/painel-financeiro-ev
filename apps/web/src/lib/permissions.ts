@@ -17,6 +17,7 @@ export const ROUTE_PERMISSIONS: Record<string, Role[]> = {
   "/dashboard/team":         ["owner", "admin"],
   "/dashboard/settings":     ["owner", "admin"],
   "/dashboard/billing":      ["owner"],
+  "/dashboard/map":          ["owner", "admin", "analyst"],
   "/dashboard/capex":        ["owner", "admin", "analyst"],
   "/dashboard/profile":      ["owner", "admin", "analyst", "viewer"],
   // /dashboard/leads is intentionally absent from the role list —
