@@ -402,9 +402,6 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
 
   return (
     <div className="flex flex-1 min-h-0 overflow-hidden">
-      {/* hidden file input for import */}
-      <input ref={simpleFileRef} type="file" accept=".fdproj,.json" className="hidden" onChange={handleImportSimple} />
-
       {/* Inputs */}
       <aside className="simplified-aside w-72 shrink-0 border-r dark:border-slate-800 overflow-y-auto bg-slate-50/50 dark:bg-slate-900/50 p-4 space-y-3 print:hidden">
         <div>
@@ -434,90 +431,132 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
           help="% da receita repassada ao dono do espaço (estabelecimento parceiro). 0 = sem split." />
       </aside>
 
-      {/* Results */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-5">
-        {/* Print-only header */}
-        <div className="hidden print:flex items-start justify-between pb-4 mb-2 border-b border-gray-300">
+      {/* Results — mesma estrutura que a análise avançada */}
+      <main className="flex-1 overflow-y-auto bg-white dark:bg-slate-950">
+
+        {/* Print header — oculto na tela, aparece no PDF */}
+        <div className="hidden print:flex items-start justify-between px-0 pt-0 pb-4 mb-2 border-b border-gray-300">
           <div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/intelbras-logo.svg" alt="Intelbras" style={{ display: "block", marginBottom: "6px", width: "55mm", height: "auto" }} />
             <h1 className="text-lg font-bold text-black">Análise Simplificada de Investimento — EV</h1>
-            <p className="text-xs text-gray-500">{s.n_chargers} carregador{s.n_chargers !== 1 ? "es" : ""} · {s.n_chargers * s.power_kw} kW · CAPEX {formatCurrency(s.capex_total)}</p>
+            <p className="text-xs text-gray-500">
+              {s.n_chargers} carregador{s.n_chargers !== 1 ? "es" : ""} · {s.n_chargers * s.power_kw} kW instalados · CAPEX {formatCurrency(s.capex_total)}
+            </p>
           </div>
-          <div className="text-right text-xs text-gray-500">
-            <p>Gerado em {new Date().toLocaleDateString("pt-BR")}</p>
-            <p>Intelbras Finance</p>
+          <div className="text-right text-xs text-gray-400">
+            <p>{new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}</p>
+            <p className="mt-0.5">Intelbras Finance</p>
           </div>
         </div>
 
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold">Análise Simplificada de Retorno</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">Payback simples (não descontado) · estimativa rápida do retorno do investimento</p>
+        {/* Cabeçalho na tela — oculto no PDF */}
+        <div className="px-6 pt-6 pb-4 border-b dark:border-slate-800 print:hidden">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h1 className="text-2xl font-bold flex items-center gap-2">
+                <BarChart3 className="h-6 w-6 text-blue-600" />
+                Análise Simplificada
+              </h1>
+              <p className="text-muted-foreground text-sm mt-0.5">
+                Payback simples (não descontado) · estimativa rápida do retorno do investimento
+              </p>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge variant="outline" className="text-xs">{s.n_chargers} carregador{s.n_chargers !== 1 ? "es" : ""} · {s.n_chargers * s.power_kw} kW</Badge>
+              <Badge variant="outline" className="text-xs">CAPEX {formatCurrency(s.capex_total)}</Badge>
+              <Badge variant="outline" className="text-xs">Ocup. {s.occupancy_pct}%</Badge>
+            </div>
           </div>
-          {/* Action bar */}
-          <div className="flex items-center gap-2 flex-wrap print:hidden shrink-0">
+
+          {/* Barra de ações — idêntica à análise avançada */}
+          <div className="flex items-center gap-2 mt-3 pt-3 border-t dark:border-slate-800 flex-wrap print:hidden">
             <Button size="sm" variant="outline" className="text-xs gap-1.5 h-8" onClick={handleSimplePrint}>
-              <Printer className="h-3.5 w-3.5" /> PDF
+              <Printer className="h-3.5 w-3.5" />
+              Exportar PDF
             </Button>
             <Button size="sm" variant="outline" className="text-xs gap-1.5 h-8" onClick={handleExportSimple}>
-              <Download className="h-3.5 w-3.5" /> .fdproj
+              <Download className="h-3.5 w-3.5" />
+              Exportar .fdproj
             </Button>
             <Button size="sm" variant="outline" className="text-xs gap-1.5 h-8" onClick={() => simpleFileRef.current?.click()}>
-              <Upload className="h-3.5 w-3.5" /> Importar
+              <Upload className="h-3.5 w-3.5" />
+              Importar
             </Button>
-            <Button
-              size="sm"
-              variant={showSavePanel ? "default" : "outline"}
-              className="text-xs gap-1.5 h-8"
-              onClick={() => setShowSavePanel(p => !p)}
-            >
-              <FolderOpen className="h-3.5 w-3.5" /> Projetos
-            </Button>
+            <div className="relative">
+              <Button
+                size="sm"
+                variant={showSavePanel ? "default" : "outline"}
+                className="text-xs gap-1.5 h-8"
+                onClick={() => setShowSavePanel(p => !p)}
+              >
+                <FolderOpen className="h-3.5 w-3.5" />
+                Projetos salvos
+                {simpleSavedConfigs.length > 0 && (
+                  <Badge variant="secondary" className="text-[0.55rem] py-0 px-1 ml-0.5">{simpleSavedConfigs.length}</Badge>
+                )}
+              </Button>
+              {showSavePanel && (
+                <div className="absolute left-0 top-full mt-1 z-50 w-80 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xl p-4 space-y-3">
+                  <p className="text-xs font-semibold">Salvar configuração atual</p>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Nome do projeto..."
+                      value={saveName}
+                      onChange={e => setSaveName(e.target.value)}
+                      onKeyDown={e => { if (e.key === "Enter") handleSaveSimple(); }}
+                      className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
+                    />
+                    <Button size="sm" className="h-7 gap-1 text-xs shrink-0" onClick={handleSaveSimple} disabled={!saveName.trim() || isSaving}>
+                      {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+                      Salvar
+                    </Button>
+                  </div>
+                  <div className="border-t dark:border-slate-700 pt-2 space-y-2">
+                    <p className="text-[0.7rem] text-muted-foreground font-medium">
+                      Projetos salvos
+                      {simpleSavedConfigs.length > 0 && <span className="ml-1 text-muted-foreground/60">({simpleSavedConfigs.length})</span>}
+                    </p>
+                    {scenariosLoading ? (
+                      <div className="flex justify-center py-4">
+                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                      </div>
+                    ) : (
+                      <div className="space-y-1 max-h-52 overflow-y-auto -mr-1 pr-1">
+                        {simpleSavedConfigs.map(cfg => (
+                          <div key={cfg.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 group">
+                            <button className="flex-1 text-left min-w-0" onClick={() => handleLoadSimple(cfg)}>
+                              <p className="text-xs font-medium truncate">{cfg.name}</p>
+                              <p className="text-[0.62rem] text-muted-foreground">
+                                {new Date(cfg.updated_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}
+                              </p>
+                            </button>
+                            <button
+                              onClick={() => handleDeleteSimple(cfg.id, cfg.name)}
+                              className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 p-0.5 shrink-0"
+                              title="Excluir projeto"
+                            >
+                              <X className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        ))}
+                        {simpleSavedConfigs.length === 0 && (
+                          <p className="text-xs text-center text-muted-foreground py-3">Nenhum projeto salvo ainda.</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+            {/* Hidden file input for import */}
+            <input ref={simpleFileRef} type="file" accept=".fdproj,.json" className="hidden" onChange={handleImportSimple} />
           </div>
         </div>
 
-        {/* Save panel */}
-        {showSavePanel && (
-          <Card className="border-blue-200 dark:border-blue-800 print:hidden">
-            <CardContent className="pt-4 pb-3 space-y-3">
-              <div className="flex gap-2">
-                <input
-                  className="flex-1 rounded-md border border-input bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700"
-                  placeholder="Nome do projeto..."
-                  value={saveName}
-                  onChange={e => setSaveName(e.target.value)}
-                  onKeyDown={e => { if (e.key === "Enter") handleSaveSimple(); }}
-                />
-                <Button size="sm" onClick={handleSaveSimple} disabled={isSaving || !saveName.trim()}>
-                  {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5 mr-1" />}
-                  Salvar
-                </Button>
-              </div>
-              {scenariosLoading ? (
-                <div className="h-8 bg-muted rounded animate-pulse" />
-              ) : simpleSavedConfigs.length === 0 ? (
-                <p className="text-xs text-muted-foreground">Nenhum projeto salvo ainda.</p>
-              ) : (
-                <div className="space-y-1 max-h-48 overflow-y-auto">
-                  {simpleSavedConfigs.map(cfg => (
-                    <div key={cfg.id} className="flex items-center gap-2 py-1 border-b last:border-0 dark:border-slate-800 text-xs">
-                      <span className="flex-1 truncate font-medium">{cfg.name}</span>
-                      <span className="text-muted-foreground shrink-0">{new Date(cfg.created_at).toLocaleDateString("pt-BR")}</span>
-                      <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={() => handleLoadSimple(cfg)}>
-                        <FolderOpen className="h-3 w-3 mr-1" /> Abrir
-                      </Button>
-                      <Button size="sm" variant="ghost" className="h-6 px-2 text-xs text-destructive" onClick={() => handleDeleteSimple(cfg.id, cfg.name)}>
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
+        {/* Conteúdo */}
+        <div className="p-6 space-y-6">
 
         {/* KPI cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -608,7 +647,8 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
           ℹ️ Esta análise usa <strong>payback simples</strong> (não descontado), sem considerar taxa de juros, inflação ou valor do dinheiro no tempo.
           Para análise completa com VPL, TIR e sensibilidade, use a <strong>Análise Avançada</strong>.
         </p>
-      </div>
+        </div>{/* end p-6 space-y-6 */}
+      </main>
     </div>
   );
 }
@@ -855,7 +895,7 @@ export default function InvestimentoPage() {
     <TooltipProvider delay={200}>
       <div className="flex flex-col h-full min-h-0">
         {/* ── Mode toggle bar ── */}
-        <div className="flex items-center gap-3 px-4 py-2 border-b dark:border-slate-800 bg-background shrink-0">
+        <div className="flex items-center gap-3 px-4 py-2 border-b dark:border-slate-800 bg-background shrink-0 print:hidden">
           <span className="text-xs font-medium text-muted-foreground">Análise:</span>
           <div className="flex rounded-lg overflow-hidden border dark:border-slate-700 text-xs">
             {(["simple", "advanced"] as const).map((m) => (
