@@ -34,7 +34,7 @@ import {
 interface SavedConfig {
   id: string;
   name: string;
-  inputs: ProjectInputs;
+  inputs: Record<string, unknown>; // ProjectInputs em cenários avançados; {_mode:"simple",...} em cenários simplificados
   results: Record<string, unknown>;
   created_at: string;
   updated_at: string;
@@ -313,7 +313,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
   );
   // Filter only "simple" scenarios
   const simpleSavedConfigs = useMemo(
-    () => allScenarios.filter(c => (c.inputs as Record<string, unknown>)._mode === "simple"),
+    () => allScenarios.filter(c => c.inputs._mode === "simple"),
     [allScenarios]
   );
 
@@ -360,8 +360,9 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
         const data = parsed.inputs ?? parsed;
         if (data._mode !== "simple") { toast.error("Este arquivo é de uma análise avançada. Use na aba Avançada."); return; }
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { _mode, ...rest } = data;
-        setS(prev => ({ ...DEFAULT_SIMPLE, ...prev, ...rest }));
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { _mode: _ignored, ...rest } = data as Record<string, unknown>;
+        setS(prev => ({ ...DEFAULT_SIMPLE, ...prev, ...(rest as Partial<SimpleInputs>) }));
         toast.success("Projeto importado");
       } catch { toast.error("Arquivo inválido. Importe um .fdproj exportado por esta ferramenta."); }
     };
@@ -382,8 +383,9 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
   }
 
   function handleLoadSimple(cfg: SavedConfig) {
+    // cfg.inputs is Record<string,unknown> with _mode:"simple" + SimpleInputs fields
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { _mode, ...rest } = cfg.inputs as Record<string, unknown>;
+    const { _mode, ...rest } = cfg.inputs;
     setS(prev => ({ ...DEFAULT_SIMPLE, ...prev, ...(rest as Partial<SimpleInputs>) }));
     setShowSavePanel(false);
     toast.success(`Projeto "${cfg.name}" carregado`);
@@ -628,9 +630,14 @@ export default function InvestimentoPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [scenarioSearch, setScenarioSearch] = useState("");
 
-  const { data: savedConfigs = [], isLoading: scenariosLoading } = useSWR<SavedConfig[]>(
+  const { data: allSavedConfigs = [], isLoading: scenariosLoading } = useSWR<SavedConfig[]>(
     "/payback/scenarios",
     (url: string) => api.get(url).then(r => r.data),
+  );
+  // Only show advanced scenarios in the advanced mode project list
+  const savedConfigs = useMemo(
+    () => allSavedConfigs.filter(c => c.inputs._mode !== "simple"),
+    [allSavedConfigs]
   );
 
   // Operating hours as local slider state (minutes from midnight)
@@ -779,7 +786,7 @@ export default function InvestimentoPage() {
   }
 
   function handleLoadConfig(cfg: SavedConfig) {
-    setInputs({ ...DEFAULT_INPUTS, ...cfg.inputs });
+    setInputs({ ...DEFAULT_INPUTS, ...(cfg.inputs as Partial<ProjectInputs>) });
     setShowSavePanel(false);
     toast.success(`Projeto "${cfg.name}" carregado`);
   }
