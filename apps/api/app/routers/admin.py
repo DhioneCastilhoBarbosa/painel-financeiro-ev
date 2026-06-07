@@ -28,6 +28,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
+from app.core.plan_config import get_all_plans, get_available_features, update_plan
 from app.core.deps import CurrentUser
 from app.models.charging_session import ChargingSession
 from app.models.data_file import DataFile
@@ -555,3 +556,54 @@ async def delete_invite_code(
     await db.delete(invite)
     await db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+# ─── Plan Config ───────────────────────────────────────────────────────────────
+
+
+class PlanConfigUpdate(BaseModel):
+    name: str | None = None
+    price_brl: int | None = None
+    price_label: str | None = None
+    max_users: int | None = None
+    max_files: int | None = None
+    is_public: bool | None = None
+    features: list[str] | None = None
+    feature_flags: dict[str, bool] | None = None
+
+
+@router.get("/plan-configs", summary="Listar configurações de todos os planos")
+async def list_plan_configs(admin: User = _AdminUser) -> dict[str, Any]:
+    return {
+        "plans": get_all_plans(),
+        "available_features": get_available_features(),
+    }
+
+
+@router.patch("/plan-configs/{plan_id}", summary="Atualizar configuração de um plano")
+async def patch_plan_config(
+    plan_id: str,
+    body: PlanConfigUpdate,
+    admin: User = _AdminUser,
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    updates = body.model_dump(exclude_none=True)
+    if not updates:
+        raise HTTPException(status_code=400, detail="Nenhum campo para atualizar")
+
+    updated = update_plan(plan_id, updates)
+    if updated is None:
+        raise HTTPException(status_code=404, detail=f"Plano '{plan_id}' não encontrado")
+
+    await log_action(
+        db,
+        admin.organization_id,
+        admin.id,
+        admin.email,
+        "admin_update_plan_config",
+        "plan_config",
+        plan_id,
+        f"fields={list(updates.keys())}",
+    )
+    await db.commit()
+    return updated

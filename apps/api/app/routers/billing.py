@@ -12,6 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
+from app.core.plan_config import get_public_plans, get_plan
 from app.core.database import get_db
 from app.core.deps import CurrentUser
 from app.models.organization import Organization
@@ -64,7 +65,15 @@ PLANS = [
 
 @router.get("/plans")
 async def list_plans():
-    return PLANS
+    """Retorna planos públicos com configurações dinâmicas do admin."""
+    public = get_public_plans()
+    # Merge stripe_price_id from the hardcoded PLANS (comes from env vars)
+    stripe_ids = {p["id"]: p.get("stripe_price_id") for p in PLANS}
+    for p in public:
+        if p["id"] in stripe_ids:
+            p = dict(p)
+            p["stripe_price_id"] = stripe_ids[p["id"]]
+    return public
 
 
 @router.get("/subscription")

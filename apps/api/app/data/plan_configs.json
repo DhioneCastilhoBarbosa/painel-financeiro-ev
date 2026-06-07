@@ -1,0 +1,141 @@
+{
+  "plans": [
+    {
+      "id": "trial",
+      "name": "Trial",
+      "price_brl": 0,
+      "price_label": "Gratuito",
+      "max_users": 3,
+      "max_files": 5,
+      "is_public": false,
+      "stripe_price_id": null,
+      "features": [
+        "3 usuários",
+        "5 arquivos de dados",
+        "Dashboard de visão geral",
+        "Exportação CSV",
+        "Suporte por e-mail"
+      ],
+      "feature_flags": {
+        "csv_export": true,
+        "pdf_export": false,
+        "advanced_calculator": false,
+        "map_view": false,
+        "api_access": false,
+        "priority_support": false
+      }
+    },
+    {
+      "id": "starter",
+      "name": "Starter",
+      "price_brl": 19700,
+      "price_label": "R$ 197/mês",
+      "max_users": 3,
+      "max_files": 5,
+      "is_public": true,
+      "stripe_price_id": null,
+      "features": [
+        "3 usuários",
+        "5 arquivos de dados",
+        "Todos os dashboards",
+        "Exportação CSV",
+        "Suporte por e-mail"
+      ],
+      "feature_flags": {
+        "csv_export": true,
+        "pdf_export": false,
+        "advanced_calculator": false,
+        "map_view": true,
+        "api_access": false,
+        "priority_support": false
+      }
+    },
+    {
+      "id": "pro",
+      "name": "Pro",
+      "price_brl": 49700,
+      "price_label": "R$ 497/mês",
+      "max_users": 10,
+      "max_files": 30,
+      "is_public": true,
+      "stripe_price_id": null,
+      "features": [
+        "10 usuários",
+        "30 arquivos de dados",
+        "Todos os dashboards",
+        "Exportação CSV + PDF",
+        "Calculadora de payback avançada",
+        "Mapa de instalação EV",
+        "Suporte prioritário"
+      ],
+      "feature_flags": {
+        "csv_export": true,
+        "pdf_export": true,
+        "advanced_calculator": true,
+        "map_view": true,
+        "api_access": false,
+        "priority_support": true
+      }
+    },
+    {
+      "id": "enterprise",
+      "name": "Enterprise",
+      "price_brl": 0,
+      "price_label": "Sob consulta",
+      "max_users": 9999,
+      "max_files": 9999,
+      "is_public": false,
+      "stripe_price_id": null,
+      "features": [
+        "Usuários ilimitados",
+        "Arquivos ilimitados",
+        "Todos os dashboards",
+        "Exportação CSV + PDF",
+        "Calculadora de payback avançada",
+        "Mapa de instalação EV",
+        "Acesso à API",
+        "Suporte dedicado",
+        "SLA garantido"
+      ],
+      "feature_flags": {
+        "csv_export": true,
+        "pdf_export": true,
+        "advanced_calculator": true,
+        "map_view": true,
+        "api_access": true,
+        "priority_support": true
+      }
+    },
+    {
+      "id": "free",
+      "name": "Free",
+      "price_brl": 0,
+      "price_label": "Gratuito",
+      "max_users": 1,
+      "max_files": 1,
+      "is_public": false,
+      "stripe_price_id": null,
+      "features": [
+        "1 usuário",
+        "1 arquivo de dados",
+        "Dashboard básico"
+      ],
+      "feature_flags": {
+        "csv_export": false,
+        "pdf_export": false,
+        "advanced_calculator": false,
+        "map_view": false,
+        "api_access": false,
+        "priority_support": false
+      }
+    }
+  ],
+  "available_features": [
+    {"key": "csv_export",           "label": "Exportação CSV"},
+    {"key": "pdf_export",           "label": "Exportação PDF / Relatórios"},
+    {"key": "advanced_calculator",  "label": "Calculadora de payback avançada"},
+    {"key": "map_view",             "label": "Mapa de instalação EV"},
+    {"key": "api_access",           "label": "Acesso à API"},
+    {"key": "priority_support",     "label": "Suporte prioritário"}
+  ]
+}

@@ -6,7 +6,7 @@ import {
   Building2, Users, FileSpreadsheet, Activity,
   CheckCircle2, XCircle, AlertTriangle, Search,
   ChevronDown, ChevronUp, ShieldAlert, Crown,
-  Link2, Trash2, Copy, Clock,
+  Link2, Trash2, Copy, Clock, Package, Pencil, Save, X,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,28 @@ import useSWR, { mutate } from "swr";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const fetcher = (url: string) => api.get(url).then((r) => r.data);
+
+// ─── Plan Config Types ────────────────────────────────────────────────────────
+
+interface FeatureMeta { key: string; label: string; }
+
+interface PlanConfig {
+  id: string;
+  name: string;
+  price_brl: number;
+  price_label: string;
+  max_users: number;
+  max_files: number;
+  is_public: boolean;
+  stripe_price_id: string | null;
+  features: string[];
+  feature_flags: Record<string, boolean>;
+}
+
+interface PlanConfigsResponse {
+  plans: PlanConfig[];
+  available_features: FeatureMeta[];
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -95,7 +117,7 @@ const PLAN_LABEL: Record<string, string> = {
 
 export default function AdminPage() {
   const { user } = useAuth();
-  const [tab, setTab] = useState<"orgs" | "users" | "invites">("orgs");
+  const [tab, setTab] = useState<"orgs" | "users" | "invites" | "plans">("orgs");
   const [orgSearch, setOrgSearch] = useState("");
   const [userSearch, setUserSearch] = useState("");
   const [expandedOrg, setExpandedOrg] = useState<string | null>(null);
@@ -279,7 +301,7 @@ export default function AdminPage() {
 
       {/* Tabs */}
       <div className="flex gap-2 border-b">
-        {(["orgs", "users", "invites"] as const).map((t) => (
+        {(["orgs", "users", "invites", "plans"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -289,7 +311,7 @@ export default function AdminPage() {
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
-            {t === "orgs" ? "Organizações" : t === "users" ? "Usuários" : "Convites"}
+            {t === "orgs" ? "Organizações" : t === "users" ? "Usuários" : t === "invites" ? "Convites" : "Planos"}
           </button>
         ))}
       </div>
@@ -521,6 +543,9 @@ export default function AdminPage() {
         </div>
       )}
 
+      {/* ── Planos ── */}
+      {tab === "plans" && <PlanConfigTab />}
+
       {/* ── Convites ── */}
       {tab === "invites" && (
         <TooltipProvider>
@@ -670,6 +695,357 @@ export default function AdminPage() {
         </TooltipProvider>
       )}
     </div>
+  );
+}
+
+// ─── Plan Config Tab ──────────────────────────────────────────────────────────
+
+const PLAN_ORDER = ["trial", "starter", "pro", "enterprise", "free"];
+const PLAN_ACCENT: Record<string, string> = {
+  trial:      "border-slate-300 dark:border-slate-600",
+  starter:    "border-blue-400/60",
+  pro:        "border-amber-400/60",
+  enterprise: "border-purple-400/60",
+  free:       "border-gray-300 dark:border-gray-600",
+};
+
+function PlanConfigTab() {
+  const { data, isLoading, mutate: mutateConfigs } = useSWR<PlanConfigsResponse>(
+    "/admin/plan-configs",
+    fetcher
+  );
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-64 w-full rounded-xl" />
+        ))}
+      </div>
+    );
+  }
+
+  const plans = [...(data?.plans ?? [])].sort(
+    (a, b) => PLAN_ORDER.indexOf(a.id) - PLAN_ORDER.indexOf(b.id)
+  );
+  const availableFeatures = data?.available_features ?? [];
+
+  return (
+    <div className="space-y-4">
+      {/* Info */}
+      <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-50 border border-amber-200 dark:bg-amber-950/30 dark:border-amber-800 text-sm text-amber-800 dark:text-amber-300">
+        <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
+        <div>
+          <p className="font-medium">Sobre preços e Stripe</p>
+          <p className="text-xs mt-0.5 opacity-80">
+            O valor aqui editado é exibido na página de Planos e registrado internamente.
+            O valor <strong>efetivamente cobrado</strong> pelo Stripe é configurado separadamente via{" "}
+            <code className="font-mono">STRIPE_PRICE_STARTER</code> /{" "}
+            <code className="font-mono">STRIPE_PRICE_PRO</code>.
+            Limites de usuários e arquivos entram em vigor imediatamente após salvar.
+          </p>
+        </div>
+      </div>
+
+      {/* Plan cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {plans.map((plan) => (
+          <PlanCard
+            key={plan.id}
+            plan={plan}
+            availableFeatures={availableFeatures}
+            onSaved={mutateConfigs}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Plan Card ────────────────────────────────────────────────────────────────
+
+function PlanCard({
+  plan,
+  availableFeatures,
+  onSaved,
+}: {
+  plan: PlanConfig;
+  availableFeatures: FeatureMeta[];
+  onSaved: () => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  // Draft state for editing
+  const [draft, setDraft] = useState<PlanConfig>(plan);
+
+  function startEdit() {
+    setDraft({ ...plan });
+    setEditing(true);
+  }
+
+  function cancelEdit() {
+    setEditing(false);
+  }
+
+  async function save() {
+    setSaving(true);
+    try {
+      await api.patch(`/admin/plan-configs/${plan.id}`, {
+        name: draft.name,
+        price_brl: draft.price_brl,
+        price_label: draft.price_label,
+        max_users: draft.max_users,
+        max_files: draft.max_files,
+        is_public: draft.is_public,
+        features: draft.features,
+        feature_flags: draft.feature_flags,
+      });
+      toast.success(`Plano "${draft.name}" atualizado`);
+      onSaved();
+      setEditing(false);
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { detail?: string } } };
+      toast.error(err?.response?.data?.detail ?? "Erro ao salvar plano");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const accentClass = PLAN_ACCENT[plan.id] ?? "border-gray-200";
+
+  return (
+    <Card className={`border-2 ${accentClass} flex flex-col`}>
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            {editing ? (
+              <input
+                className="w-full text-base font-semibold bg-transparent border-b border-amber-400 outline-none pb-0.5"
+                value={draft.name}
+                onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+              />
+            ) : (
+              <CardTitle className="text-base">{plan.name}</CardTitle>
+            )}
+          </div>
+
+          <div className="flex items-center gap-1 shrink-0">
+            {/* Público badge */}
+            {editing ? (
+              <button
+                onClick={() => setDraft({ ...draft, is_public: !draft.is_public })}
+                className={`text-[10px] px-2 py-0.5 rounded-full border font-medium transition-colors ${
+                  draft.is_public
+                    ? "bg-green-50 border-green-300 text-green-700 dark:bg-green-950/40 dark:border-green-700 dark:text-green-400"
+                    : "bg-muted border-border text-muted-foreground"
+                }`}
+              >
+                {draft.is_public ? "Público" : "Interno"}
+              </button>
+            ) : (
+              <Badge
+                variant={plan.is_public ? "default" : "secondary"}
+                className="text-[10px] px-2 py-0"
+              >
+                {plan.is_public ? "Público" : "Interno"}
+              </Badge>
+            )}
+
+            {/* Edit/Cancel */}
+            {editing ? (
+              <>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-7 w-7 text-green-600 hover:bg-green-50"
+                  onClick={save}
+                  disabled={saving}
+                  title="Salvar"
+                >
+                  {saving
+                    ? <span className="h-3.5 w-3.5 border-2 border-t-transparent rounded-full animate-spin" />
+                    : <Save className="h-3.5 w-3.5" />
+                  }
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-7 w-7 text-destructive hover:bg-destructive/10"
+                  onClick={cancelEdit}
+                  title="Cancelar"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </Button>
+              </>
+            ) : (
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                onClick={startEdit}
+                title="Editar plano"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Price */}
+        {editing ? (
+          <div className="flex items-center gap-2 mt-1">
+            <div className="flex-1">
+              <label className="text-[10px] text-muted-foreground">Rótulo de preço</label>
+              <input
+                className="w-full text-sm bg-transparent border-b border-amber-400 outline-none"
+                value={draft.price_label}
+                onChange={(e) => setDraft({ ...draft, price_label: e.target.value })}
+                placeholder="R$ 197/mês"
+              />
+            </div>
+            <div className="w-28">
+              <label className="text-[10px] text-muted-foreground">Valor (centavos)</label>
+              <input
+                type="number"
+                className="w-full text-sm bg-transparent border-b border-amber-400 outline-none"
+                value={draft.price_brl}
+                onChange={(e) => setDraft({ ...draft, price_brl: Number(e.target.value) })}
+              />
+            </div>
+          </div>
+        ) : (
+          <p className="text-2xl font-bold mt-1">{plan.price_label}</p>
+        )}
+      </CardHeader>
+
+      <CardContent className="flex-1 space-y-4">
+        {/* Limits */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-muted/40 rounded-lg p-2.5 text-center">
+            <Users className="h-4 w-4 mx-auto text-muted-foreground mb-1" />
+            {editing ? (
+              <input
+                type="number"
+                className="w-full text-center text-sm font-semibold bg-transparent border-b border-amber-400 outline-none"
+                value={draft.max_users === 9999 ? "" : draft.max_users}
+                placeholder="∞"
+                onChange={(e) => setDraft({
+                  ...draft,
+                  max_users: e.target.value === "" ? 9999 : Number(e.target.value),
+                })}
+              />
+            ) : (
+              <p className="text-sm font-semibold">
+                {plan.max_users >= 9999 ? "∞" : plan.max_users}
+              </p>
+            )}
+            <p className="text-[10px] text-muted-foreground">Usuários</p>
+          </div>
+          <div className="bg-muted/40 rounded-lg p-2.5 text-center">
+            <FileSpreadsheet className="h-4 w-4 mx-auto text-muted-foreground mb-1" />
+            {editing ? (
+              <input
+                type="number"
+                className="w-full text-center text-sm font-semibold bg-transparent border-b border-amber-400 outline-none"
+                value={draft.max_files === 9999 ? "" : draft.max_files}
+                placeholder="∞"
+                onChange={(e) => setDraft({
+                  ...draft,
+                  max_files: e.target.value === "" ? 9999 : Number(e.target.value),
+                })}
+              />
+            ) : (
+              <p className="text-sm font-semibold">
+                {plan.max_files >= 9999 ? "∞" : plan.max_files}
+              </p>
+            )}
+            <p className="text-[10px] text-muted-foreground">Arquivos</p>
+          </div>
+        </div>
+
+        {/* Feature flags */}
+        <div>
+          <p className="text-xs font-medium text-muted-foreground mb-2">Funcionalidades</p>
+          <div className="space-y-1.5">
+            {availableFeatures.map((feat) => {
+              const active = editing
+                ? (draft.feature_flags[feat.key] ?? false)
+                : (plan.feature_flags[feat.key] ?? false);
+
+              return (
+                <div key={feat.key} className="flex items-center gap-2">
+                  {editing ? (
+                    <button
+                      onClick={() =>
+                        setDraft({
+                          ...draft,
+                          feature_flags: {
+                            ...draft.feature_flags,
+                            [feat.key]: !draft.feature_flags[feat.key],
+                          },
+                        })
+                      }
+                      className={`h-4 w-4 rounded flex items-center justify-center border transition-colors shrink-0 ${
+                        active
+                          ? "bg-amber-500 border-amber-500 text-white"
+                          : "border-gray-300 dark:border-gray-600"
+                      }`}
+                    >
+                      {active && <CheckCircle2 className="h-3 w-3" />}
+                    </button>
+                  ) : (
+                    active
+                      ? <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                      : <XCircle className="h-4 w-4 text-gray-300 dark:text-gray-600 shrink-0" />
+                  )}
+                  <span className={`text-xs ${active ? "text-foreground" : "text-muted-foreground line-through"}`}>
+                    {feat.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Free-text features */}
+        <div>
+          <p className="text-xs font-medium text-muted-foreground mb-1">
+            Descrição na página de planos
+          </p>
+          {editing ? (
+            <textarea
+              rows={5}
+              className="w-full text-xs border rounded-lg p-2 font-mono resize-none focus:outline-none focus:ring-1 focus:ring-amber-400 bg-muted/20"
+              placeholder={"Uma feature por linha"}
+              value={draft.features.join("\n")}
+              onChange={(e) =>
+                setDraft({
+                  ...draft,
+                  features: e.target.value.split("\n"),
+                })
+              }
+            />
+          ) : (
+            <ul className="space-y-1">
+              {plan.features.map((f, i) => (
+                <li key={i} className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                  <span className="text-amber-500 mt-0.5 shrink-0">•</span>
+                  {f}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Stripe ID (read-only) */}
+        {plan.stripe_price_id && (
+          <p className="text-[10px] text-muted-foreground font-mono truncate">
+            Stripe: {plan.stripe_price_id}
+          </p>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 

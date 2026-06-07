@@ -23,6 +23,7 @@ from app.schemas.organization import (
     UpdateRoleRequest,
     UsageResponse,
 )
+from app.core.plan_config import get_plan_limits
 from app.services.audit_service import log_action
 
 router = APIRouter()
@@ -32,12 +33,9 @@ class MasterGrantRequest(BaseModel):
     is_master: bool
 
 
-PLAN_LIMITS = {
-    "trial": {"users": 3, "files": 5},
-    "starter": {"users": 3, "files": 5},
-    "pro": {"users": 10, "files": 30},
-    "enterprise": {"users": 9999, "files": 9999},
-}
+# Fallback em memória — get_plan_limits() lê do JSON dinâmico configurado no admin
+def _plan_limits(plan: str) -> dict:
+    return get_plan_limits(plan)
 
 
 @router.get("")
@@ -129,7 +127,7 @@ async def invite_member(
     user_count = await db.scalar(
         select(func.count(User.id)).where(User.organization_id == current_user.organization_id)
     )
-    limit = PLAN_LIMITS.get(org.plan, {}).get("users", 3)
+    limit = _plan_limits(org.plan).get("users", 3)
     if user_count >= limit:
         raise HTTPException(
             status_code=403, detail=f"Limite de {limit} usuários atingido no plano {org.plan}"
@@ -344,7 +342,7 @@ async def get_usage(current_user: CurrentUser, db: AsyncSession = Depends(get_db
             DataFile.organization_id == current_user.organization_id
         )
     )
-    limits = PLAN_LIMITS.get(org.plan, PLAN_LIMITS["starter"])
+    limits = _plan_limits(org.plan)
     return UsageResponse(
         users_used=user_count or 0,
         users_limit=limits["users"],
