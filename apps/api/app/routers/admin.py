@@ -26,7 +26,6 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 from app.core.database import get_db
 from app.core.plan_config import get_all_plans, get_available_features, update_plan
@@ -436,9 +435,31 @@ def _generate_code() -> str:
     return "".join(secrets.choice(_CODE_ALPHABET) for _ in range(16))
 
 
-def _serialize_invite_code(code: OrgInviteCode) -> dict[str, Any]:
+async def _serialize_invite_code_async(
+    code: OrgInviteCode, db: AsyncSession
+) -> dict[str, Any]:
+    """Serializa um OrgInviteCode sem tocar em nenhum atributo de relacionamento.
+    Usa apenas await db.get() — seguro em qualquer versão de SQLAlchemy async."""
     now = datetime.now(UTC)
     expired = code.expires_at < now and not code.used_at
+
+    creator_email: str | None = None
+    if code.created_by:
+        creator = await db.get(User, code.created_by)
+        creator_email = creator.email if creator else None
+
+    used_by_org_name: str | None = None
+    if code.used_by_organization_id:
+        org = await db.get(Organization, code.used_by_organization_id)
+        used_by_org_name = org.name if org else None
+
+    used_by_user_name: str | None = None
+    used_by_user_email: str | None = None
+    if code.used_by_user_id:
+        u = await db.get(User, code.used_by_user_id)
+        used_by_user_name = u.name if u else None
+        used_by_user_email = u.email if u else None
+
     return {
         "id": str(code.id),
         "code": code.code,
@@ -448,10 +469,10 @@ def _serialize_invite_code(code: OrgInviteCode) -> dict[str, Any]:
         "expired": expired,
         "used": code.used_at is not None,
         "used_at": code.used_at,
-        "used_by_organization": code.used_by_org.name if code.used_by_org else None,
-        "used_by_user_name": code.used_by_user.name if code.used_by_user else None,
-        "used_by_user_email": code.used_by_user.email if code.used_by_user else None,
-        "creator_email": code.creator.email if code.creator else None,
+        "used_by_organization": used_by_org_name,
+        "used_by_user_name": used_by_user_name,
+        "used_by_user_email": used_by_user_email,
+        "creator_email": creator_email,
     }
 
 
@@ -461,17 +482,10 @@ async def list_invite_codes(
     db: AsyncSession = Depends(get_db),
 ) -> list[dict[str, Any]]:
     result = await db.execute(
-        select(OrgInviteCode)
-        .options(
-            selectinload(OrgInviteCode.creator),
-            selectinload(OrgInviteCode.used_by_org),
-            selectinload(OrgInviteCode.used_by_user),
-        )
-        .order_by(OrgInviteCode.created_at.desc())
-        .limit(200)
+        select(OrgInviteCode).order_by(OrgInviteCode.created_at.desc()).limit(200)
     )
     codes = result.scalars().all()
-    return [_serialize_invite_code(c) for c in codes]
+    return [await _serialize_invite_code_async(c, db) for c in codes]
 
 
 @router.post(
@@ -516,15 +530,7 @@ async def create_invite_code(
     )
     await db.commit()
 
-    # Re-fetch with relationships eagerly loaded so _serialize_invite_code
-    # never triggers a synchronous lazy-load (which fails in async sessions).
-    invite = await db.scalar(
-        select(OrgInviteCode)
-        .options(selectinload(OrgInviteCode.creator))
-        .where(OrgInviteCode.id == invite.id)
-    )
-
-    return _serialize_invite_code(invite)
+    return await _serialize_invite_code_async(invite, db)
 
 
 @router.delete(

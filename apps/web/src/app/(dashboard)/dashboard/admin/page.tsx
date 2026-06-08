@@ -145,9 +145,12 @@ export default function AdminPage() {
     fetcher,
     { keepPreviousData: true }
   );
-  const { data: inviteCodes, isLoading: codesLoading } = useSWR<InviteCode[]>(
-    isAdmin ? "/admin/invite-codes" : null, fetcher
-  );
+  const {
+    data: inviteCodes,
+    isLoading: codesLoading,
+    error: codesError,
+    mutate: reloadCodes,
+  } = useSWR<InviteCode[]>(isAdmin ? "/admin/invite-codes" : null, fetcher);
 
   // ─── Guard ───────────────────────────────────────────────────────────────
 
@@ -170,7 +173,7 @@ export default function AdminPage() {
     try {
       await api.post("/admin/invite-codes", { validity_days: inviteValidity });
       toast.success("Código de convite gerado");
-      mutate("/admin/invite-codes");
+      await reloadCodes();
     } catch (e: unknown) {
       const err = e as { response?: { data?: { detail?: string } } };
       toast.error(err?.response?.data?.detail ?? "Erro ao gerar código");
@@ -184,7 +187,7 @@ export default function AdminPage() {
     try {
       await api.delete(`/admin/invite-codes/${codeId}`);
       toast.success("Código revogado");
-      mutate("/admin/invite-codes");
+      await reloadCodes();
     } catch (e: unknown) {
       const err = e as { response?: { data?: { detail?: string } } };
       toast.error(err?.response?.data?.detail ?? "Erro ao revogar código");
@@ -607,6 +610,10 @@ export default function AdminPage() {
                   <div className="p-4 space-y-2">
                     {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-12" />)}
                   </div>
+                ) : codesError ? (
+                  <p className="text-sm text-destructive text-center py-8">
+                    Erro ao carregar códigos: {(codesError as Error)?.message ?? "verifique o console"}
+                  </p>
                 ) : !inviteCodes?.length ? (
                   <p className="text-sm text-muted-foreground text-center py-8">
                     Nenhum código gerado ainda.
