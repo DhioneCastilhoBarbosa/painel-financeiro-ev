@@ -125,8 +125,33 @@ export default function AdminPage() {
   const [inviteValidity, setInviteValidity] = useState(7);
   const [creatingCode, setCreatingCode] = useState(false);
 
-  // Guard
-  if (!isIntelbrasmaster(user)) {
+  // ─── Data fetching ───────────────────────────────────────────────────────
+  // IMPORTANT: all useSWR calls must be BEFORE any conditional return so that
+  // hook count never changes between renders (Rules of Hooks). When the user is
+  // not an admin the key is null and SWR skips fetching automatically.
+
+  const isAdmin = isIntelbrasmaster(user);
+
+  const { data: stats } = useSWR<GlobalStats>(
+    isAdmin ? "/admin/stats" : null, fetcher
+  );
+  const { data: orgs, isLoading: orgsLoading } = useSWR<OrgRow[]>(
+    isAdmin ? `/admin/organizations?search=${encodeURIComponent(orgSearch)}` : null,
+    fetcher,
+    { keepPreviousData: true }
+  );
+  const { data: users, isLoading: usersLoading } = useSWR<UserRow[]>(
+    isAdmin ? `/admin/users?search=${encodeURIComponent(userSearch)}` : null,
+    fetcher,
+    { keepPreviousData: true }
+  );
+  const { data: inviteCodes, isLoading: codesLoading } = useSWR<InviteCode[]>(
+    isAdmin ? "/admin/invite-codes" : null, fetcher
+  );
+
+  // ─── Guard ───────────────────────────────────────────────────────────────
+
+  if (!isAdmin) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4 p-8">
         <ShieldAlert className="h-12 w-12 text-destructive" />
@@ -137,23 +162,6 @@ export default function AdminPage() {
       </div>
     );
   }
-
-  // ─── Data fetching ───────────────────────────────────────────────────────
-
-  const { data: stats } = useSWR<GlobalStats>("/admin/stats", fetcher);
-  const { data: orgs, isLoading: orgsLoading } = useSWR<OrgRow[]>(
-    `/admin/organizations?search=${encodeURIComponent(orgSearch)}`,
-    fetcher,
-    { keepPreviousData: true }
-  );
-  const { data: users, isLoading: usersLoading } = useSWR<UserRow[]>(
-    `/admin/users?search=${encodeURIComponent(userSearch)}`,
-    fetcher,
-    { keepPreviousData: true }
-  );
-  const { data: inviteCodes, isLoading: codesLoading } = useSWR<InviteCode[]>(
-    "/admin/invite-codes", fetcher
-  );
 
   // ─── Actions ─────────────────────────────────────────────────────────────
 
