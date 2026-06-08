@@ -23,7 +23,7 @@ from app.schemas.organization import (
     UpdateRoleRequest,
     UsageResponse,
 )
-from app.core.plan_config import get_plan_limits
+from app.core.plan_config import get_available_features, get_plan, get_plan_limits
 from app.services.audit_service import log_action
 
 router = APIRouter()
@@ -66,7 +66,6 @@ async def get_org_features(current_user: CurrentUser, db: AsyncSession = Depends
 
     # Organização mãe tem acesso irrestrito a todas as features
     if org.is_mother:
-        from app.core.plan_config import get_available_features
         all_flags = {f["key"]: True for f in get_available_features()}
         return {"plan": "enterprise", "plan_name": "Enterprise", "feature_flags": all_flags}
 
