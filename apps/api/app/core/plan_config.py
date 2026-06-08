@@ -221,10 +221,18 @@ def _try_seed(data: dict[str, Any]) -> None:
 
 
 def _save(data: dict[str, Any]) -> None:
-    with _lock:
-        _DATA_DIR.mkdir(parents=True, exist_ok=True)
-        with open(_DATA_PATH, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
+    try:
+        with _lock:
+            _DATA_DIR.mkdir(parents=True, exist_ok=True)
+            with open(_DATA_PATH, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+        logger.info("plan_configs.json salvo em %s", _DATA_PATH)
+    except OSError as exc:
+        logger.error("Falha ao salvar plan_configs.json: %s", exc)
+        raise RuntimeError(
+            f"Não foi possível persistir configuração dos planos ({exc}). "
+            "Verifique as permissões do diretório /app/app/data/."
+        ) from exc
 
 
 def _default_flags(plan_id: str) -> dict[str, bool]:

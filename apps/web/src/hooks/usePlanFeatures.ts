@@ -25,7 +25,12 @@ export function usePlanFeatures() {
   const { data, isLoading, error } = useSWR<PlanFeatures>(
     user ? '/organizations/features' : null,
     fetcher,
-    { revalidateOnFocus: false, dedupingInterval: 60_000 }
+    {
+      // Revalida ao focar a aba — garante que mudanças de plano feitas pelo
+      // admin sejam visíveis rapidamente sem precisar de hard-refresh.
+      revalidateOnFocus: true,
+      dedupingInterval: 5_000,   // evita chamadas duplicadas em 5 s
+    }
   );
 
   function hasFeature(key: string): boolean {

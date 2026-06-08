@@ -20,6 +20,8 @@ RUN addgroup --gid 1001 appgroup \
  && adduser  --uid 1001 --gid 1001 --no-create-home --disabled-password appuser
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
+# Cria diretório de dados antes do chown para que o named volume herde a ownership correta
+RUN mkdir -p /app/app/data
 RUN chmod +x /docker-entrypoint.sh \
  && chown -R appuser:appgroup /app /docker-entrypoint.sh
 

@@ -279,6 +279,7 @@ async def update_organization_plan(
 
     old_plan = org.plan
     org.plan = body.plan
+    await db.flush()   # staging explícito antes do log
     await log_action(
         db,
         admin.organization_id,
@@ -289,6 +290,7 @@ async def update_organization_plan(
         str(org.id),
         f"org={org.name} {old_plan} → {body.plan}",
     )
+    await db.commit()   # commit explícito — não depende apenas do auto-commit
     return {"message": f"Plano da organização '{org.name}' atualizado para '{body.plan}'"}
 
 
