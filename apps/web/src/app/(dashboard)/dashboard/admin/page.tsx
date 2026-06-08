@@ -124,6 +124,7 @@ export default function AdminPage() {
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [inviteValidity, setInviteValidity] = useState(7);
   const [creatingCode, setCreatingCode] = useState(false);
+  const [deletingAllCodes, setDeletingAllCodes] = useState(false);
 
   // ─── Data fetching ───────────────────────────────────────────────────────
   // IMPORTANT: all useSWR calls must be BEFORE any conditional return so that
@@ -191,6 +192,23 @@ export default function AdminPage() {
     } catch (e: unknown) {
       const err = e as { response?: { data?: { detail?: string } } };
       toast.error(err?.response?.data?.detail ?? "Erro ao revogar código");
+    }
+  }
+
+  async function deleteAllPendingCodes() {
+    const pending = inviteCodes?.filter((c) => !c.used && !c.expired) ?? [];
+    if (!pending.length) return;
+    if (!confirm(`Excluir ${pending.length} código(s) pendente(s)? Esta ação não pode ser desfeita.`)) return;
+    setDeletingAllCodes(true);
+    try {
+      await api.delete("/admin/invite-codes/pending");
+      toast.success("Códigos pendentes excluídos");
+      await reloadCodes();
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { detail?: string } } };
+      toast.error(err?.response?.data?.detail ?? "Erro ao excluir códigos");
+    } finally {
+      setDeletingAllCodes(false);
     }
   }
 
@@ -603,7 +621,25 @@ export default function AdminPage() {
             {/* Lista de códigos */}
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Códigos gerados</CardTitle>
+                <div className="flex items-center justify-between gap-2">
+                  <CardTitle className="text-base">Códigos gerados</CardTitle>
+                  {inviteCodes && inviteCodes.some((c) => !c.used && !c.expired) && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/10 text-xs h-7"
+                      onClick={deleteAllPendingCodes}
+                      disabled={deletingAllCodes}
+                    >
+                      {deletingAllCodes ? (
+                        <span className="h-3 w-3 border-2 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <Trash2 className="h-3 w-3" />
+                      )}
+                      Excluir pendentes
+                    </Button>
+                  )}
+                </div>
               </CardHeader>
               <CardContent className="p-0">
                 {codesLoading ? (
@@ -650,11 +686,11 @@ export default function AdminPage() {
                                       <button
                                         onClick={() => copyCode(c.code)}
                                         className="p-1 rounded hover:bg-muted transition-colors"
-                                      />
+                                      >
+                                        <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                                      </button>
                                     }
-                                  >
-                                    <Copy className="h-3.5 w-3.5 text-muted-foreground" />
-                                  </TooltipTrigger>
+                                  />
                                   <TooltipContent>Copiar código</TooltipContent>
                                 </Tooltip>
                               )}
@@ -691,11 +727,11 @@ export default function AdminPage() {
                                   <button
                                     onClick={() => deleteInviteCode(c.id)}
                                     className="p-1.5 rounded hover:bg-red-50 dark:hover:bg-red-950/40 text-red-500 transition-colors shrink-0 mt-0.5"
-                                  />
+                                  >
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                  </button>
                                 }
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </TooltipTrigger>
+                              />
                               <TooltipContent>Revogar código</TooltipContent>
                             </Tooltip>
                           )}

@@ -24,7 +24,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from pydantic import BaseModel, Field
-from sqlalchemy import func, select
+from sqlalchemy import delete as sql_delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -531,6 +531,36 @@ async def create_invite_code(
     await db.commit()
 
     return await _serialize_invite_code_async(invite, db)
+
+
+@router.delete(
+    "/invite-codes/pending",
+    status_code=status.HTTP_200_OK,
+    summary="Excluir todos os códigos pendentes (não usados e não expirados)",
+)
+async def delete_pending_invite_codes(
+    admin: User = _AdminUser,
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, int]:
+    now = datetime.now(UTC)
+    result = await db.execute(
+        sql_delete(OrgInviteCode)
+        .where(OrgInviteCode.used_at == None)  # noqa: E711
+        .where(OrgInviteCode.expires_at > now)
+    )
+    deleted = result.rowcount
+    await log_action(
+        db,
+        admin.organization_id,
+        admin.id,
+        admin.email,
+        "delete_pending_invite_codes",
+        "org_invite_code",
+        None,
+        f"deleted={deleted}",
+    )
+    await db.commit()
+    return {"deleted": deleted}
 
 
 @router.delete(
