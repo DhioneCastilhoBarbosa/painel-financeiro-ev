@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { PlanGate } from "@/components/PlanGate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -88,6 +89,14 @@ interface UsersDeep {
 }
 
 export default function UsuariosPage() {
+  return (
+    <PlanGate feature="users_analytics">
+      <UsuariosPageContent />
+    </PlanGate>
+  );
+}
+
+function UsuariosPageContent() {
   const { filters } = useFilters();
   const { data, isLoading } = useUsersDeep(filters);
   const { data: cohortData, isLoading: cohortLoading } = useCohort(filters);

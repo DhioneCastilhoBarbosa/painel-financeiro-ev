@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { PlanGate } from "@/components/PlanGate";
 import { useRef, useState } from "react";
 import { Printer, Download, BarChart2, TrendingUp, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -57,6 +58,14 @@ function KPIBox({ label, value, sub, color = "blue" }: { label: string; value: s
 }
 
 export default function RelatorioPage() {
+  return (
+    <PlanGate feature="pdf_report">
+      <RelatorioPageContent />
+    </PlanGate>
+  );
+}
+
+function RelatorioPageContent() {
   const { filters } = useFilters();
   const { user } = useAuth();
   const { data: kpis, isLoading: kpisLoading } = useKPIs(filters);

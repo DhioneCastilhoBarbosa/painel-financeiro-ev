@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { PlanGate } from "@/components/PlanGate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -25,6 +26,14 @@ import {
 const COLORS = ["#2563eb", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4", "#f97316"];
 
 export default function StationsPage() {
+  return (
+    <PlanGate feature="stations">
+      <StationsPageContent />
+    </PlanGate>
+  );
+}
+
+function StationsPageContent() {
   const { filters } = useFilters();
   const [selectedStation, setSelectedStation] = useState<string | null>(null);
   const { data: kpis } = useKPIs(filters);

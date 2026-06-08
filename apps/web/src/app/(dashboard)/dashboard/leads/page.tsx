@@ -1,5 +1,6 @@
 "use client";
 
+import { PlanGate } from "@/components/PlanGate";
 import { useState, useMemo } from "react";
 import useSWR from "swr";
 import { toast } from "sonner";
@@ -89,6 +90,14 @@ interface SimulatorConfig {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function LeadsPage() {
+  return (
+    <PlanGate feature="leads">
+      <LeadsPageContent />
+    </PlanGate>
+  );
+}
+
+function LeadsPageContent() {
   const { user } = useAuth();
 
   // ── Tab & filter state ──────────────────────────────────────────────────────

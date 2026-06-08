@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { PlanGate } from "@/components/PlanGate";
 import { useState } from "react";
 import { Download } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -68,6 +69,14 @@ function extendRow(r: DRERow): DRERowExtended {
 }
 
 export default function DREPage() {
+  return (
+    <PlanGate feature="dre">
+      <DREPageContent />
+    </PlanGate>
+  );
+}
+
+function DREPageContent() {
   const { filters } = useFilters();
   const [granularity, setGranularity] = useState<"weekly" | "monthly" | "quarterly">("monthly");
   const { data: dre, isLoading } = useDRE(filters, granularity);

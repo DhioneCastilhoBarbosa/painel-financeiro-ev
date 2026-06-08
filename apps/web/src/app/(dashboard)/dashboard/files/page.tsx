@@ -1,5 +1,6 @@
 "use client";
 
+import { PlanGate } from "@/components/PlanGate";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
@@ -39,6 +40,14 @@ function StatusBadge({ status }: { status: DataFile["status"] }) {
 }
 
 export default function FilesPage() {
+  return (
+    <PlanGate feature="files">
+      <FilesPageContent />
+    </PlanGate>
+  );
+}
+
+function FilesPageContent() {
   const { data: files, isLoading } = useSWR<DataFile[]>("/files", fetcher, { refreshInterval: 3000 });
   const { data: examples } = useSWR<ExampleDataset[]>("/files/examples", fetcher);
   const [uploading, setUploading] = useState(false);

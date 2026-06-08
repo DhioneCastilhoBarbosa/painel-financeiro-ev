@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { PlanGate } from "@/components/PlanGate";
 import { useState, useMemo } from "react";
 import { GitCompareArrows, Download, Info, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
@@ -71,6 +72,14 @@ function pctChange(curr: number, prev: number | undefined): string {
 }
 
 export default function TimeseriesPage() {
+  return (
+    <PlanGate feature="revenue">
+      <TimeseriesPageContent />
+    </PlanGate>
+  );
+}
+
+function TimeseriesPageContent() {
   const { filters } = useFilters();
   const [granularity, setGranularity] = useState<"daily" | "weekly" | "monthly">("daily");
   const [compareEnabled, setCompareEnabled] = useState(false);

@@ -53,6 +53,18 @@ async def get_org(current_user: CurrentUser, db: AsyncSession = Depends(get_db))
     }
 
 
+@router.get("/features")
+async def get_org_features(current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
+    """Retorna as feature_flags do plano atual da organização."""
+    org = await db.get(Organization, current_user.organization_id)
+    plan_cfg = get_plan(org.plan)
+    return {
+        "plan": org.plan,
+        "plan_name": plan_cfg["name"] if plan_cfg else org.plan,
+        "feature_flags": plan_cfg.get("feature_flags", {}) if plan_cfg else {},
+    }
+
+
 @router.patch("")
 async def update_org(
     body: OrgUpdateRequest,

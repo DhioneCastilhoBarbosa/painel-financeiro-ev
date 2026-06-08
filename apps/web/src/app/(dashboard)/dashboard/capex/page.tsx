@@ -1,5 +1,6 @@
 "use client";
 
+import { PlanGate } from "@/components/PlanGate";
 import { useState } from "react";
 import useSWR from "swr";
 import { toast } from "sonner";
@@ -96,6 +97,14 @@ function StatusBadge({ p }: { p: CapexPerformance }) {
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function CapexPage() {
+  return (
+    <PlanGate feature="capex">
+      <CapexPageContent />
+    </PlanGate>
+  );
+}
+
+function CapexPageContent() {
   const { user } = useAuth();
   const { data, isLoading, mutate } = useSWR<ChargerCapex[]>("/capex", fetcher, SWR_OPTS);
 

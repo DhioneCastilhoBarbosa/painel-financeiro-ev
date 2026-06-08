@@ -1,5 +1,6 @@
 'use client';
 import dynamic from 'next/dynamic';
+import { PlanGate } from '@/components/PlanGate';
 
 const InstallationMap = dynamic(
   () => import('./InstallationMap'),
@@ -7,5 +8,9 @@ const InstallationMap = dynamic(
 );
 
 export function MapClientWrapper() {
-  return <InstallationMap />;
+  return (
+    <PlanGate feature="map_view">
+      <InstallationMap />
+    </PlanGate>
+  );
 }

@@ -18,6 +18,8 @@ import {
 } from "@/lib/investimentoCalc";
 import api, { apiErrMsg } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePlanFeatures } from "@/hooks/usePlanFeatures";
+import { PlanGate } from "@/components/PlanGate";
 import { useKPIs, useSessionDuration, useConnectors } from "@/hooks/useAnalytics";
 import {
   ComposedChart, BarChart, Bar, Line, XAxis, YAxis, CartesianGrid,
@@ -657,8 +659,15 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
 
 export default function InvestimentoPage() {
   const { user } = useAuth();
+  const { hasFeature } = usePlanFeatures();
+  const canSimple   = hasFeature("investment_simple");
+  const canAdvanced = hasFeature("investment_advanced");
+
   const [inputs, setInputs] = useState<ProjectInputs>(DEFAULT_INPUTS);
-  const [analysisMode, setAnalysisMode] = useState<"simple" | "advanced">("simple");
+  // Default to simple; if simple is blocked but advanced isn't, start on advanced
+  const [analysisMode, setAnalysisMode] = useState<"simple" | "advanced">(
+    () => (!hasFeature("investment_simple") && hasFeature("investment_advanced") ? "advanced" : "simple")
+  );
   const [fillMsg, setFillMsg] = useState<string | null>(null);
   const [showFillPanel, setShowFillPanel] = useState(false);
   const [fillConnectorType, setFillConnectorType] = useState<string>("all");
@@ -893,26 +902,34 @@ export default function InvestimentoPage() {
 
   return (
     <TooltipProvider delay={200}>
+      <PlanGate feature={["investment_simple", "investment_advanced"]}>
       <div className="flex flex-col h-full min-h-0">
         {/* ── Mode toggle bar ── */}
         <div className="flex items-center gap-3 px-4 py-2 border-b dark:border-slate-800 bg-background shrink-0 print:hidden">
           <span className="text-xs font-medium text-muted-foreground">Análise:</span>
           <div className="flex rounded-lg overflow-hidden border dark:border-slate-700 text-xs">
-            {(["simple", "advanced"] as const).map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => setAnalysisMode(m)}
-                className={`px-3 py-1.5 transition-colors font-medium ${analysisMode === m
-                  ? "bg-blue-600 text-white"
-                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
-              >
-                {m === "simple" ? "Simplificada" : "Avançada"}
-              </button>
-            ))}
+            {(["simple", "advanced"] as const)
+              .filter((m) => m === "simple" ? canSimple : canAdvanced)
+              .map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => setAnalysisMode(m)}
+                  className={`px-3 py-1.5 transition-colors font-medium ${analysisMode === m
+                    ? "bg-blue-600 text-white"
+                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+                >
+                  {m === "simple" ? "Simplificada" : "Avançada"}
+                </button>
+              ))}
           </div>
           {analysisMode === "simple" && (
             <span className="text-[0.65rem] text-muted-foreground">Payback simples · ideal para avaliação rápida</span>
+          )}
+          {!canAdvanced && canSimple && (
+            <span className="text-[0.65rem] text-amber-600 dark:text-amber-400">
+              Análise Avançada disponível no plano Pro
+            </span>
           )}
         </div>
 
@@ -1958,6 +1975,7 @@ export default function InvestimentoPage() {
         </div>
         )}
       </div>
+      </PlanGate>
     </TooltipProvider>
   );
 }
