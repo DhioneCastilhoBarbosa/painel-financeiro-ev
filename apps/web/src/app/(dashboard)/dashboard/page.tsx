@@ -17,6 +17,11 @@ import { DownloadableChart } from "@/components/DownloadableChart";
 import Link from "next/link";
 import useSWR from "swr";
 import api from "@/lib/api";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { usePlanFeatures } from "@/hooks/usePlanFeatures";
+import { firstAccessibleRoute } from "@/lib/nav";
 import {
   ComposedChart, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Line,
@@ -36,7 +41,44 @@ const METHOD_LABELS: Record<string, string> = {
 
 const fileFetcher = (url: string) => api.get(url).then((r) => r.data);
 
+/**
+ * Página inicial. Se o plano da organização NÃO inclui a Visão Geral
+ * (dashboard_overview), redireciona o usuário para a primeira tela habilitada
+ * em vez de mostrar um dashboard vazio com onboarding inútil.
+ */
 export default function DashboardPage() {
+  const { user } = useAuth();
+  const router = useRouter();
+  const { hasFeature, hasAnyFeature, isLoading } = usePlanFeatures();
+
+  const overviewEnabled = hasFeature("dashboard_overview");
+
+  // Destino do redirect (apenas quando carregado e overview desabilitado).
+  const redirectTo =
+    !isLoading && !overviewEnabled
+      ? firstAccessibleRoute(user, hasFeature, hasAnyFeature)
+      : null;
+
+  useEffect(() => {
+    if (redirectTo && redirectTo !== "/dashboard") {
+      router.replace(redirectTo);
+    }
+  }, [redirectTo, router]);
+
+  // Enquanto carrega as features, ou enquanto o redirect está em andamento,
+  // mostra um placeholder discreto em vez do dashboard vazio.
+  if (isLoading || (!overviewEnabled && redirectTo)) {
+    return (
+      <div className="flex h-full items-center justify-center p-6">
+        <div className="h-8 w-8 border-2 border-muted-foreground/30 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  return <OverviewContent />;
+}
+
+function OverviewContent() {
   const { filters } = useFilters();
   const { data: kpis, isLoading: kpisLoading } = useKPIs(filters);
   const { data: timeseries, isLoading: tsLoading } = useTimeseries(filters);

@@ -5,9 +5,9 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { usePlanFeatures } from "@/hooks/usePlanFeatures";
 import {
-  BarChart3, FileSpreadsheet, TrendingUp, Zap, Settings,
-  ChevronLeft, ChevronRight, LogOut, Users, Moon, Sun, FileText, Building2, UserCircle, CreditCard, Target, Wallet, BookOpen, ShieldAlert, MapPin,
+  ChevronLeft, ChevronRight, LogOut, Moon, Sun, UserCircle, BookOpen, ShieldAlert,
 } from "lucide-react";
+import { NAV } from "@/lib/nav";
 import { Logo, LogoIcon } from "@/components/Logo";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,26 +20,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 // ── Intelbras brand ────────────────────────────────────────────────────────────
 const GREEN = "#06CB3F";   // Verde Institucional
 const DARK  = "#163134";   // Verde Grandes Projetos
-
-// `feature` = feature_flag key(s) required by plan. Array = any-of (OR).
-// Items without `feature` are always shown if role allows.
-const NAV: { href: string; label: string; icon: React.ComponentType<{ className?: string }>; feature?: string | string[] }[] = [
-  { href: "/dashboard",              label: "Visão Geral",          icon: BarChart3,       feature: "dashboard_overview" },
-  { href: "/dashboard/timeseries",   label: "Receita",              icon: TrendingUp,      feature: "revenue" },
-  { href: "/dashboard/stations",     label: "Estações",             icon: Zap,             feature: "stations" },
-  { href: "/dashboard/usuarios",     label: "Usuários",             icon: Users,           feature: "users_analytics" },
-  { href: "/dashboard/dre",          label: "DRE",                  icon: BarChart3,       feature: "dre" },
-  // Investment shown if simple OR advanced is enabled
-  { href: "/dashboard/investimento", label: "Análise de Invest.",   icon: Building2,       feature: ["investment_simple", "investment_advanced"] },
-  { href: "/dashboard/map",          label: "Mapa de Instalação",   icon: MapPin,          feature: "map_view" },
-  { href: "/dashboard/capex",        label: "CAPEX por Carregador", icon: Wallet,          feature: "capex" },
-  { href: "/dashboard/relatorio",    label: "Relatório PDF",        icon: FileText,        feature: "pdf_report" },
-  { href: "/dashboard/files",        label: "Arquivos",             icon: FileSpreadsheet, feature: "files" },
-  { href: "/dashboard/leads",        label: "Leads",                icon: Target,          feature: "leads" },
-  { href: "/dashboard/team",         label: "Equipe",               icon: Users,           feature: "team" },
-  { href: "/dashboard/billing",      label: "Plano & Cobrança",     icon: CreditCard,      feature: "billing" },
-  { href: "/dashboard/settings",     label: "Configurações",        icon: Settings,        feature: "settings" },
-];
 
 const ROLE_BADGE_STYLE: Record<string, React.CSSProperties> = {
   owner:   { background: "rgba(6,203,63,0.2)",  color: GREEN },
