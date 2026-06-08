@@ -32,6 +32,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# .env.production é versionado intencionalmente: contém apenas
+# variáveis NEXT_PUBLIC_* que são públicas por definição (ficam
+# embutidas no bundle JS servido ao browser).
+!.env.production
 
 # vercel
 .vercel

@@ -3,6 +3,8 @@
 .env.local
 .env.production
 .env.staging
+# apps/web/.env.production é versionado: só tem NEXT_PUBLIC_* (valores públicos)
+!apps/web/.env.production
 .env.*.local
 **/.env
 # Templates versionados:
