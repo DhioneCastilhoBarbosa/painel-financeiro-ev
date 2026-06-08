@@ -26,6 +26,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.core.database import get_db
 from app.core.plan_config import get_all_plans, get_available_features, update_plan
@@ -460,19 +461,16 @@ async def list_invite_codes(
     db: AsyncSession = Depends(get_db),
 ) -> list[dict[str, Any]]:
     result = await db.execute(
-        select(OrgInviteCode).order_by(OrgInviteCode.created_at.desc()).limit(200)
+        select(OrgInviteCode)
+        .options(
+            selectinload(OrgInviteCode.creator),
+            selectinload(OrgInviteCode.used_by_org),
+            selectinload(OrgInviteCode.used_by_user),
+        )
+        .order_by(OrgInviteCode.created_at.desc())
+        .limit(200)
     )
     codes = result.scalars().all()
-
-    # eager-load relations manually
-    for c in codes:
-        if c.created_by:
-            await db.get(User, c.created_by)
-        if c.used_by_organization_id:
-            await db.get(Organization, c.used_by_organization_id)
-        if c.used_by_user_id:
-            await db.get(User, c.used_by_user_id)
-
     return [_serialize_invite_code(c) for c in codes]
 
 
@@ -517,11 +515,14 @@ async def create_invite_code(
         f"code={candidate} validity_days={body.validity_days}",
     )
     await db.commit()
-    await db.refresh(invite)
 
-    # load relations
-    if invite.created_by:
-        await db.get(User, invite.created_by)
+    # Re-fetch with relationships eagerly loaded so _serialize_invite_code
+    # never triggers a synchronous lazy-load (which fails in async sessions).
+    invite = await db.scalar(
+        select(OrgInviteCode)
+        .options(selectinload(OrgInviteCode.creator))
+        .where(OrgInviteCode.id == invite.id)
+    )
 
     return _serialize_invite_code(invite)
 
