@@ -35,10 +35,13 @@ export function usePlanFeatures() {
   );
 
   function hasFeature(key: string): boolean {
-    if (isLoading) return true;   // otimista durante carregamento inicial
-    if (error || !data) return false;  // fail-closed: erro na API bloqueia acesso
+    // Otimista enquanto não autenticado ou durante o carregamento inicial —
+    // evita flash de tela bloqueada e piscar durante rehydration da auth.
+    if (!user || isLoading) return true;
+    // Fail-closed: se o request concluiu com erro, bloqueia o acesso.
+    if (error || !data) return false;
     const flags = data.feature_flags;
-    // Se a chave não estiver nas flags (plano antigo), libera por retrocompatibilidade
+    // Se a chave não estiver nas flags (plano antigo), libera por retrocompatibilidade.
     return key in flags ? flags[key] : true;
   }
 

@@ -55,8 +55,21 @@ async def get_org(current_user: CurrentUser, db: AsyncSession = Depends(get_db))
 
 @router.get("/features")
 async def get_org_features(current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
-    """Retorna as feature_flags do plano atual da organização."""
+    """Retorna as feature_flags do plano atual da organização.
+
+    A organização mãe (Intelbras) sempre recebe todas as features habilitadas,
+    independente do plano configurado — ela não está sujeita a restrições de plano.
+    """
     org = await db.get(Organization, current_user.organization_id)
+    if not org:
+        return {"plan": "unknown", "plan_name": "Unknown", "feature_flags": {}}
+
+    # Organização mãe tem acesso irrestrito a todas as features
+    if org.is_mother:
+        from app.core.plan_config import get_available_features
+        all_flags = {f["key"]: True for f in get_available_features()}
+        return {"plan": "enterprise", "plan_name": "Enterprise", "feature_flags": all_flags}
+
     plan_cfg = get_plan(org.plan)
     return {
         "plan": org.plan,
