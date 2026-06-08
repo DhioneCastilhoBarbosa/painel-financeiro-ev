@@ -21,7 +21,6 @@ logger = logging.getLogger(__name__)
 
 _DATA_DIR = Path(__file__).parent.parent / "data"
 _DATA_PATH = _DATA_DIR / "plan_configs.json"
-_cache: dict[str, Any] | None = None
 _lock = threading.Lock()
 
 # ─── Defaults embutidos ──────────────────────────────────────────────────────
@@ -195,45 +194,37 @@ _DEFAULTS: dict[str, Any] = {
 
 
 def _load() -> dict[str, Any]:
-    global _cache
-    if _cache is not None:
-        return _cache
-
+    """Lê sempre do arquivo (sem cache em memória) para que múltiplos workers
+    vejam imediatamente qualquer atualização salva por outro worker."""
     with _lock:
-        if _cache is not None:
-            return _cache
-
         if _DATA_PATH.exists():
             try:
                 with open(_DATA_PATH, encoding="utf-8") as f:
-                    _cache = json.load(f)
-                return _cache
+                    return json.load(f)
             except Exception as exc:
                 logger.warning("plan_configs.json inválido (%s) — usando defaults", exc)
 
         import copy
-        _cache = copy.deepcopy(_DEFAULTS)
-        _try_seed()
-        return _cache
+        data = copy.deepcopy(_DEFAULTS)
+        _try_seed(data)
+        return data
 
 
-def _try_seed() -> None:
+def _try_seed(data: dict[str, Any]) -> None:
     try:
         _DATA_DIR.mkdir(parents=True, exist_ok=True)
         with open(_DATA_PATH, "w", encoding="utf-8") as f:
-            json.dump(_cache, f, indent=2, ensure_ascii=False)
+            json.dump(data, f, indent=2, ensure_ascii=False)
         logger.info("plan_configs.json criado em %s", _DATA_PATH)
     except Exception as exc:
         logger.warning("Não foi possível persistir plan_configs.json: %s", exc)
 
 
 def _save(data: dict[str, Any]) -> None:
-    global _cache
     with _lock:
         _DATA_DIR.mkdir(parents=True, exist_ok=True)
         with open(_DATA_PATH, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
-        _cache = data
 
 
 def _default_flags(plan_id: str) -> dict[str, bool]:

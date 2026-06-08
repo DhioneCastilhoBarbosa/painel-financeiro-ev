@@ -66,6 +66,7 @@ services:
       - "8000:8000"
     volumes:
       - uploads_data:/app/uploads
+      - plan_configs_data:/app/app/data
     depends_on:
       db:
         condition: service_healthy
@@ -159,3 +160,4 @@ volumes:
   postgres_data:
   redis_data:
   uploads_data:
+  plan_configs_data:
