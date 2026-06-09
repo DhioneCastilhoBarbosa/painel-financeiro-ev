@@ -492,7 +492,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
         <div className="hidden print:flex items-start justify-between px-0 pt-0 pb-4 mb-2 border-b border-gray-300">
           <div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/intelbras-logo.svg" alt="Intelbras" style={{ display: "block", marginBottom: "6px", width: "55mm", height: "auto" }} />
+            <img src="/intelbras-logo.svg" alt="Intelbras" style={{ display: "block", marginBottom: "6px", width: "30mm", height: "auto" }} />
             <h1 className="text-lg font-bold text-black">Análise Simplificada de Investimento — EV</h1>
             <p className="text-xs text-gray-500">
               {s.n_chargers} carregador{s.n_chargers !== 1 ? "es" : ""} · {s.n_chargers * s.power_kw} kW instalados · CAPEX {formatCurrency(s.capex_total)}
@@ -629,17 +629,17 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
           <Card>
             <CardHeader className="pb-2"><CardTitle className="text-sm">Receita × Custos (mensal)</CardTitle></CardHeader>
             <CardContent className="space-y-2 text-sm">
-              {[
-                ["kWh produzido/mês", `${Math.round(r.monthly_kwh).toLocaleString("pt-BR")} kWh`, ""],
+              {([
+                ["kWh consumido/mês", `${Math.round(r.monthly_kwh * 0.5).toLocaleString("pt-BR")} kWh`, "", "Considera 50% do kWh teórico (ocupação × potência × tempo). Na prática os veículos nem sempre usam toda a potência disponível e, no fim da recarga, a potência cai naturalmente — reduzindo a energia efetivamente consumida."],
                 ["Receita bruta", formatCurrency(r.monthly_revenue), "text-blue-600 dark:text-blue-400"],
                 ["(-) Custo de energia", formatCurrency(r.monthly_energy), "text-red-500"],
                 ["(-) OPEX fixo", formatCurrency(s.monthly_opex), "text-red-500"],
-                ...(r.monthly_split > 0 ? [["(-) Split parceiro", formatCurrency(r.monthly_split), "text-red-500"] as [string, string, string]] : []),
+                ...(r.monthly_split > 0 ? [["(-) Split de receita", formatCurrency(r.monthly_split), "text-red-500"] as [string, string, string, string?]] : []),
                 ["= Lucro líquido/mês", formatCurrency(r.monthly_net), r.monthly_net >= 0 ? "text-emerald-600 dark:text-emerald-400 font-bold" : "text-red-600 font-bold"],
                 ["ROI anual estimado", `${r.roi_1y.toFixed(1)}%`, r.roi_1y >= 20 ? "text-emerald-600" : "text-amber-600"],
-              ].map(([label, val, cls]) => (
+              ] as [string, string, string, string?][]).map(([label, val, cls, help]) => (
                 <div key={label} className="flex justify-between border-b last:border-0 pb-1.5 last:pb-0 dark:border-slate-800">
-                  <span className="text-muted-foreground">{label}</span>
+                  <span className="text-muted-foreground flex items-center gap-1">{label}{help ? <Help text={help} /> : null}</span>
                   <span className={`font-medium ${cls}`}>{val}</span>
                 </div>
               ))}
