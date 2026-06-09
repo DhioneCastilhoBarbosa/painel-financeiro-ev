@@ -271,9 +271,30 @@ const DEFAULT_SIMPLE: SimpleInputs = {
   revenue_split_pct: 0,
 };
 
-function calcSimple(s: SimpleInputs) {
+/** Lucro líquido mensal para uma dada ocupação (%), mantendo os demais parâmetros. */
+function monthlyNetForOccupancy(s: SimpleInputs, occupancy_pct: number): number {
   // Sempre considera 24h/dia; ocupação representa o % do tempo em uso
-  const monthly_kwh = s.n_chargers * s.power_kw * 24 * 30 * (s.occupancy_pct / 100);
+  const monthly_kwh = s.n_chargers * s.power_kw * 24 * 30 * (occupancy_pct / 100);
+  const monthly_revenue = monthly_kwh * s.tariff_per_kwh;
+  const monthly_energy = monthly_kwh * s.energy_cost_per_kwh;
+  const monthly_split = monthly_revenue * (s.revenue_split_pct / 100);
+  return monthly_revenue - monthly_energy - s.monthly_opex - monthly_split;
+}
+
+interface SimpleScenario {
+  off: number;           // deslocamento aplicado (-10, -5, +5, +10)
+  occ: number;           // ocupação resultante já clampada em [0, 100]
+  key: string;           // chave no dataset do gráfico (ex.: "occ_25")
+  label: string;         // rótulo exibido (ex.: "25%")
+  color: string;
+  monthly_net: number;
+  payback_months: number | null;
+}
+
+function calcSimple(s: SimpleInputs) {
+  const baseOcc = s.occupancy_pct;
+  // Sempre considera 24h/dia; ocupação representa o % do tempo em uso
+  const monthly_kwh = s.n_chargers * s.power_kw * 24 * 30 * (baseOcc / 100);
   const monthly_revenue = monthly_kwh * s.tariff_per_kwh;
   const monthly_energy = monthly_kwh * s.energy_cost_per_kwh;
   const monthly_split = monthly_revenue * (s.revenue_split_pct / 100);
@@ -281,11 +302,42 @@ function calcSimple(s: SimpleInputs) {
   const payback_months = monthly_net > 0 ? s.capex_total / monthly_net : null;
   const roi_1y = monthly_net > 0 ? ((monthly_net * 12) / s.capex_total) * 100 : 0;
   const horizon = Math.min(84, Math.ceil((payback_months ?? 60) * 2.5));
-  const chart = Array.from({ length: horizon + 1 }, (_, i) => ({
-    mes: i,
-    acumulado: Math.round(monthly_net * i - s.capex_total),
-  }));
-  return { monthly_kwh, monthly_revenue, monthly_energy, monthly_split, monthly_net, payback_months, roi_1y, chart };
+
+  // ── Cenários de ocupação ±5% / ±10% em relação à base ──────────────────────
+  // Clampa a ocupação resultante em [0%, 100%] e descarta cenários que, após o
+  // clamp, coincidam com a base ou com outro cenário (ex.: base 95% → +5/+10 = 100%).
+  const OFFSETS: { off: number; color: string }[] = [
+    { off: -10, color: "#ef4444" }, // vermelho — pior caso
+    { off: -5,  color: "#f59e0b" }, // âmbar
+    { off: +5,  color: "#22c55e" }, // verde-claro
+    { off: +10, color: "#059669" }, // verde-escuro — melhor caso
+  ];
+  const seen = new Set<number>([baseOcc]); // base já é exibida como barras
+  const scenarios: SimpleScenario[] = [];
+  for (const { off, color } of OFFSETS) {
+    const occ = Math.max(0, Math.min(100, baseOcc + off));
+    if (seen.has(occ)) continue;
+    seen.add(occ);
+    const net = monthlyNetForOccupancy(s, occ);
+    scenarios.push({
+      off, occ, color,
+      key: `occ_${occ}`,
+      label: `${occ}%`,
+      monthly_net: net,
+      payback_months: net > 0 ? s.capex_total / net : null,
+    });
+  }
+
+  const chart = Array.from({ length: horizon + 1 }, (_, i) => {
+    const row: Record<string, number> = {
+      mes: i,
+      acumulado: Math.round(monthly_net * i - s.capex_total),
+    };
+    for (const sc of scenarios) row[sc.key] = Math.round(sc.monthly_net * i - s.capex_total);
+    return row;
+  });
+
+  return { monthly_kwh, monthly_revenue, monthly_energy, monthly_split, monthly_net, payback_months, roi_1y, baseOcc, scenarios, chart };
 }
 
 function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) => string }) {
@@ -622,25 +674,40 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
             <CardTitle className="text-sm">Recuperação do Investimento (acumulado)</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={r.chart} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
+            <ResponsiveContainer width="100%" height={280}>
+              <ComposedChart data={r.chart} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                 <XAxis dataKey="mes" tick={{ fontSize: 10 }} tickFormatter={(v) => `M${v}`} interval={Math.ceil(r.chart.length / 10)} />
                 <YAxis tick={{ fontSize: 10 }} tickFormatter={(v: number) => `${v >= 0 ? "" : "-"}R$${Math.abs(v) >= 1000 ? `${Math.round(Math.abs(v) / 1000)}k` : Math.abs(v)}`} width={72} />
                 <RechartTooltip
-                  formatter={(v: number) => [formatCurrency(v + s.capex_total) + ` (acum. ${v >= 0 ? "+" : ""}${formatCurrency(v)})`, "Saldo vs CAPEX"]}
+                  formatter={(v: number, name: string) => [formatCurrency(v), name]}
                   labelFormatter={(l) => `Mês ${l}`}
                 />
+                <Legend wrapperStyle={{ fontSize: 11 }} />
                 <ReferenceLine y={0} stroke="#ef4444" strokeWidth={2} strokeDasharray="4 2" label={{ value: "Break-even", position: "insideTopRight", fontSize: 10, fill: "#ef4444" }} />
-                <Bar dataKey="acumulado" radius={[2, 2, 0, 0]}>
+                <Bar dataKey="acumulado" name={`Base (${r.baseOcc}%)`} radius={[2, 2, 0, 0]}>
                   {r.chart.map((entry, i) => (
-                    <Cell key={i} fill={entry.acumulado >= 0 ? "#10b981" : "#3b82f6"} />
+                    <Cell key={i} fill={(entry.acumulado ?? 0) >= 0 ? "#10b981" : "#3b82f6"} />
                   ))}
                 </Bar>
-              </BarChart>
+                {r.scenarios.map((sc) => (
+                  <Line
+                    key={sc.key}
+                    type="monotone"
+                    dataKey={sc.key}
+                    name={`Ocup. ${sc.label}`}
+                    stroke={sc.color}
+                    strokeWidth={1.5}
+                    strokeDasharray={sc.off < 0 ? "4 2" : undefined}
+                    dot={false}
+                    isAnimationActive={false}
+                  />
+                ))}
+              </ComposedChart>
             </ResponsiveContainer>
             <p className="text-[0.65rem] text-muted-foreground mt-2 text-center">
-              Barras azuis = capital ainda não recuperado · Barras verdes = lucro após payback · Linha vermelha = ponto de equilíbrio
+              Barras = cenário base (azul: capital não recuperado · verde: lucro após payback). Linhas = cenários de ocupação ±5%/±10%
+              {" "}(tracejadas = abaixo da base, contínuas = acima), limitadas entre 0% e 100%.
             </p>
           </CardContent>
         </Card>
