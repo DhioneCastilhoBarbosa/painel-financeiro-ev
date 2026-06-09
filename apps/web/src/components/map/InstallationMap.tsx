@@ -62,6 +62,26 @@ function MapController({ filterUF }: { filterUF: string }) {
   return null;
 }
 
+// Força o Leaflet a recalcular o tamanho do container após a montagem.
+// Sem isto, o mapa renderiza com 0×0 (ou tamanho parcial) e fica "branco",
+// pois é montado via dynamic import (ssr:false) antes do layout estabilizar.
+function MapResizer() {
+  const map = useMap();
+  useEffect(() => {
+    const fix = () => map.invalidateSize();
+    // Recalcula em alguns instantes após o mount e sempre que a janela mudar.
+    const t0 = setTimeout(fix, 0);
+    const t1 = setTimeout(fix, 250);
+    const t2 = setTimeout(fix, 800);
+    window.addEventListener('resize', fix);
+    return () => {
+      clearTimeout(t0); clearTimeout(t1); clearTimeout(t2);
+      window.removeEventListener('resize', fix);
+    };
+  }, [map]);
+  return null;
+}
+
 // Triggers Overpass fetch when map moves
 function BoundsWatcher({ onBoundsChange }: {
   onBoundsChange: (s: number, w: number, n: number, e: number) => void;
@@ -181,6 +201,7 @@ export default function InstallationMap() {
           maxZoom={18}
         />
         <ZoomControl position="bottomright" />
+        <MapResizer />
         <BoundsWatcher onBoundsChange={handleBoundsChange} />
         <MapController filterUF={filterUF} />
 

@@ -4,4 +4,7 @@ node_modules
 .gitignore
 *.md
 .env*
+# Exceção: .env.production contém apenas NEXT_PUBLIC_* (embutidas no bundle em
+# build time). Precisa estar no contexto de build para o `next build` lê-lo.
+!.env.production
 .dockerignore
