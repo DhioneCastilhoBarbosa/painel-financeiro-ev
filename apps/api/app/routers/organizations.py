@@ -23,7 +23,7 @@ from app.schemas.organization import (
     UpdateRoleRequest,
     UsageResponse,
 )
-from app.core.plan_config import get_available_features, get_plan, get_plan_limits
+from app.core.plan_config import get_plan, get_plan_limits
 from app.services.audit_service import log_action
 
 router = APIRouter()
@@ -57,17 +57,15 @@ async def get_org(current_user: CurrentUser, db: AsyncSession = Depends(get_db))
 async def get_org_features(current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
     """Retorna as feature_flags do plano atual da organização.
 
-    A organização mãe (Intelbras) sempre recebe todas as features habilitadas,
-    independente do plano configurado — ela não está sujeita a restrições de plano.
+    Todas as organizações — inclusive a mãe (Intelbras) — respeitam o plano
+    configurado. O acesso ao Painel Admin é controlado por cargo (is_master +
+    org mãe), não por feature flag, então a org mãe nunca fica sem o painel
+    mesmo que esteja num plano restrito. Para liberar todas as telas à Intelbras,
+    basta colocá-la no plano Enterprise pelo próprio painel.
     """
     org = await db.get(Organization, current_user.organization_id)
     if not org:
         return {"plan": "unknown", "plan_name": "Unknown", "feature_flags": {}}
-
-    # Organização mãe tem acesso irrestrito a todas as features
-    if org.is_mother:
-        all_flags = {f["key"]: True for f in get_available_features()}
-        return {"plan": "enterprise", "plan_name": "Enterprise", "feature_flags": all_flags}
 
     plan_cfg = get_plan(org.plan)
     return {
