@@ -7,7 +7,7 @@ import { usePlanFeatures } from "@/hooks/usePlanFeatures";
 import {
   ChevronLeft, ChevronRight, LogOut, Moon, Sun, UserCircle, BookOpen, ShieldAlert,
 } from "lucide-react";
-import { NAV } from "@/lib/nav";
+import { NAV_GROUPS, type NavItem } from "@/lib/nav";
 import { Logo, LogoIcon } from "@/components/Logo";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/AuthContext";
@@ -43,13 +43,48 @@ export function Sidebar() {
     .join("")
     .toUpperCase() ?? "?";
 
-  const visibleNav = NAV.filter(({ href, feature }) => {
+  const itemAllowed = ({ href, feature }: NavItem) => {
     if (!canAccess(user, href)) return false;
     if (!feature) return true;
     if (Array.isArray(feature)) return hasAnyFeature(...feature);
     return hasFeature(feature);
-  });
+  };
+  // Filtra itens por grupo e descarta grupos que ficaram vazios.
+  const visibleGroups = NAV_GROUPS
+    .map((g) => ({ ...g, items: g.items.filter(itemAllowed) }))
+    .filter((g) => g.items.length > 0);
   const showAdmin = isIntelbrasmaster(user);
+
+  const renderItem = ({ href, label, icon: Icon }: NavItem) => {
+    const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
+    const linkClass = cn(
+      "flex items-center gap-3 mx-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+      collapsed && "justify-center px-0 mx-2"
+    );
+    const linkStyle: React.CSSProperties = active
+      ? { backgroundColor: `${GREEN}1A`, color: GREEN }   /* 10% opacity tint */
+      : { color: "rgba(255,255,255,0.7)" };
+    const hoverClass = "hover:bg-white/10 hover:!text-white";
+
+    if (!collapsed) {
+      return (
+        <Link key={href} href={href} className={cn(linkClass, !active && hoverClass)} style={linkStyle}>
+          <Icon className="h-5 w-5 shrink-0" />
+          <span className="truncate">{label}</span>
+        </Link>
+      );
+    }
+    return (
+      <Tooltip key={href}>
+        <TooltipTrigger
+          render={<Link href={href} className={cn(linkClass, !active && hoverClass)} style={linkStyle} />}
+        >
+          <Icon className="h-5 w-5 shrink-0" />
+        </TooltipTrigger>
+        <TooltipContent side="right">{label}</TooltipContent>
+      </Tooltip>
+    );
+  };
 
   return (
     <TooltipProvider delay={0}>
@@ -73,52 +108,21 @@ export function Sidebar() {
         </div>
 
         {/* ── Nav ──────────────────────────────────────────────────────── */}
-        <nav className="flex-1 py-4 space-y-0.5 overflow-y-auto">
-          {visibleNav.map(({ href, label, icon: Icon }) => {
-            const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
-
-            const linkClass = cn(
-              "flex items-center gap-3 mx-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-              collapsed && "justify-center px-0 mx-2"
-            );
-
-            const linkStyle: React.CSSProperties = active
-              ? { backgroundColor: `${GREEN}1A`, color: GREEN }   /* 10% opacity tint */
-              : { color: "rgba(255,255,255,0.7)" };
-
-            const hoverClass = "hover:bg-white/10 hover:!text-white";
-
-            if (!collapsed) {
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={cn(linkClass, !active && hoverClass)}
-                  style={linkStyle}
-                >
-                  <Icon className="h-5 w-5 shrink-0" />
-                  <span className="truncate">{label}</span>
-                </Link>
-              );
-            }
-
-            return (
-              <Tooltip key={href}>
-                <TooltipTrigger
-                  render={
-                    <Link
-                      href={href}
-                      className={cn(linkClass, !active && hoverClass)}
-                      style={linkStyle}
-                    />
-                  }
-                >
-                  <Icon className="h-5 w-5 shrink-0" />
-                </TooltipTrigger>
-                <TooltipContent side="right">{label}</TooltipContent>
-              </Tooltip>
-            );
-          })}
+        <nav className="flex-1 py-3 overflow-y-auto">
+          {visibleGroups.map((group, gi) => (
+            <div key={group.label} className={cn(gi > 0 && "mt-3 pt-3", gi > 0 && "border-t")}
+                 style={gi > 0 ? { borderColor: "rgba(255,255,255,0.08)" } : undefined}>
+              {!collapsed && (
+                <p className="px-5 pb-1 text-[0.6rem] font-semibold uppercase tracking-wider"
+                   style={{ color: "rgba(255,255,255,0.35)" }}>
+                  {group.label}
+                </p>
+              )}
+              <div className="space-y-0.5">
+                {group.items.map(renderItem)}
+              </div>
+            </div>
+          ))}
         </nav>
 
         {/* ── Bottom ───────────────────────────────────────────────────── */}

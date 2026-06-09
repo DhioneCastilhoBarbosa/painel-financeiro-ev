@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { MapClientWrapper } from '@/components/map/MapClientWrapper';
 
 export const metadata: Metadata = {
-  title: 'Mapa de Instalação | Painel Financeiro EV',
+  title: 'Análise de Locais | Painel Financeiro EV',
   description: 'Identifique e ranqueie locais para instalação de carregadores EV.',
 };
 
