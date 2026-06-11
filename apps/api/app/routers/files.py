@@ -9,6 +9,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, Up
 from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.analytics_cache import bump_analytics_cache
 from app.core.config import settings
 from app.core.database import AsyncSessionLocal, get_db
 from app.core.deps import CurrentUser
@@ -135,6 +136,7 @@ async def _process_file_background(file_id: str, storage_key: str, organization_
             data_file.connector_types = metadata.get("connector_types", [])
             data_file.processed_at = datetime.now(UTC)
             await db.commit()
+            await bump_analytics_cache(organization_id)  # invalida cache de analytics
 
         except Exception as exc:
             await db.rollback()
@@ -489,6 +491,7 @@ async def delete_file(file_id: str, current_user: CurrentUser, db: AsyncSession 
     with contextlib.suppress(Exception):
         await _delete_from_storage(f.storage_key)
     await db.delete(f)
+    await bump_analytics_cache(current_user.organization_id)  # invalida cache de analytics
 
 
 @router.post(

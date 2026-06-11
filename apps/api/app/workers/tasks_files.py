@@ -11,6 +11,7 @@ from pathlib import Path
 from sqlalchemy import create_engine, insert
 from sqlalchemy.orm import sessionmaker
 
+from app.core.analytics_cache import bump_analytics_cache_sync
 from app.core.config import settings
 from app.models.charging_session import ChargingSession
 from app.models.data_file import DataFile, FileStatus
@@ -103,6 +104,8 @@ def process_file(self, file_id: str, storage_key: str, organization_id: str):
             data_file.connector_types = metadata.get("connector_types", [])
             data_file.processed_at = datetime.now(UTC)
             db.commit()
+            # invalida o cache de analytics da org (worker síncrono)
+            bump_analytics_cache_sync(organization_id, settings.redis_url)
 
         except Exception as exc:
             db.rollback()

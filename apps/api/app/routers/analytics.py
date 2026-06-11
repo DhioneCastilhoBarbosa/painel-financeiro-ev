@@ -3,6 +3,7 @@ Endpoints de analytics — todos os dados do dashboard financeiro.
 Queries no banco → pandas → services/analytics.py → JSON.
 """
 
+import pickle
 from datetime import date
 
 import pandas as pd
@@ -11,6 +12,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
+from app.core.redis import get_redis_bin
+from app.core.analytics_cache import DF_CACHE_TTL, df_cache_key, get_version
 from app.core.deps import CurrentUser
 from app.models.charging_session import ChargingSession
 from app.models.cost_configuration import CostConfiguration
@@ -30,6 +33,49 @@ async def _get_org_tz(organization_id, db: AsyncSession) -> str:
 
 
 async def _load_df(
+    organization_id,
+    db: AsyncSession,
+    date_from: date | None = None,
+    date_to: date | None = None,
+    file_ids: list[str] | None = None,
+    stations: list[str] | None = None,
+    connectors: list[str] | None = None,
+) -> pd.DataFrame:
+    """Carrega o DataFrame de sessões com cache em Redis.
+
+    Como TODOS os endpoints de analytics passam por aqui, cachear neste ponto
+    elimina as múltiplas cargas completas da tabela quando o dashboard dispara
+    vários endpoints com os mesmos filtros (ex.: a Visão Geral). O DataFrame é
+    serializado com pickle (preserva dtypes) num Redis binário, com TTL curto, e
+    invalidado por versão da org (incrementada ao alterar os dados de sessão).
+    """
+    version = await get_version(organization_id)
+    key = df_cache_key(
+        organization_id, version,
+        date_from=date_from, date_to=date_to,
+        file_ids=sorted(file_ids) if file_ids else None,
+        stations=sorted(stations) if stations else None,
+        connectors=sorted(connectors) if connectors else None,
+    )
+    rbin = get_redis_bin()
+    try:
+        cached = await rbin.get(key)
+        if cached is not None:
+            return pickle.loads(cached)
+    except Exception:
+        pass  # qualquer falha de cache → segue para o banco (degradação graciosa)
+
+    df = await _load_df_uncached(
+        organization_id, db, date_from, date_to, file_ids, stations, connectors
+    )
+    try:
+        await rbin.set(key, pickle.dumps(df), ex=DF_CACHE_TTL)
+    except Exception:
+        pass
+    return df
+
+
+async def _load_df_uncached(
     organization_id,
     db: AsyncSession,
     date_from: date | None = None,
