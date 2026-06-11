@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { FilterProvider } from "@/contexts/FilterContext";
 import { FilterURLSync } from "@/components/FilterURLSync";
 import { Sidebar } from "@/components/Sidebar";
+import { MobileNav } from "@/components/MobileNav";
 import { RoleGuard } from "@/components/RoleGuard";
 import { TrialBanner } from "@/components/TrialBanner";
 import { AlertBell } from "@/components/AlertBell";
@@ -35,8 +36,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <FilterURLSync />
       </Suspense>
       <div className="flex h-screen overflow-hidden bg-[#EFEFED] dark:bg-slate-950">
-        <Sidebar />
+        <Sidebar className="max-md:hidden" />
         <main className="flex-1 overflow-y-auto flex flex-col">
+          <MobileNav />
           <div className="flex items-center">
             <div className="flex-1"><TrialBanner /></div>
             <div className="px-3 py-1.5 shrink-0 print:hidden">

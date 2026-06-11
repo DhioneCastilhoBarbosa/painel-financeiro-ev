@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePlanFeatures } from "@/hooks/usePlanFeatures";
 import {
   ChevronLeft, ChevronRight, LogOut, Moon, Sun, UserCircle, BookOpen, ShieldAlert,
@@ -28,11 +28,27 @@ const ROLE_BADGE_STYLE: Record<string, React.CSSProperties> = {
   viewer:  { background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)" },
 };
 
-export function Sidebar() {
+export function Sidebar({
+  className,
+  mobile = false,
+  onNavigate,
+}: {
+  className?: string;
+  /** Variante para uso dentro do drawer mobile: largura cheia, sem botão de recolher. */
+  mobile?: boolean;
+  /** Chamado ao clicar em qualquer item de navegação (fecha o drawer no mobile). */
+  onNavigate?: () => void;
+} = {}) {
   const pathname  = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsedState, setCollapsed] = useState(false);
+  const collapsed = mobile ? false : collapsedState;   // no mobile nunca recolhe
   const { user, logout } = useAuth();
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
+  // next-themes só conhece o tema após montar no cliente — evita mismatch de hidratação.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const isDark = mounted && resolvedTheme === "dark";
+  const toggleTheme = () => setTheme(isDark ? "light" : "dark");
 
   const { hasFeature, hasAnyFeature } = usePlanFeatures();
 
@@ -68,7 +84,7 @@ export function Sidebar() {
 
     if (!collapsed) {
       return (
-        <Link key={href} href={href} className={cn(linkClass, !active && hoverClass)} style={linkStyle}>
+        <Link key={href} href={href} onClick={onNavigate} className={cn(linkClass, !active && hoverClass)} style={linkStyle}>
           <Icon className="h-5 w-5 shrink-0" />
           <span className="truncate">{label}</span>
         </Link>
@@ -77,7 +93,7 @@ export function Sidebar() {
     return (
       <Tooltip key={href}>
         <TooltipTrigger
-          render={<Link href={href} className={cn(linkClass, !active && hoverClass)} style={linkStyle} />}
+          render={<Link href={href} onClick={onNavigate} className={cn(linkClass, !active && hoverClass)} style={linkStyle} />}
         >
           <Icon className="h-5 w-5 shrink-0" />
         </TooltipTrigger>
@@ -92,7 +108,8 @@ export function Sidebar() {
         data-sidebar
         className={cn(
           "relative flex flex-col border-r transition-all duration-200",
-          collapsed ? "w-16" : "w-56"
+          mobile ? "w-full h-full" : collapsed ? "w-16" : "w-56",
+          className
         )}
         style={{ backgroundColor: DARK, borderColor: "rgba(255,255,255,0.08)" }}
       >
@@ -136,6 +153,7 @@ export function Sidebar() {
               {showAdmin && (
                 <Link
                   href="/dashboard/admin"
+                  onClick={onNavigate}
                   className={cn(
                     "flex w-full items-center gap-2 px-2 py-1.5 text-sm rounded-lg transition-colors",
                     pathname.startsWith("/dashboard/admin")
@@ -161,23 +179,22 @@ export function Sidebar() {
                 </Link>
               )}
 
-              {/* Theme toggle (temporarily disabled) */}
+              {/* Theme toggle */}
               <button
-                className="flex w-full items-center gap-2 px-2 py-1.5 text-sm rounded-lg opacity-40 cursor-not-allowed"
+                onClick={toggleTheme}
+                className="flex w-full items-center gap-2 px-2 py-1.5 text-sm rounded-lg hover:bg-white/10 transition-colors"
                 style={{ color: "rgba(255,255,255,0.6)" }}
-                disabled
-                title="Alternância de tema temporariamente desativada"
+                title={isDark ? "Mudar para tema claro" : "Mudar para tema escuro"}
+                suppressHydrationWarning
               >
-                {theme === "dark"
-                  ? <Sun className="h-4 w-4" />
-                  : <Moon className="h-4 w-4" />
-                }
-                <span>Tema</span>
+                {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                <span suppressHydrationWarning>{isDark ? "Tema claro" : "Tema escuro"}</span>
               </button>
 
               {/* Profile */}
               <Link
                 href="/dashboard/profile"
+                onClick={onNavigate}
                 className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white/10 w-full transition-colors"
               >
                 <Avatar className="h-7 w-7 shrink-0">
@@ -233,15 +250,16 @@ export function Sidebar() {
                 <TooltipTrigger
                   render={
                     <button
-                      className="flex w-full items-center justify-center py-1.5 rounded-lg opacity-40 cursor-not-allowed"
+                      onClick={toggleTheme}
+                      className="flex w-full items-center justify-center py-1.5 rounded-lg hover:bg-white/10 transition-colors"
                       style={{ color: "rgba(255,255,255,0.6)" }}
-                      disabled
+                      suppressHydrationWarning
                     />
                   }
                 >
-                  {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                  {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                 </TooltipTrigger>
-                <TooltipContent side="right">Alternância de tema temporariamente desativada</TooltipContent>
+                <TooltipContent side="right">{isDark ? "Tema claro" : "Tema escuro"}</TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger
@@ -274,21 +292,23 @@ export function Sidebar() {
           )}
         </div>
 
-        {/* ── Collapse toggle ───────────────────────────────────────────── */}
-        <button
-          className="absolute bottom-36 -right-3 h-6 w-6 rounded-full shadow-md flex items-center justify-center border transition-colors hover:opacity-90"
-          style={{
-            backgroundColor: DARK,
-            borderColor: `${GREEN}40`,
-            color: GREEN,
-          }}
-          onClick={() => setCollapsed(!collapsed)}
-        >
-          {collapsed
-            ? <ChevronRight className="h-3 w-3" />
-            : <ChevronLeft className="h-3 w-3" />
-          }
-        </button>
+        {/* ── Collapse toggle (apenas desktop) ──────────────────────────── */}
+        {!mobile && (
+          <button
+            className="absolute bottom-36 -right-3 h-6 w-6 rounded-full shadow-md flex items-center justify-center border transition-colors hover:opacity-90"
+            style={{
+              backgroundColor: DARK,
+              borderColor: `${GREEN}40`,
+              color: GREEN,
+            }}
+            onClick={() => setCollapsed(!collapsed)}
+          >
+            {collapsed
+              ? <ChevronRight className="h-3 w-3" />
+              : <ChevronLeft className="h-3 w-3" />
+            }
+          </button>
+        )}
       </aside>
     </TooltipProvider>
   );
