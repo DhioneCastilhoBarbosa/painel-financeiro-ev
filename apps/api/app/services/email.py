@@ -7,10 +7,16 @@ para que o desenvolvimento local funcione sem conta Resend.
 from __future__ import annotations
 
 import logging
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
+
+# SMTP tem prioridade quando smtp_host está configurado
+_smtp_available = bool(settings.smtp_host)
 
 # Inicializa Resend apenas quando a chave está disponível
 _resend_available = bool(settings.resend_api_key)
@@ -24,12 +30,40 @@ def _from() -> str:
     return f"FinanceDash <{settings.email_from}>"
 
 
+def _smtp_from() -> str:
+    return settings.smtp_from or settings.smtp_user or settings.email_from
+
+
+def _send_via_smtp(to: str, subject: str, html: str) -> bool:
+    """Envia via servidor SMTP (postal.intelbras.com.br por padrão)."""
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"] = _smtp_from()
+        msg["To"] = to
+        msg.attach(MIMEText(html, "html", "utf-8"))
+
+        with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=20) as server:
+            if settings.smtp_use_tls:
+                server.starttls()
+            if settings.smtp_user and settings.smtp_password:
+                server.login(settings.smtp_user, settings.smtp_password)
+            server.sendmail(_smtp_from(), [to], msg.as_string())
+        return True
+    except Exception as exc:
+        logger.error("Erro ao enviar e-mail SMTP para %s: %s", to, exc)
+        return False
+
+
 def _app_url() -> str:
     return settings.app_url.rstrip("/")
 
 
 def _send_sync(to: str, subject: str, html: str) -> bool:
     """Versão síncrona — usada por Celery tasks (sem event loop)."""
+    # SMTP tem prioridade quando configurado
+    if _smtp_available:
+        return _send_via_smtp(to, subject, html)
     if not _resend_available:
         logger.info("[EMAIL no-op] To=%s | Subject=%s", to, subject)
         return False
@@ -270,6 +304,30 @@ async def send_specialist_contact_notification(
 """,
     )
     return await _send(to, f"💬 {lead_name} quer falar com especialista — FinanceDash", html)
+
+
+# ─── Feedback (sugestões / reclamações) ───────────────────────────────────────
+
+
+async def send_feedback_response_email(
+    to: str, name: str, feedback_type: str, title: str, response: str
+) -> bool:
+    type_label = "sugestão" if feedback_type == "suggestion" else "reclamação"
+    first = name.split()[0] if name else "Olá"
+    html = _base_template(
+        "Resposta à sua " + type_label,
+        f"""
+<p>Olá, <strong>{first}</strong>!</p>
+<p>Recebemos a sua {type_label} <strong>"{title}"</strong> e temos uma resposta para você:</p>
+
+<blockquote style="border-left:4px solid #2563eb;margin:16px 0;padding:12px 16px;background:#eff6ff;border-radius:0 8px 8px 0;color:#334155">
+  {response}
+</blockquote>
+
+<p>Agradecemos por nos ajudar a melhorar a plataforma!</p>
+""",
+    )
+    return await _send(to, f"Resposta à sua {type_label} — FinanceDash", html)
 
 
 # ─── Alertas ──────────────────────────────────────────────────────────────────

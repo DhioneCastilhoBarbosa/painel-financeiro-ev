@@ -37,6 +37,7 @@ class FeedbackOut(BaseModel):
     user_name: str
     user_email: str
     organization_id: uuid.UUID
+    admin_response: str | None = None
     created_at: datetime
 
     class Config:

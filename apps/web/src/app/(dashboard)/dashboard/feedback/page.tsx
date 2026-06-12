@@ -16,6 +16,7 @@ interface FeedbackItem {
   title: string;
   content: string;
   status: "pending" | "reviewed" | "resolved";
+  admin_response: string | null;
   created_at: string;
 }
 
@@ -173,6 +174,12 @@ export default function FeedbackPage() {
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground line-clamp-2">{item.content}</p>
+                        {item.admin_response && (
+                          <div className="mt-2 rounded-lg border border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/30 p-3">
+                            <p className="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-1">Resposta da equipe</p>
+                            <p className="text-sm text-blue-900 dark:text-blue-200 whitespace-pre-wrap">{item.admin_response}</p>
+                          </div>
+                        )}
                         <p className="text-xs text-muted-foreground">
                           {new Date(item.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}
                         </p>

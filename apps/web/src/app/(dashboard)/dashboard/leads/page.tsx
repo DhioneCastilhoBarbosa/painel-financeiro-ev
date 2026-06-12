@@ -1205,7 +1205,14 @@ function LeadsPageContent() {
                     const monthlyNet = (res.monthly_net as number) ?? 0;
                     return (
                       <tr key={sc.id} className="border-t hover:bg-muted/20 transition-colors">
-                        <td className="px-4 py-3 font-medium">{sc.name}</td>
+                        <td className="px-4 py-3 font-medium">
+                          <div className="flex items-center gap-1.5">
+                            {sc.name}
+                            {inp._source === "pdf" && (
+                              <span className="text-[0.55rem] uppercase tracking-wide font-semibold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400">PDF</span>
+                            )}
+                          </div>
+                        </td>
                         <td className="px-4 py-3 text-muted-foreground">{estName}</td>
                         <td className="px-4 py-3 text-xs">{stationSummary || "—"}</td>
                         <td className="px-4 py-3">{fmtBRL(capex)}</td>

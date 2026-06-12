@@ -696,6 +696,11 @@ class FeedbackStatusUpdate(BaseModel):
     status: str = Field(..., pattern="^(pending|reviewed|resolved)$")
 
 
+class FeedbackResponseUpdate(BaseModel):
+    admin_response: str = Field(..., min_length=1, max_length=5000)
+    status: str | None = Field(None, pattern="^(pending|reviewed|resolved)$")
+
+
 @router.get("/feedback", summary="Listar todos os feedbacks (sugestões/reclamações)")
 async def list_all_feedback(
     admin: User = _AdminUser,
@@ -724,6 +729,7 @@ async def list_all_feedback(
             "user_email": f.user_email,
             "organization_id": str(f.organization_id),
             "organization_name": org_name or "",
+            "admin_response": f.admin_response,
             "created_at": f.created_at.isoformat(),
         }
         for f, org_name in rows
@@ -743,3 +749,55 @@ async def update_feedback_status(
     fb.status = body.status
     await db.commit()
     return {"id": str(fb.id), "status": fb.status}
+
+
+@router.patch("/feedback/{feedback_id}/respond", summary="Responder a um feedback")
+async def respond_feedback(
+    feedback_id: uuid.UUID,
+    body: FeedbackResponseUpdate,
+    admin: User = _AdminUser,
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    fb = await db.get(Feedback, feedback_id)
+    if not fb:
+        raise HTTPException(status_code=404, detail="Feedback não encontrado")
+    fb.admin_response = body.admin_response
+    if body.status:
+        fb.status = body.status
+    elif fb.status == "pending":
+        fb.status = "reviewed"
+    await db.commit()
+
+    # Notifica o usuário por e-mail (best-effort — não falha a request)
+    if fb.user_email:
+        try:
+            from app.services.email import send_feedback_response_email
+
+            await send_feedback_response_email(
+                to=fb.user_email,
+                name=fb.user_name or "",
+                feedback_type=fb.type,
+                title=fb.title,
+                response=fb.admin_response,
+            )
+        except Exception:  # noqa: BLE001
+            pass
+
+    return {"id": str(fb.id), "status": fb.status, "admin_response": fb.admin_response}
+
+
+@router.delete(
+    "/feedback/{feedback_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Excluir um feedback",
+)
+async def delete_feedback(
+    feedback_id: uuid.UUID,
+    admin: User = _AdminUser,
+    db: AsyncSession = Depends(get_db),
+) -> None:
+    fb = await db.get(Feedback, feedback_id)
+    if not fb:
+        raise HTTPException(status_code=404, detail="Feedback não encontrado")
+    await db.delete(fb)
+    await db.commit()

@@ -14,6 +14,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.database import get_db
 from app.core.ratelimit import limiter
 from app.models.lead import Lead
@@ -36,6 +37,12 @@ router = APIRouter()
 
 
 # ─── Helper ───────────────────────────────────────────────────────────────────
+
+
+def _always_notify_emails() -> set[str]:
+    """E-mails que sempre recebem notificações de leads (config global)."""
+    raw = settings.lead_notify_always or ""
+    return {e.strip() for e in raw.split(",") if e.strip()}
 
 
 async def _get_config(db: AsyncSession) -> dict:
@@ -181,11 +188,15 @@ async def submit_lead(
     notif_result = await db.execute(
         select(LeadNotificationEmail).where(LeadNotificationEmail.is_active.is_(True))
     )
-    for notif in notif_result.scalars():
-        if notif.states and body.state not in notif.states:
-            continue
+    recipients: set[str] = {
+        notif.email
+        for notif in notif_result.scalars()
+        if not (notif.states and body.state not in notif.states)
+    }
+    recipients |= _always_notify_emails()
+    for email in recipients:
         await send_lead_notification_email(
-            notif.email,
+            email,
             body.name,
             body.email,
             body.phone,
@@ -246,11 +257,15 @@ async def add_specialist_message(
     notif_result = await db.execute(
         select(LeadNotificationEmail).where(LeadNotificationEmail.is_active.is_(True))
     )
-    for notif in notif_result.scalars():
-        if notif.states and lead.state not in notif.states:
-            continue
+    recipients = {
+        notif.email
+        for notif in notif_result.scalars()
+        if not (notif.states and lead.state not in notif.states)
+    }
+    recipients |= _always_notify_emails()
+    for email in recipients:
         await send_specialist_contact_notification(
-            notif.email,
+            email,
             lead.name,
             lead.email,
             lead.phone,
@@ -302,11 +317,15 @@ async def enterprise_contact(
     notif_result = await db.execute(
         select(LeadNotificationEmail).where(LeadNotificationEmail.is_active.is_(True))
     )
-    for notif in notif_result.scalars():
-        if notif.states:  # enterprise contacts ignoram filtro de estado
-            continue
+    recipients = {
+        notif.email
+        for notif in notif_result.scalars()
+        if not notif.states  # enterprise contacts ignoram filtro de estado
+    }
+    recipients |= _always_notify_emails()
+    for email in recipients:
         await send_lead_notification_email(
-            notif.email,
+            email,
             body.name,
             body.email,
             body.phone,

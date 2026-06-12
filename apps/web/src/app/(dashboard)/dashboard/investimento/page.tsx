@@ -468,7 +468,24 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     [allScenarios]
   );
 
+  // Auto-registra a simulação no CRM ao gerar PDF (fire-and-forget, sem bloquear impressão)
+  async function recordPdfSimulation() {
+    try {
+      const label = s.establishment_name?.trim() || "Sem nome";
+      const dateStr = new Date().toLocaleDateString("pt-BR");
+      await api.post("/payback/scenarios", {
+        name: `[PDF] ${label} — ${dateStr}`,
+        inputs: { _mode: "simple", _source: "pdf", ...s },
+        results: r,
+      });
+      swrMutate("/payback/scenarios");
+    } catch {
+      // silencioso — não impede a geração do PDF
+    }
+  }
+
   function handleSimplePrint() {
+    void recordPdfSimulation();
     const originalTitle = document.title;
     document.title = `Intelbras - Análise de Investimento de Eletroposto${s.establishment_name ? ` - ${s.establishment_name}` : ""}`;
     const sidebar = document.querySelector<HTMLElement>("[data-sidebar]");
@@ -688,13 +705,15 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
             <label className="text-xs font-medium text-slate-600 dark:text-slate-400 flex-1">Ocupação estimada</label>
             <Help text="% do tempo total (24h/dia) que os carregadores ficam em uso. Ex.: 30% ≈ 7h/dia em uso." />
           </div>
-          <div className="flex gap-1">
+          <div className="flex gap-1.5">
             {OCC_PRESETS.map(preset => (
               <button key={preset.label} type="button" onClick={() => setV("occupancy_pct", preset.value)}
-                className={`flex-1 text-[0.6rem] font-medium py-1.5 rounded border transition-colors leading-tight ${
+                className={`flex-1 font-medium py-2 px-1 rounded-lg border transition-colors leading-tight ${
                   s.occupancy_pct === preset.value ? preset.active : "border-input text-muted-foreground hover:bg-slate-50 dark:hover:bg-slate-800"
                 }`}>
-                {preset.label}<br />{preset.value}%<br /><span className="text-[0.55rem] opacity-70">{preset.desc}</span>
+                <span className="block text-xs font-semibold">{preset.label}</span>
+                <span className="block text-sm font-bold">{preset.value}%</span>
+                <span className="block text-[0.65rem] opacity-70">{preset.desc}</span>
               </button>
             ))}
           </div>
@@ -733,6 +752,10 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
               {user?.organization_name && <p>{user.organization_name}</p>}
             </div>
           </div>
+          <p className="mt-2 text-[0.7rem] font-semibold text-amber-700 bg-amber-50 border border-amber-300 rounded px-2 py-1">
+            ⚠ SIMULADOR EM FASE DE TESTES — Esta ferramenta está em validação e pode apresentar
+            problemas ou resultados incorretos. Use os valores apenas como referência inicial.
+          </p>
         </div>
 
         {/* Screen header — hidden in PDF */}
@@ -822,6 +845,16 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
         {/* Content */}
         <div className="p-6 space-y-6">
 
+        {/* Test simulator warning — visible on screen */}
+        <div className="rounded-lg border border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/30 px-4 py-3 flex items-start gap-2 print:hidden">
+          <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+          <p className="text-xs text-amber-800 dark:text-amber-300 leading-snug">
+            <strong>Simulador em fase de testes.</strong> Esta ferramenta está em validação e pode
+            apresentar problemas ou resultados incorretos. Utilize os valores apenas como referência
+            inicial e confirme com uma análise detalhada antes de qualquer decisão.
+          </p>
+        </div>
+
         {/* KPI cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
@@ -905,7 +938,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="simple-chart-wrapper" style={{ width: "100%", height: 280 }}>
+            <div className="simple-chart-wrapper" style={{ width: "100%", height: 440 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={r.chart} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />

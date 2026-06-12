@@ -57,6 +57,16 @@ class Settings(BaseSettings):
     # Email
     resend_api_key: str = ""
     email_from: str = "noreply@financedash.com.br"
+    # SMTP — usado quando smtp_host está definido (tem prioridade sobre Resend)
+    smtp_host: str = "postal.intelbras.com.br"
+    smtp_port: int = 2525
+    smtp_user: str = "licenca.cve"
+    smtp_password: str = "aPCPNYVhEMMmw0mR86q0kzag"
+    smtp_from: str = "licenca.cve@intelbras.com.br"
+    smtp_use_tls: bool = True
+    # E-mail(s) que sempre recebem notificações de leads, independente da config
+    # por organização. Separe múltiplos por vírgula.
+    lead_notify_always: str = "jorgesch07@gmail.com"
 
     # Stripe
     stripe_secret_key: str = ""

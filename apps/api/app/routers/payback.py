@@ -3,7 +3,7 @@ import uuid
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -54,6 +54,19 @@ class ScenarioResponse(BaseModel):
     share_token: str | None
 
     model_config = {"from_attributes": True}
+
+    @field_validator("id", mode="before")
+    @classmethod
+    def _id_to_str(cls, v: object) -> object:
+        # SQLAlchemy returns a uuid.UUID for as_uuid=True columns; Pydantic v2
+        # does not coerce UUID -> str automatically, which would raise a 500.
+        return str(v) if v is not None else v
+
+    @field_validator("inputs", "results", mode="before")
+    @classmethod
+    def _none_to_dict(cls, v: object) -> object:
+        # Defensive: legacy rows may have NULL JSONB instead of {}.
+        return v if v is not None else {}
 
 
 @router.post("/calculate")

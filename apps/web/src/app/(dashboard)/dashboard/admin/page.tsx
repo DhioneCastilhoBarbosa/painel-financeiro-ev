@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import { toast } from "sonner";
 import {
   Building2, Users, FileSpreadsheet, Activity,
   CheckCircle2, XCircle, AlertTriangle, Search,
   ChevronDown, ChevronUp, ShieldAlert, Crown,
   Link2, Trash2, Copy, Clock, Package, Pencil, Save, X,
-  Lightbulb, MessageSquarePlus,
+  Lightbulb, MessageSquarePlus, CheckCheck,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -122,6 +122,9 @@ export default function AdminPage() {
   const [editingTrialOrgId, setEditingTrialOrgId] = useState<string | null>(null);
   const [trialDaysInput, setTrialDaysInput] = useState(30);
   const [savingTrial, setSavingTrial] = useState(false);
+  const [respondingId, setRespondingId] = useState<string | null>(null);
+  const [responseText, setResponseText] = useState("");
+  const [savingResponse, setSavingResponse] = useState(false);
   const [orgSearch, setOrgSearch] = useState("");
   const [userSearch, setUserSearch] = useState("");
   const [expandedOrg, setExpandedOrg] = useState<string | null>(null);
@@ -159,7 +162,8 @@ export default function AdminPage() {
 
   const { data: feedbackItems = [], isLoading: feedbackLoading, mutate: reloadFeedback } = useSWR<{
     id: string; type: string; title: string; content: string; status: string;
-    user_name: string; user_email: string; organization_id: string; organization_name: string; created_at: string;
+    user_name: string; user_email: string; organization_id: string; organization_name: string;
+    admin_response: string | null; created_at: string;
   }[]>(isAdmin ? "/admin/feedback?limit=200" : null, fetcher);
 
   // ─── Guard ───────────────────────────────────────────────────────────────
@@ -293,6 +297,38 @@ export default function AdminPage() {
     } catch (e: unknown) {
       const err = e as { response?: { data?: { detail?: string } } };
       toast.error(err?.response?.data?.detail ?? "Erro ao atualizar status");
+    }
+  }
+
+  async function respondFeedback(feedbackId: string) {
+    if (!responseText.trim()) { toast.error("Escreva uma resposta."); return; }
+    setSavingResponse(true);
+    try {
+      await api.patch(`/admin/feedback/${feedbackId}/respond`, {
+        admin_response: responseText.trim(),
+        status: "resolved",
+      });
+      toast.success("Resposta enviada ao usuário por e-mail");
+      setRespondingId(null);
+      setResponseText("");
+      await reloadFeedback();
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { detail?: string } } };
+      toast.error(err?.response?.data?.detail ?? "Erro ao enviar resposta");
+    } finally {
+      setSavingResponse(false);
+    }
+  }
+
+  async function deleteFeedback(feedbackId: string) {
+    if (!confirm("Excluir este feedback permanentemente?")) return;
+    try {
+      await api.delete(`/admin/feedback/${feedbackId}`);
+      toast.success("Feedback excluído");
+      await reloadFeedback();
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { detail?: string } } };
+      toast.error(err?.response?.data?.detail ?? "Erro ao excluir feedback");
     }
   }
 
@@ -685,14 +721,15 @@ export default function AdminPage() {
               <table className="w-full text-sm">
                 <thead className="bg-muted/50">
                   <tr>
-                    {["Tipo", "Título", "Descrição", "Usuário", "Organização", "Data", "Status"].map((h) => (
+                    {["Tipo", "Título", "Descrição", "Usuário", "Organização", "Data", "Status", "Ações"].map((h) => (
                       <th key={h} className="px-4 py-2 text-left font-medium text-muted-foreground text-xs">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {feedbackItems.map((item) => (
-                    <tr key={item.id} className="border-t hover:bg-muted/20 transition-colors align-top">
+                    <Fragment key={item.id}>
+                    <tr className="border-t hover:bg-muted/20 transition-colors align-top">
                       <td className="px-4 py-3">
                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-xs font-medium whitespace-nowrap ${
                           item.type === "suggestion"
@@ -707,6 +744,11 @@ export default function AdminPage() {
                       </td>
                       <td className="px-4 py-3 font-medium max-w-[180px]">
                         <span className="line-clamp-2">{item.title}</span>
+                        {item.admin_response && (
+                          <span className="mt-1 inline-flex items-center gap-1 text-[0.6rem] text-emerald-600 dark:text-emerald-400">
+                            <CheckCheck className="h-3 w-3" /> Respondido
+                          </span>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-muted-foreground text-xs max-w-[240px]">
                         <span className="line-clamp-3">{item.content}</span>
@@ -724,7 +766,7 @@ export default function AdminPage() {
                       <td className="px-4 py-3">
                         <Select
                           value={item.status}
-                          onValueChange={(v) => updateFeedbackStatus(item.id, v)}
+                          onValueChange={(v) => { if (v) updateFeedbackStatus(item.id, v); }}
                         >
                           <SelectTrigger className="h-7 w-32 text-xs">
                             <SelectValue />
@@ -736,7 +778,60 @@ export default function AdminPage() {
                           </SelectContent>
                         </Select>
                       </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="flex items-center gap-1">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 text-xs text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+                            onClick={() => {
+                              setRespondingId(respondingId === item.id ? null : item.id);
+                              setResponseText(item.admin_response ?? "");
+                            }}
+                          >
+                            <MessageSquarePlus className="h-3.5 w-3.5 mr-1" />
+                            {item.admin_response ? "Editar" : "Responder"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 text-xs text-destructive hover:bg-destructive/10"
+                            onClick={() => deleteFeedback(item.id)}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </td>
                     </tr>
+                    {respondingId === item.id && (
+                      <tr className="bg-muted/20 border-t">
+                        <td colSpan={8} className="px-4 py-3">
+                          <div className="space-y-2 max-w-2xl">
+                            <label className="text-xs font-medium text-muted-foreground">
+                              Resposta ao usuário (enviada por e-mail para {item.user_email})
+                            </label>
+                            <textarea
+                              value={responseText}
+                              onChange={(e) => setResponseText(e.target.value)}
+                              rows={3}
+                              placeholder="Escreva sua resposta..."
+                              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 resize-none"
+                            />
+                            <div className="flex items-center gap-2">
+                              <Button size="sm" className="h-8" onClick={() => respondFeedback(item.id)} disabled={savingResponse || !responseText.trim()}>
+                                {savingResponse
+                                  ? <span className="h-3.5 w-3.5 border-2 border-t-transparent rounded-full animate-spin" />
+                                  : <><Save className="h-3.5 w-3.5 mr-1" />Enviar resposta</>}
+                              </Button>
+                              <Button size="sm" variant="ghost" className="h-8" onClick={() => { setRespondingId(null); setResponseText(""); }} disabled={savingResponse}>
+                                <X className="h-3.5 w-3.5 mr-1" />Cancelar
+                              </Button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                    </Fragment>
                   ))}
                 </tbody>
               </table>
