@@ -286,10 +286,13 @@ export default function InstallationMap() {
         {muniReady && (
           <MunicipioScoreLayer uf={filterUF} geojson={muniGeojson!} scoresByCode={muniScores} />
         )}
-        {geoReady && layers.score && filteredScores.length > 0 && (
+        {/* Score/heatmap por UF — só no panorama nacional. Com um estado
+            selecionado, o choropleth MUNICIPAL acima já mostra o score por cidade
+            (a camada por UF cobriria as cidades com uma cor única). */}
+        {!filterUF && geoReady && layers.score && filteredScores.length > 0 && (
           <ScoreLayer geojson={geojson!} scores={filteredScores} onSelectUF={handleSelectUF} />
         )}
-        {layers.heatmap && filteredScores.length > 0 && (
+        {!filterUF && layers.heatmap && filteredScores.length > 0 && (
           <HeatmapLayer scores={filteredScores} />
         )}
 
@@ -315,6 +318,7 @@ export default function InstallationMap() {
         onWeightsChange={setWeights}
         top10={filteredTop10}
         allScores={scores}
+        muniTop={muniTop}
         onExport={handleExport}
         filterUF={filterUF}
         onFilterUFChange={setFilterUF}

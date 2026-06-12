@@ -80,7 +80,7 @@ export function useOverpassData() {
   node["shop"="department_store"](${bbox});
   way["highway"~"motorway|trunk|primary"](${bbox});
 );
-out center body;`;
+out geom;`;
 
         lastReqRef.current = now;
         setLoading(true);

@@ -38,6 +38,13 @@ function getLatLng(el: OverpassElement): [number, number] | null {
   if (el.type === 'node') return [(el as OverpassNode).lat, (el as OverpassNode).lon];
   const way = el as OverpassWay;
   if (way.center) return [way.center.lat, way.center.lon];
+  // Com `out geom;` os ways trazem a geometria — usa o centroide dos vértices.
+  if (way.geometry?.length) {
+    const n = way.geometry.length;
+    const lat = way.geometry.reduce((s, p) => s + p.lat, 0) / n;
+    const lon = way.geometry.reduce((s, p) => s + p.lon, 0) / n;
+    return [lat, lon];
+  }
   return null;
 }
 

@@ -11,8 +11,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { ScoreWeights, UFScore } from '@/utils/scoring';
+import { scoreToColor } from '@/utils/scoring';
 import type { GapClassificacao } from '@/utils/gapAnalysis';
 import { GAP_COLORS } from '@/utils/gapAnalysis';
+import type { MunicipioScore } from '@/hooks/useMunicipioScore';
 
 export interface LayerVisibility {
   income: boolean;
@@ -33,6 +35,8 @@ interface Props {
   onWeightsChange: (w: ScoreWeights) => void;
   top10: UFScore[];
   allScores: UFScore[];
+  /** Top 10 municípios da UF selecionada (substitui o ranking por UF quando há filtro). */
+  muniTop?: MunicipioScore[];
   onExport: () => void;
   filterUF: string;
   onFilterUFChange: (uf: string) => void;
@@ -103,10 +107,11 @@ function gapClassFromIndex(idx: number): GapClassificacao {
 export function MapSidebar({
   layers, onLayersChange,
   weights, onWeightsChange,
-  top10, allScores, onExport,
+  top10, allScores, muniTop, onExport,
   filterUF, onFilterUFChange,
   ibgeLoading, abveLoading,
 }: Props) {
+  const showMuni = !!filterUF && !!muniTop && muniTop.length > 0;
   const [collapsed, setCollapsed] = useState(false);
   const [tab, setTab] = useState<'layers' | 'weights' | 'rank'>('layers');
 
@@ -285,10 +290,39 @@ export function MapSidebar({
         )}
 
         {/* ── TOP 10 ── */}
-        {tab === 'rank' && (
+        {tab === 'rank' && showMuni && (
           <div className="p-4">
             <p className="text-[10px] text-gray-400 mb-3">
-              Granularidade: por estado (UF). Dados ABVE disponíveis apenas neste nível.
+              Top 10 cidades de <b>{filterUF}</b> por score de oportunidade
+              (frota EV real ABVE × eletropostos).
+            </p>
+            <ol className="space-y-2">
+              {muniTop!.slice(0, 10).map((m, i) => (
+                <li key={m.code} className="flex items-center gap-2 p-2 rounded-lg bg-gray-50 border hover:border-[#06CB3F]/40 transition-colors">
+                  <span className="text-sm font-bold text-gray-400 w-5 text-right flex-shrink-0">{i + 1}.</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-gray-800 truncate">{m.nome}</p>
+                    <p className="text-[10px] text-gray-500">
+                      Frota EV: {Math.round(m.frotaEst).toLocaleString('pt-BR')} · Eletropostos: {m.eletropostos}
+                    </p>
+                  </div>
+                  <span
+                    className="shrink-0 text-xs font-bold rounded px-1.5 py-0.5 text-white"
+                    style={{ backgroundColor: scoreToColor(m.score) }}
+                  >
+                    {m.scorePercent}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+
+        {tab === 'rank' && !showMuni && (
+          <div className="p-4">
+            <p className="text-[10px] text-gray-400 mb-3">
+              Ranking por estado (UF). Selecione um estado no filtro acima para ver o
+              Top 10 de cidades.
               {allScores.length > 0
                 ? ` Score calculado para ${allScores.length} estados.`
                 : ' Aguardando dados…'}
