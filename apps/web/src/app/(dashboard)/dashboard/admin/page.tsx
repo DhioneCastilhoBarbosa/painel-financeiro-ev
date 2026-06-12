@@ -114,6 +114,10 @@ const PLAN_LABEL: Record<string, string> = {
   trial: "Trial", starter: "Starter", pro: "Pro", enterprise: "Enterprise", free: "Free",
 };
 
+const FEEDBACK_STATUS_LABEL: Record<string, string> = {
+  pending: "Pendente", reviewed: "Em análise", resolved: "Resolvido",
+};
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function AdminPage() {
@@ -769,7 +773,9 @@ export default function AdminPage() {
                           onValueChange={(v) => { if (v) updateFeedbackStatus(item.id, v); }}
                         >
                           <SelectTrigger className="h-7 w-32 text-xs">
-                            <SelectValue />
+                            <SelectValue>
+                              {(v: string) => FEEDBACK_STATUS_LABEL[v] ?? v}
+                            </SelectValue>
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="pending" className="text-xs">Pendente</SelectItem>

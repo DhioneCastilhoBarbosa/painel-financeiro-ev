@@ -490,26 +490,22 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     document.title = `Intelbras - Análise de Investimento de Eletroposto${s.establishment_name ? ` - ${s.establishment_name}` : ""}`;
     const sidebar = document.querySelector<HTMLElement>("[data-sidebar]");
     const aside = document.querySelector<HTMLElement>(".simplified-aside");
-    const chartWrapper = document.querySelector<HTMLElement>(".simple-chart-wrapper");
     const toUnclip = Array.from(document.querySelectorAll<HTMLElement>(".h-screen,.h-full,.min-h-0,.overflow-hidden,.overflow-y-auto"));
     const savedSidebar = sidebar ? sidebar.style.display : null;
     const savedAside = aside ? aside.style.display : null;
-    const savedChartHeight = chartWrapper ? chartWrapper.style.height : null;
     const savedUnclip = toUnclip.map(el => ({ el, v: el.style.cssText }));
     if (sidebar) sidebar.style.display = "none";
     if (aside) aside.style.display = "none";
-    if (chartWrapper) chartWrapper.style.height = "440px";
     toUnclip.forEach(el => { el.style.height = "auto"; el.style.maxHeight = "none"; el.style.minHeight = "0"; el.style.overflow = "visible"; });
     const restore = () => {
       document.title = originalTitle;
       if (sidebar && savedSidebar !== null) sidebar.style.display = savedSidebar;
       if (aside && savedAside !== null) aside.style.display = savedAside;
-      if (chartWrapper && savedChartHeight !== null) chartWrapper.style.height = savedChartHeight;
       savedUnclip.forEach(({ el, v }) => { el.style.cssText = v; });
       window.removeEventListener("afterprint", restore);
     };
     window.addEventListener("afterprint", restore);
-    // Give the chart one frame to resize before printing
+    // Give the print-only chart one frame to mount before printing
     requestAnimationFrame(() => window.print());
   }
 
@@ -904,6 +900,12 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                   <span className={`font-medium ${cls}`}>{val}</span>
                 </div>
               ))}
+              <p className="text-[0.7rem] text-muted-foreground leading-snug pt-1">
+                <strong>Sobre o CAPEX:</strong> representa o investimento inicial total do projeto,
+                compondo equipamentos (carregadores), infraestrutura elétrica, obra civil,
+                transformador/proteção, homologações, software/backend e mão de obra de instalação.
+                Ajuste o valor conforme o orçamento real do seu fornecedor.
+              </p>
               {r.monthly_net <= 0 && (
                 <p className="text-xs text-red-500 pt-1">⚠ O projeto não gera retorno com os parâmetros atuais. Revise a tarifa, ocupação ou OPEX.</p>
               )}
@@ -938,7 +940,8 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="simple-chart-wrapper" style={{ width: "100%", height: 440 }}>
+            {/* Screen chart — responsive, hidden in PDF */}
+            <div className="simple-chart-wrapper print:hidden" style={{ width: "100%", height: 440 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={r.chart} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
@@ -960,6 +963,29 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
+
+            {/* Print chart — fixed pixel size so the PDF renders at a proper height
+                (Recharts ResponsiveContainer measures unreliably during window.print) */}
+            <div className="hidden print:block" style={{ width: "100%" }}>
+              <ComposedChart width={700} height={340} data={r.chart} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis dataKey="mes" tick={{ fontSize: 10 }} tickFormatter={(v) => `M${v}`} interval={Math.ceil(r.chart.length / 10)} />
+                <YAxis tick={{ fontSize: 10 }} tickFormatter={(v: number) => `${v >= 0 ? "" : "-"}R$${Math.abs(v) >= 1000 ? `${Math.round(Math.abs(v) / 1000)}k` : Math.abs(v)}`} width={72} />
+                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <ReferenceLine y={0} stroke="#ef4444" strokeWidth={2} strokeDasharray="4 2" label={{ value: "Break-even", position: "insideTopRight", fontSize: 10, fill: "#ef4444" }} />
+                <Bar dataKey="acumulado" name={`Base (${r.baseOcc}%)`} radius={[2, 2, 0, 0]} isAnimationActive={false}>
+                  {r.chart.map((entry, i) => (
+                    <Cell key={i} fill={(entry.acumulado ?? 0) >= 0 ? "#10b981" : "#3b82f6"} />
+                  ))}
+                </Bar>
+                {r.scenarios.filter(sc => !hiddenScenarios.has(sc.key)).map((sc) => (
+                  <Line key={sc.key} type="monotone" dataKey={sc.key} name={`Ocup. ${sc.label}`}
+                    stroke={sc.color} strokeWidth={1.5} strokeDasharray={sc.off < 0 ? "4 2" : undefined}
+                    dot={false} isAnimationActive={false} />
+                ))}
+              </ComposedChart>
+            </div>
+
             <p className="text-[0.65rem] text-muted-foreground mt-2 text-center">
               Barras = cenário base (azul: capital não recuperado · verde: lucro após payback). Linhas = cenários ±5%/±10% de ocupação.
             </p>
@@ -977,7 +1003,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                     <th className="text-left px-4 py-2.5 font-medium">Ano</th>
                     <th className="text-right px-4 py-2.5 font-medium">Receita gerada</th>
                     <th className="text-right px-4 py-2.5 font-medium">Lucro gerado</th>
-                    <th className="text-right px-4 py-2.5 font-medium">ROI anual</th>
+                    <th className="text-right px-4 py-2.5 font-medium">ROI acumulado</th>
                     <th className="text-right px-4 py-2.5 font-medium">Retorno do investimento</th>
                   </tr>
                 </thead>
@@ -986,14 +1012,15 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                     const year = i + 1;
                     const annualRevenue = r.monthly_revenue * 12;
                     const annualNet = r.monthly_net * 12;
-                    const roiAnnual = s.capex_total > 0 ? (annualNet / s.capex_total) * 100 : 0;
-                    const cumReturn = annualNet * year - s.capex_total;
+                    const cumNet = annualNet * year;
+                    const roiCumulative = s.capex_total > 0 ? (cumNet / s.capex_total) * 100 : 0;
+                    const cumReturn = cumNet - s.capex_total;
                     return (
                       <tr key={year} className="hover:bg-muted/30">
                         <td className="px-4 py-2.5 font-medium">Ano {year}</td>
                         <td className="px-4 py-2.5 text-right text-blue-600 dark:text-blue-400">{formatCurrency(annualRevenue)}</td>
                         <td className={`px-4 py-2.5 text-right font-medium ${annualNet >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>{formatCurrency(annualNet)}</td>
-                        <td className={`px-4 py-2.5 text-right font-medium ${roiAnnual >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>{roiAnnual.toFixed(1)}%</td>
+                        <td className={`px-4 py-2.5 text-right font-medium ${roiCumulative >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>{roiCumulative.toFixed(1)}%</td>
                         <td className={`px-4 py-2.5 text-right font-bold ${cumReturn >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>
                           {cumReturn >= 0 ? "+" : ""}{formatCurrency(cumReturn)}
                         </td>
@@ -1004,7 +1031,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
               </table>
             </div>
             <p className="text-[0.65rem] text-muted-foreground mt-2">
-              Retorno do investimento = lucro acumulado no período − CAPEX total. Valores positivos indicam recuperação do investimento.
+              ROI acumulado = lucro acumulado no período ÷ CAPEX total. Retorno do investimento = lucro acumulado − CAPEX total (positivo indica recuperação do investimento).
             </p>
           </CardContent>
         </Card>
