@@ -1,0 +1,1650 @@
+municipio,uf,ac,dc,total
+"São Paulo","SP",2011,402,2413
+"Rio de Janeiro","RJ",802,131,933
+"Brasília","DF",460,361,821
+"Curitiba","PR",305,199,504
+"Goiânia","GO",242,150,392
+"Fortaleza","CE",230,146,376
+"Porto Alegre","RS",232,103,335
+"Belo Horizonte","MG",206,105,311
+"Recife","PE",188,107,295
+"Campinas","SP",213,81,294
+"Salvador","BA",200,77,277
+"Florianópolis","SC",220,53,273
+"Ribeirão Preto","SP",123,45,168
+"Natal","RN",103,56,159
+"Maceió","AL",99,54,153
+"João Pessoa","PB",69,80,149
+"Barueri","SP",112,26,138
+"Maringá","PR",91,45,136
+"Manaus","AM",67,63,130
+"Aracaju","SE",77,44,121
+"Cuiabá","MT",81,37,118
+"São José dos Campos","SP",70,46,116
+"Gramado","RS",95,15,110
+"Joinville","SC",78,32,110
+"Campo Grande","MS",69,37,106
+"Balneário Camboriú","SC",86,17,103
+"Santos","SP",84,15,99
+"Blumenau","SC",69,27,96
+"Belém","PA",52,41,93
+"Uberlândia","MG",49,44,93
+"Caxias do Sul","RS",49,43,92
+"São Bernardo do Campo","SP",65,26,91
+"São Luís","MA",36,54,90
+"São José do Rio Preto","SP",64,23,87
+"São José dos Pinhais","PR",41,45,86
+"Teresina","PI",46,39,85
+"Londrina","PR",48,36,84
+"Cascavel","PR",51,31,82
+"Vitória","ES",57,24,81
+"Guarulhos","SP",59,21,80
+"Contagem","MG",54,22,76
+"Campos do Jordão","SP",70,3,73
+"Foz do Iguaçu","PR",54,19,73
+"Santo André","SP",49,23,72
+"Campina Grande","PB",50,18,68
+"Jundiaí","SP",43,18,61
+"Juiz de Fora","MG",44,16,60
+"Mogi das Cruzes","SP",42,17,59
+"Santa Maria","RS",29,29,58
+"São José","SC",38,20,58
+"Passo Fundo","RS",29,28,57
+"Piracicaba","SP",37,20,57
+"Serra","ES",24,32,56
+"Chapecó","SC",40,14,54
+"Mossoró","RN",24,30,54
+"Bauru","SP",31,22,53
+"Jaraguá do Sul","SC",30,22,52
+"Porto Seguro","BA",48,4,52
+"Itajaí","SC",36,15,51
+"Vitória da Conquista","BA",28,23,51
+"Sorocaba","SP",36,14,50
+"Ponta Grossa","PR",31,17,48
+"Canoas","RS",18,28,46
+"Criciúma","SC",30,16,46
+"Niterói","RJ",32,14,46
+"Porto Velho","RO",28,18,46
+"Caruaru","PE",22,23,45
+"Indaiatuba","SP",35,10,45
+"São Roque","SP",40,5,45
+"Pelotas","RS",28,16,44
+"Anápolis","GO",14,29,43
+"Caldas Novas","GO",30,13,43
+"Jaboatão dos Guararapes","PE",13,30,43
+"Novo Hamburgo","RS",29,14,43
+"Arapiraca","AL",26,16,42
+"Betim","MG",30,12,42
+"Feira de Santana","BA",21,21,42
+"Dourados","MS",19,22,41
+"Porto Belo","SC",22,19,41
+"Rio das Ostras","RJ",32,9,41
+"Lages","SC",20,20,40
+"Petrópolis","RJ",30,10,40
+"Sinop","MT",22,18,40
+"Uberaba","MG",28,12,40
+"Bento Gonçalves","RS",33,6,39
+"Santana de Parnaíba","SP",35,4,39
+"Poços de Caldas","MG",33,4,37
+"São Caetano do Sul","SP",29,8,37
+"Domingos Martins","ES",32,4,36
+"Nova Lima","MG",23,13,36
+"Pirenópolis","GO",31,5,36
+"Vila Velha","ES",28,8,36
+"Campos dos Goytacazes","RJ",19,16,35
+"Guarujá","SP",28,7,35
+"São Sebastião","SP",32,3,35
+"Limeira","SP",22,12,34
+"Palhoça","SC",20,14,34
+"Palmas","TO",10,24,34
+"Bertioga","SP",22,11,33
+"Paraty","RJ",24,9,33
+"Angra dos Reis","RJ",24,8,32
+"Cotia","SP",25,7,32
+"Guarapuava","PR",22,9,31
+"Lajeado","RS",19,12,31
+"Osasco","SP",24,7,31
+"Torres","RS",14,17,31
+"Canela","RS",21,9,30
+"Itu","SP",19,11,30
+"Macaé","RJ",21,9,30
+"Olímpia","SP",28,2,30
+"Osório","RS",10,20,30
+"Tiradentes","MG",30,0,30
+"Várzea Grande","MT",19,11,30
+"Parnamirim","RN",13,16,29
+"Xangri-lá","RS",20,9,29
+"Aracati","CE",25,3,28
+"Atibaia","SP",20,8,28
+"Erechim","RS",13,15,28
+"Itapema","SC",18,10,28
+"Jaguariúna","SP",27,1,28
+"Nova Iguaçu","RJ",21,7,28
+"Rio Verde","GO",14,14,28
+"Tubarão","SC",17,11,28
+"Guarapari","ES",19,8,27
+"Taubaté","SP",25,2,27
+"Araçatuba","SP",21,5,26
+"Brusque","SC",11,15,26
+"Cachoeiro de Itapemirim","ES",21,5,26
+"Camaçari","BA",21,5,26
+"Itapetininga","SP",21,5,26
+"Itupeva","SP",22,4,26
+"Pato Branco","PR",20,6,26
+"Teresópolis","RJ",22,4,26
+"Araraquara","SP",14,11,25
+"Botucatu","SP",16,9,25
+"Cabo Frio","RJ",17,8,25
+"Franca","SP",19,6,25
+"Ipojuca","PE",20,5,25
+"Linhares","ES",17,8,25
+"Rio Branco","AC",17,8,25
+"São Leopoldo","RS",20,5,25
+"Urubici","SC",21,4,25
+"Araçariguama","SP",12,12,24
+"Camanducaia","MG",20,4,24
+"Imperatriz","MA",16,8,24
+"Lagoa Santa","MG",17,7,24
+"Ubatuba","SP",20,4,24
+"Governador Valadares","MG",20,3,23
+"Juazeiro do Norte","CE",7,16,23
+"Luís Correia","PI",18,5,23
+"Macapá","AP",18,5,23
+"Parauapebas","PA",11,12,23
+"Presidente Prudente","SP",12,11,23
+"Santa Cruz do Sul","RS",17,6,23
+"Toledo","PR",19,4,23
+"Valinhos","SP",15,8,23
+"Itatiaia","RJ",20,2,22
+"Itumbiara","GO",8,14,22
+"Parnaíba","PI",11,11,22
+"Patos de Minas","MG",19,3,22
+"Rio Quente","GO",21,1,22
+"Rondonópolis","MT",14,8,22
+"São Carlos","SP",17,5,22
+"Americana","SP",12,9,21
+"Aparecida de Goiânia","GO",13,8,21
+"Bragança Paulista","SP",18,3,21
+"Divinópolis","MG",12,9,21
+"Ijuí","RS",17,4,21
+"Marília","SP",13,8,21
+"Petrolina","PE",5,16,21
+"Rio Grande","RS",12,9,21
+"Aparecida","SP",14,6,20
+"Guararema","SP",10,10,20
+"Lauro de Freitas","BA",11,9,20
+"Sobral","CE",10,10,20
+"Votorantim","SP",19,1,20
+"Ananindeua","PA",5,14,19
+"Barretos","SP",16,3,19
+"Eusébio","CE",16,3,19
+"Imbituba","SC",10,9,19
+"Abadiânia","GO",6,12,18
+"Andradina","SP",16,2,18
+"Aquiraz","CE",9,9,18
+"Capão da Canoa","RS",10,8,18
+"Caraguatatuba","SP",9,9,18
+"Carapicuíba","SP",18,0,18
+"Gravataí","RS",11,7,18
+"Jacareí","SP",14,4,18
+"Pouso Alegre","MG",10,8,18
+"Rio do Sul","SC",14,4,18
+"São Gonçalo","RJ",10,8,18
+"Águas de Lindóia","SP",16,1,17
+"Itanhaém","SP",15,2,17
+"Jataí","GO",17,0,17
+"Maragogi","AL",13,4,17
+"Mogi Guaçu","SP",12,5,17
+"Navegantes","SC",11,6,17
+"Praia Grande","SP",14,3,17
+"Santa Rosa","RS",7,10,17
+"Santarém","PA",7,10,17
+"Avaré","SP",12,4,16
+"Barra Mansa","RJ",5,11,16
+"Biguaçu","SC",13,3,16
+"Campo Largo","PR",12,4,16
+"Capitólio","MG",13,3,16
+"Montes Claros","MG",10,6,16
+"Ouro Preto","MG",14,2,16
+"Santa Bárbara d'Oeste","SP",12,4,16
+"Santa Rita do Sapucaí","MG",11,5,16
+"Santo Antônio do Pinhal","SP",13,3,16
+"São Lourenço","MG",12,4,16
+"Tramandaí","RS",13,3,16
+"Umuarama","PR",4,12,16
+"Videira","SC",14,2,16
+"Apucarana","PR",8,7,15
+"Bacabal","MA",15,0,15
+"Barbacena","MG",3,12,15
+"Cajueiro da Praia","PI",13,2,15
+"Farroupilha","RS",11,4,15
+"Itabuna","BA",9,6,15
+"Mirassol","SP",8,7,15
+"Pardinho","SP",8,7,15
+"Varginha","MG",6,9,15
+"Ariquemes","RO",5,9,14
+"Barreiras","BA",10,4,14
+"Boa Vista","RR",4,10,14
+"Brotas","SP",13,1,14
+"Caucaia","CE",7,7,14
+"Cravinhos","SP",8,6,14
+"Fortim","CE",5,9,14
+"Garanhuns","PE",8,6,14
+"Igaporã","BA",14,0,14
+"Ipatinga","MG",5,9,14
+"Marechal Deodoro","AL",8,6,14
+"Olinda","PE",4,10,14
+"Ourinhos","SP",7,7,14
+"Pomerode","SC",14,0,14
+"Pontes e Lacerda","MT",10,4,14
+"Resende","RJ",10,4,14
+"Santiago","RS",7,7,14
+"Vinhedo","SP",12,2,14
+"Araxá","MG",13,0,13
+"Bonito","MS",11,2,13
+"Cáceres","MT",8,5,13
+"Cariacica","ES",10,3,13
+"Cianorte","PR",7,6,13
+"Correntina","BA",11,2,13
+"Curvelo","MG",9,4,13
+"Esteio","RS",10,3,13
+"Ilhabela","SP",13,0,13
+"Ipameri","GO",8,5,13
+"Itabaiana","SE",8,5,13
+"Nova Friburgo","RJ",10,3,13
+"Paulo Lopes","SC",5,8,13
+"Pontal do Paraná","PR",3,10,13
+"Restinga Sêca","RS",13,0,13
+"São Bento do Sul","SC",6,7,13
+"Sapiranga","RS",12,1,13
+"Senhor do Bonfim","BA",6,7,13
+"Valparaíso de Goiás","GO",5,8,13
+"Balneário Piçarras","SC",4,8,12
+"Bombinhas","SC",11,1,12
+"Cabo de Santo Agostinho","PE",6,6,12
+"Catalão","GO",7,5,12
+"Colatina","ES",10,2,12
+"Gaspar","SC",12,0,12
+"Holambra","SP",12,0,12
+"Joaçaba","SC",10,2,12
+"Manhuaçu","MG",7,5,12
+"Pinhais","PR",7,5,12
+"Pirassununga","SP",4,8,12
+"Salinópolis","PA",6,6,12
+"Santa Rita do Passa Quatro","SP",4,8,12
+"São Mateus do Sul","PR",5,7,12
+"São Miguel do Oeste","SC",11,1,12
+"São Pedro da Aldeia","RJ",4,8,12
+"Sete Lagoas","MG",8,4,12
+"Viamão","RS",8,4,12
+"Alto Alegre do Maranhão","MA",1,10,11
+"Araucária","PR",5,6,11
+"Barra do Garças","MT",7,4,11
+"Cajamar","SP",4,7,11
+"Estância","SE",6,5,11
+"Guaratinguetá","SP",5,6,11
+"Guaratuba","PR",7,4,11
+"Imbaú","PR",3,8,11
+"Mangaratiba","RJ",9,2,11
+"Maricá","RJ",8,3,11
+"Palmeira","PR",2,9,11
+"Piripiri","PI",3,8,11
+"Porto Rico","PR",11,0,11
+"São Cristóvão do Sul","SC",11,0,11
+"São João de Meriti","RJ",7,4,11
+"São Mateus","ES",10,1,11
+"Sapucaia do Sul","RS",11,0,11
+"Xanxerê","SC",8,3,11
+"Araquari","SC",6,4,10
+"Arcoverde","PE",8,2,10
+"Barreirinhas","MA",5,5,10
+"Caicó","RN",3,7,10
+"Castanhal","PA",3,7,10
+"Coxim","MS",8,2,10
+"Cristalina","GO",5,5,10
+"Cruz","CE",8,2,10
+"Cruz Alta","RS",9,1,10
+"Diamantina","MG",8,2,10
+"Extrema","MG",8,2,10
+"Francisco Beltrão","PR",7,3,10
+"Gurinhém","PB",6,4,10
+"Itabira","MG",6,4,10
+"Itatiba","SP",9,1,10
+"Laguna","SC",2,8,10
+"Louveira","SP",6,4,10
+"Luís Eduardo Magalhães","BA",6,4,10
+"Mafra","SC",7,3,10
+"Medianeira","PR",1,9,10
+"Mogi Mirim","SP",5,5,10
+"Nova Mutum","MT",6,4,10
+"Nova Petrópolis","RS",10,0,10
+"Pará de Minas","MG",8,2,10
+"Santo Ângelo","RS",10,0,10
+"São Francisco do Pará","PA",1,9,10
+"São João da Boa Vista","SP",10,0,10
+"São João del Rei","MG",9,1,10
+"Sertãozinho","SP",9,1,10
+"Sorriso","MT",6,4,10
+"Trairi","CE",9,1,10
+"Alfredo Wagner","SC",6,3,9
+"Altamira","PA",5,4,9
+"Alto Paraíso de Goiás","GO",9,0,9
+"Armação dos Búzios","RJ",7,2,9
+"Assis","SP",4,5,9
+"Barra de Santo Antônio","AL",8,1,9
+"Beberibe","CE",4,5,9
+"Bom Jesus da Lapa","BA",7,2,9
+"Campo Bom","RS",5,4,9
+"Campo Mourão","PR",6,3,9
+"Caratinga","MG",7,2,9
+"Castro","PR",3,6,9
+"Caxias","MA",1,8,9
+"Concórdia","SC",8,1,9
+"Diadema","SP",5,4,9
+"Duque de Caxias","RJ",7,2,9
+"Eunápolis","BA",6,3,9
+"Fernandópolis","SP",8,1,9
+"Goiatuba","GO",3,6,9
+"Igarassu","PE",5,4,9
+"Itacoatiara","AM",7,2,9
+"Itaperuna","RJ",8,1,9
+"Itapoá","SC",7,2,9
+"Jaú","SP",6,3,9
+"Lauro Freitas","BA",7,2,9
+"Lucas do Rio Verde","MT",9,0,9
+"Luziânia","GO",6,3,9
+"Marabá","PA",7,2,9
+"Maracaju","MS",2,7,9
+"Marau","RS",9,0,9
+"Mata de São João","BA",5,4,9
+"Naviraí","MS",5,4,9
+"Paranavaí","PR",4,5,9
+"Patos","PB",6,3,9
+"Pederneiras","SP",7,2,9
+"Salto","SP",6,3,9
+"São Marcos","RS",7,2,9
+"Serra Negra","SP",8,1,9
+"Vacaria","RS",7,2,9
+"Votuporanga","SP",9,0,9
+"Adamantina","SP",7,1,8
+"Alegrete","RS",3,5,8
+"Araguaína","TO",3,5,8
+"Arapongas","PR",4,4,8
+"Bagé","RS",7,1,8
+"Balneário Gaivota","SC",8,0,8
+"Barra Velha","SC",4,4,8
+"Brumado","BA",6,2,8
+"Cachoeira do Sul","RS",4,4,8
+"Campo Belo","MG",6,2,8
+"Chuí","RS",2,6,8
+"Congonhas","MG",7,1,8
+"Conselheiro Lafaiete","MG",8,0,8
+"Eldorado do Sul","RS",0,8,8
+"Estância Velha","RS",6,2,8
+"Garopaba","SC",6,2,8
+"Governador Nunes Freire","MA",2,6,8
+"Guaíra","PR",4,4,8
+"Ibotirama","BA",5,3,8
+"Ilhéus","BA",6,2,8
+"Itaguaí","RJ",5,3,8
+"Itapajé","CE",6,2,8
+"Jaboticabal","SP",7,1,8
+"João Monlevade","MG",5,3,8
+"Lauro Müller","SC",8,0,8
+"Marechal Cândido Rondon","PR",8,0,8
+"Mauá da Serra","PR",2,6,8
+"Nova Prata","RS",7,1,8
+"Paulista","PE",4,4,8
+"Perdões","MG",2,6,8
+"Piraí","RJ",2,6,8
+"Planaltina","GO",0,8,8
+"Ponta Porã","MS",5,3,8
+"Prado","BA",8,0,8
+"Rio Negrinho","SC",5,3,8
+"São Bento do Sapucaí","SP",8,0,8
+"São Gabriel do Oeste","MS",8,0,8
+"São Gonçalo do Amarante","RN",3,5,8
+"Senador Canedo","GO",5,3,8
+"Seropédica","RJ",6,2,8
+"Sombrio","SC",2,6,8
+"Sumaré","SP",4,4,8
+"Teófilo Otoni","MG",6,2,8
+"Tibau do Sul","RN",4,4,8
+"Touros","RN",6,2,8
+"Três Lagoas","MS",8,0,8
+"Abre Campo","MG",3,4,7
+"Alfenas","MG",5,2,7
+"Amparo","SP",7,0,7
+"Araras","SP",6,1,7
+"Arujá","SP",7,0,7
+"Bananeiras","PB",5,2,7
+"Bandeirantes","PR",6,1,7
+"Boituva","SP",4,3,7
+"Cabrobó","PE",3,4,7
+"Caeté","MG",3,4,7
+"Caieiras","SP",4,3,7
+"Cambará do Sul","RS",5,2,7
+"Campos Novos","SC",5,2,7
+"Canaã dos Carajás","PA",3,4,7
+"Carlos Barbosa","RS",5,2,7
+"Carmópolis de Minas","MG",1,6,7
+"Catanduva","SP",4,3,7
+"Coruripe","AL",4,3,7
+"Currais Novos","RN",3,4,7
+"Espírito Santo do Pinhal","SP",7,0,7
+"Frutal","MG",7,0,7
+"Guarabira","PB",4,3,7
+"Guaramiranga","CE",4,3,7
+"Igrejinha","RS",6,1,7
+"Imbé","RS",6,1,7
+"Itaboraí","RJ",3,4,7
+"Itapecuru Mirim","MA",1,6,7
+"Jequié","BA",5,2,7
+"Lajes","RN",1,6,7
+"Lajinha","MG",7,0,7
+"Lorena","SP",3,4,7
+"Miracatu","SP",4,3,7
+"Montenegro","RS",6,1,7
+"Oliveira","MG",3,4,7
+"Palmeiras","BA",7,0,7
+"Paranaguá","PR",4,3,7
+"Paranaíba","MS",7,0,7
+"Pindamonhangaba","SP",5,2,7
+"Piumhi","MG",5,2,7
+"Portão","RS",3,4,7
+"Presidente Figueiredo","AM",5,2,7
+"Propriá","SE",4,3,7
+"Queluz","SP",3,4,7
+"Santa Vitória do Palmar","RS",3,4,7
+"Santo Amaro da Imperatriz","SC",3,4,7
+"São Joaquim","SC",7,0,7
+"São Simão","GO",7,0,7
+"São Vicente","SP",6,1,7
+"Saquarema","RJ",1,6,7
+"Sousa","PB",3,4,7
+"Taiobeiras","MG",5,2,7
+"Taquaritinga","SP",6,1,7
+"Tijucas","SC",7,0,7
+"Timbó","SC",7,0,7
+"Três Corações","MG",1,6,7
+"Tucano","BA",5,2,7
+"Venâncio Aires","RS",4,3,7
+"Abreu e Lima","PE",2,4,6
+"Açu","RN",2,4,6
+"Alagoinhas","BA",3,3,6
+"Aragoiânia","GO",1,5,6
+"Araruama","RJ",2,4,6
+"Barra do Ribeiro","RS",4,2,6
+"Bayeux","PB",0,6,6
+"Birigui","SP",5,1,6
+"Bom Retiro","SC",5,1,6
+"Braço do Norte","SC",5,1,6
+"Caçapava","SP",4,2,6
+"Cachoeirinha","RS",2,4,6
+"Cacoal","RO",5,1,6
+"Camaquã","RS",4,2,6
+"Camaragibe","PE",5,1,6
+"Campo Verde","MT",5,1,6
+"Carazinho","RS",3,3,6
+"Cassilândia","MS",6,0,6
+"Chapada dos Guimarães","MT",4,2,6
+"Confins","MG",5,1,6
+"Cordeirópolis","SP",2,4,6
+"Encantado","RS",6,0,6
+"Fazenda Rio Grande","PR",0,6,6
+"Fernandes Pinheiro","PR",0,6,6
+"Formosa","GO",4,2,6
+"Franco da Rocha","SP",6,0,6
+"Guapimirim","RJ",6,0,6
+"Hortolândia","SP",4,2,6
+"Irati","PR",6,0,6
+"Iretama","PR",6,0,6
+"Itaberaba","BA",4,2,6
+"Itaquaquecetuba","SP",4,2,6
+"Ivoti","RS",6,0,6
+"Ji-Paraná","RO",3,3,6
+"Laranjal Paulista","SP",6,0,6
+"Mairiporã","SP",4,2,6
+"Martins","RN",2,4,6
+"Milagres","BA",2,4,6
+"Muriaé","MG",4,2,6
+"Ortigueira","PR",3,3,6
+"Papanduva","SC",5,1,6
+"Paraipaba","CE",1,5,6
+"Paranapanema","SP",6,0,6
+"Passa e Fica","RN",6,0,6
+"Passo de Camaragibe","AL",6,0,6
+"Pau dos Ferros","RN",4,2,6
+"Paulínia","SP",4,2,6
+"Penápolis","SP",4,2,6
+"Penedo","AL",6,0,6
+"Penha","SC",4,2,6
+"Pinhal","RS",2,4,6
+"Pinhalzinho","SC",5,1,6
+"Piranhas","AL",6,0,6
+"Pirapora","MG",6,0,6
+"Prudentópolis","PR",2,4,6
+"Quatro Barras","PR",3,3,6
+"Ribeirão Pires","SP",6,0,6
+"Rio Claro","SP",4,2,6
+"Russas","CE",4,2,6
+"Salgueiro","PE",3,3,6
+"Santa Cruz do Capibaribe","PE",5,1,6
+"Santa Cruz do Rio Pardo","SP",2,4,6
+"São Francisco de Paula","RS",5,1,6
+"São Lourenço da Mata","PE",3,3,6
+"São Miguel do Gostoso","RN",5,1,6
+"Soledade","RS",4,2,6
+"Tailândia","PA",2,4,6
+"Tamandaré","PE",6,0,6
+"Tapejara","RS",6,0,6
+"Taquara","RS",4,2,6
+"Tatuí","SP",5,1,6
+"Tianguá","CE",3,3,6
+"Valença","BA",6,0,6
+"Viana","ES",2,4,6
+"Volta Redonda","RJ",2,4,6
+"Alhandra","PB",1,4,5
+"Almirante Tamandaré","PR",4,1,5
+"Alto Piquiri","PR",4,1,5
+"Araporã","MG",0,5,5
+"Arroio do Meio","RS",4,1,5
+"Balsa Nova","PR",4,1,5
+"Barão de Cotegipe","RS",1,4,5
+"Barra Bonita","SP",4,1,5
+"Barrinha","SP",4,1,5
+"Borda da Mata","MG",5,0,5
+"Cafelândia","PR",4,1,5
+"Campo Novo do Parecis","MT",5,0,5
+"Canindé","CE",2,3,5
+"Carambeí","PR",4,1,5
+"Chapadão do Sul","MS",5,0,5
+"Colombo","PR",2,3,5
+"Corumbá","MS",5,0,5
+"Cruzeiro","SP",5,0,5
+"Delmiro Gouveia","AL",5,0,5
+"Dracena","SP",5,0,5
+"Elesbão Veloso","PI",1,4,5
+"Estrela","RS",3,2,5
+"Francisco Morato","SP",4,1,5
+"Governador Celso Ramos","SC",5,0,5
+"Gravatá","PE",0,5,5
+"Gurupi","TO",3,2,5
+"Ibirubá","RS",5,0,5
+"Inhumas","GO",5,0,5
+"Itajubá","MG",3,2,5
+"Itapecerica da Serra","SP",5,0,5
+"Itapeva","SP",4,1,5
+"Itapipoca","CE",1,4,5
+"Itirapina","SP",4,1,5
+"Jarinu","SP",3,2,5
+"Lapa","PR",3,2,5
+"Lima Duarte","MG",5,0,5
+"Limoeiro do Norte","CE",4,1,5
+"Machado","MG",5,0,5
+"Magé","RJ",5,0,5
+"Mandirituba","PR",2,3,5
+"Maracajá","SC",2,3,5
+"Maracanaú","CE",3,2,5
+"Martinópolis","SP",3,2,5
+"Mimoso do Sul","ES",2,3,5
+"Nova Andradina","MS",3,2,5
+"Nova Pádua","RS",5,0,5
+"Nova Viçosa","BA",2,3,5
+"Palmeira dos Índios","AL",3,2,5
+"Paracambi","RJ",5,0,5
+"Paripiranga","BA",5,0,5
+"Passos","MG",5,0,5
+"Patrocínio","MG",3,2,5
+"Patu","RN",3,2,5
+"Paulo Afonso","BA",4,1,5
+"Peritoró","MA",1,4,5
+"Picos","PI",2,3,5
+"Piracuruca","PI",1,4,5
+"Pombal","PB",1,4,5
+"Porangatu","GO",4,1,5
+"Quixadá","CE",2,3,5
+"Rifaina","SP",5,0,5
+"Rorainópolis","RR",2,3,5
+"Rosário do Sul","RS",4,1,5
+"Saloá","PE",5,0,5
+"Santa Teresa","ES",5,0,5
+"Santo Antônio da Platina","PR",2,3,5
+"São João do Sul","SC",4,1,5
+"São José de Ribamar","MA",2,3,5
+"São Pedro","SP",5,0,5
+"São Pedro do Sul","RS",5,0,5
+"São Sebastião","AL",3,2,5
+"Sapucaia","RJ",2,3,5
+"Serra Talhada","PE",3,2,5
+"Suzano","SP",3,2,5
+"Teixeira de Freitas","BA",3,2,5
+"Teutônia","RS",5,0,5
+"Tutóia","MA",3,2,5
+"União da Vitória","PR",3,2,5
+"Uruguaiana","RS",4,1,5
+"Valença","RJ",4,1,5
+"Viçosa do Ceará","CE",5,0,5
+"Wenceslau Braz","PR",2,3,5
+"Além Paraíba","MG",4,0,4
+"Alexânia","GO",4,0,4
+"Alvorada","RS",0,4,4
+"Aracruz","ES",4,0,4
+"Araranguá","SC",2,2,4
+"Barro Preto","BA",2,2,4
+"Bezerros","PE",4,0,4
+"Brumadinho","MG",4,0,4
+"Caculé","BA",3,1,4
+"Camboriú","SC",3,1,4
+"Campina Grande do Sul","PR",2,2,4
+"Campo Alegre","AL",2,2,4
+"Canguaretama","RN",1,3,4
+"Capanema","PA",0,4,4
+"Capão Alto","SC",3,1,4
+"Capão Bonito","SP",4,0,4
+"Casca","RS",4,0,4
+"Cássia","MG",4,0,4
+"Conceição das Alagoas","MG",0,4,4
+"Cristal","RS",2,2,4
+"Cubatão","SP",4,0,4
+"Curitibanos","SC",4,0,4
+"Dois Irmãos","RS",4,0,4
+"Dois Vizinhos","PR",2,2,4
+"Engenheiro Coelho","SP",4,0,4
+"Escada","PE",2,2,4
+"Euclides da Cunha","BA",3,1,4
+"Ferreira Gomes","AP",1,3,4
+"Fraiburgo","SC",4,0,4
+"Frederico Westphalen","RS",3,1,4
+"Gália","SP",3,1,4
+"Garibaldi","RS",2,2,4
+"General Carneiro","PR",0,4,4
+"Goiana","PE",2,2,4
+"Goianésia do Pará","PA",0,4,4
+"Guaporé","RS",2,2,4
+"Guarani","MG",2,2,4
+"Herculândia","SP",3,1,4
+"Ibaté","SP",2,2,4
+"Ibiporã","PR",0,4,4
+"Ibiraçu","ES",2,2,4
+"Ibiúna","SP",4,0,4
+"Icó","CE",3,1,4
+"Igaraçu do Tietê","SP",4,0,4
+"Ilhota","SC",2,2,4
+"Iporá","GO",4,0,4
+"Itaobim","MG",4,0,4
+"Itapemirim","ES",3,1,4
+"Itapira","SP",4,0,4
+"Itariri","SP",4,0,4
+"Ituiutaba","MG",4,0,4
+"Jaboticatubas","MG",4,0,4
+"Jaguaquara","BA",2,2,4
+"Jaguarão","RS",2,2,4
+"Jales","SP",3,1,4
+"Jaraguá","GO",3,1,4
+"Jardinópolis","SP",4,0,4
+"Juara","MT",4,0,4
+"Juazeirinho","PB",3,1,4
+"Lajedo","PE",2,2,4
+"Laranjeiras","SE",4,0,4
+"Lençóis","BA",4,0,4
+"Leopoldina","MG",4,0,4
+"Lima Campos","MA",4,0,4
+"Maravilha","SC",2,2,4
+"Matão","SP",4,0,4
+"Morada Nova","CE",0,4,4
+"Moreno","PE",4,0,4
+"Nossa Senhora da Glória","SE",1,3,4
+"Nova Nazaré","MT",4,0,4
+"Nova Odessa","SP",3,1,4
+"Nova Santa Rita","RS",2,2,4
+"Oriente","SP",4,0,4
+"Otacílio Costa","SC",2,2,4
+"Pacoti","CE",1,3,4
+"Palmares","PE",2,2,4
+"Paracatu","MG",2,2,4
+"Paragominas","PA",2,2,4
+"Paraibuna","SP",0,4,4
+"Passa Quatro","MG",4,0,4
+"Passo de Torres","SC",1,3,4
+"Paverama","RS",1,3,4
+"Pedra Azul","MG",2,2,4
+"Pinto Bandeira","RS",4,0,4
+"Piúma","ES",4,0,4
+"Pompéu","MG",3,1,4
+"Porto de Pedras","AL",4,0,4
+"Porto Feliz","SP",4,0,4
+"Primavera do Leste","MT",2,2,4
+"Queimados","RJ",4,0,4
+"Quirinópolis","GO",3,1,4
+"Realeza","PR",3,1,4
+"Remígio","PB",4,0,4
+"Ribas do Rio Pardo","MS",4,0,4
+"Rio Bonito","RJ",2,2,4
+"Rolândia","PR",4,0,4
+"Rubiataba","GO",4,0,4
+"Sacramento","MG",4,0,4
+"Santa Fé do Sul","SP",4,0,4
+"Santa Gertrudes","SP",3,1,4
+"Santa Rosa do Sul","SC",3,1,4
+"Santa Tereza do Oeste","PR",1,3,4
+"Santa Vitória","MG",4,0,4
+"Sant'Ana do Livramento","RS",3,1,4
+"Santo Antônio da Patrulha","RS",3,1,4
+"Santo Antônio de Jesus","BA",4,0,4
+"São João","PR",3,1,4
+"São José do Hortêncio","RS",4,0,4
+"São Luiz Gonzaga","RS",3,1,4
+"São Sebastião do Caí","RS",2,2,4
+"Sapé","PB",2,2,4
+"Silva Jardim","RJ",2,2,4
+"Surubim","PE",1,3,4
+"Tibagi","PR",2,2,4
+"Tibau","RN",1,3,4
+"Timon","MA",2,2,4
+"Três Cachoeiras","RS",0,4,4
+"Três de Maio","RS",4,0,4
+"Unaí","MG",3,1,4
+"Vargem Alta","ES",4,0,4
+"Vargem Grande Paulista","SP",3,1,4
+"Venda Nova do Imigrante","ES",4,0,4
+"Veranópolis","RS",4,0,4
+"Acará","PA",1,2,3
+"Água Branca","PI",2,1,3
+"Águas de Santa Bárbara","SP",1,2,3
+"Altos","PI",3,0,3
+"Amontada","CE",3,0,3
+"Anastácio","MS",3,0,3
+"Anchieta","ES",3,0,3
+"Andaraí","BA",3,0,3
+"Antônio Prado","RS",3,0,3
+"Aquidabã","SE",2,1,3
+"Araripina","PE",2,1,3
+"Areia Branca","RN",1,2,3
+"Arroio do Sal","RS",0,3,3
+"Baixo Guandu","ES",3,0,3
+"Balsas","MA",1,2,3
+"Bariri","SP",3,0,3
+"Barra de São Francisco","ES",3,0,3
+"Barra do Piraí","RJ",3,0,3
+"Batalha","PI",0,3,3
+"Batatais","SP",1,2,3
+"Baturité","CE",3,0,3
+"Caçapava do Sul","RS",2,1,3
+"Cachoeira Paulista","SP",2,1,3
+"Cajati","SP",1,2,3
+"Cajazeiras","PB",2,1,3
+"Camamu","BA",1,2,3
+"Cambé","PR",0,3,3
+"Camocim","CE",3,0,3
+"Campo Alegre","SC",2,1,3
+"Cananéia","SP",3,0,3
+"Candiba","BA",3,0,3
+"Candói","PR",1,2,3
+"Canoinhas","SC",1,2,3
+"Canudos","BA",1,2,3
+"Capim Grosso","BA",1,2,3
+"Capinzal","SC",3,0,3
+"Carapebus","RJ",3,0,3
+"Carolina","MA",1,2,3
+"Cataguases","MG",3,0,3
+"Catolé do Rocha","PB",2,1,3
+"Caxambu","MG",3,0,3
+"Cesário Lange","SP",3,0,3
+"Chavantes","SP",2,1,3
+"Chopinzinho","PR",3,0,3
+"Coari","AM",3,0,3
+"Conceição da Barra","ES",3,0,3
+"Conde","PB",2,1,3
+"Corbélia","PR",1,2,3
+"Coronel Vivida","PR",3,0,3
+"Crisópolis","BA",2,1,3
+"Cristais","MG",3,0,3
+"Cunha","SP",3,0,3
+"Descanso","SC",3,0,3
+"Dionísio Cerqueira","SC",1,2,3
+"Dom Eliseu","PA",0,3,3
+"Douradina","PR",3,0,3
+"Dourado","SP",3,0,3
+"Elias Fausto","SP",3,0,3
+"Elói Mendes","MG",2,1,3
+"Embu das Artes","SP",3,0,3
+"Entre Rios","BA",1,2,3
+"Esperantina","PI",1,2,3
+"Estiva","MG",1,2,3
+"Estiva Gerbi","SP",1,2,3
+"Extremoz","RN",2,1,3
+"Floriano","PI",2,1,3
+"Fontoura Xavier","RS",1,2,3
+"Forquilha","CE",3,0,3
+"Garça","SP",3,0,3
+"Getúlio Vargas","RS",2,1,3
+"Goianinha","RN",1,2,3
+"Goiás","GO",1,2,3
+"Gonçalves","MG",3,0,3
+"Guanambi","BA",3,0,3
+"Guaraciaba do Norte","CE",3,0,3
+"Guaramirim","SC",1,2,3
+"Horizonte","CE",2,1,3
+"Horizontina","RS",2,1,3
+"Humaitá","AM",3,0,3
+"Ibema","PR",1,2,3
+"Ibiraiaras","RS",3,0,3
+"Ilópolis","RS",3,0,3
+"Itá","SC",3,0,3
+"Itabirito","MG",3,0,3
+"Itacaré","BA",2,1,3
+"Itamarandiba","MG",2,1,3
+"Itaúna","MG",2,1,3
+"Jaguaribara","CE",2,1,3
+"Jaguaruna","SC",3,0,3
+"Japira","PR",1,2,3
+"Jaru","RO",3,0,3
+"João Câmara","RN",0,3,3
+"João Pinheiro","MG",2,1,3
+"Laranjeiras do Sul","PR",1,2,3
+"Lavras","MG",2,1,3
+"Lençóis Paulista","SP",2,1,3
+"Lins","SP",3,0,3
+"Luz","MG",2,1,3
+"Mãe do Rio","PA",1,2,3
+"Mamanguape","PB",0,3,3
+"Manacapuru","AM",3,0,3
+"Marilândia do Sul","PR",1,2,3
+"Marmeleiro","PR",1,2,3
+"Matelândia","PR",3,0,3
+"Mauá","SP",3,0,3
+"Miguel Pereira","RJ",1,2,3
+"Monte das Gameleiras","RN",2,1,3
+"Mucugê","BA",3,0,3
+"Naque","MG",1,2,3
+"Natividade","TO",1,2,3
+"Nísia Floresta","RN",1,2,3
+"Nova Bassano","RS",2,1,3
+"Nova Cruz","RN",0,3,3
+"Olho d'Água das Flores","AL",2,1,3
+"Orleans","SC",3,0,3
+"Ouroeste","SP",1,2,3
+"Paço do Lumiar","MA",3,0,3
+"Pantano Grande","RS",0,3,3
+"Pedreira","SP",2,1,3
+"Peruíbe","SP",2,1,3
+"Piraquara","PR",0,3,3
+"Piratininga","SP",3,0,3
+"Pires do Rio","GO",1,2,3
+"Porto dos Gaúchos","MT",3,0,3
+"Porto Nacional","TO",1,2,3
+"Porto Real","RJ",2,1,3
+"Presidente Bernardes","SP",3,0,3
+"Princesa Isabel","PB",3,0,3
+"Quixeramobim","CE",0,3,3
+"Redenção","PA",3,0,3
+"Registro","SP",3,0,3
+"Rio das Pedras","SP",1,2,3
+"Rio Largo","AL",1,2,3
+"Rio Verde de Mato Grosso","MS",1,2,3
+"Rodeio Bonito","RS",1,2,3
+"Rolim de Moura","RO",3,0,3
+"Roseira","SP",1,2,3
+"Sabará","MG",1,2,3
+"Sananduva","RS",2,1,3
+"Santa Cruz","RN",2,1,3
+"Santa Inês","MA",1,2,3
+"Santo Antônio de Posse","SP",3,0,3
+"São Borja","RS",2,1,3
+"São Desidério","BA",3,0,3
+"São Francisco do Sul","SC",3,0,3
+"São Gabriel","RS",1,2,3
+"São Gonçalo do Abaeté","MG",1,2,3
+"São Gonçalo do Amarante","CE",3,0,3
+"São Gonçalo do Rio Abaixo","MG",1,2,3
+"São Gonçalo do Sapucaí","MG",1,2,3
+"São Jerônimo","RS",2,1,3
+"São João dos Patos","MA",1,2,3
+"São José do Ouro","RS",2,1,3
+"São José do Rio Pardo","SP",3,0,3
+"São Luís de Montes Belos","GO",2,1,3
+"São Luiz do Paraitinga","SP",3,0,3
+"São Mamede","PB",2,1,3
+"São Raimundo Nonato","PI",2,1,3
+"São Sebastião do Paraíso","MG",3,0,3
+"São Sepé","RS",3,0,3
+"Sarandi","RS",3,0,3
+"Seabra","BA",1,2,3
+"Silvânia","GO",3,0,3
+"Simões Filho","BA",0,3,3
+"Simolândia","GO",1,2,3
+"Siqueira Campos","PR",0,3,3
+"Socorro","SP",3,0,3
+"Soledade","PB",2,1,3
+"Solonópole","CE",1,2,3
+"Sumé","PB",2,1,3
+"Tangará da Serra","MT",3,0,3
+"Tanguá","RJ",0,3,3
+"Tapera","RS",3,0,3
+"Tarumirim","MG",1,2,3
+"Tauá","CE",2,1,3
+"Tremembé","SP",3,0,3
+"Três Coroas","RS",1,2,3
+"Três Marias","MG",1,2,3
+"Trindade","GO",3,0,3
+"Triunfo","RS",1,2,3
+"Tupã","SP",2,1,3
+"Ubaporanga","MG",1,2,3
+"Vassouras","RJ",3,0,3
+"Vespasiano","MG",3,0,3
+"Vianópolis","GO",2,1,3
+"Vila Flores","RS",3,0,3
+"Vila Propício","GO",3,0,3
+"Vilhena","RO",3,0,3
+"Virgínia","MG",3,0,3
+"Xaxim","SC",3,0,3
+"Abaeté","MG",2,0,2
+"Acaraú","CE",0,2,2
+"Agrolândia","SC",1,1,2
+"Águas de São Pedro","SP",2,0,2
+"Águas Lindas de Goiás","GO",1,1,2
+"Agudo","RS",0,2,2
+"Agudos","SP",2,0,2
+"Alpercata","MG",1,1,2
+"Alta Floresta","MT",2,0,2
+"Alto Garças","MT",2,0,2
+"Altônia","PR",2,0,2
+"Amajari","RR",2,0,2
+"Analândia","SP",2,0,2
+"Andradas","MG",2,0,2
+"Andrelândia","MG",2,0,2
+"Angicos","RN",0,2,2
+"Aquidauana","MS",1,1,2
+"Araguari","MG",2,0,2
+"Araponga","MG",2,0,2
+"Araruna","PR",2,0,2
+"Areado","MG",2,0,2
+"Areia","PB",2,0,2
+"Arroio do Tigre","RS",2,0,2
+"Augustinópolis","TO",2,0,2
+"Augusto de Lima","MG",2,0,2
+"Axixá","MA",0,2,2
+"Barão","RS",2,0,2
+"Barbalha","CE",2,0,2
+"Barra do Choça","BA",2,0,2
+"Barra dos Coqueiros","SE",1,1,2
+"Barro Alto","GO",1,1,2
+"Bebedouro","SP",2,0,2
+"Belo Oriente","MG",0,2,2
+"Benedito Novo","SC",1,1,2
+"Boa Esperança","MG",2,0,2
+"Boa Vista das Missões","RS",0,2,2
+"Boa Vista do Buricá","RS",1,1,2
+"Bocaiúva","MG",2,0,2
+"Bodoquena","MS",2,0,2
+"Bom Despacho","MG",1,1,2
+"Bom Jardim da Serra","SC",2,0,2
+"Bonfim","RR",0,2,2
+"Bonito","PE",2,0,2
+"Boquim","SE",2,0,2
+"Borrazópolis","PR",0,2,2
+"Bueno Brandão","MG",2,0,2
+"Butiá","RS",2,0,2
+"Caetanópolis","MG",0,2,2
+"Caetité","BA",1,1,2
+"Campestre","MG",2,0,2
+"Campo Alegre de Goiás","GO",2,0,2
+"Campos Altos","MG",1,1,2
+"Campos Sales","CE",2,0,2
+"Candeias","BA",2,0,2
+"Cândido Mota","SP",2,0,2
+"Candiota","RS",2,0,2
+"Canindé de São Francisco","SE",1,1,2
+"Cantagalo","PR",2,0,2
+"Capim Branco","MG",2,0,2
+"Capivari","SP",1,1,2
+"Cascavel","CE",2,0,2
+"Caseiros","RS",2,0,2
+"Ceres","GO",2,0,2
+"Cerquilho","SP",1,1,2
+"Cezarina","GO",0,2,2
+"Chapadinha","MA",0,2,2
+"Cipó","BA",2,0,2
+"Cláudia","MT",2,0,2
+"Cocal","PI",0,2,2
+"Colinas do Tocantins","TO",2,0,2
+"Conceição da Feira","BA",1,1,2
+"Conceição do Coité","BA",1,1,2
+"Cornélio Procópio","PR",2,0,2
+"Coronel Fabriciano","MG",0,2,2
+"Costa Rica","MS",2,0,2
+"Crateús","CE",1,1,2
+"Crato","CE",0,2,2
+"Cristianópolis","GO",0,2,2
+"Cruz das Almas","BA",2,0,2
+"Custódia","PE",2,0,2
+"Delfinópolis","MG",2,0,2
+"Diamantino","MT",2,0,2
+"Dois Lajeados","RS",0,2,2
+"Dores do Rio Preto","ES",1,1,2
+"Entre-Ijuís","RS",2,0,2
+"Erval Seco","RS",2,0,2
+"Erval Velho","SC",1,1,2
+"Espigão D'Oeste","RO",2,0,2
+"Estrela do Sul","MG",0,2,2
+"Fátima do Sul","MS",2,0,2
+"Fernando de Noronha","PE",1,1,2
+"Flores da Cunha","RS",2,0,2
+"Fronteira","MG",1,1,2
+"Garuva","SC",0,2,2
+"Grajaú","MA",0,2,2
+"Guaçuí","ES",2,0,2
+"Guanhães","MG",2,0,2
+"Guapé","MG",1,1,2
+"Guaraí","TO",0,2,2
+"Gurinhatã","MG",2,0,2
+"Hidrolândia","GO",2,0,2
+"Iati","PE",2,0,2
+"Ibicaraí","BA",1,1,2
+"Ibicaré","SC",2,0,2
+"Ibirama","SC",2,0,2
+"Ibirité","MG",1,1,2
+"Içara","SC",2,0,2
+"Igaratá","SP",2,0,2
+"Iguaba Grande","RJ",2,0,2
+"Iguape","SP",2,0,2
+"Iguatu","CE",0,2,2
+"Ilha Solteira","SP",2,0,2
+"Independência","RS",2,0,2
+"Inhangapi","PA",0,2,2
+"Iporã","PR",2,0,2
+"Ipuiúna","MG",1,1,2
+"Itaí","SP",1,1,2
+"Itamaraju","BA",2,0,2
+"Itapetinga","BA",0,2,2
+"Itapeva","MG",2,0,2
+"Itati","RS",1,1,2
+"Itaúba","MT",2,0,2
+"Itauçu","GO",1,1,2
+"Ivaiporã","PR",1,1,2
+"Jacobina","BA",2,0,2
+"Jacutinga","MG",2,0,2
+"Jaguaribe","CE",0,2,2
+"Jardim do Seridó","RN",2,0,2
+"João Neiva","ES",2,0,2
+"Juazeiro","BA",1,1,2
+"Junqueiro","AL",0,2,2
+"Juquiá","SP",2,0,2
+"Juquitiba","SP",0,2,2
+"Lagarto","SE",2,0,2
+"Lagoa Vermelha","RS",2,0,2
+"Lagoinha do Piauí","PI",0,2,2
+"Lajeado","TO",2,0,2
+"Lambari","MG",2,0,2
+"Lassance","MG",2,0,2
+"Leme","SP",0,2,2
+"Luiz Alves","SC",1,1,2
+"Macarani","BA",2,0,2
+"Mandaguaçu","PR",2,0,2
+"Marechal Floriano","ES",2,0,2
+"Mariluz","PR",2,0,2
+"Marituba","PA",0,2,2
+"Martinho Campos","MG",0,2,2
+"Maruim","SE",1,1,2
+"Matias Barbosa","MG",0,2,2
+"Matipó","MG",2,0,2
+"Matozinhos","MG",0,2,2
+"Matupá","MT",1,1,2
+"Meruoca","CE",0,2,2
+"Messias Targino","RN",2,0,2
+"Mineiros do Tietê","SP",2,0,2
+"Miranda do Norte","MA",0,2,2
+"Mococa","SP",2,0,2
+"Mombaça","CE",0,2,2
+"Montanha","ES",2,0,2
+"Monte Alegre de Minas","MG",2,0,2
+"Monte Alegre do Sul","SP",2,0,2
+"Monte Azul Paulista","SP",2,0,2
+"Monte Sião","MG",2,0,2
+"Monteiro","PB",1,1,2
+"Morro do Chapéu","BA",2,0,2
+"Mostardas","RS",2,0,2
+"Muitos Capões","RS",2,0,2
+"Nazaré Paulista","SP",2,0,2
+"Nazário","GO",2,0,2
+"Nordestina","BA",2,0,2
+"Nossa Senhora do Socorro","SE",2,0,2
+"Nova Alvorada do Sul","MS",0,2,2
+"Nova Londrina","PR",2,0,2
+"Nova Santa Rosa","PR",2,0,2
+"Nova Venécia","ES",2,0,2
+"Novo Lino","AL",0,2,2
+"Novo Oriente","CE",2,0,2
+"Novo Repartimento","PA",2,0,2
+"Oeiras","PI",2,0,2
+"Orindiúva","SP",2,0,2
+"Pacajá","PA",1,1,2
+"Pacatuba","CE",1,1,2
+"Palhano","CE",1,1,2
+"Palmas","PR",0,2,2
+"Palmeira das Missões","RS",0,2,2
+"Panambi","RS",2,0,2
+"Paraguaçu","MG",2,0,2
+"Paraíba do Sul","RJ",2,0,2
+"Parelhas","RN",1,1,2
+"Paripueira","AL",2,0,2
+"Pariquera-Açu","SP",0,2,2
+"Parobé","RS",0,2,2
+"Passagem","RN",1,1,2
+"Passira","PE",2,0,2
+"Perdizes","MG",0,2,2
+"Pereira Barreto","SP",1,1,2
+"Perobal","PR",2,0,2
+"Pérola","PR",2,0,2
+"Petrolina de Goiás","GO",2,0,2
+"Picada Café","RS",2,0,2
+"Pilar","AL",2,0,2
+"Pinheiro","MA",2,0,2
+"Piracanjuba","GO",2,0,2
+"Piraí do Sul","PR",0,2,2
+"Piranguinho","MG",2,0,2
+"Pirapora do Bom Jesus","SP",2,0,2
+"Pirapozinho","SP",2,0,2
+"Piratuba","SC",2,0,2
+"Pitanga","PR",2,0,2
+"Planura","MG",2,0,2
+"Poconé","MT",0,2,2
+"Ponte Nova","MG",2,0,2
+"Porto Ferreira","SP",0,2,2
+"Porto Real do Colégio","AL",1,1,2
+"Posse","GO",2,0,2
+"Potirendaba","SP",2,0,2
+"Pouso Novo","RS",2,0,2
+"Praia Grande","SC",2,0,2
+"Prata","MG",2,0,2
+"Prata do Piauí","PI",2,0,2
+"Presidente Dutra","MA",0,2,2
+"Presidente Venceslau","SP",2,0,2
+"Prudente de Morais","MG",2,0,2
+"Quaraí","RS",2,0,2
+"Querência do Norte","PR",2,0,2
+"Resplendor","MG",2,0,2
+"Ribeirão Claro","PR",2,0,2
+"Rio Azul","PR",2,0,2
+"Rio Bananal","ES",2,0,2
+"Rio Brilhante","MS",2,0,2
+"Rio Negro","PR",0,2,2
+"Rio Pomba","MG",2,0,2
+"Rodeio","SC",2,0,2
+"Rolante","RS",1,1,2
+"Rondon do Pará","PA",2,0,2
+"Rurópolis","PA",1,1,2
+"Sales Oliveira","SP",0,2,2
+"Salto de Pirapora","SP",1,1,2
+"Santa Clara d'Oeste","SP",2,0,2
+"Santa Cruz da Conceição","SP",2,0,2
+"Santa Cruz de Monte Castelo","PR",2,0,2
+"Santa Fé","PR",2,0,2
+"Santa Helena","PR",1,1,2
+"Santa Helena de Goiás","GO",2,0,2
+"Santa Isabel do Ivaí","PR",2,0,2
+"Santa Margarida do Sul","RS",0,2,2
+"Santa Rita do Pardo","MS",0,2,2
+"Santa Terezinha","BA",2,0,2
+"Santa Terezinha de Itaipu","PR",2,0,2
+"Santana","AP",1,1,2
+"Santo Amaro do Maranhão","MA",1,1,2
+"São Gonçalo do Pará","MG",2,0,2
+"São João da Barra","RJ",2,0,2
+"São José da Barra","MG",2,0,2
+"São José de Mipibu","RN",1,1,2
+"São Lourenço do Oeste","SC",2,0,2
+"São Lourenço do Sul","RS",2,0,2
+"São Manoel do Paraná","PR",2,0,2
+"São Miguel dos Campos","AL",2,0,2
+"São Sebastião do Passé","BA",1,1,2
+"São Tiago","MG",1,1,2
+"Selbach","RS",2,0,2
+"Selvíria","MS",2,0,2
+"Sericita","MG",2,0,2
+"Serra da Raiz","PB",2,0,2
+"Serro","MG",2,0,2
+"Simão Dias","SE",2,0,2
+"Solânea","PB",2,0,2
+"Sooretama","ES",2,0,2
+"Tamboril","CE",2,0,2
+"Tangará","RN",0,2,2
+"Taperoá","PB",1,1,2
+"Taquaritinga do Norte","PE",2,0,2
+"Terra de Areia","RS",0,2,2
+"Tijucas do Sul","PR",0,2,2
+"Timbé do Sul","SC",0,2,2
+"Toritama","PE",1,1,2
+"Três Pontas","MG",2,0,2
+"Três Rios","RJ",2,0,2
+"Treze Tílias","SC",2,0,2
+"Turmalina","MG",2,0,2
+"Ubá","MG",1,1,2
+"Ulianópolis","PA",0,2,2
+"Una","BA",2,0,2
+"União dos Palmares","AL",2,0,2
+"Vargem Grande","MA",2,0,2
+"Várzea da Palma","MG",2,0,2
+"Viçosa","MG",2,0,2
+"Vigia","PA",2,0,2
+"Vitória de Santo Antão","PE",1,1,2
+"Wenceslau Guimarães","BA",2,0,2
+"Xinguara","PA",0,2,2
+"Acaiaca","MG",1,0,1
+"Aceguá","RS",0,1,1
+"Afonso Cláudio","ES",1,0,1
+"Afrânio","PE",0,1,1
+"Água Clara","MS",0,1,1
+"Águas da Prata","SP",1,0,1
+"Águas Formosas","MG",1,0,1
+"Agudos do Sul","PR",0,1,1
+"Aimorés","MG",1,0,1
+"Aiuaba","CE",1,0,1
+"Alagoinha","PB",0,1,1
+"Aliança do Tocantins","TO",1,0,1
+"Alta Floresta D'Oeste","RO",1,0,1
+"Alto Araguaia","MT",1,0,1
+"Alto do Rodrigues","RN",0,1,1
+"Alto Jequitibá","MG",1,0,1
+"Alto Rio Doce","MG",1,0,1
+"Alto Taquari","MT",1,0,1
+"Álvaro de Carvalho","SP",1,0,1
+"Alvinópolis","MG",1,0,1
+"Alvorada","TO",1,0,1
+"Amambai","MS",1,0,1
+"Amapá","AP",0,1,1
+"Ametista do Sul","RS",1,0,1
+"Angatuba","SP",1,0,1
+"Anhembi","SP",1,0,1
+"Anicuns","GO",1,0,1
+"Antonina","PR",0,1,1
+"Aparecida","PB",0,1,1
+"Aparecida do Rio Doce","GO",1,0,1
+"Apiúna","SC",1,0,1
+"Apodi","RN",0,1,1
+"Araçoiaba da Serra","SP",1,0,1
+"Arandu","SP",1,0,1
+"Arapoti","PR",1,0,1
+"Araricá","RS",1,0,1
+"Araruna","PB",0,1,1
+"Arcos","MG",1,0,1
+"Arraial do Cabo","RJ",1,0,1
+"Arroio Grande","RS",1,0,1
+"Artur Nogueira","SP",1,0,1
+"Aruanã","GO",1,0,1
+"Assis Chateaubriand","PR",1,0,1
+"Aurora","CE",1,0,1
+"Bady Bassitt","SP",0,1,1
+"Baependi","MG",1,0,1
+"Balneário Rincão","SC",0,1,1
+"Bananal","SP",1,0,1
+"Barão de Cocais","MG",1,0,1
+"Barbosa","SP",1,0,1
+"Barcarena","PA",0,1,1
+"Barra","BA",1,0,1
+"Barra de São Miguel","AL",1,0,1
+"Barra do Bugres","MT",1,0,1
+"Barroquinha","CE",1,0,1
+"Belford Roxo","RJ",0,1,1
+"Belo Jardim","PE",1,0,1
+"Bilac","SP",1,0,1
+"Bituruna","PR",1,0,1
+"Boa Viagem","CE",1,0,1
+"Boa Vista do Sul","RS",1,0,1
+"Bocaina","SP",1,0,1
+"Bom Jesus","PI",0,1,1
+"Bom Jesus do Galho","MG",1,0,1
+"Bom Princípio","RS",1,0,1
+"Bonito","BA",1,0,1
+"Botuporã","BA",1,0,1
+"Bragança","PA",1,0,1
+"Brejo do Cruz","PB",1,0,1
+"Buenópolis","MG",1,0,1
+"Buriticupu","MA",0,1,1
+"Buritis","RO",1,0,1
+"Cabedelo","PB",0,1,1
+"Caçador","SC",1,0,1
+"Cachoeira Alta","GO",1,0,1
+"Cachoeirinha","PE",0,1,1
+"Caconde","SP",1,0,1
+"Caiçara do Norte","RN",1,0,1
+"Calçoene","AP",1,0,1
+"Cambará","PR",1,0,1
+"Cambuí","MG",1,0,1
+"Cambuquira","MG",1,0,1
+"Campanha","MG",0,1,1
+"Campestre do Maranhão","MA",1,0,1
+"Campinorte","GO",1,0,1
+"Campo Erê","SC",1,0,1
+"Campo Limpo Paulista","SP",1,0,1
+"Campo Maior","PI",0,1,1
+"Campos Belos","GO",1,0,1
+"Canavieiras","BA",1,0,1
+"Canguçu","RS",1,0,1
+"Capela do Alto","SP",0,1,1
+"Capitão de Campos","PI",0,1,1
+"Carangola","MG",1,0,1
+"Cariri do Tocantins","TO",1,0,1
+"Carlinda","MT",1,0,1
+"Carmo","RJ",1,0,1
+"Carmo da Mata","MG",1,0,1
+"Carnaúba dos Dantas","RN",1,0,1
+"Carneirinho","MG",1,0,1
+"Carpina","PE",1,0,1
+"Carrancas","MG",1,0,1
+"Catu","BA",1,0,1
+"Cavalcante","GO",1,0,1
+"Cerro Azul","PR",1,0,1
+"Charqueadas","RS",1,0,1
+"Cidade Ocidental","GO",1,0,1
+"Cidreira","RS",0,1,1
+"Cocalzinho de Goiás","GO",1,0,1
+"Codó","MA",1,0,1
+"Colina","SP",1,0,1
+"Colômbia","SP",1,0,1
+"Colônia do Gurguéia","PI",0,1,1
+"Colorado","RS",1,0,1
+"Comendador Gomes","MG",0,1,1
+"Conceição do Araguaia","PA",1,0,1
+"Conceição do Mato Dentro","MG",0,1,1
+"Condeúba","BA",1,0,1
+"Confresa","MT",1,0,1
+"Contenda","PR",1,0,1
+"Coração de Maria","BA",1,0,1
+"Coromandel","MG",1,0,1
+"Corupá","SC",0,1,1
+"Costa Marques","RO",0,1,1
+"Crissiumal","RS",1,0,1
+"Cristinápolis","SE",1,0,1
+"Crixás","GO",1,0,1
+"Cruzeiro do Oeste","PR",1,0,1
+"Cruzeta","RN",1,0,1
+"Cuité","PB",1,0,1
+"Cumari","GO",1,0,1
+"Divino","MG",1,0,1
+"Divino de São Lourenço","ES",1,0,1
+"Divisópolis","MG",1,0,1
+"Ecoporanga","ES",1,0,1
+"Eldorado","MS",1,0,1
+"Entre Rios de Minas","MG",1,0,1
+"Espumoso","RS",1,0,1
+"Estreito","MA",1,0,1
+"Estrela do Norte","GO",1,0,1
+"Faxinal dos Guedes","SC",1,0,1
+"Formiga","MG",0,1,1
+"Formosa do Oeste","PR",1,0,1
+"Frei Miguelinho","PE",1,0,1
+"Gandu","BA",1,0,1
+"Glória de Dourados","MS",1,0,1
+"Goianira","GO",1,0,1
+"Granja","CE",1,0,1
+"Grossos","RN",1,0,1
+"Guaíba","RS",1,0,1
+"Guaiçara","SP",1,0,1
+"Guairaçá","PR",1,0,1
+"Guaraçaí","SP",1,0,1
+"Guarantã do Norte","MT",1,0,1
+"Guararapes","SP",1,0,1
+"Guareí","SP",1,0,1
+"Guia Lopes da Laguna","MS",0,1,1
+"Ibiá","MG",1,0,1
+"Ibiapina","CE",1,0,1
+"Icapuí","CE",1,0,1
+"Igarapé-Miri","PA",1,0,1
+"Iguaraçu","PR",1,0,1
+"Ilha de Itamaracá","PE",0,1,1
+"Imbituva","PR",1,0,1
+"Imbuia","SC",1,0,1
+"Indaial","SC",0,1,1
+"Inhambupe","BA",1,0,1
+"Inhaúma","MG",1,0,1
+"Ipirá","BA",1,0,1
+"Ipiranga do Sul","RS",1,0,1
+"Iporã do Oeste","SC",1,0,1
+"Irapuru","SP",0,1,1
+"Irecê","BA",1,0,1
+"Itaberaí","GO",0,1,1
+"Itaituba","PA",1,0,1
+"Itajá","RN",0,1,1
+"Itaju","SP",1,0,1
+"Itamonte","MG",1,0,1
+"Itapagipe","MG",1,0,1
+"Itaparica","BA",1,0,1
+"Itapiranga","SC",1,0,1
+"Itápolis","SP",1,0,1
+"Itaporanga","PB",1,0,1
+"Itaqui","RS",1,0,1
+"Itatim","BA",1,0,1
+"Iturama","MG",1,0,1
+"Ivaí","PR",1,0,1
+"Ivinhema","MS",1,0,1
+"Jaboticaba","RS",1,0,1
+"Jacarezinho","PR",0,1,1
+"Jaguarari","BA",1,0,1
+"Jaguaripe","BA",1,0,1
+"Jaguaruana","CE",1,0,1
+"Jandaia do Sul","PR",1,0,1
+"Jardim","MS",1,0,1
+"Jardim de Piranhas","RN",1,0,1
+"Jati","CE",1,0,1
+"Jijoca de Jericoacoara","CE",1,0,1
+"Joaíma","MG",1,0,1
+"Joanópolis","SP",1,0,1
+"João Alfredo","PE",1,0,1
+"Joaquim Felício","MG",1,0,1
+"José Bonifácio","SP",1,0,1
+"Joviânia","GO",1,0,1
+"Jucurutu","RN",1,0,1
+"Juína","MT",1,0,1
+"Jundiá","AL",1,0,1
+"Jussara","GO",0,1,1
+"Lagoa Formosa","MG",1,0,1
+"Lagoa Nova","RN",0,1,1
+"Laranjal","MG",1,0,1
+"Lavrinhas","SP",1,0,1
+"Licínio de Almeida","BA",1,0,1
+"Linha Nova","RS",1,0,1
+"Lontras","SC",1,0,1
+"Macaparana","PE",1,0,1
+"Machadinho","RS",1,0,1
+"Machados","PE",1,0,1
+"Mairinque","SP",1,0,1
+"Mallet","PR",1,0,1
+"Mamonas","MG",1,0,1
+"Mangueirinha","PR",1,0,1
+"Maracaçumé","MA",1,0,1
+"Maracás","BA",1,0,1
+"Marco","CE",0,1,1
+"Marema","SC",1,0,1
+"Marialva","PR",1,0,1
+"Mariana","MG",1,0,1
+"Mariápolis","SP",1,0,1
+"Maribondo","AL",0,1,1
+"Massapê","CE",1,0,1
+"Massaranduba","PB",0,1,1
+"Massaranduba","SC",0,1,1
+"Matinhos","PR",0,1,1
+"Maxaranguape","RN",1,0,1
+"Mercês","MG",1,0,1
+"Mineiros","GO",1,0,1
+"Miradouro","MG",1,0,1
+"Miranorte","TO",1,0,1
+"Mongaguá","SP",1,0,1
+"Monte Aprazível","SP",1,0,1
+"Monte Castelo","SC",1,0,1
+"Montes Claros de Goiás","GO",1,0,1
+"Morro Reuter","RS",1,0,1
+"Mozarlândia","GO",1,0,1
+"Mulungu","CE",1,0,1
+"Mundo Novo","MS",1,0,1
+"Muzambinho","MG",1,0,1
+"Natividade da Serra","SP",1,0,1
+"Nerópolis","GO",1,0,1
+"Neves Paulista","SP",1,0,1
+"Niquelândia","GO",1,0,1
+"Nonoai","RS",0,1,1
+"Nova Aurora","PR",1,0,1
+"Nova Bréscia","RS",1,0,1
+"Nova Cantu","PR",1,0,1
+"Nova Crixás","GO",1,0,1
+"Nova Palmeira","PB",1,0,1
+"Nova Serrana","MG",1,0,1
+"Nova Trento","SC",0,1,1
+"Nova Veneza","SC",1,0,1
+"Novo Airão","AM",1,0,1
+"Novo Gama","GO",1,0,1
+"Novo Progresso","PA",1,0,1
+"Novo Santo Antônio","MT",0,1,1
+"Ocauçu","SP",1,0,1
+"Olho d'Água do Borges","RN",1,0,1
+"Osvaldo Cruz","SP",1,0,1
+"Ouricuri","PE",0,1,1
+"Ouro Preto do Oeste","RO",0,1,1
+"Pacaembu","SP",1,0,1
+"Palma","MG",1,0,1
+"Palmas de Monte Alto","BA",1,0,1
+"Palmitos","SC",1,0,1
+"Palotina","PR",1,0,1
+"Paraguaçu Paulista","SP",0,1,1
+"Paraíso do Tocantins","TO",0,1,1
+"Paraisópolis","MG",1,0,1
+"Paudalho","PE",1,0,1
+"Paulistânia","SP",1,0,1
+"Peabiru","PR",1,0,1
+"Pedrinópolis","MG",1,0,1
+"Pedro de Toledo","SP",1,0,1
+"Pedro do Rosário","MA",1,0,1
+"Peixoto de Azevedo","MT",1,0,1
+"Picuí","PB",1,0,1
+"Piedade","SP",1,0,1
+"Piên","PR",1,0,1
+"Pinhal de São Bento","PR",1,0,1
+"Pinhalão","PR",1,0,1
+"Pinheiral","RJ",1,0,1
+"Pinheiro Machado","RS",1,0,1
+"Piracaia","SP",1,0,1
+"Piraju","SP",1,0,1
+"Pirajuí","SP",1,0,1
+"Pitangui","MG",1,0,1
+"Pitimbu","PB",1,0,1
+"Poá","SP",0,1,1
+"Poço Fundo","MG",1,0,1
+"Ponte Serrada","SC",1,0,1
+"Porangaba","SP",0,1,1
+"Porto da Folha","SE",1,0,1
+"Potiraguá","BA",0,1,1
+"Presidente Epitácio","SP",0,1,1
+"Presidente Tancredo Neves","BA",1,0,1
+"Quedas do Iguaçu","PR",1,0,1
+"Quintana","SP",1,0,1
+"Rancho Queimado","SC",1,0,1
+"Redenção","CE",1,0,1
+"Redenção da Serra","SP",0,1,1
+"Reriutaba","CE",1,0,1
+"Riachão","MA",1,0,1
+"Riachão do Jacuípe","BA",1,0,1
+"Riacho da Cruz","RN",1,0,1
+"Rialma","GO",1,0,1
+"Ribeira do Pombal","BA",1,0,1
+"Ribeirão Bonito","SP",1,0,1
+"Ribeirão das Neves","MG",1,0,1
+"Rinópolis","SP",1,0,1
+"Rio Claro","RJ",1,0,1
+"Rio do Fogo","RN",1,0,1
+"Rio Paranaíba","MG",1,0,1
+"Rio Piracicaba","MG",1,0,1
+"Rolador","RS",1,0,1
+"Sabáudia","PR",1,0,1
+"Saldanha Marinho","RS",1,0,1
+"Salto Grande","SP",1,0,1
+"Sanharó","PE",0,1,1
+"Santa Adélia","SP",1,0,1
+"Santa Bárbara","BA",1,0,1
+"Santa Bárbara","MG",1,0,1
+"Santa Cecília","SC",1,0,1
+"Santa Cruz Cabrália","BA",0,1,1
+"Santa Ernestina","SP",1,0,1
+"Santa Inês","PR",1,0,1
+"Santa Isabel","SP",1,0,1
+"Santa Izabel do Pará","PA",1,0,1
+"Santa Leopoldina","ES",1,0,1
+"Santa Luzia","MG",0,1,1
+"Santa Maria","RN",0,1,1
+"Santa Maria da Serra","SP",0,1,1
+"Santa Maria de Itabira","MG",1,0,1
+"Santa Maria Madalena","RJ",1,0,1
+"Santa Quitéria","CE",0,1,1
+"Santa Rita de Jacutinga","MG",1,0,1
+"Santa Tereza de Goiás","GO",1,0,1
+"Santana do Araguaia","PA",1,0,1
+"Santana do Garambéu","MG",1,0,1
+"Santana do São Francisco","SE",1,0,1
+"Santo Antônio","RN",1,0,1
+"Santo Antônio de Leverger","MT",1,0,1
+"São Benedito do Rio Preto","MA",1,0,1
+"São Benedito do Sul","PE",1,0,1
+"São Francisco","MG",1,0,1
+"São Francisco de Itabapoana","RJ",1,0,1
+"São João Batista do Glória","MG",1,0,1
+"São João Evangelista","MG",1,0,1
+"São Joaquim da Barra","SP",0,1,1
+"São Joaquim do Monte","PE",1,0,1
+"São Jorge d'Oeste","PR",1,0,1
+"São José do Cedro","SC",1,0,1
+"São José do Piauí","PI",0,1,1
+"São José dos Quatro Marcos","MT",0,1,1
+"São Luís do Curu","CE",0,1,1
+"São Luís do Quitunde","AL",1,0,1
+"São Martinho","RS",1,0,1
+"São Martinho","SC",1,0,1
+"São Miguel Arcanjo","SP",1,0,1
+"São Miguel das Missões","RS",1,0,1
+"São Miguel dos Milagres","AL",1,0,1
+"São Pedro de Alcântara","SC",1,0,1
+"Sarandi","PR",1,0,1
+"Seara","SC",1,0,1
+"Sena Madureira","AC",1,0,1
+"Sentinela do Sul","RS",1,0,1
+"Serra de São Bento","RN",1,0,1
+"Serra do Salitre","MG",1,0,1
+"Serrinha","BA",0,1,1
+"Sidrolândia","MS",1,0,1
+"Simões","PI",1,0,1
+"Sirinhaém","PE",0,1,1
+"Sud Mennucci","SP",1,0,1
+"Tabuleiro","MG",1,0,1
+"Tambaú","SP",0,1,1
+"Tanabi","SP",1,0,1
+"Tanquinho","BA",1,0,1
+"Taperoá","BA",1,0,1
+"Tapurah","MT",1,0,1
+"Taquaral","SP",1,0,1
+"Taquarituba","SP",1,0,1
+"Tartarugalzinho","AP",1,0,1
+"Terenos","MS",1,0,1
+"Terra Nova","PE",1,0,1
+"Tio Hugo","RS",0,1,1
+"Tombos","MG",1,0,1
+"Tracuateua","PA",1,0,1
+"Trindade do Sul","RS",1,0,1
+"Triunfo Potiguar","RN",1,0,1
+"Tuiuti","SP",1,0,1
+"Tuparendi","RS",1,0,1
+"Uchoa","SP",1,0,1
+"Umarizal","RN",1,0,1
+"Umbaúba","SE",1,0,1
+"Upanema","RN",1,0,1
+"Urandi","BA",1,0,1
+"Uruaçu","GO",1,0,1
+"Uruana","GO",1,0,1
+"Uruará","PA",1,0,1
+"Uruburetama","CE",1,0,1
+"Urupema","SC",1,0,1
+"Urupês","SP",1,0,1
+"Urussanga","SC",1,0,1
+"Várzea da Roça","BA",1,0,1
+"Vera","MT",1,0,1
+"Vicentina","MS",1,0,1
+"Visconde do Rio Branco","MG",1,0,1
+"Vitorino","PR",0,1,1

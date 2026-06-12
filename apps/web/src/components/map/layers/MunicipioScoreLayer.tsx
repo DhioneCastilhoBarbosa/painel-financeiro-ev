@@ -35,14 +35,19 @@ export function MunicipioScoreLayer({ uf, geojson, scoresByCode }: Props) {
     const code: string = feature?.properties?.codarea;
     const m = scoresByCode.get(code);
     if (!m) return;
+    const fonteLabel = m.fonte === 'abve' ? 'ABVE' : m.fonte === 'ocm' ? 'Open Charge Map' : 'sem registro';
+    const detalheEletro = m.fonte === 'abve'
+      ? `${m.eletropostos} <span style="color:#64748b">(AC ${m.ac} · DC ${m.dc})</span>`
+      : `${m.eletropostos}`;
     layer.bindTooltip(`${m.nome} — ${m.scorePercent}/100`, { sticky: true });
     layer.bindPopup(
       `<b>${m.nome} (${m.uf})</b><br/>
        Score de oportunidade: <b>${m.scorePercent}/100</b><br/>
        População: ${m.pop.toLocaleString('pt-BR')}<br/>
        Frota EV (estimada): ${Math.round(m.frotaEst).toLocaleString('pt-BR')}<br/>
-       Eletropostos: ${m.eletropostos}<br/>
-       Carência (frota/ponto): ${m.gap.toFixed(1)}`
+       Eletropostos: ${detalheEletro}<br/>
+       Carência (frota/ponto): ${m.gap.toFixed(1)}<br/>
+       <span style="color:#94a3b8;font-size:11px">Fonte eletropostos: ${fonteLabel}</span>`
     );
   };
 
