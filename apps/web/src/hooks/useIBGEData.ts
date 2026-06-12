@@ -24,8 +24,11 @@ export const UF_CODE_TO_SIGLA: Record<string, string> = {
 
 const GEO_URL =
   'https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo+json&resolucao=2';
+// Agregado 6579 = População residente estimada (var 9324, último período). A
+// variável 9058 usada antes foi descontinuada pelo IBGE (passou a retornar 500).
+// Este valor por UF é usado como proxy de "porte de mercado" no score nacional.
 const INCOME_URL =
-  'https://servicodados.ibge.gov.br/api/v3/agregados/6579/periodos/2021/variaveis/9058?localidades=N3[all]';
+  'https://servicodados.ibge.gov.br/api/v3/agregados/6579/periodos/-1/variaveis/9324?localidades=N3[all]';
 const TIMEOUT_MS = 20_000;
 
 let geoCache: IBGEGeoJSON | null = null;
@@ -64,7 +67,8 @@ export function useIBGEData() {
             for (const s of series) {
               const code: string = s?.localidade?.id;
               const sigla = UF_CODE_TO_SIGLA[code];
-              const val = s?.serie?.['2021'];
+              // pega o valor do período mais recente retornado (ex.: "2025")
+              const val = Object.values(s?.serie ?? {}).at(-1) as string | undefined;
               if (sigla && val) income[sigla] = parseFloat(val) || 0;
             }
             return income;
