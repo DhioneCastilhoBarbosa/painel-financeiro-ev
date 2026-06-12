@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function MapPage() {
   return (
-    <div style={{ height: 'calc(100dvh - 56px)', overflow: 'hidden' }}>
+    <div style={{ height: 'calc(100dvh - 56px)', overflow: 'hidden', position: 'relative', zIndex: 0 }}>
       <MapClientWrapper />
     </div>
   );

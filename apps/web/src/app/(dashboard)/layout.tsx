@@ -38,10 +38,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="flex h-screen overflow-hidden bg-[#EFEFED] dark:bg-slate-950">
         <Sidebar className="max-md:hidden" />
         <main className="flex-1 overflow-y-auto flex flex-col">
-          <MobileNav />
-          <div className="flex items-center">
+          <div className="print:hidden"><MobileNav /></div>
+          <div className="flex items-center print:hidden">
             <div className="flex-1"><TrialBanner /></div>
-            <div className="px-3 py-1.5 shrink-0 print:hidden">
+            <div className="px-3 py-1.5 shrink-0">
               <AlertBell />
             </div>
           </div>

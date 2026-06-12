@@ -32,6 +32,7 @@ from app.core.plan_config import get_all_plans, get_available_features, update_p
 from app.core.deps import CurrentUser
 from app.models.charging_session import ChargingSession
 from app.models.data_file import DataFile
+from app.models.feedback import Feedback
 from app.models.org_invite_code import OrgInviteCode
 from app.models.organization import Organization
 from app.models.subscription import Subscription
@@ -646,3 +647,99 @@ async def patch_plan_config(
     )
     await db.commit()
     return updated
+
+
+# ─── Trial days management ────────────────────────────────────────────────────
+
+
+class TrialDaysUpdate(BaseModel):
+    trial_ends_at: datetime | None = None
+    days_from_now: int | None = None
+
+
+@router.patch("/organizations/{org_id}/trial", summary="Atualizar validade do trial")
+async def update_org_trial(
+    org_id: uuid.UUID,
+    body: TrialDaysUpdate,
+    admin: User = _AdminUser,
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    org = await db.get(Organization, org_id)
+    if not org:
+        raise HTTPException(status_code=404, detail="Organização não encontrada")
+
+    if body.days_from_now is not None:
+        new_date = datetime.now(UTC) + timedelta(days=body.days_from_now)
+        org.trial_ends_at = new_date
+    elif body.trial_ends_at is not None:
+        org.trial_ends_at = body.trial_ends_at
+    else:
+        raise HTTPException(status_code=400, detail="Forneça trial_ends_at ou days_from_now")
+
+    await db.commit()
+    await db.refresh(org)
+    remaining = None
+    if org.trial_ends_at:
+        delta = org.trial_ends_at - datetime.now(UTC)
+        remaining = max(0, delta.days)
+    return {
+        "id": str(org.id),
+        "trial_ends_at": org.trial_ends_at.isoformat() if org.trial_ends_at else None,
+        "days_remaining": remaining,
+    }
+
+
+# ─── Admin feedback endpoints ─────────────────────────────────────────────────
+
+
+class FeedbackStatusUpdate(BaseModel):
+    status: str = Field(..., pattern="^(pending|reviewed|resolved)$")
+
+
+@router.get("/feedback", summary="Listar todos os feedbacks (sugestões/reclamações)")
+async def list_all_feedback(
+    admin: User = _AdminUser,
+    db: AsyncSession = Depends(get_db),
+    status_filter: str | None = Query(None, alias="status"),
+    limit: int = Query(100, ge=1, le=500),
+) -> list[dict[str, Any]]:
+    q = (
+        select(Feedback, Organization.name.label("org_name"))
+        .join(Organization, Feedback.organization_id == Organization.id, isouter=True)
+        .order_by(Feedback.created_at.desc())
+        .limit(limit)
+    )
+    if status_filter:
+        q = q.where(Feedback.status == status_filter)
+    result = await db.execute(q)
+    rows = result.all()
+    return [
+        {
+            "id": str(f.id),
+            "type": f.type,
+            "title": f.title,
+            "content": f.content,
+            "status": f.status,
+            "user_name": f.user_name,
+            "user_email": f.user_email,
+            "organization_id": str(f.organization_id),
+            "organization_name": org_name or "",
+            "created_at": f.created_at.isoformat(),
+        }
+        for f, org_name in rows
+    ]
+
+
+@router.patch("/feedback/{feedback_id}/status", summary="Atualizar status de um feedback")
+async def update_feedback_status(
+    feedback_id: uuid.UUID,
+    body: FeedbackStatusUpdate,
+    admin: User = _AdminUser,
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    fb = await db.get(Feedback, feedback_id)
+    if not fb:
+        raise HTTPException(status_code=404, detail="Feedback não encontrado")
+    fb.status = body.status
+    await db.commit()
+    return {"id": str(fb.id), "status": fb.status}

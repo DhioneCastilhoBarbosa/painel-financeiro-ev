@@ -25,6 +25,7 @@ from app.routers import (
     billing,
     capex,
     custom_roles,
+    feedback,
     files,
     leads,
     organizations,
@@ -315,6 +316,7 @@ app.include_router(capex.router, prefix="/api/v1/capex", tags=["capex"], depende
 app.include_router(alerts.router, prefix="/api/v1/alerts", tags=["alerts"])
 app.include_router(user_notes.router, prefix="/api/v1/user-notes", tags=["user-notes"])
 app.include_router(audit.router, prefix="/api/v1/audit", tags=["audit"])
+app.include_router(feedback.router, prefix="/api/v1/feedback", tags=["feedback"])
 
 # Painel de Administrador — exclusivo para Mestres da organização Intelbras
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["admin"])

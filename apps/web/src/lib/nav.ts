@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 import {
   BarChart3, FileSpreadsheet, TrendingUp, Zap, Settings,
-  Users, FileText, Building2, CreditCard, Target, Wallet, MapPin,
+  Users, FileText, Building2, CreditCard, Target, Wallet, MapPin, MessageSquarePlus,
 } from "lucide-react";
 import type { User } from "@/lib/types";
 import { canAccess } from "@/lib/permissions";
@@ -45,11 +45,12 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "Gestão",
     items: [
-      { href: "/dashboard/relatorio", label: "Relatório PDF",    icon: FileText,        feature: "pdf_report" },
-      { href: "/dashboard/files",     label: "Arquivos",         icon: FileSpreadsheet, feature: "files" },
-      { href: "/dashboard/team",      label: "Equipe",           icon: Users,           feature: "team" },
-      { href: "/dashboard/billing",   label: "Plano & Cobrança", icon: CreditCard,      feature: "billing" },
-      { href: "/dashboard/settings",  label: "Configurações",    icon: Settings,        feature: "settings" },
+      { href: "/dashboard/relatorio", label: "Relatório PDF",        icon: FileText,           feature: "pdf_report" },
+      { href: "/dashboard/files",     label: "Arquivos",             icon: FileSpreadsheet,    feature: "files" },
+      { href: "/dashboard/team",      label: "Equipe",               icon: Users,              feature: "team" },
+      { href: "/dashboard/billing",   label: "Plano & Cobrança",     icon: CreditCard,         feature: "billing" },
+      { href: "/dashboard/settings",  label: "Configurações",        icon: Settings,           feature: "settings" },
+      { href: "/dashboard/feedback",  label: "Sugestões / Reclamações", icon: MessageSquarePlus },
     ],
   },
   {

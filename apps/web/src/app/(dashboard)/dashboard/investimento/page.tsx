@@ -249,7 +249,20 @@ function PrintParameters({ inputs, results, capex }: { inputs: ProjectInputs; re
 
 // ─── Simplified Analysis ──────────────────────────────────────────────────────
 
+interface StationEntry {
+  type: string;
+  quantity: number;
+}
+
+interface ChargerConfigEntry {
+  power_kw: number;
+  price_brl: number;
+  avg_sessions_day: number;
+  avg_duration_min: number;
+}
+
 interface SimpleInputs {
+  stations: StationEntry[];
   n_chargers: number;
   power_kw: number;
   capex_total: number;
@@ -258,9 +271,12 @@ interface SimpleInputs {
   occupancy_pct: number;
   monthly_opex: number;
   revenue_split_pct: number;
+  establishment_name: string;
+  location_type: string;
 }
 
 const DEFAULT_SIMPLE: SimpleInputs = {
+  stations: [{ type: "DC 60 kW", quantity: 1 }],
   n_chargers: 1,
   power_kw: 60,
   capex_total: 93500,
@@ -269,56 +285,82 @@ const DEFAULT_SIMPLE: SimpleInputs = {
   occupancy_pct: 30,
   monthly_opex: 300,
   revenue_split_pct: 0,
+  establishment_name: "",
+  location_type: "",
 };
 
-/** Lucro líquido mensal para uma dada ocupação (%), mantendo os demais parâmetros. */
-function monthlyNetForOccupancy(s: SimpleInputs, occupancy_pct: number): number {
-  // Sempre considera 24h/dia; ocupação representa o % do tempo em uso
-  const monthly_kwh = s.n_chargers * s.power_kw * 24 * 30 * (occupancy_pct / 100);
-  const monthly_revenue = monthly_kwh * s.tariff_per_kwh;
-  const monthly_energy = monthly_kwh * s.energy_cost_per_kwh;
-  const monthly_split = monthly_revenue * (s.revenue_split_pct / 100);
-  return monthly_revenue - monthly_energy - s.monthly_opex - monthly_split;
-}
+const OCC_PRESETS: { label: string; desc: string; value: number; active: string }[] = [
+  { label: "Baixa", desc: "~3h/dia", value: 15, active: "bg-red-100 border-red-300 text-red-700 dark:bg-red-950/40 dark:border-red-800 dark:text-red-400" },
+  { label: "Média", desc: "~7h/dia", value: 30, active: "bg-amber-100 border-amber-300 text-amber-700 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-400" },
+  { label: "Alta", desc: "~13h/dia", value: 55, active: "bg-green-100 border-green-300 text-green-700 dark:bg-green-950/40 dark:border-green-800 dark:text-green-400" },
+];
+
+const LOCATION_TYPES = [
+  "Shopping Center / Mall", "Hotel / Pousada", "Condomínio Residencial",
+  "Condomínio Empresarial", "Posto de Combustível", "Supermercado / Hipermercado",
+  "Aeroporto / Rodoviária", "Escritório Corporativo", "Restaurante / Alimentação",
+  "Hospital / Clínica", "Universidade / Escola", "Academia / Clube",
+  "Estacionamento Público", "Outro",
+];
 
 interface SimpleScenario {
-  off: number;           // deslocamento aplicado (-10, -5, +5, +10)
-  occ: number;           // ocupação resultante já clampada em [0, 100]
-  key: string;           // chave no dataset do gráfico (ex.: "occ_25")
-  label: string;         // rótulo exibido (ex.: "25%")
+  off: number;
+  occ: number;
+  key: string;
+  label: string;
   color: string;
   monthly_net: number;
   payback_months: number | null;
 }
 
-function calcSimple(s: SimpleInputs) {
+function calcSimple(s: SimpleInputs, configs?: Record<string, ChargerConfigEntry>) {
   const baseOcc = s.occupancy_pct;
-  // Sempre considera 24h/dia; ocupação representa o % do tempo em uso
-  const monthly_kwh = s.n_chargers * s.power_kw * 24 * 30 * (baseOcc / 100);
-  const monthly_revenue = monthly_kwh * s.tariff_per_kwh;
-  const monthly_energy = monthly_kwh * s.energy_cost_per_kwh;
-  const monthly_split = monthly_revenue * (s.revenue_split_pct / 100);
-  const monthly_net = monthly_revenue - monthly_energy - s.monthly_opex - monthly_split;
-  const payback_months = monthly_net > 0 ? s.capex_total / monthly_net : null;
-  const roi_1y = monthly_net > 0 ? ((monthly_net * 12) / s.capex_total) * 100 : 0;
-  const horizon = Math.min(84, Math.ceil((payback_months ?? 60) * 2.5));
 
-  // ── Cenários de ocupação ±5% / ±10% em relação à base ──────────────────────
-  // Clampa a ocupação resultante em [0%, 100%] e descarta cenários que, após o
-  // clamp, coincidam com a base ou com outro cenário (ex.: base 95% → +5/+10 = 100%).
+  // Derive effective totals from stations or legacy n_chargers/power_kw
+  let n_chargers: number;
+  let total_power_kw: number;
+  const activeStations = s.stations.filter(st => st.quantity > 0);
+  if (activeStations.length > 0 && configs) {
+    n_chargers = activeStations.reduce((sum, st) => sum + st.quantity, 0);
+    total_power_kw = activeStations.reduce((sum, st) => sum + st.quantity * (configs[st.type]?.power_kw ?? 0), 0);
+  } else {
+    n_chargers = s.n_chargers;
+    total_power_kw = s.n_chargers * s.power_kw;
+  }
+
+  // Theoretical max kWh at given occupancy; 50% reduction for real-world charging behaviour
+  const monthly_kwh_theoretical = total_power_kw * 24 * 30 * (baseOcc / 100);
+  const monthly_kwh = monthly_kwh_theoretical * 0.5;
+
+  const monthly_revenue = monthly_kwh * s.tariff_per_kwh;
+  const monthly_energy  = monthly_kwh * s.energy_cost_per_kwh;
+  const monthly_split   = monthly_revenue * (s.revenue_split_pct / 100);
+  const monthly_net     = monthly_revenue - monthly_energy - s.monthly_opex - monthly_split;
+  const payback_months  = monthly_net > 0 ? s.capex_total / monthly_net : null;
+  const roi_1y          = monthly_net > 0 ? ((monthly_net * 12) / s.capex_total) * 100 : 0;
+  const horizon         = Math.min(84, Math.ceil((payback_months ?? 60) * 2.5));
+
+  function netForOcc(occ: number): number {
+    const kwh = total_power_kw * 24 * 30 * (occ / 100) * 0.5;
+    const rev = kwh * s.tariff_per_kwh;
+    const eng = kwh * s.energy_cost_per_kwh;
+    const spl = rev * (s.revenue_split_pct / 100);
+    return rev - eng - s.monthly_opex - spl;
+  }
+
   const OFFSETS: { off: number; color: string }[] = [
-    { off: -10, color: "#ef4444" }, // vermelho — pior caso
-    { off: -5,  color: "#f59e0b" }, // âmbar
-    { off: +5,  color: "#22c55e" }, // verde-claro
-    { off: +10, color: "#059669" }, // verde-escuro — melhor caso
+    { off: -10, color: "#ef4444" },
+    { off: -5,  color: "#f59e0b" },
+    { off: +5,  color: "#22c55e" },
+    { off: +10, color: "#059669" },
   ];
-  const seen = new Set<number>([baseOcc]); // base já é exibida como barras
+  const seen = new Set<number>([baseOcc]);
   const scenarios: SimpleScenario[] = [];
   for (const { off, color } of OFFSETS) {
     const occ = Math.max(0, Math.min(100, baseOcc + off));
     if (seen.has(occ)) continue;
     seen.add(occ);
-    const net = monthlyNetForOccupancy(s, occ);
+    const net = netForOcc(occ);
     scenarios.push({
       off, occ, color,
       key: `occ_${occ}`,
@@ -329,21 +371,67 @@ function calcSimple(s: SimpleInputs) {
   }
 
   const chart = Array.from({ length: horizon + 1 }, (_, i) => {
-    const row: Record<string, number> = {
-      mes: i,
-      acumulado: Math.round(monthly_net * i - s.capex_total),
-    };
+    const row: Record<string, number> = { mes: i, acumulado: Math.round(monthly_net * i - s.capex_total) };
     for (const sc of scenarios) row[sc.key] = Math.round(sc.monthly_net * i - s.capex_total);
     return row;
   });
 
-  return { monthly_kwh, monthly_revenue, monthly_energy, monthly_split, monthly_net, payback_months, roi_1y, baseOcc, scenarios, chart };
+  return {
+    monthly_kwh, monthly_kwh_theoretical, monthly_revenue, monthly_energy, monthly_split,
+    monthly_net, payback_months, roi_1y, baseOcc, n_chargers, total_power_kw, scenarios, chart,
+  };
 }
 
 function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) => string }) {
+  const { user } = useAuth();
   const [s, setS] = useState<SimpleInputs>(DEFAULT_SIMPLE);
-  const r = useMemo(() => calcSimple(s), [s]);
-  const setV = (k: keyof SimpleInputs, v: number) => setS(prev => ({ ...prev, [k]: v }));
+
+  // Fetch simulator config for charger types & CAPEX suggestions
+  const { data: simCfg } = useSWR<{ charger_configs: Record<string, ChargerConfigEntry> }>(
+    "/leads/config/simulator",
+    (url: string) => api.get(url).then(rr => rr.data),
+  );
+  const chargerConfigs = simCfg?.charger_configs ?? null;
+  const chargerTypeEntries = useMemo(
+    () => chargerConfigs ? (Object.entries(chargerConfigs) as [string, ChargerConfigEntry][]) : [],
+    [chargerConfigs],
+  );
+
+  const r = useMemo(() => calcSimple(s, chargerConfigs ?? undefined), [s, chargerConfigs]);
+
+  const setV = <K extends keyof SimpleInputs>(k: K, v: SimpleInputs[K]) =>
+    setS(prev => ({ ...prev, [k]: v }));
+
+  const updateStation = (type: string, quantity: number) => {
+    setS(prev => {
+      const existing = prev.stations.find(st => st.type === type);
+      let next: StationEntry[];
+      if (quantity <= 0) {
+        next = prev.stations.filter(st => st.type !== type);
+      } else if (existing) {
+        next = prev.stations.map(st => st.type === type ? { ...st, quantity } : st);
+      } else {
+        next = [...prev.stations, { type, quantity }];
+      }
+      return { ...prev, stations: next };
+    });
+  };
+
+  // Suggested CAPEX based on selected stations and config prices
+  const suggestedCapex = useMemo(() => {
+    if (!chargerConfigs || s.stations.length === 0) return 0;
+    return s.stations.reduce((sum, st) => sum + (chargerConfigs[st.type]?.price_brl ?? 0) * st.quantity, 0);
+  }, [s.stations, chargerConfigs]);
+
+  // Auto-fill CAPEX from suggestion when stations change and CAPEX wasn't manually edited
+  const prevSuggestedCapex = useRef(suggestedCapex);
+  useEffect(() => {
+    if (suggestedCapex > 0 && suggestedCapex !== prevSuggestedCapex.current) {
+      prevSuggestedCapex.current = suggestedCapex;
+      setS(prev => ({ ...prev, capex_total: suggestedCapex }));
+    }
+  }, [suggestedCapex]);
+
   const fmtPb = (m: number | null) => {
     if (!m) return "Sem retorno";
     if (m > 120) return "> 10 anos";
@@ -365,13 +453,14 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     "/payback/scenarios",
     (url: string) => api.get(url).then(rr => rr.data),
   );
-  // Filter only "simple" scenarios
   const simpleSavedConfigs = useMemo(
     () => allScenarios.filter(c => c.inputs._mode === "simple"),
     [allScenarios]
   );
 
   function handleSimplePrint() {
+    const originalTitle = document.title;
+    document.title = `Intelbras - Análise de Investimento de Eletroposto${s.establishment_name ? ` - ${s.establishment_name}` : ""}`;
     const sidebar = document.querySelector<HTMLElement>("[data-sidebar]");
     const aside = document.querySelector<HTMLElement>(".simplified-aside");
     const toUnclip = Array.from(document.querySelectorAll<HTMLElement>(".h-screen,.h-full,.min-h-0,.overflow-hidden,.overflow-y-auto"));
@@ -382,6 +471,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     if (aside) aside.style.display = "none";
     toUnclip.forEach(el => { el.style.height = "auto"; el.style.maxHeight = "none"; el.style.minHeight = "0"; el.style.overflow = "visible"; });
     const restore = () => {
+      document.title = originalTitle;
       if (sidebar && savedSidebar !== null) sidebar.style.display = savedSidebar;
       if (aside && savedAside !== null) aside.style.display = savedAside;
       savedUnclip.forEach(({ el, v }) => { el.style.cssText = v; });
@@ -413,8 +503,6 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
         const parsed = JSON.parse(ev.target?.result as string);
         const data = parsed.inputs ?? parsed;
         if (data._mode !== "simple") { toast.error("Este arquivo é de uma análise avançada. Use na aba Avançada."); return; }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { _mode: _ignored, ...rest } = data as Record<string, unknown>;
         setS(prev => ({ ...DEFAULT_SIMPLE, ...prev, ...(rest as Partial<SimpleInputs>) }));
         toast.success("Projeto importado");
@@ -437,9 +525,8 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
   }
 
   function handleLoadSimple(cfg: SavedConfig) {
-    // cfg.inputs is Record<string,unknown> with _mode:"simple" + SimpleInputs fields
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { _mode, ...rest } = cfg.inputs;
+    void _mode;
     setS(prev => ({ ...DEFAULT_SIMPLE, ...prev, ...(rest as Partial<SimpleInputs>) }));
     setShowSavePanel(false);
     toast.success(`Projeto "${cfg.name}" carregado`);
@@ -454,6 +541,10 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     } catch (err) { toast.error(apiErrMsg(err, "Erro ao excluir")); }
   }
 
+  const stationsSummary = r.n_chargers > 0
+    ? `${r.n_chargers} carregador${r.n_chargers !== 1 ? "es" : ""} · ${r.total_power_kw.toFixed(1).replace(".0", "")} kW`
+    : "Nenhuma estação";
+
   return (
     <div className="flex flex-1 min-h-0 overflow-hidden">
       {/* Inputs */}
@@ -465,19 +556,117 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
           </h2>
           <p className="text-[0.7rem] text-muted-foreground mt-0.5">Preencha os valores principais do projeto</p>
         </div>
-        <NumField label="Qtd. carregadores" value={s.n_chargers} onChange={v => setV("n_chargers", v)} min={1}
-          help="Número total de carregadores instalados." />
-        <NumField label="Potência (kW/unid.)" value={s.power_kw} onChange={v => setV("power_kw", v)} suffix="kW"
-          help="Potência nominal de cada carregador." />
-        <NumField label="CAPEX total" value={s.capex_total} onChange={v => setV("capex_total", v)} prefix="R$"
-          help="Investimento inicial total: equipamentos, infraestrutura, instalação e homologações." />
+
+        {/* Establishment name */}
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Nome do estabelecimento</label>
+          <input
+            type="text"
+            placeholder="Ex: Shopping Vila Olímpia"
+            value={s.establishment_name}
+            onChange={e => setV("establishment_name", e.target.value)}
+            className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
+          />
+        </div>
+
+        {/* Location type */}
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Local de utilização</label>
+          <select
+            value={s.location_type}
+            onChange={e => setV("location_type", e.target.value)}
+            className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
+          >
+            <option value="">Selecione o tipo de local</option>
+            {LOCATION_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+          </select>
+        </div>
+
         <Separator />
+
+        {/* Station selector */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs font-medium text-slate-600 dark:text-slate-400 flex-1">Estações de recarga</label>
+            <Help text="Selecione os tipos e quantidades de carregadores. CAPEX e potência são calculados automaticamente com base nas configurações." />
+          </div>
+          {chargerTypeEntries.length === 0 ? (
+            <div className="space-y-2">
+              <NumField label="Qtd. carregadores" value={s.n_chargers} onChange={v => setV("n_chargers", v)} min={1}
+                help="Número total de carregadores instalados." />
+              <NumField label="Potência (kW/unid.)" value={s.power_kw} onChange={v => setV("power_kw", v)} suffix="kW"
+                help="Potência nominal de cada carregador." />
+            </div>
+          ) : (
+            <div className="rounded-lg border dark:border-slate-700 divide-y dark:divide-slate-700 bg-white dark:bg-slate-900">
+              {chargerTypeEntries.map(([type, cfg]) => {
+                const qty = s.stations.find(st => st.type === type)?.quantity ?? 0;
+                return (
+                  <div key={type} className="flex items-center justify-between gap-2 px-3 py-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-medium truncate">{type}</p>
+                      <p className="text-[0.62rem] text-muted-foreground">{cfg.power_kw} kW · {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(cfg.price_brl)}</p>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button type="button" onClick={() => updateStation(type, Math.max(0, qty - 1))}
+                        className="h-6 w-6 rounded border border-input flex items-center justify-center text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed"
+                        disabled={qty === 0}>−</button>
+                      <span className="w-6 text-center text-xs font-medium tabular-nums">{qty}</span>
+                      <button type="button" onClick={() => updateStation(type, qty + 1)}
+                        className="h-6 w-6 rounded border border-input flex items-center justify-center text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800">+</button>
+                    </div>
+                  </div>
+                );
+              })}
+              <div className="px-3 py-2 text-[0.65rem] text-muted-foreground flex items-center justify-between">
+                <span>{stationsSummary}</span>
+                {suggestedCapex > 0 && suggestedCapex !== s.capex_total && (
+                  <button type="button" className="text-blue-500 hover:underline"
+                    onClick={() => setV("capex_total", suggestedCapex)}>
+                    Usar sugerido
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* CAPEX */}
+        <NumField label="CAPEX total" value={s.capex_total} onChange={v => setV("capex_total", v)} prefix="R$"
+          help="Investimento inicial total. O valor sugerido é baseado nos equipamentos selecionados e pode ser ajustado."
+          hint={suggestedCapex > 0 ? `Sugerido: ${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(suggestedCapex)}` : undefined} />
+
+        <Separator />
+
         <NumField label="Tarifa cobrada" value={s.tariff_per_kwh} onChange={v => setV("tariff_per_kwh", v)} prefix="R$" suffix="/kWh" step={0.05}
           help="Preço cobrado ao usuário final por kWh carregado." />
         <NumField label="Custo de energia" value={s.energy_cost_per_kwh} onChange={v => setV("energy_cost_per_kwh", v)} prefix="R$" suffix="/kWh" step={0.01}
           help="Tarifa de energia elétrica paga à concessionária." />
-        <NumField label="Ocupação estimada" value={s.occupancy_pct} onChange={v => setV("occupancy_pct", Math.min(100, v))} suffix="%" step={5}
-          help="% do tempo total (24h/dia) que os carregadores ficam em uso efetivo. Ex.: 30% = em uso ~7,2h/dia." />
+
+        {/* Occupancy with presets */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs font-medium text-slate-600 dark:text-slate-400 flex-1">Ocupação estimada</label>
+            <Help text="% do tempo total (24h/dia) que os carregadores ficam em uso. Ex.: 30% ≈ 7h/dia em uso." />
+          </div>
+          <div className="flex gap-1">
+            {OCC_PRESETS.map(preset => (
+              <button key={preset.label} type="button" onClick={() => setV("occupancy_pct", preset.value)}
+                className={`flex-1 text-[0.6rem] font-medium py-1.5 rounded border transition-colors leading-tight ${
+                  s.occupancy_pct === preset.value ? preset.active : "border-input text-muted-foreground hover:bg-slate-50 dark:hover:bg-slate-800"
+                }`}>
+                {preset.label}<br />{preset.value}%<br /><span className="text-[0.55rem] opacity-70">{preset.desc}</span>
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-1">
+            <input type="number" min={0} max={100} step={1} value={s.occupancy_pct}
+              onChange={e => { const v = parseFloat(e.target.value); if (!isNaN(v)) setV("occupancy_pct", Math.min(100, Math.max(0, v))); }}
+              className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm text-right focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900" />
+            <span className="text-xs text-muted-foreground shrink-0">%</span>
+          </div>
+        </div>
+
         <Separator />
         <NumField label="OPEX mensal (fixo)" value={s.monthly_opex} onChange={v => setV("monthly_opex", v)} prefix="R$"
           help="Soma de todos os custos fixos mensais: manutenção, internet, aluguel, etc." />
@@ -485,26 +674,30 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
           help="% da receita repassada ao dono do espaço (estabelecimento parceiro). 0 = sem split." />
       </aside>
 
-      {/* Results — mesma estrutura que a análise avançada */}
+      {/* Results */}
       <main className="flex-1 overflow-y-auto bg-white dark:bg-slate-950">
 
-        {/* Print header — oculto na tela, aparece no PDF */}
-        <div className="hidden print:flex items-start justify-between px-0 pt-0 pb-4 mb-2 border-b border-gray-300">
-          <div>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/intelbras-logo.svg" alt="Intelbras" style={{ display: "block", marginBottom: "6px", width: "30mm", height: "auto" }} />
-            <h1 className="text-lg font-bold text-black">Análise Simplificada de Investimento — EV</h1>
-            <p className="text-xs text-gray-500">
-              {s.n_chargers} carregador{s.n_chargers !== 1 ? "es" : ""} · {s.n_chargers * s.power_kw} kW instalados · CAPEX {formatCurrency(s.capex_total)}
-            </p>
-          </div>
-          <div className="text-right text-xs text-gray-400">
-            <p>{new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}</p>
-            <p className="mt-0.5">Intelbras Finance</p>
+        {/* Print header — hidden on screen, visible in PDF */}
+        <div className="hidden print:block px-0 pt-0 pb-4 mb-4 border-b-2 border-gray-300">
+          <div className="flex items-start justify-between">
+            <div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/intelbras-logo.svg" alt="Intelbras" style={{ display: "block", marginBottom: "6px", width: "30mm", height: "auto" }} />
+              <h1 className="text-base font-bold text-black">Análise de Investimento de Eletropostos - Payback</h1>
+              {s.establishment_name && <p className="text-sm font-semibold text-gray-700">{s.establishment_name}</p>}
+              {s.location_type && <p className="text-xs text-gray-500">{s.location_type}</p>}
+              <p className="text-xs text-gray-500 mt-1">{stationsSummary} · CAPEX {formatCurrency(s.capex_total)}</p>
+            </div>
+            <div className="text-right text-xs text-gray-400 space-y-0.5">
+              <p>{new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}</p>
+              {user && <p className="font-medium text-gray-600">{user.name}</p>}
+              {user?.organization_name && <p>{user.organization_name}</p>}
+              <p>Intelbras Finance</p>
+            </div>
           </div>
         </div>
 
-        {/* Cabeçalho na tela — oculto no PDF */}
+        {/* Screen header — hidden in PDF */}
         <div className="px-6 pt-6 pb-4 border-b dark:border-slate-800 print:hidden">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
@@ -513,39 +706,30 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                 Análise Simplificada
               </h1>
               <p className="text-muted-foreground text-sm mt-0.5">
-                Payback simples (não descontado) · estimativa rápida do retorno do investimento
+                Análise de Investimento de Eletropostos - Payback simples · estimativa rápida do retorno
               </p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant="outline" className="text-xs">{s.n_chargers} carregador{s.n_chargers !== 1 ? "es" : ""} · {s.n_chargers * s.power_kw} kW</Badge>
+              <Badge variant="outline" className="text-xs">{stationsSummary}</Badge>
               <Badge variant="outline" className="text-xs">CAPEX {formatCurrency(s.capex_total)}</Badge>
               <Badge variant="outline" className="text-xs">Ocup. {s.occupancy_pct}%</Badge>
             </div>
           </div>
 
-          {/* Barra de ações — idêntica à análise avançada */}
-          <div className="flex items-center gap-2 mt-3 pt-3 border-t dark:border-slate-800 flex-wrap print:hidden">
+          <div className="flex items-center gap-2 mt-3 pt-3 border-t dark:border-slate-800 flex-wrap">
             <Button size="sm" variant="outline" className="text-xs gap-1.5 h-8" onClick={handleSimplePrint}>
-              <Printer className="h-3.5 w-3.5" />
-              Exportar PDF
+              <Printer className="h-3.5 w-3.5" />Exportar PDF
             </Button>
             <Button size="sm" variant="outline" className="text-xs gap-1.5 h-8" onClick={handleExportSimple}>
-              <Download className="h-3.5 w-3.5" />
-              Exportar .fdproj
+              <Download className="h-3.5 w-3.5" />Exportar .fdproj
             </Button>
             <Button size="sm" variant="outline" className="text-xs gap-1.5 h-8" onClick={() => simpleFileRef.current?.click()}>
-              <Upload className="h-3.5 w-3.5" />
-              Importar
+              <Upload className="h-3.5 w-3.5" />Importar
             </Button>
             <div className="relative">
-              <Button
-                size="sm"
-                variant={showSavePanel ? "default" : "outline"}
-                className="text-xs gap-1.5 h-8"
-                onClick={() => setShowSavePanel(p => !p)}
-              >
-                <FolderOpen className="h-3.5 w-3.5" />
-                Projetos salvos
+              <Button size="sm" variant={showSavePanel ? "default" : "outline"} className="text-xs gap-1.5 h-8"
+                onClick={() => setShowSavePanel(p => !p)}>
+                <FolderOpen className="h-3.5 w-3.5" />Projetos salvos
                 {simpleSavedConfigs.length > 0 && (
                   <Badge variant="secondary" className="text-[0.55rem] py-0 px-1 ml-0.5">{simpleSavedConfigs.length}</Badge>
                 )}
@@ -554,28 +738,20 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                 <div className="absolute left-0 top-full mt-1 z-50 w-80 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xl p-4 space-y-3">
                   <p className="text-xs font-semibold">Salvar configuração atual</p>
                   <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      placeholder="Nome do projeto..."
-                      value={saveName}
+                    <input type="text" placeholder="Nome do projeto..." value={saveName}
                       onChange={e => setSaveName(e.target.value)}
                       onKeyDown={e => { if (e.key === "Enter") handleSaveSimple(); }}
-                      className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
-                    />
+                      className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900" />
                     <Button size="sm" className="h-7 gap-1 text-xs shrink-0" onClick={handleSaveSimple} disabled={!saveName.trim() || isSaving}>
-                      {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
-                      Salvar
+                      {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}Salvar
                     </Button>
                   </div>
                   <div className="border-t dark:border-slate-700 pt-2 space-y-2">
                     <p className="text-[0.7rem] text-muted-foreground font-medium">
-                      Projetos salvos
-                      {simpleSavedConfigs.length > 0 && <span className="ml-1 text-muted-foreground/60">({simpleSavedConfigs.length})</span>}
+                      Projetos salvos{simpleSavedConfigs.length > 0 && <span className="ml-1 text-muted-foreground/60">({simpleSavedConfigs.length})</span>}
                     </p>
                     {scenariosLoading ? (
-                      <div className="flex justify-center py-4">
-                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                      </div>
+                      <div className="flex justify-center py-4"><Loader2 className="h-4 w-4 animate-spin text-muted-foreground" /></div>
                     ) : (
                       <div className="space-y-1 max-h-52 overflow-y-auto -mr-1 pr-1">
                         {simpleSavedConfigs.map(cfg => (
@@ -586,11 +762,8 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                                 {new Date(cfg.updated_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}
                               </p>
                             </button>
-                            <button
-                              onClick={() => handleDeleteSimple(cfg.id, cfg.name)}
-                              className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 p-0.5 shrink-0"
-                              title="Excluir projeto"
-                            >
+                            <button onClick={() => handleDeleteSimple(cfg.id, cfg.name)}
+                              className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 p-0.5 shrink-0" title="Excluir projeto">
                               <X className="h-3.5 w-3.5" />
                             </button>
                           </div>
@@ -604,12 +777,11 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                 </div>
               )}
             </div>
-            {/* Hidden file input for import */}
             <input ref={simpleFileRef} type="file" accept=".fdproj,.json" className="hidden" onChange={handleImportSimple} />
           </div>
         </div>
 
-        {/* Conteúdo */}
+        {/* Content */}
         <div className="p-6 space-y-6">
 
         {/* KPI cards */}
@@ -630,7 +802,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
             <CardHeader className="pb-2"><CardTitle className="text-sm">Receita × Custos (mensal)</CardTitle></CardHeader>
             <CardContent className="space-y-2 text-sm">
               {([
-                ["kWh consumido/mês", `${Math.round(r.monthly_kwh * 0.5).toLocaleString("pt-BR")} kWh`, "", "Considera 50% do kWh teórico (ocupação × potência × tempo). Na prática os veículos nem sempre usam toda a potência disponível e, no fim da recarga, a potência cai naturalmente — reduzindo a energia efetivamente consumida."],
+                ["kWh consumido/mês (est.)", `${Math.round(r.monthly_kwh).toLocaleString("pt-BR")} kWh`, "", "Calculado como 50% do kWh teórico máximo (potência × 24h × 30 × ocupação). Na prática, os veículos não operam à potência máxima durante toda a sessão — a potência cai ao final da recarga — resultando nesta redução média de 50%."],
                 ["Receita bruta", formatCurrency(r.monthly_revenue), "text-blue-600 dark:text-blue-400"],
                 ["(-) Custo de energia", formatCurrency(r.monthly_energy), "text-red-500"],
                 ["(-) OPEX fixo", formatCurrency(s.monthly_opex), "text-red-500"],
@@ -649,13 +821,13 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
           <Card>
             <CardHeader className="pb-2"><CardTitle className="text-sm">Resumo do Investimento</CardTitle></CardHeader>
             <CardContent className="space-y-2 text-sm">
-              {[
+              {([
                 ["CAPEX total", formatCurrency(s.capex_total), ""],
+                ["Capacidade instalada", `${r.total_power_kw.toFixed(1).replace(".0","")} kW`, ""],
                 ["Lucro mensal líquido", formatCurrency(r.monthly_net), r.monthly_net >= 0 ? "text-emerald-600" : "text-red-500"],
                 ["Payback simples", fmtPb(r.payback_months), r.payback_months && r.payback_months <= 48 ? "text-emerald-600 font-bold" : "text-amber-600 font-bold"],
                 ["ROI 1º ano", `${r.roi_1y.toFixed(1)}%`, ""],
-                ["Capacidade instalada", `${s.n_chargers * s.power_kw} kW`, ""],
-              ].map(([label, val, cls]) => (
+              ] as [string, string, string][]).map(([label, val, cls]) => (
                 <div key={label} className="flex justify-between border-b last:border-0 pb-1.5 last:pb-0 dark:border-slate-800">
                   <span className="text-muted-foreground">{label}</span>
                   <span className={`font-medium ${cls}`}>{val}</span>
@@ -668,55 +840,99 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
           </Card>
         </div>
 
-        {/* Break-even chart */}
+        {/* Break-even chart — taller in print */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">Recuperação do Investimento (acumulado)</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={280}>
-              <ComposedChart data={r.chart} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-                <XAxis dataKey="mes" tick={{ fontSize: 10 }} tickFormatter={(v) => `M${v}`} interval={Math.ceil(r.chart.length / 10)} />
-                <YAxis tick={{ fontSize: 10 }} tickFormatter={(v: number) => `${v >= 0 ? "" : "-"}R$${Math.abs(v) >= 1000 ? `${Math.round(Math.abs(v) / 1000)}k` : Math.abs(v)}`} width={72} />
-                <RechartTooltip
-                  formatter={(v: number, name: string) => [formatCurrency(v), name]}
-                  labelFormatter={(l) => `Mês ${l}`}
-                />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
-                <ReferenceLine y={0} stroke="#ef4444" strokeWidth={2} strokeDasharray="4 2" label={{ value: "Break-even", position: "insideTopRight", fontSize: 10, fill: "#ef4444" }} />
-                <Bar dataKey="acumulado" name={`Base (${r.baseOcc}%)`} radius={[2, 2, 0, 0]}>
-                  {r.chart.map((entry, i) => (
-                    <Cell key={i} fill={(entry.acumulado ?? 0) >= 0 ? "#10b981" : "#3b82f6"} />
+            <div style={{ width: "100%", height: 280 }} className="print:!h-[420px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <ComposedChart data={r.chart} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                  <XAxis dataKey="mes" tick={{ fontSize: 10 }} tickFormatter={(v) => `M${v}`} interval={Math.ceil(r.chart.length / 10)} />
+                  <YAxis tick={{ fontSize: 10 }} tickFormatter={(v: number) => `${v >= 0 ? "" : "-"}R$${Math.abs(v) >= 1000 ? `${Math.round(Math.abs(v) / 1000)}k` : Math.abs(v)}`} width={72} />
+                  <RechartTooltip formatter={(v: number, name: string) => [formatCurrency(v), name]} labelFormatter={(l) => `Mês ${l}`} />
+                  <Legend wrapperStyle={{ fontSize: 11 }} />
+                  <ReferenceLine y={0} stroke="#ef4444" strokeWidth={2} strokeDasharray="4 2" label={{ value: "Break-even", position: "insideTopRight", fontSize: 10, fill: "#ef4444" }} />
+                  <Bar dataKey="acumulado" name={`Base (${r.baseOcc}%)`} radius={[2, 2, 0, 0]}>
+                    {r.chart.map((entry, i) => (
+                      <Cell key={i} fill={(entry.acumulado ?? 0) >= 0 ? "#10b981" : "#3b82f6"} />
+                    ))}
+                  </Bar>
+                  {r.scenarios.map((sc) => (
+                    <Line key={sc.key} type="monotone" dataKey={sc.key} name={`Ocup. ${sc.label}`}
+                      stroke={sc.color} strokeWidth={1.5} strokeDasharray={sc.off < 0 ? "4 2" : undefined}
+                      dot={false} isAnimationActive={false} />
                   ))}
-                </Bar>
-                {r.scenarios.map((sc) => (
-                  <Line
-                    key={sc.key}
-                    type="monotone"
-                    dataKey={sc.key}
-                    name={`Ocup. ${sc.label}`}
-                    stroke={sc.color}
-                    strokeWidth={1.5}
-                    strokeDasharray={sc.off < 0 ? "4 2" : undefined}
-                    dot={false}
-                    isAnimationActive={false}
-                  />
-                ))}
-              </ComposedChart>
-            </ResponsiveContainer>
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
             <p className="text-[0.65rem] text-muted-foreground mt-2 text-center">
-              Barras = cenário base (azul: capital não recuperado · verde: lucro após payback). Linhas = cenários de ocupação ±5%/±10%
-              {" "}(tracejadas = abaixo da base, contínuas = acima), limitadas entre 0% e 100%.
+              Barras = cenário base (azul: capital não recuperado · verde: lucro após payback). Linhas = cenários ±5%/±10% de ocupação.
             </p>
           </CardContent>
         </Card>
+
+        {/* 5-year investment table */}
+        <Card>
+          <CardHeader className="pb-2"><CardTitle className="text-sm">Projeção dos Primeiros 5 Anos</CardTitle></CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto rounded-lg border dark:border-slate-700">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-muted/50 text-xs text-muted-foreground">
+                    <th className="text-left px-4 py-2.5 font-medium">Ano</th>
+                    <th className="text-right px-4 py-2.5 font-medium">Receita gerada</th>
+                    <th className="text-right px-4 py-2.5 font-medium">Lucro gerado</th>
+                    <th className="text-right px-4 py-2.5 font-medium">Retorno do investimento</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y dark:divide-slate-700">
+                  {Array.from({ length: 5 }, (_, i) => {
+                    const year = i + 1;
+                    const annualRevenue = r.monthly_revenue * 12;
+                    const annualNet = r.monthly_net * 12;
+                    const cumReturn = annualNet * year - s.capex_total;
+                    return (
+                      <tr key={year} className="hover:bg-muted/30">
+                        <td className="px-4 py-2.5 font-medium">Ano {year}</td>
+                        <td className="px-4 py-2.5 text-right text-blue-600 dark:text-blue-400">{formatCurrency(annualRevenue)}</td>
+                        <td className={`px-4 py-2.5 text-right font-medium ${annualNet >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>{formatCurrency(annualNet)}</td>
+                        <td className={`px-4 py-2.5 text-right font-bold ${cumReturn >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>
+                          {cumReturn >= 0 ? "+" : ""}{formatCurrency(cumReturn)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-[0.65rem] text-muted-foreground mt-2">
+              Retorno do investimento = lucro acumulado no período − CAPEX total. Valores positivos indicam recuperação do investimento.
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Disclaimer */}
+        <div className="rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-800/60 dark:bg-amber-950/20 p-4">
+          <p className="text-xs font-semibold text-amber-800 dark:text-amber-400 mb-1.5 flex items-center gap-1.5">
+            <AlertTriangle className="h-3.5 w-3.5 shrink-0" />Aviso de Disclaimer
+          </p>
+          <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
+            As projeções apresentadas são estimativas baseadas exclusivamente nos dados inseridos pelo usuário.
+            Variáveis como condições do ambiente de instalação, comportamento dos usuários finais, variações de tarifa de energia,
+            sazonalidade, manutenções não previstas, regulamentações locais e outros fatores externos não são capturados por este modelo
+            e podem impactar significativamente os resultados reais. Este documento não representa um compromisso comercial,
+            garantia de retorno financeiro ou aconselhamento jurídico/financeiro. Consulte um especialista antes de tomar decisões de investimento.
+          </p>
+        </div>
 
         <p className="text-xs text-muted-foreground pb-4">
           ℹ️ Esta análise usa <strong>payback simples</strong> (não descontado), sem considerar taxa de juros, inflação ou valor do dinheiro no tempo.
           Para análise completa com VPL, TIR e sensibilidade, use a <strong>Análise Avançada</strong>.
         </p>
-        </div>{/* end p-6 space-y-6 */}
+        </div>
       </main>
     </div>
   );

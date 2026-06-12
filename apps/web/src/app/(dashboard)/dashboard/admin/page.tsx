@@ -7,6 +7,7 @@ import {
   CheckCircle2, XCircle, AlertTriangle, Search,
   ChevronDown, ChevronUp, ShieldAlert, Crown,
   Link2, Trash2, Copy, Clock, Package, Pencil, Save, X,
+  Lightbulb, MessageSquarePlus,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -117,7 +118,10 @@ const PLAN_LABEL: Record<string, string> = {
 
 export default function AdminPage() {
   const { user } = useAuth();
-  const [tab, setTab] = useState<"orgs" | "users" | "invites" | "plans">("orgs");
+  const [tab, setTab] = useState<"orgs" | "users" | "invites" | "plans" | "feedback">("orgs");
+  const [editingTrialOrgId, setEditingTrialOrgId] = useState<string | null>(null);
+  const [trialDaysInput, setTrialDaysInput] = useState(30);
+  const [savingTrial, setSavingTrial] = useState(false);
   const [orgSearch, setOrgSearch] = useState("");
   const [userSearch, setUserSearch] = useState("");
   const [expandedOrg, setExpandedOrg] = useState<string | null>(null);
@@ -152,6 +156,11 @@ export default function AdminPage() {
     error: codesError,
     mutate: reloadCodes,
   } = useSWR<InviteCode[]>(isAdmin ? "/admin/invite-codes" : null, fetcher);
+
+  const { data: feedbackItems = [], isLoading: feedbackLoading, mutate: reloadFeedback } = useSWR<{
+    id: string; type: string; title: string; content: string; status: string;
+    user_name: string; user_email: string; organization_id: string; organization_name: string; created_at: string;
+  }[]>(isAdmin ? "/admin/feedback?limit=200" : null, fetcher);
 
   // ─── Guard ───────────────────────────────────────────────────────────────
 
@@ -261,6 +270,32 @@ export default function AdminPage() {
     }
   }
 
+  async function updateTrialDays(orgId: string, days: number) {
+    setSavingTrial(true);
+    try {
+      await api.patch(`/admin/organizations/${orgId}/trial`, { days_from_now: days });
+      toast.success(`Trial estendido por ${days} dias`);
+      mutate((key: unknown) => typeof key === "string" && key.startsWith("/admin/organizations"));
+      setEditingTrialOrgId(null);
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { detail?: string } } };
+      toast.error(err?.response?.data?.detail ?? "Erro ao atualizar trial");
+    } finally {
+      setSavingTrial(false);
+    }
+  }
+
+  async function updateFeedbackStatus(feedbackId: string, newStatus: string) {
+    try {
+      await api.patch(`/admin/feedback/${feedbackId}/status`, { status: newStatus });
+      toast.success("Status atualizado");
+      await reloadFeedback();
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { detail?: string } } };
+      toast.error(err?.response?.data?.detail ?? "Erro ao atualizar status");
+    }
+  }
+
   async function toggleUserStatus(userId: string, currentIsActive: boolean, userEmail: string) {
     const action = currentIsActive ? "bloquear" : "ativar";
     if (!confirm(`Deseja ${action} o usuário ${userEmail}?`)) return;
@@ -329,8 +364,8 @@ export default function AdminPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b">
-        {(["orgs", "users", "invites", "plans"] as const).map((t) => (
+      <div className="flex gap-2 border-b flex-wrap">
+        {(["orgs", "users", "invites", "plans", "feedback"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -340,7 +375,7 @@ export default function AdminPage() {
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
-            {t === "orgs" ? "Organizações" : t === "users" ? "Usuários" : t === "invites" ? "Convites" : "Planos"}
+            {t === "orgs" ? "Organizações" : t === "users" ? "Usuários" : t === "invites" ? "Convites" : t === "plans" ? "Planos" : `Feedback${feedbackItems.length > 0 ? ` (${feedbackItems.length})` : ""}`}
           </button>
         ))}
       </div>
@@ -387,6 +422,32 @@ export default function AdminPage() {
                         <p className="text-xs text-muted-foreground mt-0.5">
                           {org.users} usuários · {org.files} arquivos · criada em {formatDate(org.created_at)}
                         </p>
+                        {org.trial_ends_at && (
+                          <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                            <Clock className="h-3 w-3 shrink-0" />
+                            {(() => {
+                              const days = Math.ceil((new Date(org.trial_ends_at!).getTime() - Date.now()) / 86400000);
+                              return days > 0
+                                ? <><span className="text-amber-600 dark:text-amber-400 font-medium">Trial: {days} {days === 1 ? "dia" : "dias"} restante{days !== 1 ? "s" : ""}</span></>
+                                : <span className="text-destructive font-medium">Trial expirado há {Math.abs(days)} dias</span>;
+                            })()}
+                            <button
+                              className="ml-0.5 p-0.5 rounded hover:bg-muted transition-colors"
+                              title="Estender trial"
+                              onClick={() => { setEditingTrialOrgId(org.id); setTrialDaysInput(30); }}
+                            >
+                              <Pencil className="h-3 w-3 text-muted-foreground" />
+                            </button>
+                          </p>
+                        )}
+                        {!org.trial_ends_at && (
+                          <button
+                            className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1 hover:text-foreground transition-colors"
+                            onClick={() => { setEditingTrialOrgId(org.id); setTrialDaysInput(30); }}
+                          >
+                            <Clock className="h-3 w-3" /> Definir trial
+                          </button>
+                        )}
                       </div>
 
                       {/* Actions */}
@@ -453,6 +514,41 @@ export default function AdminPage() {
                         {expandedOrg === org.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                       </button>
                     </div>
+
+                    {/* Trial editor */}
+                    {editingTrialOrgId === org.id && (
+                      <div className="mt-3 pt-3 border-t flex items-center gap-3 flex-wrap">
+                        <span className="text-sm font-medium text-muted-foreground shrink-0">Definir trial por:</span>
+                        <Input
+                          type="number"
+                          min={1}
+                          max={365}
+                          value={trialDaysInput}
+                          onChange={(e) => setTrialDaysInput(Number(e.target.value))}
+                          className="w-24 h-8 text-sm"
+                        />
+                        <span className="text-sm text-muted-foreground shrink-0">dias a partir de hoje</span>
+                        <Button
+                          size="sm"
+                          className="h-8"
+                          onClick={() => updateTrialDays(org.id, trialDaysInput)}
+                          disabled={savingTrial}
+                        >
+                          {savingTrial
+                            ? <span className="h-3.5 w-3.5 border-2 border-t-transparent rounded-full animate-spin" />
+                            : <><Save className="h-3.5 w-3.5 mr-1" />Salvar</>}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8"
+                          onClick={() => setEditingTrialOrgId(null)}
+                          disabled={savingTrial}
+                        >
+                          <X className="h-3.5 w-3.5 mr-1" />Cancelar
+                        </Button>
+                      </div>
+                    )}
 
                     {/* Expanded details */}
                     {expandedOrg === org.id && (
@@ -565,6 +661,83 @@ export default function AdminPage() {
                       </td>
                     </tr>
                   )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Feedback ── */}
+      {tab === "feedback" && (
+        <div className="space-y-4">
+          {feedbackLoading ? (
+            <div className="space-y-2">
+              {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-16 w-full" />)}
+            </div>
+          ) : feedbackItems.length === 0 ? (
+            <div className="flex flex-col items-center py-16 gap-3 text-muted-foreground">
+              <MessageSquarePlus className="h-10 w-10 opacity-30" />
+              <p className="text-sm">Nenhum feedback recebido ainda.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto rounded-lg border">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/50">
+                  <tr>
+                    {["Tipo", "Título", "Descrição", "Usuário", "Organização", "Data", "Status"].map((h) => (
+                      <th key={h} className="px-4 py-2 text-left font-medium text-muted-foreground text-xs">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {feedbackItems.map((item) => (
+                    <tr key={item.id} className="border-t hover:bg-muted/20 transition-colors align-top">
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-xs font-medium whitespace-nowrap ${
+                          item.type === "suggestion"
+                            ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-800"
+                            : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-400 dark:border-red-800"
+                        }`}>
+                          {item.type === "suggestion"
+                            ? <Lightbulb className="h-3 w-3" />
+                            : <MessageSquarePlus className="h-3 w-3" />}
+                          {item.type === "suggestion" ? "Sugestão" : "Reclamação"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 font-medium max-w-[180px]">
+                        <span className="line-clamp-2">{item.title}</span>
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground text-xs max-w-[240px]">
+                        <span className="line-clamp-3">{item.content}</span>
+                      </td>
+                      <td className="px-4 py-3 text-xs whitespace-nowrap">
+                        <div className="font-medium">{item.user_name || "—"}</div>
+                        <div className="text-muted-foreground">{item.user_email}</div>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                        {item.organization_name || "—"}
+                      </td>
+                      <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                        {new Date(item.created_at).toLocaleDateString("pt-BR")}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Select
+                          value={item.status}
+                          onValueChange={(v) => updateFeedbackStatus(item.id, v)}
+                        >
+                          <SelectTrigger className="h-7 w-32 text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending" className="text-xs">Pendente</SelectItem>
+                            <SelectItem value="reviewed" className="text-xs">Em análise</SelectItem>
+                            <SelectItem value="resolved" className="text-xs">Resolvido</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
