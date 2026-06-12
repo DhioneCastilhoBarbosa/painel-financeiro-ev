@@ -1,10 +1,11 @@
 'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 import * as L from 'leaflet';
-import 'leaflet.markercluster';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+import { ensureLeafletPlugins } from '@/components/map/leafletPlugins';
 import type { OverpassElement, OverpassNode, OverpassWay } from '@/hooks/useOverpassData';
 
 const poiIcon = L.divIcon({
@@ -51,38 +52,44 @@ export function PoiLayer({ pois, fuelStations, showPois, showFuel }: Props) {
   const map = useMap();
 
   useEffect(() => {
-    const groups: L.MarkerClusterGroup[] = [];
+    if (!showPois && !showFuel) return;
+    const groups: any[] = [];
+    let cancelled = false;
 
-    if (showPois && pois.length) {
-      const poiCluster = L.markerClusterGroup({ maxClusterRadius: 50 });
-      pois.forEach((el) => {
-        const pos = getLatLng(el);
-        if (!pos) return;
-        const name = el.tags?.name || el.tags?.shop || 'POI';
-        L.marker(pos, { icon: poiIcon })
-          .bindPopup(`<b>${name}</b>`)
-          .addTo(poiCluster);
-      });
-      map.addLayer(poiCluster);
-      groups.push(poiCluster);
-    }
+    ensureLeafletPlugins().then((L2: any) => {
+      if (cancelled || !map) return;
+      if (typeof L2?.markerClusterGroup !== 'function') {
+        console.warn('[map] leaflet.markercluster indisponível — agrupamento ignorado.');
+        return;
+      }
 
-    if (showFuel && fuelStations.length) {
-      const fuelCluster = L.markerClusterGroup({ maxClusterRadius: 40 });
-      fuelStations.forEach((el) => {
-        const name = el.tags?.name || 'Posto de combustível';
-        const brand = el.tags?.brand || '';
-        L.marker([el.lat, el.lon], { icon: fuelIcon })
-          .bindPopup(
-            `<b>${name}</b>${brand ? `<br/>${brand}` : ''}<br/><em>Candidato a retrofit EV</em>`
-          )
-          .addTo(fuelCluster);
-      });
-      map.addLayer(fuelCluster);
-      groups.push(fuelCluster);
-    }
+      if (showPois && pois.length) {
+        const poiCluster = L2.markerClusterGroup({ maxClusterRadius: 50 });
+        pois.forEach((el) => {
+          const pos = getLatLng(el);
+          if (!pos) return;
+          const name = el.tags?.name || el.tags?.shop || 'POI';
+          L.marker(pos, { icon: poiIcon }).bindPopup(`<b>${name}</b>`).addTo(poiCluster);
+        });
+        map.addLayer(poiCluster);
+        groups.push(poiCluster);
+      }
 
-    return () => { groups.forEach((g) => map.removeLayer(g)); };
+      if (showFuel && fuelStations.length) {
+        const fuelCluster = L2.markerClusterGroup({ maxClusterRadius: 40 });
+        fuelStations.forEach((el) => {
+          const name = el.tags?.name || 'Posto de combustível';
+          const brand = el.tags?.brand || '';
+          L.marker([el.lat, el.lon], { icon: fuelIcon })
+            .bindPopup(`<b>${name}</b>${brand ? `<br/>${brand}` : ''}<br/><em>Candidato a retrofit EV</em>`)
+            .addTo(fuelCluster);
+        });
+        map.addLayer(fuelCluster);
+        groups.push(fuelCluster);
+      }
+    });
+
+    return () => { cancelled = true; groups.forEach((g) => map.removeLayer(g)); };
   }, [map, pois, fuelStations, showPois, showFuel]);
 
   return null;

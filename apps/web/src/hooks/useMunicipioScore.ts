@@ -196,8 +196,12 @@ export function useMunicipioScore(
       return;
     }
     const cached = cache.get(ufId);
+    // Limpa o estado anterior imediatamente: sem isto, ao trocar para uma UF
+    // ainda não carregada, o choropleth do estado anterior continua na tela
+    // (com scores recalculados sobre os municípios errados) até o fetch terminar.
+    setData(cached ?? null);
     if (cached) {
-      setData(cached);
+      setError(null);
       return;
     }
     let cancelled = false;

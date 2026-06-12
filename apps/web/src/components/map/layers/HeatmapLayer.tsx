@@ -2,33 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
-import * as L from 'leaflet';
+import { ensureLeafletPlugins } from '@/components/map/leafletPlugins';
 import type { UFScore } from '@/utils/scoring';
 
 interface Props {
   scores: UFScore[];
-}
-
-// O plugin leaflet.heat registra `L.heatLayer` no objeto global `L`. Com bundler +
-// import ESM, o side-effect no topo pode rodar antes de `L` existir como global,
-// deixando `L.heatLayer` indefinido (e quebrando o mapa ao ativar o heatmap).
-// Garantimos o registro: expomos `window.L` e importamos o plugin sob demanda.
-let heatReady: Promise<boolean> | null = null;
-function ensureHeat(): Promise<boolean> {
-  if (typeof window === 'undefined') return Promise.resolve(false);
-  if (!heatReady) {
-    heatReady = (async () => {
-      const w = window as any;
-      if (!w.L) w.L = L;
-      try {
-        await import('leaflet.heat');
-        return typeof (L as any).heatLayer === 'function';
-      } catch {
-        return false;
-      }
-    })();
-  }
-  return heatReady;
 }
 
 export function HeatmapLayer({ scores }: Props) {
@@ -39,10 +17,10 @@ export function HeatmapLayer({ scores }: Props) {
     let heat: any = null;
     let cancelled = false;
 
-    ensureHeat().then((ok) => {
+    ensureLeafletPlugins().then((L2: any) => {
       if (cancelled || !map) return;
-      const heatLayer = (L as any).heatLayer;
-      if (!ok || typeof heatLayer !== 'function') {
+      const heatLayer = L2?.heatLayer;
+      if (typeof heatLayer !== 'function') {
         console.warn('[map] leaflet.heat indisponível — camada de heatmap ignorada.');
         return;
       }
