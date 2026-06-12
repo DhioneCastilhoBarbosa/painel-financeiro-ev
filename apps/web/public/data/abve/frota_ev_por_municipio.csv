@@ -1,0 +1,4286 @@
+municipio,uf,bev,phev,hev,mhev,hev_flex,ev_plugin,total
+"Abadia de Goiás","GO",5,5,2,1,3,10,16
+"Abadia dos Dourados","MG",0,0,0,1,0,0,1
+"Abadiânia","GO",1,5,1,0,4,6,11
+"Abaeté","MG",2,2,0,0,4,4,8
+"Abaetetuba","PA",13,8,5,4,16,21,46
+"Abaiara","CE",1,0,0,0,0,1,1
+"Abaíra","BA",1,0,0,0,0,1,1
+"Abatiá","PR",0,1,1,0,1,1,3
+"Abdon Batista","SC",1,2,0,0,0,3,3
+"Abel Figueiredo","PA",0,0,0,0,1,0,1
+"Abelardo Luz","SC",2,10,1,6,3,12,22
+"Abre Campo","MG",0,0,0,0,2,0,2
+"Abreu e Lima","PE",75,21,2,1,5,96,104
+"Acaiaca","MG",2,0,0,1,0,2,3
+"Açailândia","MA",35,19,4,1,8,54,67
+"Acajutiba","BA",0,1,0,0,0,1,1
+"Acará","PA",3,3,0,1,1,6,8
+"Acarape","CE",2,1,0,0,2,3,5
+"Acaraú","CE",9,10,5,0,6,19,30
+"Acari","RN",1,0,0,0,4,1,5
+"Acauã","PI",1,0,0,0,0,1,1
+"Aceguá","RS",0,0,0,1,1,0,2
+"Acopiara","CE",0,12,1,1,1,12,15
+"Acorizal","MT",1,2,1,0,3,3,7
+"Acrelândia","AC",0,0,0,0,1,0,1
+"Acreúna","GO",2,15,4,4,6,17,31
+"Açu","RN",38,20,1,1,4,58,64
+"Açucena","MG",0,0,0,0,1,0,1
+"Adamantina","SP",14,20,5,3,35,34,77
+"Adolfo","SP",1,4,1,1,0,5,7
+"Adrianópolis","PR",0,0,0,0,1,0,1
+"Adustina","BA",1,0,0,1,0,1,2
+"Afogados da Ingazeira","PE",8,7,0,0,3,15,18
+"Afonso Cláudio","ES",5,11,1,2,3,16,22
+"Afuá","PA",0,0,1,0,0,0,1
+"Agrestina","PE",4,1,1,0,0,5,6
+"Agricolândia","PI",2,0,0,0,0,2,2
+"Agrolândia","SC",4,8,0,0,2,12,14
+"Agronômica","SC",1,6,2,0,2,7,11
+"Água Azul do Norte","PA",1,0,0,0,1,1,2
+"Água Boa","MT",0,4,1,1,6,4,12
+"Água Boa","MG",1,0,0,0,1,1,2
+"Água Branca","AL",2,0,0,0,0,2,2
+"Água Branca","PB",1,0,0,0,0,1,1
+"Água Branca","PI",3,0,0,0,1,3,4
+"Água Clara","MS",0,2,0,0,2,2,4
+"Água Comprida","MG",0,0,1,1,0,0,2
+"Água Doce","SC",1,4,1,1,1,5,8
+"Água Doce do Norte","ES",1,1,1,0,1,2,4
+"Água Fria","BA",0,0,0,0,2,0,2
+"Água Limpa","GO",0,0,1,0,1,0,2
+"Água Preta","PE",1,1,0,0,0,2,2
+"Aguaí","SP",9,16,7,3,13,25,48
+"Águas Belas","PE",3,2,1,1,0,5,7
+"Águas da Prata","SP",1,2,4,2,8,3,17
+"Águas de Chapecó","SC",1,1,0,0,0,2,2
+"Águas de Lindóia","SP",12,32,7,2,7,44,60
+"Águas de Santa Bárbara","SP",3,5,0,0,6,8,14
+"Águas de São Pedro","SP",4,5,5,1,12,9,27
+"Águas Frias","SC",2,1,0,0,0,3,3
+"Águas Lindas de Goiás","GO",2,3,0,0,5,5,10
+"Águas Mornas","SC",10,8,0,0,5,18,23
+"Águas Vermelhas","MG",1,0,0,0,0,1,1
+"Agudo","RS",5,2,0,1,4,7,12
+"Agudos","SP",19,34,10,1,12,53,76
+"Agudos do Sul","PR",0,3,0,0,2,3,5
+"Águia Branca","ES",2,1,0,0,1,3,4
+"Aguiar","PB",0,1,2,0,0,1,3
+"Aimorés","MG",1,0,0,0,1,1,2
+"Aiquara","BA",0,0,0,1,0,0,1
+"Aiuruoca","MG",0,2,1,0,0,2,3
+"Ajuricaba","RS",1,3,0,0,0,4,4
+"Alagoa","MG",0,0,0,0,1,0,1
+"Alagoa Grande","PB",5,0,0,0,4,5,9
+"Alagoa Nova","PB",1,0,1,0,1,1,3
+"Alagoinha","PB",3,1,0,0,0,4,4
+"Alagoinha","PE",1,2,0,0,0,3,3
+"Alagoinha do Piauí","PI",0,0,0,0,2,0,2
+"Alagoinhas","BA",66,65,16,13,33,131,193
+"Alambari","SP",0,3,0,0,0,3,3
+"Alcântara","MA",1,0,0,0,0,1,1
+"Alcântaras","CE",2,3,0,0,0,5,5
+"Alcinópolis","MS",0,0,1,0,1,0,2
+"Alcobaça","BA",1,1,1,0,9,2,12
+"Alecrim","RS",1,1,0,0,0,2,2
+"Alegre","ES",12,14,1,2,16,26,45
+"Alegrete","RS",27,8,8,5,11,35,59
+"Alegrete do Piauí","PI",0,0,0,0,1,0,1
+"Alegria","RS",0,1,2,0,1,1,4
+"Além Paraíba","MG",4,0,0,0,0,4,4
+"Alenquer","PA",2,0,0,0,1,2,3
+"Alexandria","RN",1,0,2,0,1,1,4
+"Alexânia","GO",1,3,1,0,1,4,6
+"Alfenas","MG",16,27,4,5,11,43,63
+"Alfredo Chaves","ES",12,16,3,2,2,28,35
+"Alfredo Marcondes","SP",1,2,0,0,1,3,4
+"Alfredo Vasconcelos","MG",1,0,0,0,0,1,1
+"Alfredo Wagner","SC",4,4,3,0,6,8,17
+"Algodão de Jandaíra","PB",0,1,0,0,1,1,2
+"Alhandra","PB",7,1,0,0,0,8,8
+"Aliança","PE",3,2,0,0,1,5,6
+"Aliança do Tocantins","TO",0,1,0,0,0,1,1
+"Almas","TO",0,0,0,1,0,0,1
+"Almenara","MG",1,0,0,0,0,1,1
+"Almino Afonso","RN",1,2,1,0,0,3,4
+"Almirante Tamandaré","PR",114,75,11,12,19,189,231
+"Alpercata","MG",1,2,0,0,3,3,6
+"Alpestre","RS",0,0,0,0,1,0,1
+"Alpinópolis","MG",1,1,1,0,3,2,6
+"Alta Floresta","MT",13,27,8,2,21,40,71
+"Alta Floresta D'Oeste","RO",0,2,0,0,1,2,3
+"Altamira","PA",80,26,2,3,23,106,134
+"Altamira do Maranhão","MA",0,1,0,0,0,1,1
+"Altaneira","CE",1,0,0,0,0,1,1
+"Alterosa","MG",0,0,1,0,0,0,1
+"Altinho","PE",3,0,0,0,1,3,4
+"Altinópolis","SP",2,9,5,5,2,11,23
+"Alto Alegre","RS",0,0,0,1,0,0,1
+"Alto Alegre","SP",1,2,0,0,0,3,3
+"Alto Alegre do Maranhão","MA",1,0,0,0,3,1,4
+"Alto Alegre dos Parecis","RO",0,0,0,0,1,0,1
+"Alto Araguaia","MT",0,3,1,0,4,3,8
+"Alto Bela Vista","SC",0,0,0,0,2,0,2
+"Alto do Rodrigues","RN",3,0,0,0,1,3,4
+"Alto Feliz","RS",3,0,0,0,0,3,3
+"Alto Garças","MT",0,4,1,0,4,4,9
+"Alto Horizonte","GO",1,0,0,0,0,1,1
+"Alto Jequitibá","MG",0,0,0,0,2,0,2
+"Alto Longá","PI",1,0,0,0,0,1,1
+"Alto Paraguai","MT",0,0,0,0,2,0,2
+"Alto Paraíso","PR",1,0,0,1,0,1,2
+"Alto Paraíso","RO",1,0,0,0,1,1,2
+"Alto Paraíso de Goiás","GO",0,0,0,0,1,0,1
+"Alto Paraná","PR",3,7,1,0,2,10,13
+"Alto Piquiri","PR",2,0,0,0,0,2,2
+"Alto Rio Novo","ES",0,0,0,0,2,0,2
+"Alto Santo","CE",0,3,0,0,1,3,4
+"Alto Taquari","MT",0,2,0,0,0,2,2
+"Altônia","PR",1,2,0,0,3,3,6
+"Altos","PI",14,10,0,0,6,24,30
+"Alumínio","SP",11,5,5,0,3,16,24
+"Alvarenga","MG",0,1,0,0,0,1,1
+"Álvares Florence","SP",0,0,1,0,0,0,1
+"Álvares Machado","SP",27,38,1,0,11,65,77
+"Alvinlândia","SP",0,1,0,1,1,1,3
+"Alvinópolis","MG",1,0,0,1,5,1,7
+"Alvorada","RS",129,33,10,7,13,162,192
+"Alvorada","TO",0,0,2,0,3,0,5
+"Alvorada do Norte","GO",0,0,0,1,1,0,2
+"Alvorada do Sul","PR",2,3,0,0,3,5,8
+"Alvorada D'Oeste","RO",0,1,2,0,2,1,5
+"Amambai","MS",3,10,11,0,9,13,33
+"Amaporã","PR",0,1,0,0,0,1,1
+"Amaraji","PE",2,1,0,0,0,3,3
+"Amaral Ferrador","RS",1,0,0,0,0,1,1
+"Amarante","PI",1,2,0,0,2,3,5
+"Amarante do Maranhão","MA",2,0,0,0,1,2,3
+"Amargosa","BA",8,10,1,0,4,18,23
+"Amélia Rodrigues","BA",2,4,0,1,2,6,9
+"Americana","SP",483,1024,144,67,199,1507,1917
+"Americano do Brasil","GO",0,1,1,0,3,1,5
+"Américo Brasiliense","SP",12,9,3,0,7,21,31
+"Américo de Campos","SP",1,2,1,0,1,3,5
+"Ametista do Sul","RS",1,0,1,0,5,1,7
+"Amontada","CE",3,0,2,0,0,3,5
+"Amparo","SP",33,45,21,8,27,78,134
+"Amparo do Serra","MG",0,0,0,0,2,0,2
+"Ampére","PR",3,10,3,0,8,13,24
+"Anadia","AL",1,1,0,0,1,2,3
+"Anagé","BA",0,2,0,0,2,2,4
+"Anajatuba","MA",3,0,0,0,4,3,7
+"Analândia","SP",0,4,2,0,0,4,6
+"Ananás","TO",0,2,0,0,3,2,5
+"Ananindeua","PA",272,172,46,21,155,444,666
+"Anápolis","GO",573,1135,901,2231,797,1708,5637
+"Anapu","PA",0,0,0,0,2,0,2
+"Anapurus","MA",0,1,0,0,1,1,2
+"Anastácio","MS",1,3,0,1,2,4,7
+"Anaurilândia","MS",0,0,1,0,1,0,2
+"Anchieta","ES",11,30,13,2,11,41,67
+"Anchieta","SC",0,0,2,0,0,0,2
+"Andirá","PR",5,4,2,0,5,9,16
+"Andradas","MG",2,2,2,1,4,4,11
+"Andradina","SP",19,49,13,10,12,68,103
+"Angatuba","SP",2,18,4,0,1,20,25
+"Angélica","MS",0,0,0,0,1,0,1
+"Angelim","PE",3,0,0,0,0,3,3
+"Angelina","SC",1,2,0,0,1,3,4
+"Angical","BA",0,0,0,0,1,0,1
+"Angical do Piauí","PI",0,0,0,0,2,0,2
+"Angico","TO",0,1,0,0,0,1,1
+"Angicos","RN",1,4,1,0,0,5,6
+"Angra dos Reis","RJ",137,102,20,9,78,239,346
+"Anguera","BA",1,0,0,0,6,1,7
+"Anhembi","SP",0,0,0,0,1,0,1
+"Anicuns","GO",5,11,0,0,7,16,23
+"Anísio de Abreu","PI",0,1,2,0,1,1,4
+"Anita Garibaldi","SC",0,3,0,0,4,3,7
+"Anitápolis","SC",1,3,1,0,0,4,5
+"Anta Gorda","RS",0,0,1,0,2,0,3
+"Antas","BA",1,0,0,0,1,1,2
+"Antonina","PR",5,0,0,0,1,5,6
+"Antônio Cardoso","BA",0,0,0,1,0,0,1
+"Antônio Carlos","MG",1,0,0,0,1,1,2
+"Antônio Carlos","SC",15,14,4,4,10,29,47
+"Antônio Dias","MG",0,0,0,1,1,0,2
+"Antônio Gonçalves","BA",0,0,0,1,2,0,3
+"Antônio João","MS",0,1,0,0,1,1,2
+"Antônio Prado","RS",14,13,3,2,1,27,33
+"Aparecida","PB",0,1,0,1,0,1,2
+"Aparecida","SP",6,25,9,7,14,31,61
+"Aparecida de Goiânia","GO",534,411,62,45,137,945,1189
+"Aparecida do Rio Doce","GO",0,2,1,0,1,2,4
+"Aparecida do Rio Negro","TO",0,0,0,0,1,0,1
+"Aparecida do Taboado","MS",2,4,2,4,5,6,17
+"Aparecida d'Oeste","SP",0,0,1,0,1,0,2
+"Aperibé","RJ",2,6,2,0,6,8,16
+"Apiacá","ES",0,1,0,0,2,1,3
+"Apiacás","MT",0,2,0,0,3,2,5
+"Apiaí","SP",4,1,1,1,3,5,10
+"Apiúna","SC",5,6,3,1,2,11,17
+"Apodi","RN",27,13,5,1,4,40,50
+"Aporá","BA",1,0,0,1,0,1,2
+"Aporé","GO",0,0,0,1,2,0,3
+"Apuarema","BA",0,0,1,0,0,0,1
+"Apucarana","PR",69,112,23,16,37,181,257
+"Apuiarés","CE",1,0,0,0,1,1,2
+"Aquidabã","SE",4,1,0,0,0,5,5
+"Aquidauana","MS",2,9,4,1,6,11,22
+"Aquiraz","CE",119,104,10,8,28,223,269
+"Arabutã","SC",1,0,0,0,0,1,1
+"Aracaju","SE",1430,1650,366,164,382,3080,3992
+"Araçariguama","SP",18,29,3,7,6,47,63
+"Aracati","CE",13,14,4,2,8,27,41
+"Aracatu","BA",2,1,1,0,0,3,4
+"Araçatuba","SP",199,426,165,28,157,625,975
+"Araci","BA",6,2,0,0,3,8,11
+"Aracoiaba","CE",2,0,0,0,2,2,4
+"Araçoiaba da Serra","SP",75,99,31,3,25,174,233
+"Aracruz","ES",75,113,27,6,34,188,255
+"Araçu","GO",0,0,0,0,5,0,5
+"Araçuaí","MG",2,0,0,0,0,2,2
+"Aragarças","GO",3,7,1,1,3,10,15
+"Aragoiânia","GO",6,1,1,1,5,7,14
+"Araguacema","TO",0,0,0,0,1,0,1
+"Araguaçu","TO",0,0,0,0,1,0,1
+"Araguaína","TO",154,148,22,11,97,302,432
+"Araguanã","TO",0,1,0,0,1,1,2
+"Araguapaz","GO",1,1,0,0,0,2,2
+"Araguari","MG",25,29,8,11,10,54,83
+"Araguatins","TO",1,6,1,0,1,7,9
+"Araioses","MA",1,0,0,0,0,1,1
+"Aral Moreira","MS",0,1,1,0,2,1,4
+"Aramari","BA",0,0,0,1,2,0,3
+"Arame","MA",1,0,0,0,1,1,2
+"Aramina","SP",1,0,0,0,3,1,4
+"Arandu","SP",1,1,0,0,1,2,3
+"Arapeí","SP",0,1,0,0,0,1,1
+"Arapiraca","AL",748,458,35,38,83,1206,1362
+"Arapoema","TO",0,1,0,0,0,1,1
+"Arapongas","PR",101,175,22,22,33,276,353
+"Arapoti","PR",2,10,1,1,5,12,19
+"Arapuã","PR",0,0,0,0,1,0,1
+"Araputanga","MT",1,8,2,0,4,9,15
+"Araquari","SC",168,159,8,11,7,327,353
+"Araranguá","SC",41,81,27,7,85,122,241
+"Araraquara","SP",355,600,127,28,206,955,1316
+"Araras","SP",90,148,47,24,76,238,385
+"Arari","MA",0,2,2,2,2,2,8
+"Araricá","RS",14,3,4,1,1,17,23
+"Araripe","CE",0,1,0,0,1,1,2
+"Araripina","PE",8,3,2,0,6,11,19
+"Araruama","RJ",176,100,25,20,53,276,374
+"Araruna","PB",2,0,2,0,0,2,4
+"Araruna","PR",1,6,0,1,6,7,14
+"Arataca","BA",0,0,0,0,2,0,2
+"Aratiba","RS",7,2,0,0,2,9,11
+"Arauá","SE",0,0,1,1,0,0,2
+"Araucária","PR",172,103,15,13,37,275,340
+"Araújos","MG",0,3,0,0,0,3,3
+"Araxá","MG",21,41,8,15,15,62,100
+"Arceburgo","MG",3,0,0,0,1,3,4
+"Arcos","MG",5,9,1,0,4,14,19
+"Arcoverde","PE",37,24,1,5,10,61,77
+"Areado","MG",1,2,0,0,0,3,3
+"Areal","RJ",5,4,0,0,0,9,9
+"Arealva","SP",2,0,1,0,2,2,5
+"Areia","PB",1,0,2,2,2,1,7
+"Areia Branca","RN",12,8,3,2,3,20,28
+"Areia Branca","SE",4,1,0,0,0,5,5
+"Areial","PB",3,1,0,0,0,4,4
+"Areiópolis","SP",2,1,0,0,0,3,3
+"Arenápolis","MT",4,7,3,0,6,11,20
+"Arenópolis","GO",1,0,0,0,0,1,1
+"Arês","RN",1,0,0,0,0,1,1
+"Argirita","MG",1,0,0,0,0,1,1
+"Arinos","MG",0,0,0,0,1,0,1
+"Aripuanã","MT",1,6,1,0,0,7,8
+"Ariquemes","RO",44,94,14,9,37,138,198
+"Ariranha","SP",2,0,0,0,1,2,3
+"Armação dos Búzios","RJ",54,75,14,11,46,129,200
+"Armazém","SC",5,4,0,0,3,9,12
+"Aroazes","PI",1,0,0,0,0,1,1
+"Aroeiras do Itaim","PI",0,1,0,0,0,1,1
+"Arraial do Cabo","RJ",20,14,5,2,17,34,58
+"Arraias","TO",0,0,0,0,1,0,1
+"Arroio do Meio","RS",13,13,6,2,9,26,43
+"Arroio do Padre","RS",1,0,0,0,0,1,1
+"Arroio do Sal","RS",15,0,3,0,3,15,21
+"Arroio do Tigre","RS",5,2,0,0,2,7,9
+"Arroio dos Ratos","RS",3,4,0,1,2,7,10
+"Arroio Grande","RS",2,4,4,1,3,6,14
+"Arroio Trinta","SC",1,0,1,0,0,1,2
+"Artur Nogueira","SP",23,49,12,8,19,72,111
+"Aruanã","GO",2,2,0,0,0,4,4
+"Arujá","SP",189,263,63,42,111,452,668
+"Arvoredo","SC",0,2,0,0,0,2,2
+"Arvorezinha","RS",1,3,2,0,5,4,11
+"Ascurra","SC",4,4,2,1,3,8,14
+"Assaí","PR",7,7,1,0,10,14,25
+"Assaré","CE",0,0,0,0,1,0,1
+"Assis","SP",87,127,19,8,57,214,298
+"Assis Chateaubriand","PR",13,15,7,3,8,28,46
+"Astolfo Dutra","MG",2,2,2,0,6,4,12
+"Astorga","PR",5,10,2,2,3,15,22
+"Atalaia","AL",3,5,2,1,6,8,17
+"Atalanta","SC",0,2,0,0,0,2,2
+"Atibaia","SP",385,455,81,49,179,840,1149
+"Atílio Vivácqua","ES",5,2,4,0,3,7,14
+"Augustinópolis","TO",1,0,0,1,1,1,3
+"Augusto Corrêa","PA",1,0,1,0,0,1,2
+"Augusto Pestana","RS",2,0,1,0,0,2,3
+"Áurea","RS",1,0,0,0,1,1,2
+"Aurelino Leal","BA",0,0,0,0,1,0,1
+"Auriflama","SP",3,11,2,0,5,14,21
+"Aurora","CE",0,3,0,1,1,3,5
+"Aurora","SC",0,2,1,5,0,2,8
+"Aurora do Tocantins","TO",1,0,0,0,0,1,1
+"Autazes","AM",0,0,0,1,0,0,1
+"Avanhandava","SP",1,2,1,0,4,3,8
+"Avaré","SP",39,60,17,6,73,99,195
+"Avelinópolis","GO",0,1,2,0,0,1,3
+"Axixá","MA",0,0,0,0,1,0,1
+"Babaçulândia","TO",0,1,0,0,0,1,1
+"Bacabal","MA",20,6,4,6,51,26,87
+"Bacabeira","MA",0,2,0,0,2,2,4
+"Bacuri","MA",0,1,0,0,0,1,1
+"Bady Bassitt","SP",39,60,11,0,10,99,120
+"Baependi","MG",0,4,0,0,3,4,7
+"Bagé","RS",30,48,15,12,35,78,140
+"Bagre","PA",0,1,0,0,1,1,2
+"Baía Formosa","RN",2,0,0,0,0,2,2
+"Baião","PA",2,2,0,0,0,4,4
+"Baixa Grande","BA",1,0,0,0,1,1,2
+"Baixa Grande do Ribeiro","PI",0,1,1,0,0,1,2
+"Baixo Guandu","ES",8,29,12,0,16,37,65
+"Balbinos","SP",0,1,0,0,1,1,2
+"Baldim","MG",2,1,0,0,3,3,6
+"Baliza","GO",1,0,0,0,1,1,2
+"Balneário Arroio do Silva","SC",5,14,5,2,4,19,30
+"Balneário Barra do Sul","SC",10,14,0,1,7,24,32
+"Balneário Camboriú","SC",913,1846,317,257,276,2759,3609
+"Balneário Gaivota","SC",3,13,4,0,6,16,26
+"Balneário Piçarras","SC",56,112,26,15,29,168,238
+"Balneário Pinhal","RS",0,1,0,0,0,1,1
+"Balneário Rincão","SC",16,16,4,1,10,32,47
+"Balsa Nova","PR",8,5,1,0,2,13,16
+"Bálsamo","SP",10,15,1,5,2,25,33
+"Balsas","MA",50,71,4,6,66,121,197
+"Bambuí","MG",1,0,1,2,0,1,4
+"Banabuiú","CE",0,2,0,0,0,2,2
+"Bananal","SP",0,5,0,0,1,5,6
+"Bananeiras","PB",5,1,2,1,1,6,10
+"Bandeira do Sul","MG",0,0,0,0,2,0,2
+"Bandeirante","SC",1,0,0,0,2,1,3
+"Bandeirantes","MS",1,1,3,0,3,2,8
+"Bandeirantes","PR",7,11,3,1,8,18,30
+"Bannach","PA",1,1,0,0,0,2,2
+"Banzaê","BA",0,2,0,0,1,2,3
+"Barão","RS",1,1,0,0,1,2,3
+"Barão de Antonina","SP",0,0,0,1,1,0,2
+"Barão de Cocais","MG",3,3,0,1,4,6,11
+"Barão de Cotegipe","RS",7,2,0,1,2,9,12
+"Barão de Grajaú","MA",2,0,0,0,0,2,2
+"Barão de Melgaço","MT",0,2,0,0,0,2,2
+"Barão do Triunfo","RS",0,0,0,0,1,0,1
+"Baraúna","PB",0,0,1,0,0,0,1
+"Baraúna","RN",7,1,2,0,10,8,20
+"Barbacena","MG",13,22,8,5,18,35,66
+"Barbalha","CE",53,37,7,2,17,90,116
+"Barbosa","SP",0,1,0,0,1,1,2
+"Barbosa Ferraz","PR",0,1,0,0,3,1,4
+"Barcarena","PA",24,21,8,9,25,45,87
+"Bariri","SP",12,22,9,1,17,34,61
+"Barra","BA",1,1,0,0,4,2,6
+"Barra Bonita","SC",1,0,0,0,0,1,1
+"Barra Bonita","SP",13,35,10,2,15,48,75
+"Barra da Estiva","BA",3,2,0,0,1,5,6
+"Barra de Santa Rosa","PB",5,0,0,0,0,5,5
+"Barra de Santana","PB",1,0,0,0,0,1,1
+"Barra de Santo Antônio","AL",8,3,0,1,6,11,18
+"Barra de São Francisco","ES",15,33,8,3,5,48,64
+"Barra de São Miguel","AL",22,19,2,1,6,41,50
+"Barra de São Miguel","PB",1,0,0,0,0,1,1
+"Barra do Bugres","MT",2,11,6,1,6,13,26
+"Barra do Choça","BA",12,6,0,0,1,18,19
+"Barra do Corda","MA",5,3,0,0,5,8,13
+"Barra do Garças","MT",12,19,7,5,27,31,70
+"Barra do Guarita","RS",0,0,0,0,1,0,1
+"Barra do Mendes","BA",0,0,0,0,2,0,2
+"Barra do Ouro","TO",2,0,0,0,0,2,2
+"Barra do Piraí","RJ",29,34,5,5,20,63,93
+"Barra do Ribeiro","RS",3,5,2,1,4,8,15
+"Barra do Rio Azul","RS",1,2,0,0,1,3,4
+"Barra do Turvo","SP",0,2,0,0,0,2,2
+"Barra dos Coqueiros","SE",159,121,6,1,20,280,307
+"Barra Funda","RS",1,0,0,0,1,1,2
+"Barra Longa","MG",0,0,0,0,1,0,1
+"Barra Mansa","RJ",99,85,19,7,83,184,293
+"Barra Velha","SC",61,64,13,9,33,125,180
+"Barracão","PR",1,1,1,0,3,2,6
+"Barras","PI",2,2,2,1,0,4,7
+"Barreira","CE",3,0,1,1,1,3,6
+"Barreiras","BA",94,92,26,23,69,186,304
+"Barreirinhas","MA",6,7,0,2,4,13,19
+"Barreiros","PE",10,2,2,1,2,12,17
+"Barretos","SP",107,145,38,27,76,252,393
+"Barrinha","SP",15,8,0,3,8,23,34
+"Barro","CE",0,0,1,0,0,0,1
+"Barro Alto","GO",1,0,0,0,1,1,2
+"Barro Duro","PI",0,3,0,0,0,3,3
+"Barroquinha","CE",4,0,0,0,0,4,4
+"Barros Cassal","RS",0,0,0,0,1,0,1
+"Barroso","MG",0,3,0,0,2,3,5
+"Barueri","SP",986,1999,342,290,485,2985,4102
+"Bastos","SP",1,7,7,2,24,8,41
+"Bataguassu","MS",2,10,0,1,3,12,16
+"Batalha","AL",3,2,0,0,1,5,6
+"Batatais","SP",29,44,6,7,18,73,104
+"Batayporã","MS",1,0,0,1,0,1,2
+"Baturité","CE",7,5,1,0,3,12,16
+"Bauru","SP",706,975,271,55,285,1681,2292
+"Bayeux","PB",95,17,3,2,13,112,130
+"Bebedouro","SP",48,86,18,27,27,134,206
+"Beberibe","CE",4,7,0,1,5,11,17
+"Bela Cruz","CE",2,3,0,0,1,5,6
+"Bela Vista","MS",0,4,3,0,7,4,14
+"Bela Vista de Goiás","GO",21,21,2,1,6,42,51
+"Bela Vista de Minas","MG",0,2,0,0,1,2,3
+"Bela Vista do Maranhão","MA",0,0,0,0,2,0,2
+"Bela Vista do Paraíso","PR",4,1,1,0,1,5,7
+"Bela Vista do Toldo","SC",0,2,0,0,1,2,3
+"Belém","AL",1,2,1,0,1,3,5
+"Belém","PA",1408,1528,441,241,974,2936,4592
+"Belém","PB",0,1,0,0,0,1,1
+"Belém de Maria","PE",0,0,0,0,1,0,1
+"Belém do Brejo do Cruz","PB",1,0,0,0,1,1,2
+"Belém do Piauí","PI",1,0,0,0,0,1,1
+"Belém do São Francisco","PE",2,2,0,0,1,4,5
+"Belford Roxo","RJ",132,52,6,9,36,184,235
+"Belmiro Braga","MG",1,0,0,0,0,1,1
+"Belmonte","BA",0,1,0,0,0,1,1
+"Belo Campo","BA",5,2,0,0,3,7,10
+"Belo Horizonte","MG",9059,11853,3257,820,4113,20912,29102
+"Belo Jardim","PE",16,12,2,2,8,28,40
+"Belo Monte","AL",2,0,0,0,0,2,2
+"Belo Oriente","MG",1,3,0,0,8,4,12
+"Belo Vale","MG",2,0,0,0,1,2,3
+"Belterra","PA",1,0,0,0,1,1,2
+"Beneditinos","PI",0,0,0,0,1,0,1
+"Benedito Novo","SC",7,7,0,0,2,14,16
+"Benevides","PA",15,10,1,5,9,25,40
+"Bento de Abreu","SP",0,2,0,0,1,2,3
+"Bento Gonçalves","RS",124,135,57,30,88,259,434
+"Bequimão","MA",0,0,0,0,1,0,1
+"Berilo","MG",0,0,0,0,1,0,1
+"Bernardino de Campos","SP",0,0,1,1,0,0,2
+"Bernardo do Mearim","MA",2,0,0,0,0,2,2
+"Bertioga","SP",52,94,30,14,22,146,212
+"Betim","MG",131,97,30,15,48,228,321
+"Bezerros","PE",20,11,1,1,4,31,37
+"Bicas","MG",2,0,0,1,1,2,4
+"Biguaçu","SC",131,109,22,10,19,240,291
+"Bilac","SP",0,7,2,0,3,7,12
+"Biquinhas","MG",0,0,0,0,1,0,1
+"Birigui","SP",44,137,33,11,40,181,265
+"Biritiba Mirim","SP",11,8,3,1,7,19,30
+"Biritinga","BA",0,1,0,0,0,1,1
+"Bituruna","PR",3,2,0,1,0,5,6
+"Blumenau","SC",971,1336,315,224,220,2307,3066
+"Boa Esperança","ES",0,4,1,0,1,4,6
+"Boa Esperança","MG",2,3,4,1,3,5,13
+"Boa Esperança","PR",2,1,0,0,1,3,4
+"Boa Esperança","SP",0,1,0,0,0,1,1
+"Boa Esperança do Sul","SP",1,4,0,0,1,5,6
+"Boa Nova","BA",1,0,0,0,0,1,1
+"Boa Ventura","PB",0,1,0,0,0,1,1
+"Boa Ventura de São Roque","PR",0,0,1,0,0,0,1
+"Boa Viagem","CE",5,3,1,0,2,8,11
+"Boa Vista","RR",525,236,25,10,199,761,995
+"Boa Vista da Aparecida","PR",2,1,0,1,1,3,5
+"Boa Vista das Missões","RS",1,1,0,0,1,2,3
+"Boa Vista do Buricá","RS",4,2,1,0,2,6,9
+"Boa Vista do Cadeado","RS",1,0,0,0,0,1,1
+"Boa Vista do Sul","RS",0,0,0,0,3,0,3
+"Boca da Mata","AL",3,1,0,0,2,4,6
+"Bocaina","PI",0,1,0,0,0,1,1
+"Bocaina","SP",2,3,1,0,2,5,8
+"Bocaiúva","MG",2,5,0,0,1,7,8
+"Bocaiúva do Sul","PR",11,6,0,2,0,17,19
+"Bodó","RN",1,0,0,0,0,1,1
+"Bodocó","PE",4,0,0,0,0,4,4
+"Bodoquena","MS",0,1,1,0,2,1,4
+"Bofete","SP",1,2,1,0,3,3,7
+"Boituva","SP",83,111,43,15,66,194,318
+"Bom Conselho","PE",6,2,0,1,1,8,10
+"Bom Despacho","MG",5,5,1,4,7,10,22
+"Bom Jardim","MA",1,0,0,1,1,1,3
+"Bom Jardim","PE",4,0,0,1,0,4,5
+"Bom Jardim","RJ",2,9,1,0,13,11,25
+"Bom Jardim da Serra","SC",1,2,0,0,2,3,5
+"Bom Jardim de Goiás","GO",0,0,0,0,3,0,3
+"Bom Jardim de Minas","MG",2,0,0,0,0,2,2
+"Bom Jesus","PI",2,6,1,3,1,8,13
+"Bom Jesus","RN",1,0,0,0,1,1,2
+"Bom Jesus","RS",1,0,0,1,1,1,3
+"Bom Jesus","SC",0,2,0,0,0,2,2
+"Bom Jesus da Lapa","BA",11,11,3,4,20,22,49
+"Bom Jesus da Penha","MG",0,0,0,0,1,0,1
+"Bom Jesus das Selvas","MA",0,0,0,0,1,0,1
+"Bom Jesus de Goiás","GO",2,16,1,5,2,18,26
+"Bom Jesus do Amparo","MG",2,0,0,0,0,2,2
+"Bom Jesus do Araguaia","MT",1,2,1,0,0,3,4
+"Bom Jesus do Galho","MG",1,0,0,0,3,1,4
+"Bom Jesus do Itabapoana","RJ",2,4,1,2,4,6,13
+"Bom Jesus do Norte","ES",7,11,1,1,4,18,24
+"Bom Jesus do Sul","PR",1,0,0,0,0,1,1
+"Bom Jesus do Tocantins","PA",1,0,0,0,4,1,5
+"Bom Jesus dos Perdões","SP",21,29,2,5,10,50,67
+"Bom Lugar","MA",0,0,0,0,2,0,2
+"Bom Princípio","RS",25,12,2,1,10,37,50
+"Bom Princípio do Piauí","PI",1,0,0,0,1,1,2
+"Bom Retiro","SC",1,3,1,0,2,4,7
+"Bom Retiro do Sul","RS",10,5,0,1,4,15,20
+"Bom Sucesso","PB",1,0,0,0,0,1,1
+"Bom Sucesso","PR",3,1,0,0,2,4,6
+"Bom Sucesso de Itararé","SP",0,1,1,0,0,1,2
+"Bom Sucesso do Sul","PR",0,1,0,0,0,1,1
+"Bombinhas","SC",72,129,28,19,46,201,294
+"Bonfim","RR",1,0,0,0,2,1,3
+"Bonfinópolis","GO",2,0,0,0,1,2,3
+"Boninal","BA",0,0,0,1,1,0,2
+"Bonito","BA",1,0,0,1,1,1,3
+"Bonito","MS",2,10,6,3,5,12,26
+"Bonito","PA",1,0,0,0,0,1,1
+"Bonito","PE",4,2,1,1,0,6,8
+"Bonito de Santa Fé","PB",0,0,0,0,2,0,2
+"Boqueirão","PB",0,1,0,0,2,1,3
+"Boqueirão do Leão","RS",0,0,0,0,3,0,3
+"Boquim","SE",11,9,0,0,1,20,21
+"Boquira","BA",1,0,0,0,1,1,2
+"Boracéia","SP",0,5,1,0,1,5,7
+"Borborema","SP",2,14,3,0,3,16,22
+"Borda da Mata","MG",3,3,2,0,0,6,8
+"Borebi","SP",0,2,0,0,0,2,2
+"Borrazópolis","PR",1,1,0,0,0,2,2
+"Bossoroca","RS",0,3,0,0,1,3,4
+"Botelhos","MG",0,1,0,0,1,1,2
+"Botucatu","SP",278,292,29,13,140,570,752
+"Botuverá","SC",2,4,0,1,1,6,8
+"Bozano","RS",1,0,0,0,0,1,1
+"Braço do Norte","SC",20,57,8,7,21,77,113
+"Braço do Trombudo","SC",1,3,1,1,0,4,6
+"Braga","RS",1,1,0,0,0,2,2
+"Bragança","PA",9,10,2,3,18,19,42
+"Bragança Paulista","SP",302,369,86,44,164,671,965
+"Brás Pires","MG",0,0,0,0,2,0,2
+"Brasil Novo","PA",1,0,0,0,0,1,1
+"Brasilândia","MS",1,4,1,0,0,5,6
+"Brasilândia de Minas","MG",0,0,0,0,1,0,1
+"Brasilândia do Sul","PR",1,0,0,0,0,1,1
+"Brasiléia","AC",1,5,0,0,4,6,10
+"Brasília","DF",23275,24589,4828,1657,6006,47864,60355
+"Brasília de Minas","MG",1,1,0,0,1,2,3
+"Brasnorte","MT",2,8,0,1,3,10,14
+"Braúna","SP",0,1,1,0,1,1,3
+"Brazabrantes","GO",2,2,0,0,0,4,4
+"Brazópolis","MG",2,1,0,0,1,3,4
+"Brejetuba","ES",2,2,2,0,5,4,11
+"Brejinho","PE",1,1,0,0,0,2,2
+"Brejinho","RN",2,2,0,0,0,4,4
+"Brejo","MA",1,0,0,0,0,1,1
+"Brejo Alegre","SP",1,0,0,0,1,1,2
+"Brejo da Madre de Deus","PE",8,2,0,0,0,10,10
+"Brejo do Cruz","PB",0,0,0,0,1,0,1
+"Brejo Santo","CE",2,6,2,0,0,8,10
+"Brejões","BA",0,0,1,0,1,0,2
+"Breu Branco","PA",0,2,0,0,1,2,3
+"Breves","PA",6,5,2,1,0,11,14
+"Brochier","RS",2,0,0,1,2,2,5
+"Brodowski","SP",9,13,7,4,8,22,41
+"Brotas","SP",4,14,2,1,2,18,23
+"Brumadinho","MG",11,11,4,3,7,22,36
+"Brumado","BA",16,19,3,1,13,35,52
+"Brunópolis","SC",0,0,0,0,3,0,3
+"Brusque","SC",275,424,79,46,103,699,927
+"Bueno Brandão","MG",0,0,1,0,2,0,3
+"Buenópolis","MG",1,0,0,0,1,1,2
+"Buerarema","BA",1,0,0,0,1,1,2
+"Buíque","PE",2,2,0,0,2,4,6
+"Bujari","AC",1,0,0,0,1,1,2
+"Bujaru","PA",0,1,0,0,0,1,1
+"Buri","SP",6,10,2,1,4,16,23
+"Buritama","SP",3,15,5,2,3,18,28
+"Buriti Alegre","GO",1,3,0,1,2,4,7
+"Buriti de Goiás","GO",1,2,0,0,1,3,4
+"Buriti dos Lopes","PI",2,0,0,0,1,2,3
+"Buriticupu","MA",1,4,0,0,4,5,9
+"Buritirana","MA",2,0,0,0,0,2,2
+"Buritis","RO",0,6,1,0,2,6,9
+"Buritizal","SP",1,0,1,0,1,1,3
+"Butiá","RS",9,5,1,1,5,14,21
+"Caaporã","PB",2,1,0,0,0,3,3
+"Caarapó","MS",2,9,3,0,1,11,15
+"Caatiba","BA",2,2,0,0,0,4,4
+"Cabaceiras","PB",1,0,0,0,0,1,1
+"Cabaceiras do Paraguaçu","BA",0,1,1,1,2,1,5
+"Cabedelo","PB",294,222,56,15,106,516,693
+"Cabixi","RO",0,0,1,0,1,0,2
+"Cabo de Santo Agostinho","PE",215,127,17,5,24,342,388
+"Cabo Frio","RJ",193,213,52,24,140,406,622
+"Cabo Verde","MG",0,0,0,0,1,0,1
+"Cabreúva","SP",46,53,11,7,18,99,135
+"Cabrobó","PE",4,2,1,2,4,6,13
+"Caçador","SC",37,77,20,7,13,114,154
+"Caçapava","SP",72,73,18,15,21,145,199
+"Caçapava do Sul","RS",10,7,3,0,4,17,24
+"Cacaulândia","RO",1,2,0,0,0,3,3
+"Cacequi","RS",2,0,1,0,0,2,3
+"Cáceres","MT",61,73,25,9,57,134,225
+"Cachoeira","BA",4,6,2,4,5,10,21
+"Cachoeira Alta","GO",1,5,0,0,1,6,7
+"Cachoeira de Minas","MG",4,0,0,0,0,4,4
+"Cachoeira do Arari","PA",0,0,0,0,1,0,1
+"Cachoeira do Piriá","PA",0,0,0,0,2,0,2
+"Cachoeira do Sul","RS",31,14,11,8,20,45,84
+"Cachoeira Dourada","GO",2,5,0,1,3,7,11
+"Cachoeira Dourada","MG",0,0,0,0,2,0,2
+"Cachoeira Paulista","SP",5,14,2,1,7,19,29
+"Cachoeiras de Macacu","RJ",16,18,5,1,15,34,55
+"Cachoeirinha","PE",5,0,1,0,4,5,10
+"Cachoeirinha","RS",272,118,29,18,26,390,463
+"Cachoeirinha","TO",0,0,0,0,1,0,1
+"Cachoeiro de Itapemirim","ES",207,314,77,18,125,521,741
+"Cacimba de Dentro","PB",0,1,1,0,0,1,2
+"Cacoal","RO",81,100,24,5,27,181,237
+"Caconde","SP",7,7,1,0,5,14,20
+"Caçu","GO",2,4,2,1,4,6,13
+"Caculé","BA",2,5,1,0,2,7,10
+"Caém","BA",0,0,0,0,1,0,1
+"Caetanópolis","MG",1,1,0,0,2,2,4
+"Caetanos","BA",1,0,0,0,0,1,1
+"Caeté","MG",0,8,0,0,1,8,9
+"Caetés","PE",4,1,0,0,0,5,5
+"Caetité","BA",12,10,1,0,8,22,31
+"Cafarnaum","BA",3,0,0,0,3,3,6
+"Cafeara","PR",0,1,0,0,0,1,1
+"Cafelândia","PR",7,10,4,0,3,17,24
+"Cafelândia","SP",8,10,7,0,8,18,33
+"Caiabu","SP",0,1,0,0,0,1,1
+"Caiapônia","GO",2,5,2,0,4,7,13
+"Caibaté","RS",1,0,0,0,0,1,1
+"Caibi","SC",1,11,3,1,0,12,16
+"Caiçara","PB",2,0,0,0,0,2,2
+"Caicó","RN",47,22,3,9,16,69,97
+"Caieiras","SP",75,95,25,10,45,170,250
+"Cairu","BA",1,0,0,0,2,1,3
+"Cajamar","SP",111,127,25,11,90,238,364
+"Cajari","MA",0,0,0,1,1,0,2
+"Cajati","SP",3,2,0,1,7,5,13
+"Cajazeiras","PB",16,26,8,10,29,42,89
+"Cajazeiras do Piauí","PI",0,0,0,0,2,0,2
+"Cajobi","SP",3,2,1,0,1,5,7
+"Cajueiro","AL",2,0,2,0,2,2,6
+"Cajueiro da Praia","PI",1,2,1,0,0,3,4
+"Cajuru","SP",3,11,1,3,6,14,24
+"Caldas","MG",0,1,0,0,2,1,3
+"Caldas Novas","GO",53,62,8,12,52,115,187
+"Caldazinha","GO",0,1,0,0,0,1,1
+"Caldeirão Grande","BA",1,0,0,0,0,1,1
+"Califórnia","PR",1,3,0,0,0,4,4
+"Calumbi","PE",0,1,0,0,0,1,1
+"Camacan","BA",0,0,0,0,2,0,2
+"Camaçari","BA",425,264,71,23,142,689,925
+"Camacho","MG",0,1,0,0,1,1,2
+"Camamu","BA",2,0,1,0,1,2,4
+"Camanducaia","MG",6,4,0,2,3,10,15
+"Camapuã","MS",0,3,0,2,1,3,6
+"Camaquã","RS",21,22,17,8,9,43,77
+"Camaragibe","PE",261,81,17,11,34,342,404
+"Camargo","RS",0,0,0,1,0,0,1
+"Cambará","PR",2,5,3,0,5,7,15
+"Cambará do Sul","RS",0,1,0,0,5,1,6
+"Cambé","PR",115,99,18,3,16,214,251
+"Cambira","PR",1,5,1,0,0,6,7
+"Camboriú","SC",160,147,43,23,29,307,402
+"Cambuci","RJ",1,1,0,0,3,2,5
+"Cambuí","MG",5,3,2,0,6,8,16
+"Cambuquira","MG",0,2,0,0,1,2,3
+"Cametá","PA",2,5,4,0,7,7,18
+"Camocim","CE",14,8,1,0,8,22,31
+"Camocim de São Félix","PE",3,0,1,0,0,3,4
+"Campanha","MG",1,1,0,0,0,2,2
+"Campestre","AL",0,1,0,0,0,1,1
+"Campestre","MG",1,0,1,0,3,1,5
+"Campestre da Serra","RS",0,1,1,0,1,1,3
+"Campestre de Goiás","GO",2,0,0,0,0,2,2
+"Campestre do Maranhão","MA",2,0,0,0,0,2,2
+"Campina da Lagoa","PR",3,8,0,0,3,11,14
+"Campina das Missões","RS",1,0,2,0,1,1,4
+"Campina do Monte Alegre","SP",2,0,1,0,0,2,3
+"Campina do Simão","PR",0,1,0,0,1,1,2
+"Campina Grande","PB",683,409,98,64,261,1092,1515
+"Campina Grande do Sul","PR",63,35,5,6,7,98,116
+"Campina Verde","MG",0,0,0,0,1,0,1
+"Campinaçu","GO",0,0,0,0,1,0,1
+"Campinápolis","MT",0,0,0,0,1,0,1
+"Campinas","SP",3806,5882,847,415,1221,9688,12171
+"Campinas do Sul","RS",1,0,0,0,0,1,1
+"Campinorte","GO",0,2,0,0,2,2,4
+"Campo Alegre","AL",5,3,1,0,2,8,11
+"Campo Alegre","SC",4,14,1,1,2,18,22
+"Campo Alegre de Goiás","GO",1,0,1,0,0,1,2
+"Campo Alegre de Lourdes","BA",1,2,0,0,0,3,3
+"Campo Belo","MG",5,9,0,1,2,14,17
+"Campo Belo do Sul","SC",0,0,2,0,2,0,4
+"Campo Bom","RS",129,87,11,15,33,216,275
+"Campo Bonito","PR",0,2,0,1,0,2,3
+"Campo do Brito","SE",1,2,1,2,0,3,6
+"Campo do Meio","MG",0,3,0,0,6,3,9
+"Campo do Tenente","PR",0,0,1,0,0,0,1
+"Campo Erê","SC",0,2,1,0,0,2,3
+"Campo Formoso","BA",3,0,0,0,2,3,5
+"Campo Grande","AL",2,0,0,0,1,2,3
+"Campo Grande","MS",1078,2022,529,275,780,3100,4684
+"Campo Grande","RN",1,0,0,0,0,1,1
+"Campo Grande do Piauí","PI",1,0,0,0,0,1,1
+"Campo Largo","PR",185,122,35,14,13,307,369
+"Campo Largo do Piauí","PI",1,0,0,0,0,1,1
+"Campo Limpo de Goiás","GO",5,1,0,0,3,6,9
+"Campo Limpo Paulista","SP",52,23,12,4,16,75,107
+"Campo Magro","PR",24,17,2,2,3,41,48
+"Campo Maior","PI",7,6,3,2,10,13,28
+"Campo Mourão","PR",52,111,24,12,19,163,218
+"Campo Novo","RS",1,2,1,0,2,3,6
+"Campo Novo de Rondônia","RO",0,0,0,0,1,0,1
+"Campo Novo do Parecis","MT",2,40,4,8,11,42,65
+"Campo Verde","MT",9,51,13,7,8,60,88
+"Campos Altos","MG",0,0,0,0,3,0,3
+"Campos Belos","GO",0,1,1,0,4,1,6
+"Campos Borges","RS",1,0,0,0,0,1,1
+"Campos de Júlio","MT",0,3,1,2,1,3,7
+"Campos do Jordão","SP",40,31,12,7,15,71,105
+"Campos dos Goytacazes","RJ",134,193,80,30,217,327,654
+"Campos Gerais","MG",2,0,0,1,1,2,4
+"Campos Lindos","TO",3,1,0,0,0,4,4
+"Campos Novos","SC",11,57,12,3,10,68,93
+"Campos Novos Paulista","SP",0,1,0,0,1,1,2
+"Campos Sales","CE",1,1,0,0,1,2,3
+"Campos Verdes","GO",0,0,0,0,1,0,1
+"Camutanga","PE",1,0,0,0,0,1,1
+"Canaã","MG",0,0,1,0,1,0,2
+"Canaã dos Carajás","PA",36,23,3,3,23,59,88
+"Cananéia","SP",2,5,2,0,1,7,10
+"Canápolis","MG",2,1,1,0,0,3,4
+"Canarana","BA",0,0,0,0,3,0,3
+"Canarana","MT",2,10,1,0,5,12,18
+"Canas","SP",3,2,0,1,0,5,6
+"Canavieiras","BA",0,0,0,0,1,0,1
+"Candeal","BA",0,0,0,0,2,0,2
+"Candeias","BA",26,20,2,2,19,46,69
+"Candeias","MG",2,1,0,0,0,3,3
+"Candeias do Jamari","RO",18,5,0,0,2,23,25
+"Candelária","RS",5,2,1,2,7,7,17
+"Candiba","BA",1,0,0,0,0,1,1
+"Cândido de Abreu","PR",1,3,0,0,1,4,5
+"Cândido Mendes","MA",1,0,0,0,0,1,1
+"Cândido Mota","SP",8,10,0,0,4,18,22
+"Cândido Sales","BA",2,2,0,0,2,4,6
+"Candiota","RS",3,1,0,0,0,4,4
+"Candói","PR",2,3,0,0,1,5,6
+"Canela","RS",89,36,8,4,18,125,155
+"Canelinha","SC",8,14,6,2,2,22,32
+"Canguaretama","RN",4,0,0,0,1,4,5
+"Canguçu","RS",10,10,1,0,8,20,29
+"Canhoba","SE",1,0,0,0,0,1,1
+"Canhotinho","PE",2,0,0,0,3,2,5
+"Canindé","CE",6,3,2,0,5,9,16
+"Canindé de São Francisco","SE",0,1,0,0,0,1,1
+"Canitar","SP",1,0,1,0,0,1,2
+"Canoas","RS",746,368,109,65,149,1114,1437
+"Canoinhas","SC",14,34,9,11,36,48,104
+"Cansanção","BA",7,2,0,1,1,9,11
+"Cantá","RR",5,0,0,0,1,5,6
+"Cantagalo","MG",0,0,0,0,1,0,1
+"Cantagalo","PR",0,3,2,0,0,3,5
+"Cantagalo","RJ",7,6,0,0,1,13,14
+"Cantanhede","MA",1,0,1,0,1,1,3
+"Canto do Buriti","PI",0,1,2,0,0,1,3
+"Canudos","BA",0,0,0,0,1,0,1
+"Capanema","PA",12,14,1,2,9,26,38
+"Capanema","PR",0,10,1,0,2,10,13
+"Capão Bonito","SP",10,16,4,3,10,26,43
+"Capão da Canoa","RS",97,79,22,18,38,176,254
+"Capão do Cipó","RS",0,0,0,0,1,0,1
+"Capão do Leão","RS",12,6,0,0,2,18,20
+"Capela","AL",0,0,1,0,0,0,1
+"Capela","SE",0,3,0,0,1,3,4
+"Capela de Santana","RS",12,2,0,1,3,14,18
+"Capela do Alto","SP",5,11,3,0,2,16,21
+"Capela do Alto Alegre","BA",3,1,0,0,0,4,4
+"Capelinha","MG",0,3,0,1,1,3,5
+"Capetinga","MG",0,1,0,0,1,1,2
+"Capim Branco","MG",1,0,0,1,0,1,2
+"Capim Grosso","BA",9,5,2,0,0,14,16
+"Capinópolis","MG",0,4,0,0,1,4,5
+"Capinzal","SC",7,7,5,3,1,14,23
+"Capinzal do Norte","MA",1,0,0,0,0,1,1
+"Capistrano","CE",0,1,0,0,0,1,1
+"Capitão","RS",2,0,0,0,1,2,3
+"Capitão Andrade","MG",0,0,0,0,1,0,1
+"Capitão de Campos","PI",1,0,0,0,1,1,2
+"Capitão Enéas","MG",1,0,0,0,0,1,1
+"Capitão Leônidas Marques","PR",8,10,1,1,0,18,20
+"Capitão Poço","PA",1,7,0,1,10,8,19
+"Capitólio","MG",1,1,0,0,2,2,4
+"Capivari","SP",20,39,14,5,25,59,103
+"Capivari de Baixo","SC",8,9,4,1,11,17,33
+"Capivari do Sul","RS",0,0,0,1,0,0,1
+"Capixaba","AC",1,0,0,0,0,1,1
+"Capoeiras","PE",1,0,0,0,1,1,2
+"Caputira","MG",0,1,0,0,1,1,2
+"Caraá","RS",6,1,0,0,1,7,8
+"Caracaraí","RR",2,0,0,0,0,2,2
+"Caracol","MS",0,0,0,0,1,0,1
+"Caraguatatuba","SP",159,178,42,43,39,337,461
+"Caraíbas","BA",1,1,0,0,1,2,3
+"Carambeí","PR",12,14,1,3,1,26,31
+"Carandaí","MG",1,1,0,1,2,2,5
+"Carangola","MG",5,6,1,0,5,11,17
+"Carapebus","RJ",5,4,1,0,3,9,13
+"Carapicuíba","SP",157,170,35,16,64,327,442
+"Caratinga","MG",16,15,9,11,17,31,68
+"Caraúbas","PB",0,2,0,0,0,2,2
+"Caraúbas","RN",0,4,0,1,3,4,8
+"Caravelas","BA",0,0,0,0,1,0,1
+"Carazinho","RS",56,59,13,11,6,115,145
+"Cardeal da Silva","BA",1,4,0,0,3,5,8
+"Cardoso","SP",0,0,0,1,2,0,3
+"Cardoso Moreira","RJ",2,3,0,0,1,5,6
+"Careaçu","MG",0,0,0,0,1,0,1
+"Careiro","AM",1,0,0,0,0,1,1
+"Cariacica","ES",2125,1059,368,135,158,3184,3845
+"Caridade","CE",2,1,0,0,1,3,4
+"Carinhanha","BA",1,0,0,0,1,1,2
+"Carira","SE",2,1,0,0,1,3,4
+"Cariré","CE",1,4,0,0,2,5,7
+"Cariri do Tocantins","TO",0,0,0,1,0,0,1
+"Caririaçu","CE",1,0,0,0,0,1,1
+"Carlinda","MT",0,1,0,0,0,1,1
+"Carlópolis","PR",11,8,2,0,4,19,25
+"Carlos Barbosa","RS",25,29,5,7,21,54,87
+"Carlos Gomes","RS",0,0,0,0,1,0,1
+"Carmésia","MG",0,1,0,0,0,1,1
+"Carmo","RJ",1,2,0,0,4,3,7
+"Carmo da Cachoeira","MG",0,2,0,0,1,2,3
+"Carmo da Mata","MG",1,1,0,0,0,2,2
+"Carmo de Minas","MG",1,0,2,0,1,1,4
+"Carmo do Cajuru","MG",1,3,1,0,0,4,5
+"Carmo do Paranaíba","MG",1,4,0,0,5,5,10
+"Carmo do Rio Claro","MG",2,0,0,0,3,2,5
+"Carmo do Rio Verde","GO",0,3,1,1,2,3,7
+"Carmópolis","SE",1,0,0,0,0,1,1
+"Carmópolis de Minas","MG",2,2,0,0,0,4,4
+"Carnaíba","PE",1,0,0,0,0,1,1
+"Carnaúba dos Dantas","RN",2,1,0,0,1,3,4
+"Carneiros","AL",1,0,0,0,0,1,1
+"Carolina","MA",3,0,0,0,2,3,5
+"Carpina","PE",86,29,4,3,16,115,138
+"Caruaru","PE",637,358,62,29,107,995,1193
+"Carutapera","MA",2,0,0,0,0,2,2
+"Carvalhópolis","MG",0,0,0,0,2,0,2
+"Casa Branca","SP",3,11,0,0,6,14,20
+"Casa Nova","BA",2,0,0,0,0,2,2
+"Casca","RS",5,13,2,3,2,18,25
+"Cascavel","CE",14,4,0,0,4,18,22
+"Cascavel","PR",622,908,161,74,181,1530,1946
+"Caseiros","RS",1,0,0,0,0,1,1
+"Casimiro de Abreu","RJ",9,9,5,1,12,18,36
+"Cássia","MG",3,2,1,0,3,5,9
+"Cássia dos Coqueiros","SP",0,1,1,0,2,1,4
+"Cassilândia","MS",1,2,4,1,5,3,13
+"Castanhal","PA",111,56,19,14,55,167,255
+"Castanheira","MT",0,3,0,0,1,3,4
+"Castelândia","GO",0,2,0,0,0,2,2
+"Castelo","ES",14,39,5,8,15,53,81
+"Castelo do Piauí","PI",3,2,0,0,0,5,5
+"Castilho","SP",11,1,1,0,0,12,13
+"Castro","PR",21,37,15,6,20,58,99
+"Castro Alves","BA",2,2,1,0,4,4,9
+"Cataguases","MG",7,10,1,4,7,17,29
+"Catalão","GO",35,252,25,10,36,287,358
+"Catanduva","SP",97,189,57,22,67,286,432
+"Catanduvas","PR",0,1,1,0,5,1,7
+"Catanduvas","SC",3,11,1,0,2,14,17
+"Catarina","CE",0,2,1,0,0,2,3
+"Catas Altas","MG",0,0,0,0,1,0,1
+"Catende","PE",2,2,1,1,3,4,9
+"Catiguá","SP",1,0,1,0,1,1,3
+"Catolé do Rocha","PB",9,8,3,3,2,17,25
+"Catu","BA",14,9,3,3,10,23,39
+"Catuípe","RS",3,3,0,0,1,6,7
+"Catuji","MG",0,0,1,0,0,0,1
+"Catunda","CE",1,0,0,0,0,1,1
+"Caturaí","GO",0,3,0,0,1,3,4
+"Caucaia","CE",247,87,7,4,35,334,380
+"Caxambu","MG",1,3,0,0,3,4,7
+"Caxambu do Sul","SC",1,0,0,0,0,1,1
+"Caxias","MA",21,4,1,2,7,25,35
+"Caxias do Sul","RS",1560,787,287,96,291,2347,3021
+"Caxingó","PI",1,0,0,0,1,1,2
+"Ceará-Mirim","RN",30,5,1,3,4,35,43
+"Cedral","MA",3,0,0,0,1,3,4
+"Cedral","SP",8,5,6,0,3,13,22
+"Cedro","CE",4,0,0,0,1,4,5
+"Cedro","PE",1,0,0,0,1,1,2
+"Cedro de São João","SE",1,3,0,0,0,4,4
+"Celso Ramos","SC",0,0,1,0,1,0,2
+"Centenário","RS",0,1,0,0,0,1,1
+"Centenário do Sul","PR",4,0,0,0,1,4,5
+"Central","BA",0,0,1,0,1,0,2
+"Central de Minas","MG",0,0,1,1,0,0,2
+"Centralina","MG",0,1,0,0,0,1,1
+"Cerejeiras","RO",2,3,3,0,5,5,13
+"Ceres","GO",3,13,7,4,3,16,30
+"Cerqueira César","SP",7,3,2,0,7,10,19
+"Cerquilho","SP",25,55,9,9,33,80,131
+"Cerrito","RS",1,0,0,0,0,1,1
+"Cerro Azul","PR",2,2,0,0,0,4,4
+"Cerro Branco","RS",0,0,0,0,1,0,1
+"Cerro Grande do Sul","RS",2,0,1,0,0,2,3
+"Cerro Largo","RS",4,1,0,1,4,5,10
+"Cerro Negro","SC",0,1,0,0,0,1,1
+"Cesário Lange","SP",7,7,1,0,9,14,24
+"Céu Azul","PR",1,2,0,0,1,3,4
+"Cezarina","GO",0,0,0,0,1,0,1
+"Chã de Alegria","PE",2,1,0,0,0,3,3
+"Chã Grande","PE",7,1,0,0,3,8,11
+"Chapada","RS",0,1,0,1,0,1,2
+"Chapada dos Guimarães","MT",16,11,5,1,11,27,44
+"Chapadão do Céu","GO",1,5,0,0,3,6,9
+"Chapadão do Sul","MS",3,18,6,7,27,21,61
+"Chapadinha","MA",5,3,1,1,4,8,14
+"Chapecó","SC",442,862,192,106,132,1304,1734
+"Charqueada","SP",3,4,0,0,2,7,9
+"Charqueadas","RS",20,6,2,1,2,26,31
+"Charrua","RS",0,1,0,0,0,1,1
+"Chaval","CE",1,1,0,0,0,2,2
+"Chavantes","SP",2,3,0,1,4,5,10
+"Chiapetta","RS",0,1,0,0,0,1,1
+"Chopinzinho","PR",14,7,0,2,0,21,23
+"Choró","CE",0,2,0,0,2,2,4
+"Chorrochó","BA",1,0,0,0,3,1,4
+"Chuí","RS",7,4,1,0,4,11,16
+"Chupinguaia","RO",0,2,0,0,0,2,2
+"Cianorte","PR",71,98,22,10,18,169,219
+"Cícero Dantas","BA",3,0,0,0,5,3,8
+"Cidade Gaúcha","PR",4,4,1,0,1,8,10
+"Cidade Ocidental","GO",1,0,0,0,0,1,1
+"Cidelândia","MA",2,1,1,0,0,3,4
+"Cidreira","RS",11,1,0,1,0,12,13
+"Cipó","BA",3,3,0,0,0,6,6
+"Ciríaco","RS",3,3,1,0,1,6,8
+"Cláudia","MT",3,2,2,0,4,5,11
+"Cláudio","MG",2,9,3,3,4,11,21
+"Clementina","SP",1,3,0,0,1,4,5
+"Clevelândia","PR",2,3,2,0,1,5,8
+"Coaraci","BA",1,0,1,0,3,1,5
+"Coari","AM",1,4,0,0,0,5,5
+"Cocal","PI",0,1,0,0,2,1,3
+"Cocal de Telha","PI",0,1,0,0,2,1,3
+"Cocal do Sul","SC",15,8,5,1,11,23,40
+"Cocal dos Alves","PI",1,0,0,0,0,1,1
+"Cocalzinho de Goiás","GO",0,1,1,0,1,1,3
+"Codó","MA",16,4,1,1,4,20,26
+"Coelho Neto","MA",0,1,0,0,0,1,1
+"Coimbra","MG",0,0,0,0,3,0,3
+"Coité do Nóia","AL",9,2,0,0,0,11,11
+"Coivaras","PI",1,0,0,0,0,1,1
+"Colares","PA",1,0,0,0,0,1,1
+"Colatina","ES",93,137,35,16,65,230,346
+"Colíder","MT",7,8,3,2,12,15,32
+"Colina","SP",4,9,3,2,2,13,20
+"Colinas","MA",1,0,0,0,3,1,4
+"Colinas","RS",3,0,0,0,2,3,5
+"Colinas do Tocantins","TO",3,5,0,0,4,8,12
+"Colméia","TO",0,1,0,0,2,1,3
+"Colniza","MT",0,0,0,0,1,0,1
+"Colômbia","SP",1,3,2,0,0,4,6
+"Colombo","PR",309,189,21,19,31,498,569
+"Colônia Leopoldina","AL",0,0,1,0,0,0,1
+"Colorado","PR",4,8,2,0,6,12,20
+"Colorado","RS",4,1,0,0,0,5,5
+"Colorado do Oeste","RO",0,1,1,1,1,1,4
+"Coluna","MG",0,0,0,1,0,0,1
+"Comendador Levy Gasparian","RJ",3,4,0,0,0,7,7
+"Comodoro","MT",1,5,3,0,1,6,10
+"Conceição","PB",0,1,1,0,1,1,3
+"Conceição da Aparecida","MG",0,1,0,0,3,1,4
+"Conceição da Barra","ES",9,13,4,1,1,22,28
+"Conceição da Feira","BA",5,2,0,1,2,7,10
+"Conceição das Alagoas","MG",1,2,2,0,2,3,7
+"Conceição de Macabu","RJ",2,0,0,0,6,2,8
+"Conceição do Almeida","BA",1,2,1,0,1,3,5
+"Conceição do Araguaia","PA",3,2,0,0,3,5,8
+"Conceição do Canindé","PI",1,0,0,0,0,1,1
+"Conceição do Castelo","ES",3,0,0,0,7,3,10
+"Conceição do Coité","BA",20,14,1,0,10,34,45
+"Conceição do Jacuípe","BA",13,13,2,3,10,26,41
+"Conceição do Lago-Açu","MA",1,0,0,0,0,1,1
+"Conceição do Mato Dentro","MG",1,2,0,0,3,3,6
+"Conceição do Pará","MG",0,0,0,0,1,0,1
+"Conceição do Rio Verde","MG",0,2,0,0,0,2,2
+"Conceição dos Ouros","MG",2,4,0,0,2,6,8
+"Conchal","SP",6,17,4,0,9,23,36
+"Conchas","SP",2,8,0,0,5,10,15
+"Concórdia","SC",48,110,38,8,20,158,224
+"Concórdia do Pará","PA",0,0,0,0,4,0,4
+"Condado","PB",0,0,0,0,1,0,1
+"Condado","PE",4,1,0,0,1,5,6
+"Conde","BA",4,1,0,0,1,5,6
+"Conde","PB",16,7,0,0,3,23,26
+"Condeúba","BA",5,1,1,0,2,6,9
+"Condor","RS",1,1,0,0,1,2,3
+"Confins","MG",9,4,0,2,27,13,42
+"Confresa","MT",0,1,2,1,1,1,5
+"Congonhal","MG",1,5,0,0,1,6,7
+"Congonhas","MG",4,5,0,0,4,9,13
+"Conquista","MG",0,0,0,0,1,0,1
+"Conquista D'Oeste","MT",0,3,0,1,0,3,4
+"Conselheiro Lafaiete","MG",29,24,1,5,10,53,69
+"Conselheiro Pena","MG",2,0,0,1,4,2,7
+"Constantina","RS",0,0,0,0,1,0,1
+"Contagem","MG",304,325,63,34,184,629,910
+"Contenda","PR",13,7,0,1,2,20,23
+"Contendas do Sincorá","BA",1,0,0,0,0,1,1
+"Coqueiro Baixo","RS",1,0,0,0,0,1,1
+"Coqueiro Seco","AL",3,0,0,0,0,3,3
+"Coração de Maria","BA",1,2,0,0,2,3,5
+"Corbélia","PR",3,12,5,0,3,15,23
+"Cordeiro","RJ",5,5,2,2,4,10,18
+"Cordeirópolis","SP",19,29,6,5,14,48,73
+"Cordeiros","BA",0,1,0,0,0,1,1
+"Cordilheira Alta","SC",2,10,1,2,0,12,15
+"Coreaú","CE",1,0,0,0,0,1,1
+"Coremas","PB",0,1,1,0,1,1,3
+"Corguinho","MS",0,1,0,0,2,1,3
+"Corinto","MG",0,0,0,0,1,0,1
+"Cornélio Procópio","PR",18,38,13,3,17,56,89
+"Coroaci","MG",2,0,0,0,2,2,4
+"Coroados","SP",0,5,1,1,0,5,7
+"Coroatá","MA",1,2,0,0,3,3,6
+"Coromandel","MG",2,2,2,0,4,4,10
+"Coronel Bicaco","RS",0,2,0,0,0,2,2
+"Coronel Domingos Soares","PR",0,0,0,0,1,0,1
+"Coronel Fabriciano","MG",52,35,6,5,28,87,126
+"Coronel Freitas","SC",4,1,1,1,1,5,8
+"Coronel João Pessoa","RN",1,0,0,0,0,1,1
+"Coronel João Sá","BA",1,1,0,0,0,2,2
+"Coronel Martins","SC",0,0,0,1,0,0,1
+"Coronel Pacheco","MG",1,3,0,0,0,4,4
+"Coronel Sapucaia","MS",1,0,0,0,0,1,1
+"Coronel Vivida","PR",17,12,3,1,3,29,36
+"Coronel Xavier Chaves","MG",0,1,0,0,0,1,1
+"Córrego do Bom Jesus","MG",1,0,0,0,0,1,1
+"Córrego do Ouro","GO",0,0,0,0,1,0,1
+"Córrego Fundo","MG",1,0,0,0,0,1,1
+"Correia Pinto","SC",6,8,0,0,1,14,15
+"Corrente","PI",0,2,0,0,0,2,2
+"Correntes","PE",0,0,0,0,1,0,1
+"Correntina","BA",0,2,0,0,1,2,3
+"Cortês","PE",1,0,0,0,0,1,1
+"Corumbá","MS",7,39,10,6,39,46,101
+"Corumbá de Goiás","GO",1,1,3,1,3,2,9
+"Corumbaíba","GO",1,2,1,2,1,3,7
+"Corumbiara","RO",0,2,0,0,0,2,2
+"Corupá","SC",5,10,1,0,7,15,23
+"Coruripe","AL",14,15,3,4,4,29,40
+"Cosmópolis","SP",16,38,15,1,25,54,95
+"Cosmorama","SP",3,3,0,0,1,6,7
+"Costa Marques","RO",0,0,0,0,3,0,3
+"Costa Rica","MS",3,11,4,0,3,14,21
+"Cotegipe","BA",2,0,0,0,0,2,2
+"Cotia","SP",414,507,137,49,211,921,1318
+"Cotiporã","RS",2,0,0,0,0,2,2
+"Cotriguaçu","MT",0,1,0,0,0,1,1
+"Couto de Magalhães de Minas","MG",0,0,0,0,1,0,1
+"Coxilha","RS",1,0,0,0,0,1,1
+"Coxim","MS",2,18,3,4,11,20,38
+"Coxixola","PB",0,0,0,0,2,0,2
+"Craíbas","AL",6,1,0,1,1,7,9
+"Crateús","CE",12,10,2,3,3,22,30
+"Crato","CE",63,58,10,2,35,121,168
+"Cravinhos","SP",49,55,4,10,8,104,126
+"Criciúma","SC",515,748,128,85,196,1263,1672
+"Crisópolis","BA",4,0,0,0,0,4,4
+"Crissiumal","RS",0,1,0,1,0,1,2
+"Cristais","MG",0,2,2,0,0,2,4
+"Cristais Paulista","SP",2,4,1,0,4,6,11
+"Cristal","RS",0,1,2,0,1,1,4
+"Cristalina","GO",4,5,0,2,1,9,12
+"Cristianópolis","GO",1,5,0,0,0,6,6
+"Cristina","MG",0,1,0,0,2,1,3
+"Crixás","GO",0,3,1,0,2,3,6
+"Croatá","CE",0,0,0,0,1,0,1
+"Cromínia","GO",2,1,0,0,0,3,3
+"Cruz","CE",8,5,0,3,2,13,18
+"Cruz Alta","RS",31,35,17,9,13,66,105
+"Cruz das Almas","BA",12,15,3,4,12,27,46
+"Cruz do Espírito Santo","PB",1,1,0,0,0,2,2
+"Cruz Machado","PR",0,1,0,0,0,1,1
+"Cruzaltense","RS",1,0,0,0,2,1,3
+"Cruzeiro","SP",22,30,21,5,12,52,90
+"Cruzeiro do Iguaçu","PR",3,0,0,0,2,3,5
+"Cruzeiro do Oeste","PR",4,9,2,0,3,13,18
+"Cruzeiro do Sul","AC",12,14,2,0,49,26,77
+"Cruzeiro do Sul","PR",0,3,0,0,0,3,3
+"Cruzeiro do Sul","RS",6,6,3,0,6,12,21
+"Cruzeta","RN",4,0,0,0,0,4,4
+"Cruzília","MG",1,0,1,0,2,1,4
+"Cubatão","SP",32,46,7,6,15,78,106
+"Cuiabá","MT",1821,2668,605,212,932,4489,6238
+"Cuité","PB",1,3,0,0,1,4,5
+"Cuitegi","PB",1,0,0,0,0,1,1
+"Cujubim","RO",0,0,0,0,2,0,2
+"Cumari","GO",0,1,0,0,0,1,1
+"Cumaru","PE",0,2,0,0,2,2,4
+"Cumaru do Norte","PA",0,0,0,1,0,0,1
+"Cunha","SP",5,9,0,0,0,14,14
+"Cunha Porã","SC",2,5,0,0,3,7,10
+"Cunhataí","SC",0,0,0,0,1,0,1
+"Cupira","PE",5,1,0,0,1,6,7
+"Curionópolis","PA",2,4,1,0,4,6,11
+"Curitiba","PR",9648,8246,2202,854,2047,17894,22997
+"Curitibanos","SC",12,25,18,3,10,37,68
+"Curiúva","PR",1,0,0,0,3,1,4
+"Currais Novos","RN",41,10,1,1,3,51,56
+"Curral de Dentro","MG",0,0,0,0,5,0,5
+"Curralinho","PA",0,2,0,0,0,2,2
+"Curuçá","PA",0,1,0,0,0,1,1
+"Cururupu","MA",1,0,1,0,0,1,2
+"Curvelândia","MT",1,0,0,0,0,1,1
+"Curvelo","MG",10,18,0,5,11,28,44
+"Custódia","PE",3,4,0,0,5,7,12
+"Damião","PB",1,0,0,0,0,1,1
+"Darcinópolis","TO",0,0,0,0,1,0,1
+"Dário Meira","BA",1,0,0,0,0,1,1
+"Davinópolis","MA",10,0,0,0,0,10,10
+"Delfim Moreira","MG",1,0,0,0,0,1,1
+"Delfinópolis","MG",0,1,0,0,0,1,1
+"Delmiro Gouveia","AL",7,14,1,0,9,21,31
+"Delta","MG",0,0,0,2,0,0,2
+"Demerval Lobão","PI",2,3,2,0,0,5,7
+"Denise","MT",0,2,1,0,0,2,3
+"Deodápolis","MS",1,0,1,1,5,1,8
+"Descalvado","SP",9,29,3,0,8,38,49
+"Descanso","SC",3,1,0,0,2,4,6
+"Desterro","PB",1,0,0,0,0,1,1
+"Diadema","SP",151,242,67,29,135,393,624
+"Diamante do Norte","PR",0,0,0,1,0,0,1
+"Diamante do Sul","PR",0,0,0,0,1,0,1
+"Diamante D'Oeste","PR",2,0,0,0,2,2,4
+"Diamantina","MG",2,3,2,1,5,5,13
+"Diamantino","MT",7,14,1,1,5,21,28
+"Dianópolis","TO",0,1,0,0,1,1,2
+"Dias d'Ávila","BA",39,16,2,1,9,55,67
+"Dilermando de Aguiar","RS",1,0,0,0,0,1,1
+"Dionísio Cerqueira","SC",3,9,0,1,6,12,19
+"Diorama","GO",0,0,0,0,1,0,1
+"Dirceu Arcoverde","PI",0,0,0,0,1,0,1
+"Divinésia","MG",0,0,1,0,3,0,4
+"Divino","MG",3,3,0,1,5,6,12
+"Divino de São Lourenço","ES",0,1,0,0,0,1,1
+"Divinolândia","SP",0,11,1,0,4,11,16
+"Divinolândia de Minas","MG",2,1,0,0,2,3,5
+"Divinópolis","MG",141,142,19,12,86,283,400
+"Divinópolis do Tocantins","TO",0,0,0,0,1,0,1
+"Divisópolis","MG",0,0,0,0,1,0,1
+"Dobrada","SP",4,3,1,0,2,7,10
+"Dois Córregos","SP",9,12,1,2,7,21,31
+"Dois Irmãos","RS",71,49,8,8,15,120,151
+"Dois Irmãos do Buriti","MS",1,1,0,0,1,2,3
+"Dois Lajeados","RS",4,0,0,0,1,4,5
+"Dois Riachos","AL",0,1,0,2,0,1,3
+"Dois Vizinhos","PR",26,18,4,2,12,44,62
+"Dolcinópolis","SP",1,1,0,0,1,2,3
+"Dom Aquino","MT",0,5,0,1,0,5,6
+"Dom Basílio","BA",1,1,0,0,2,2,4
+"Dom Cavati","MG",0,0,0,0,1,0,1
+"Dom Eliseu","PA",1,2,2,2,3,3,10
+"Dom Expedito Lopes","PI",0,1,0,0,2,1,3
+"Dom Feliciano","RS",0,1,0,0,0,1,1
+"Dom Macedo Costa","BA",0,0,0,0,1,0,1
+"Dom Pedrito","RS",4,12,4,3,5,16,28
+"Dom Pedro","MA",2,0,2,0,3,2,7
+"Dom Pedro de Alcântara","RS",1,0,0,0,0,1,1
+"Dom Silvério","MG",3,0,0,0,1,3,4
+"Domingos Martins","ES",22,36,16,1,10,58,85
+"Domingos Mourão","PI",0,0,0,0,1,0,1
+"Dona Emma","SC",2,0,0,0,0,2,2
+"Dona Euzébia","MG",1,1,0,0,0,2,2
+"Dona Francisca","RS",0,0,0,0,1,0,1
+"Dores de Campos","MG",1,2,0,0,0,3,3
+"Dores do Indaiá","MG",1,1,0,0,2,2,4
+"Dores do Rio Preto","ES",3,9,1,0,5,12,18
+"Dormentes","PE",1,2,1,0,1,3,5
+"Douradina","MS",0,1,1,0,3,1,5
+"Douradina","PR",0,3,1,0,3,3,7
+"Dourado","SP",2,4,0,1,1,6,8
+"Dourados","MS",431,463,93,32,159,894,1178
+"Doutor Camargo","PR",0,1,0,0,1,1,2
+"Doutor Pedrinho","SC",0,1,0,0,0,1,1
+"Doutor Severiano","RN",0,0,0,0,1,0,1
+"Doutor Ulysses","PR",1,0,0,0,0,1,1
+"Dracena","SP",16,20,4,4,30,36,74
+"Duartina","SP",2,4,0,0,6,6,12
+"Duas Barras","RJ",2,3,0,0,0,5,5
+"Dumont","SP",7,8,1,3,3,15,22
+"Duque Bacelar","MA",0,0,0,0,1,0,1
+"Duque de Caxias","RJ",352,210,50,42,171,562,825
+"Echaporã","SP",1,0,0,0,1,1,2
+"Ecoporanga","ES",3,5,0,0,5,8,13
+"Edealina","GO",2,0,0,0,1,2,3
+"Edéia","GO",1,8,1,0,4,9,14
+"Eldorado","MS",0,1,0,1,1,1,3
+"Eldorado","SP",0,0,0,0,1,0,1
+"Eldorado do Carajás","PA",0,4,0,0,1,4,5
+"Eldorado do Sul","RS",89,58,7,10,14,147,178
+"Elias Fausto","SP",4,9,4,1,11,13,29
+"Elísio Medrado","BA",0,0,0,0,2,0,2
+"Elói Mendes","MG",2,6,0,0,4,8,12
+"Embu das Artes","SP",97,125,15,17,55,222,309
+"Embu-Guaçu","SP",40,32,8,4,19,72,103
+"Emilianópolis","SP",1,2,0,0,3,3,6
+"Encantado","RS",20,13,7,4,7,33,51
+"Encanto","RN",1,2,0,0,0,3,3
+"Encruzilhada","BA",2,4,0,0,0,6,6
+"Encruzilhada do Sul","RS",3,2,0,0,2,5,7
+"Enéas Marques","PR",1,2,0,0,1,3,4
+"Engenheiro Beltrão","PR",1,5,1,0,2,6,9
+"Engenheiro Caldas","MG",0,2,0,0,2,2,4
+"Engenheiro Coelho","SP",11,14,2,3,9,25,39
+"Engenheiro Paulo de Frontin","RJ",1,1,2,1,3,2,8
+"Entre Folhas","MG",1,1,0,0,1,2,3
+"Entre Rios","BA",5,4,1,2,2,9,14
+"Entre Rios de Minas","MG",1,2,1,1,0,3,5
+"Entre Rios do Oeste","PR",1,1,0,0,2,2,4
+"Entre-Ijuís","RS",1,3,0,1,2,4,7
+"Epitaciolândia","AC",4,5,1,0,3,9,13
+"Equador","RN",2,0,0,0,2,2,4
+"Erebango","RS",3,1,0,0,0,4,4
+"Erechim","RS",193,97,21,18,45,290,374
+"Ermo","SC",1,0,0,2,0,1,3
+"Ernestina","RS",0,0,0,2,1,0,3
+"Erval Grande","RS",2,1,0,0,1,3,4
+"Erval Seco","RS",2,1,1,0,1,3,5
+"Erval Velho","SC",0,1,1,0,0,1,2
+"Ervália","MG",0,1,0,1,5,1,7
+"Escada","PE",11,10,1,3,4,21,29
+"Esmeralda","RS",0,0,0,0,1,0,1
+"Esmeraldas","MG",4,6,0,1,3,10,14
+"Espera Feliz","MG",0,1,0,1,0,1,2
+"Esperança","PB",14,1,0,1,6,15,22
+"Esperantina","PI",11,4,1,0,0,15,16
+"Espigão Alto do Iguaçu","PR",0,1,0,0,0,1,1
+"Espigão D'Oeste","RO",5,8,2,0,6,13,21
+"Espinosa","MG",0,1,0,0,1,1,2
+"Espírito Santo","RN",3,1,0,0,2,4,6
+"Espírito Santo do Pinhal","SP",18,32,9,7,15,50,81
+"Espírito Santo do Turvo","SP",1,0,1,0,2,1,4
+"Esplanada","BA",2,4,0,1,2,6,9
+"Espumoso","RS",4,4,3,0,1,8,12
+"Estação","RS",4,3,2,0,1,7,10
+"Estância","SE",13,29,1,1,3,42,47
+"Estância Velha","RS",112,75,13,6,28,187,234
+"Esteio","RS",137,49,13,13,40,186,252
+"Estiva","MG",1,1,1,0,2,2,5
+"Estiva Gerbi","SP",3,11,0,3,8,14,25
+"Estreito","MA",2,3,0,0,2,5,7
+"Estrela","RS",34,18,6,9,29,52,96
+"Estrela de Alagoas","AL",4,2,0,0,0,6,6
+"Estrela do Norte","SP",0,0,0,0,1,0,1
+"Estrela d'Oeste","SP",0,1,3,2,4,1,10
+"Estrela Velha","RS",2,0,0,1,2,2,5
+"Euclides da Cunha","BA",9,15,8,3,5,24,40
+"Euclides da Cunha Paulista","SP",0,3,0,0,0,3,3
+"Eugenópolis","MG",0,0,0,0,8,0,8
+"Eunápolis","BA",16,20,9,4,36,36,85
+"Eusébio","CE",654,559,43,31,80,1213,1367
+"Ewbank da Câmara","MG",0,0,0,0,2,0,2
+"Extrema","MG",18,5,4,2,2,23,31
+"Extremoz","RN",39,12,2,2,9,51,64
+"Exu","PE",5,0,0,0,0,5,5
+"Fagundes","PB",1,1,0,0,0,2,2
+"Fagundes Varela","RS",2,1,1,0,1,3,5
+"Faina","GO",0,1,0,0,0,1,1
+"Fama","MG",0,0,0,1,0,0,1
+"Faro","PA",0,1,0,0,0,1,1
+"Farol","PR",0,0,1,0,0,0,1
+"Farroupilha","RS",123,87,15,8,37,210,270
+"Fartura","SP",3,3,2,0,5,6,13
+"Fátima","BA",1,0,0,0,2,1,3
+"Fátima do Sul","MS",7,14,10,0,4,21,35
+"Faxinal","PR",1,2,0,0,2,3,5
+"Faxinal do Soturno","RS",2,10,1,2,2,12,17
+"Faxinal dos Guedes","SC",0,8,3,0,3,8,14
+"Faxinalzinho","RS",1,0,0,0,0,1,1
+"Fazenda Nova","GO",0,0,0,0,3,0,3
+"Fazenda Rio Grande","PR",126,66,15,6,5,192,218
+"Fazenda Vilanova","RS",2,0,0,0,1,2,3
+"Feijó","AC",0,2,0,0,0,2,2
+"Feira de Santana","BA",1061,762,112,56,313,1823,2304
+"Feira Grande","AL",4,4,0,0,0,8,8
+"Feira Nova","PE",0,3,0,0,4,3,7
+"Feira Nova","SE",0,0,0,0,1,0,1
+"Feliz","RS",17,9,5,4,5,26,40
+"Feliz Deserto","AL",1,0,0,0,0,1,1
+"Fernandes Pinheiro","PR",0,3,1,0,0,3,4
+"Fernando de Noronha","PE",76,4,0,0,2,80,82
+"Fernando Pedroza","RN",0,0,1,0,0,0,1
+"Fernando Prestes","SP",3,5,2,0,1,8,11
+"Fernandópolis","SP",55,62,22,6,22,117,167
+"Ferraz de Vasconcelos","SP",46,52,9,7,26,98,140
+"Ferreira Gomes","AP",0,0,0,0,1,0,1
+"Ferreiros","PE",1,0,0,0,1,1,2
+"Ferros","MG",0,0,0,0,1,0,1
+"Figueira","PR",1,0,0,0,1,1,2
+"Figueirão","MS",1,2,0,2,0,3,5
+"Figueirópolis","TO",0,0,1,0,3,0,4
+"Firminópolis","GO",0,4,1,0,3,4,8
+"Flexeiras","AL",1,0,0,0,0,1,1
+"Flor da Serra do Sul","PR",0,0,0,0,1,0,1
+"Floraí","PR",4,2,0,0,2,6,8
+"Florânia","RN",1,0,0,0,1,1,2
+"Floreal","SP",1,2,0,0,0,3,3
+"Flores","PE",0,1,0,0,4,1,5
+"Flores da Cunha","RS",64,41,7,3,15,105,130
+"Floresta","PR",2,1,0,0,7,3,10
+"Floresta","PE",0,1,0,0,1,1,2
+"Floresta Azul","BA",0,0,0,0,1,0,1
+"Florestal","MG",0,4,1,0,1,4,6
+"Florestópolis","PR",0,3,0,0,2,3,5
+"Floriano","PI",8,23,5,4,13,31,53
+"Florianópolis","SC",2832,3721,871,411,774,6553,8609
+"Flórida","PR",1,0,0,0,1,1,2
+"Flórida Paulista","SP",0,1,0,0,1,1,2
+"Florínea","SP",1,1,0,0,0,2,2
+"Fontoura Xavier","RS",1,0,1,2,3,1,7
+"Formiga","MG",5,11,1,6,10,16,33
+"Formigueiro","RS",1,1,0,0,1,2,3
+"Formosa","GO",1,0,0,3,1,1,5
+"Formosa da Serra Negra","MA",0,0,0,0,1,0,1
+"Formosa do Oeste","PR",1,2,1,0,0,3,4
+"Formosa do Rio Preto","BA",1,1,0,0,2,2,4
+"Formosa do Sul","SC",1,0,0,0,0,1,1
+"Formoso","GO",0,1,0,0,1,1,2
+"Formoso do Araguaia","TO",0,1,0,0,1,1,2
+"Forquetinha","RS",0,0,0,1,0,0,1
+"Forquilha","CE",4,2,1,0,3,6,10
+"Forquilhinha","SC",14,15,1,0,4,29,34
+"Fortaleza","CE",4557,4417,810,433,1497,8974,11714
+"Fortaleza de Minas","MG",0,0,0,0,1,0,1
+"Fortaleza dos Nogueiras","MA",0,3,0,0,2,3,5
+"Fortaleza dos Valos","RS",0,3,1,0,1,3,5
+"Fortim","CE",0,6,0,0,0,6,6
+"Fortuna","MA",0,1,0,0,1,1,2
+"Foz do Iguaçu","PR",400,254,70,56,126,654,906
+"Foz do Jordão","PR",0,1,0,0,1,1,2
+"Fraiburgo","SC",7,26,10,1,2,33,46
+"Franca","SP",256,491,86,96,241,747,1170
+"Francinópolis","PI",0,0,0,0,1,0,1
+"Francisco Alves","PR",0,0,1,0,1,0,2
+"Francisco Beltrão","PR",76,72,30,5,46,148,229
+"Francisco Dantas","RN",0,0,0,0,1,0,1
+"Francisco Morato","SP",53,16,2,3,11,69,85
+"Francisco Sá","MG",0,2,0,1,1,2,4
+"Francisco Santos","PI",0,1,0,0,2,1,3
+"Franco da Rocha","SP",50,23,6,5,38,73,122
+"Frecheirinha","CE",2,0,0,0,3,2,5
+"Frederico Westphalen","RS",24,19,5,5,8,43,61
+"Frei Inocêncio","MG",1,0,0,0,1,1,2
+"Frei Miguelinho","PE",5,0,0,0,0,5,5
+"Frei Paulo","SE",0,0,0,0,2,0,2
+"Fronteiras","PI",0,1,0,0,2,1,3
+"Frutal","MG",4,8,2,4,5,12,23
+"Frutuoso Gomes","RN",0,1,0,0,0,1,1
+"Fundão","ES",18,12,6,0,4,30,40
+"Funilândia","MG",2,1,0,0,0,3,3
+"Gabriel Monteiro","SP",2,0,0,0,3,2,5
+"Gália","SP",1,1,0,0,6,2,8
+"Gameleira","PE",1,1,0,0,0,2,2
+"Gameleira de Goiás","GO",0,1,0,0,1,1,2
+"Gandu","BA",5,12,1,3,8,17,29
+"Garanhuns","PE",119,54,9,7,40,173,229
+"Garça","SP",26,66,17,9,35,92,153
+"Garibaldi","RS",25,32,17,1,33,57,108
+"Garopaba","SC",26,116,23,9,33,142,207
+"Garrafão do Norte","PA",0,0,0,0,1,0,1
+"Garruchos","RS",1,0,0,0,0,1,1
+"Garuva","SC",18,25,4,2,13,43,62
+"Gaspar","SC",80,95,23,18,20,175,236
+"Gastão Vidigal","SP",0,1,0,0,0,1,1
+"Gaúcha do Norte","MT",0,6,1,0,0,6,7
+"Gaurama","RS",4,5,0,1,2,9,12
+"Gavião Peixoto","SP",0,1,0,0,0,1,1
+"Geminiano","PI",1,1,0,0,1,2,3
+"General Câmara","RS",3,0,0,0,0,3,3
+"General Carneiro","MT",0,0,0,0,2,0,2
+"General Carneiro","PR",0,1,0,0,1,1,2
+"General Salgado","SP",1,1,0,2,2,2,6
+"General Sampaio","CE",0,1,0,0,2,1,3
+"Gentil","RS",1,0,0,0,2,1,3
+"Gentio do Ouro","BA",0,0,0,0,1,0,1
+"Getulina","SP",3,5,0,0,5,8,13
+"Getúlio Vargas","RS",16,8,4,2,4,24,34
+"Gilbués","PI",0,0,0,0,1,0,1
+"Girau do Ponciano","AL",11,8,0,0,2,19,21
+"Giruá","RS",3,4,1,0,1,7,9
+"Glicério","SP",0,0,0,1,1,0,2
+"Glória","BA",0,0,0,0,1,0,1
+"Glória de Dourados","MS",0,4,2,0,1,4,7
+"Glória do Goitá","PE",1,9,0,0,1,10,11
+"Glória D'Oeste","MT",0,0,0,0,1,0,1
+"Glorinha","RS",2,1,0,0,1,3,4
+"Godofredo Viana","MA",0,0,1,0,0,0,1
+"Goiabeira","MG",0,0,0,0,1,0,1
+"Goiana","PE",18,10,1,2,2,28,33
+"Goianápolis","GO",6,5,0,0,3,11,14
+"Goiandira","GO",0,1,1,0,0,1,2
+"Goianésia","GO",14,23,10,8,24,37,79
+"Goianésia do Pará","PA",0,0,0,1,1,0,2
+"Goiânia","GO",3733,5517,1155,626,1760,9250,12791
+"Goianinha","RN",7,2,2,3,2,9,16
+"Goianira","GO",40,24,3,1,8,64,76
+"Goiás","GO",2,3,4,1,6,5,16
+"Goiatins","TO",0,0,0,0,1,0,1
+"Goiatuba","GO",5,40,6,7,1,45,59
+"Goioerê","PR",8,20,4,2,0,28,34
+"Gonçalves","MG",0,2,0,0,0,2,2
+"Gonçalves Dias","MA",1,1,0,1,0,2,3
+"Gouveia","MG",1,0,0,1,1,1,3
+"Gouvelândia","GO",0,1,0,0,0,1,1
+"Governador Archer","MA",4,0,0,0,0,4,4
+"Governador Celso Ramos","SC",39,48,15,6,10,87,118
+"Governador Dix-Sept Rosado","RN",2,0,0,0,0,2,2
+"Governador Edison Lobão","MA",3,2,0,0,0,5,5
+"Governador Eugênio Barros","MA",0,0,0,0,1,0,1
+"Governador Jorge Teixeira","RO",0,0,0,0,1,0,1
+"Governador Lindenberg","ES",2,3,1,1,7,5,14
+"Governador Mangabeira","BA",0,0,0,0,8,0,8
+"Governador Nunes Freire","MA",1,0,0,0,1,1,2
+"Governador Valadares","MG",285,235,15,14,83,520,632
+"Graça","CE",0,0,0,0,1,0,1
+"Gracho Cardoso","SE",0,0,0,0,1,0,1
+"Grajaú","MA",3,4,1,1,8,7,17
+"Gramado","RS",136,80,9,23,32,216,280
+"Gramado dos Loureiros","RS",3,0,0,1,0,3,4
+"Grandes Rios","PR",0,1,0,0,0,1,1
+"Granito","PE",1,0,0,0,0,1,1
+"Granja","CE",2,3,0,0,0,5,5
+"Granjeiro","CE",0,1,0,0,0,1,1
+"Grão Mogol","MG",0,1,0,0,1,1,2
+"Grão-Pará","SC",0,4,0,1,3,4,8
+"Gravatá","PE",60,33,2,4,12,93,111
+"Gravataí","RS",732,234,50,14,59,966,1089
+"Gravatal","SC",4,9,2,3,8,13,26
+"Groaíras","CE",1,0,0,0,1,1,2
+"Grossos","RN",0,0,0,0,1,0,1
+"Guabiruba","SC",32,35,11,8,13,67,99
+"Guaçuí","ES",8,24,3,6,3,32,44
+"Guadalupe","PI",2,3,0,0,2,5,7
+"Guaíba","RS",133,42,16,6,24,175,221
+"Guaiçara","SP",5,2,0,0,1,7,8
+"Guaimbê","SP",0,1,0,0,2,1,3
+"Guaíra","PR",2,18,3,3,5,20,31
+"Guaíra","SP",10,36,7,7,8,46,68
+"Guaiúba","CE",1,2,0,0,2,3,5
+"Guajará-Mirim","RO",8,8,3,0,8,16,27
+"Guajeru","BA",1,0,0,0,0,1,1
+"Guamaré","RN",2,0,0,0,0,2,2
+"Guamiranga","PR",1,2,0,0,0,3,3
+"Guanambi","BA",25,29,3,1,46,54,104
+"Guanhães","MG",5,3,0,0,1,8,9
+"Guapé","MG",0,0,0,1,0,0,1
+"Guapiaçu","SP",10,17,2,2,1,27,32
+"Guapiara","SP",0,5,4,1,0,5,10
+"Guapimirim","RJ",31,20,11,1,16,51,79
+"Guapirama","PR",1,2,0,0,1,3,4
+"Guapó","GO",12,6,0,0,6,18,24
+"Guaporé","RS",25,24,4,4,10,49,67
+"Guará","SP",3,5,2,0,6,8,16
+"Guarabira","PB",29,12,4,1,3,41,49
+"Guaraçaí","SP",0,8,0,0,1,8,9
+"Guaraci","PR",1,2,1,0,0,3,4
+"Guaraci","SP",3,3,4,1,1,6,12
+"Guaraciaba","MG",1,1,0,0,2,2,4
+"Guaraciaba","SC",1,0,2,0,1,1,4
+"Guaraciaba do Norte","CE",5,3,0,1,3,8,12
+"Guaraciama","MG",0,1,0,0,0,1,1
+"Guaraí","TO",1,3,4,0,6,4,14
+"Guaramiranga","CE",8,2,0,0,0,10,10
+"Guaramirim","SC",62,55,8,7,16,117,148
+"Guaranésia","MG",3,0,0,0,1,3,4
+"Guarani","MG",0,2,0,0,0,2,2
+"Guaraniaçu","PR",1,3,0,0,2,4,6
+"Guarantã","SP",1,3,1,1,2,4,8
+"Guarantã do Norte","MT",2,8,2,1,3,10,16
+"Guarapari","ES",250,366,81,48,108,616,853
+"Guarapuava","PR",220,178,58,9,35,398,500
+"Guarará","MG",0,0,1,0,0,0,1
+"Guararapes","SP",8,18,12,5,13,26,56
+"Guararema","SP",60,44,7,1,19,104,131
+"Guaratinga","BA",0,0,0,0,5,0,5
+"Guaratinguetá","SP",52,73,37,13,29,125,204
+"Guaratuba","PR",15,39,6,4,9,54,73
+"Guarda-Mor","MG",0,1,0,0,0,1,1
+"Guareí","SP",2,1,0,1,1,3,5
+"Guariba","SP",10,18,3,2,10,28,43
+"Guarujá","SP",103,174,77,41,85,277,480
+"Guarujá do Sul","SC",0,2,0,0,1,2,3
+"Guarulhos","SP",820,1208,417,226,736,2028,3407
+"Guatambú","SC",5,5,0,1,0,10,11
+"Guatapará","SP",3,1,0,0,0,4,4
+"Guaxupé","MG",8,10,1,4,6,18,29
+"Guia Lopes da Laguna","MS",0,1,0,0,4,1,5
+"Guidoval","MG",0,2,0,0,0,2,2
+"Guimarães","MA",0,0,0,1,0,0,1
+"Guimarânia","MG",0,3,0,0,0,3,3
+"Guiratinga","MT",1,2,0,0,3,3,6
+"Guiricema","MG",1,1,1,0,3,2,6
+"Gurupi","TO",11,14,6,2,44,25,77
+"Guzolândia","SP",0,0,1,0,1,0,2
+"Harmonia","RS",2,1,2,0,3,3,8
+"Heliópolis","BA",0,0,1,0,0,0,1
+"Herculândia","SP",1,3,1,0,2,4,7
+"Herval","RS",1,0,0,0,0,1,1
+"Herval d'Oeste","SC",8,9,3,1,4,17,25
+"Hidrolândia","CE",1,0,0,0,0,1,1
+"Hidrolândia","GO",26,28,5,5,8,54,72
+"Hidrolina","GO",1,2,1,0,0,3,4
+"Holambra","SP",27,36,8,5,27,63,103
+"Honório Serpa","PR",0,1,0,0,0,1,1
+"Horizonte","CE",33,12,2,1,1,45,49
+"Horizontina","RS",6,5,3,1,4,11,19
+"Hortolândia","SP",98,146,37,8,71,244,360
+"Hugo Napoleão","PI",1,0,0,0,1,1,2
+"Hulha Negra","RS",0,0,1,0,1,0,2
+"Humaitá","AM",1,0,0,0,1,1,2
+"Humaitá","RS",4,1,0,0,1,5,6
+"Iacanga","SP",1,4,3,1,3,5,12
+"Iacri","SP",0,8,1,0,0,8,9
+"Iaçu","BA",0,2,0,0,3,2,5
+"Iapu","MG",1,0,0,0,3,1,4
+"Iati","PE",1,0,1,0,1,1,3
+"Ibaiti","PR",3,7,5,1,4,10,20
+"Ibarama","RS",1,0,0,0,0,1,1
+"Ibaté","SP",6,10,2,2,5,16,25
+"Ibateguara","AL",0,2,0,0,0,2,2
+"Ibatiba","ES",11,11,2,2,3,22,29
+"Ibema","PR",0,2,0,0,0,2,2
+"Ibiá","MG",0,6,1,0,4,6,11
+"Ibiaçá","RS",0,2,0,0,1,2,3
+"Ibiapina","CE",5,4,0,1,2,9,12
+"Ibiara","PB",0,1,0,0,0,1,1
+"Ibiassucê","BA",2,0,0,0,0,2,2
+"Ibicaraí","BA",2,1,1,0,2,3,6
+"Ibicaré","SC",4,1,0,0,1,5,6
+"Ibicoara","BA",0,1,1,0,1,1,3
+"Ibicuí","BA",0,0,0,0,2,0,2
+"Ibicuitinga","CE",0,0,0,0,2,0,2
+"Ibimirim","PE",1,1,0,0,3,2,5
+"Ibipeba","BA",1,0,0,0,1,1,2
+"Ibiporã","PR",37,45,15,3,13,82,113
+"Ibirá","SP",2,8,0,0,2,10,12
+"Ibiraci","MG",0,1,0,0,5,1,6
+"Ibiraçu","ES",7,7,4,0,2,14,20
+"Ibiraiaras","RS",7,3,1,0,1,10,12
+"Ibirama","SC",19,14,1,3,4,33,41
+"Ibirapitanga","BA",0,2,0,0,1,2,3
+"Ibirapuã","BA",1,0,1,0,2,1,4
+"Ibirapuitã","RS",1,0,0,0,0,1,1
+"Ibirarema","SP",0,0,0,0,3,0,3
+"Ibirataia","BA",0,1,2,2,1,1,6
+"Ibirité","MG",16,13,4,2,7,29,42
+"Ibirubá","RS",11,26,1,2,3,37,43
+"Ibitinga","SP",46,70,11,9,29,116,165
+"Ibitirama","ES",3,4,2,0,4,7,13
+"Ibititá","BA",2,1,0,0,0,3,3
+"Ibiúna","SP",26,40,14,7,27,66,114
+"Ibotirama","BA",2,2,0,0,1,4,5
+"Icapuí","CE",1,2,0,0,3,3,6
+"Içara","SC",37,129,21,8,27,166,222
+"Icaraíma","PR",6,2,0,0,2,8,10
+"Icatu","MA",2,0,0,0,0,2,2
+"Icém","SP",2,1,0,0,1,3,4
+"Ichu","BA",1,0,0,0,0,1,1
+"Icó","CE",0,1,2,2,0,1,5
+"Iconha","ES",2,11,3,2,5,13,23
+"Ielmo Marinho","RN",2,0,0,0,0,2,2
+"Iepê","SP",2,2,2,0,4,4,10
+"Igaci","AL",4,1,1,1,2,5,9
+"Igaporã","BA",0,1,0,0,0,1,1
+"Igaraçu do Tietê","SP",2,2,1,0,2,4,7
+"Igarapava","SP",1,6,5,4,4,7,20
+"Igarapé","MG",8,7,2,3,8,15,28
+"Igarapé do Meio","MA",1,0,0,0,1,1,2
+"Igarapé Grande","MA",0,0,2,0,0,0,2
+"Igarapé-Açu","PA",1,3,3,0,4,4,11
+"Igarapé-Miri","PA",3,4,0,0,2,7,9
+"Igarassu","PE",77,28,2,2,10,105,119
+"Igaratá","SP",5,10,4,1,3,15,23
+"Igaratinga","MG",0,0,0,0,1,0,1
+"Igreja Nova","AL",1,1,0,0,2,2,4
+"Igrejinha","RS",32,24,6,4,8,56,74
+"Iguaba Grande","RJ",32,18,3,3,13,50,69
+"Iguaí","BA",1,0,0,0,0,1,1
+"Iguape","SP",8,4,1,1,6,12,20
+"Iguaraçu","PR",12,9,2,2,2,21,27
+"Iguatama","MG",0,0,0,0,1,0,1
+"Iguatemi","MS",0,0,0,1,1,0,2
+"Iguatu","CE",20,60,8,8,18,80,114
+"Ijaci","MG",2,0,0,0,0,2,2
+"Ijuí","RS",104,58,27,7,30,162,226
+"Ilha Comprida","SP",1,0,0,1,7,1,9
+"Ilha das Flores","SE",1,0,0,0,0,1,1
+"Ilha de Itamaracá","PE",9,4,2,0,4,13,19
+"Ilha Grande","PI",0,1,0,0,0,1,1
+"Ilha Solteira","SP",10,18,8,0,3,28,39
+"Ilhabela","SP",27,40,22,9,13,67,111
+"Ilhéus","BA",44,49,17,9,63,93,182
+"Ilhota","SC",14,11,5,2,2,25,34
+"Ilicínea","MG",0,1,0,0,2,1,3
+"Ilópolis","RS",1,1,0,0,2,2,4
+"Imaculada","PB",0,0,0,0,1,0,1
+"Imaruí","SC",1,3,0,0,6,4,10
+"Imbaú","PR",0,2,1,0,3,2,6
+"Imbé","RS",46,7,3,0,15,53,71
+"Imbé de Minas","MG",1,0,0,0,0,1,1
+"Imbituba","SC",61,71,12,10,56,132,210
+"Imbituva","PR",11,12,3,1,2,23,29
+"Imbuia","SC",1,2,0,1,2,3,6
+"Imigrante","RS",3,2,4,0,2,5,11
+"Imperatriz","MA",436,200,31,7,107,636,781
+"Inácio Martins","PR",1,1,0,0,0,2,2
+"Inaciolândia","GO",1,1,0,1,0,2,3
+"Inajá","PE",0,0,0,0,1,0,1
+"Indaiabira","MG",1,0,0,0,1,1,2
+"Indaial","SC",91,101,10,14,19,192,235
+"Indaiatuba","SP",1211,1457,248,96,907,2668,3919
+"Independência","CE",11,3,0,0,0,14,14
+"Independência","RS",2,2,0,0,1,4,5
+"Indiana","SP",1,1,0,0,1,2,3
+"Indianópolis","MG",0,2,0,0,0,2,2
+"Indianópolis","PR",1,0,0,0,1,1,2
+"Indiaporã","SP",0,1,0,0,0,1,1
+"Indiara","GO",1,5,0,0,1,6,7
+"Indiaroba","SE",0,0,0,0,1,0,1
+"Indiavaí","MT",3,0,0,1,0,3,4
+"Ingá","PB",2,1,0,1,0,3,4
+"Ingazeira","PE",1,0,0,0,0,1,1
+"Inhambupe","BA",7,3,4,0,4,10,18
+"Inhangapi","PA",8,1,0,0,0,9,9
+"Inhapi","AL",0,1,0,0,2,1,3
+"Inhapim","MG",0,2,0,0,2,2,4
+"Inhaúma","MG",1,0,1,1,0,1,3
+"Inhuma","PI",0,0,0,0,1,0,1
+"Inhumas","GO",32,30,2,1,9,62,74
+"Inimutaba","MG",0,1,0,0,0,1,1
+"Inocência","MS",2,2,2,0,3,4,9
+"Inúbia Paulista","SP",1,1,0,0,2,2,4
+"Iomerê","SC",1,0,1,0,1,1,3
+"Ipaba","MG",0,0,0,0,5,0,5
+"Ipameri","GO",1,5,0,0,5,6,11
+"Ipanema","MG",1,2,0,0,5,3,8
+"Ipanguaçu","RN",3,1,1,0,0,4,5
+"Ipatinga","MG",289,208,30,11,98,497,636
+"Ipaumirim","CE",0,1,1,0,0,1,2
+"Ipaussu","SP",1,0,0,0,4,1,5
+"Ipê","RS",1,1,0,0,1,2,3
+"Ipecaetá","BA",1,1,0,0,3,2,5
+"Iperó","SP",11,11,2,3,3,22,30
+"Ipeúna","SP",4,7,2,2,7,11,22
+"Ipiaú","BA",5,4,1,0,2,9,12
+"Ipiguá","SP",4,1,0,0,0,5,5
+"Ipira","SC",0,0,1,0,1,0,2
+"Ipirá","BA",3,15,1,1,8,18,28
+"Ipiranga","PR",3,0,0,0,0,3,3
+"Ipiranga de Goiás","GO",0,0,0,0,1,0,1
+"Ipiranga do Norte","MT",0,3,1,2,3,3,9
+"Ipiranga do Sul","RS",0,1,0,1,0,1,2
+"Ipixuna do Pará","PA",0,1,0,0,1,1,2
+"Ipojuca","PE",62,33,5,2,13,95,115
+"Iporá","GO",7,10,3,2,6,17,28
+"Iporã","PR",17,1,0,1,0,18,19
+"Iporã do Oeste","SC",2,5,1,0,0,7,8
+"Iporanga","SP",0,0,0,0,2,0,2
+"Ipu","CE",3,0,0,0,3,3,6
+"Ipuã","SP",1,7,4,5,5,8,22
+"Ipubi","PE",4,0,0,0,2,4,6
+"Ipueira","RN",0,0,0,0,1,0,1
+"Ipueiras","CE",0,2,2,0,0,2,4
+"Ipuiúna","MG",0,0,0,0,1,0,1
+"Ipumirim","SC",1,1,0,0,2,2,4
+"Ipupiara","BA",0,0,0,1,1,0,2
+"Iracema","CE",0,2,0,0,0,2,2
+"Iracema do Oeste","PR",0,0,1,0,1,0,2
+"Iracemápolis","SP",6,69,35,3,3,75,116
+"Iraí","RS",0,0,0,0,1,0,1
+"Iraí de Minas","MG",0,0,0,0,1,0,1
+"Iramaia","BA",0,0,0,0,1,0,1
+"Iranduba","AM",8,3,0,0,2,11,13
+"Irani","SC",1,1,0,0,1,2,3
+"Irapuã","SP",0,4,0,0,1,4,5
+"Irapuru","SP",0,1,0,0,1,1,2
+"Iraquara","BA",0,0,1,0,0,0,1
+"Irará","BA",5,4,1,1,9,9,20
+"Irati","PR",32,38,5,2,3,70,80
+"Irati","SC",0,1,1,0,0,1,2
+"Irauçuba","CE",0,2,0,0,1,2,3
+"Irecê","BA",12,16,6,3,51,28,88
+"Iretama","PR",0,1,1,0,2,1,4
+"Irineópolis","SC",1,1,1,1,4,2,8
+"Irituia","PA",1,2,0,0,1,3,4
+"Irupi","ES",0,3,2,0,1,3,6
+"Isaías Coelho","PI",1,0,0,0,0,1,1
+"Itá","SC",2,5,3,2,4,7,16
+"Itaara","RS",6,2,0,0,1,8,9
+"Itabaiana","PB",3,0,0,0,3,3,6
+"Itabaiana","SE",63,59,8,8,16,122,154
+"Itabaianinha","SE",4,12,0,0,2,16,18
+"Itabela","BA",0,0,1,0,6,0,7
+"Itaberá","SP",7,14,1,0,4,21,26
+"Itaberaba","BA",4,13,4,1,6,17,28
+"Itaberaí","GO",11,17,4,4,10,28,46
+"Itabi","SE",1,0,0,0,1,1,2
+"Itabira","MG",52,29,5,5,38,81,129
+"Itabirinha","MG",0,3,1,1,2,3,7
+"Itabirito","MG",16,12,3,2,12,28,45
+"Itaboraí","RJ",71,51,12,8,43,122,185
+"Itabuna","BA",281,160,20,15,57,441,533
+"Itacaré","BA",2,4,2,0,8,6,16
+"Itacoatiara","AM",0,2,0,1,2,2,5
+"Itacurubi","RS",1,0,0,0,0,1,1
+"Itaeté","BA",0,0,1,0,2,0,3
+"Itagibá","BA",1,1,0,0,1,2,3
+"Itagimirim","BA",0,1,0,0,0,1,1
+"Itaguaçu","ES",0,1,2,0,6,1,9
+"Itaguaí","RJ",71,51,11,12,52,122,197
+"Itaguajé","PR",0,0,0,0,1,0,1
+"Itaguari","GO",0,1,0,0,0,1,1
+"Itaguaru","GO",0,1,0,0,0,1,1
+"Itaí","SP",9,11,3,8,14,20,45
+"Itaíba","PE",0,0,0,0,3,0,3
+"Itaiçaba","CE",1,1,0,1,0,2,3
+"Itainópolis","PI",1,0,0,0,2,1,3
+"Itaiópolis","SC",0,6,0,0,3,6,9
+"Itaipava do Grajaú","MA",0,0,0,1,0,0,1
+"Itaipulândia","PR",4,3,0,0,2,7,9
+"Itaitinga","CE",49,16,2,1,3,65,71
+"Itaituba","PA",13,14,0,1,17,27,45
+"Itajá","GO",0,2,0,0,1,2,3
+"Itajá","RN",2,2,0,0,1,4,5
+"Itajaí","SC",675,1261,229,175,266,1936,2606
+"Itajobi","SP",2,9,2,2,6,11,21
+"Itajubá","MG",15,16,6,7,12,31,56
+"Itajuípe","BA",1,0,0,0,1,1,2
+"Italva","RJ",3,3,0,0,2,6,8
+"Itamaraju","BA",1,3,2,0,7,4,13
+"Itamarandiba","MG",1,2,0,0,2,3,5
+"Itamarati","AM",0,1,0,0,0,1,1
+"Itamarati de Minas","MG",0,0,0,0,1,0,1
+"Itambacuri","MG",0,0,0,0,1,0,1
+"Itambé","BA",1,1,0,0,1,2,3
+"Itambé","PR",1,0,1,0,3,1,5
+"Itambé","PE",15,1,2,0,1,16,19
+"Itambé do Mato Dentro","MG",1,0,0,0,0,1,1
+"Itamogi","MG",1,1,0,0,0,2,2
+"Itamonte","MG",0,0,0,0,2,0,2
+"Itanagra","BA",0,0,1,0,0,0,1
+"Itanhaém","SP",59,48,8,9,23,107,147
+"Itanhandu","MG",2,2,1,1,2,4,8
+"Itanhangá","MT",0,2,0,0,2,2,4
+"Itanhém","BA",0,1,0,0,0,1,1
+"Itaobim","MG",0,0,0,0,1,0,1
+"Itaocara","RJ",5,6,2,0,13,11,26
+"Itapaci","GO",5,5,1,0,4,10,15
+"Itapagipe","MG",0,2,0,0,0,2,2
+"Itapajé","CE",6,5,0,0,0,11,11
+"Itaparica","BA",1,3,1,1,3,4,9
+"Itapé","BA",0,0,0,1,1,0,2
+"Itapebi","BA",0,1,0,0,0,1,1
+"Itapecerica","MG",0,1,0,0,1,1,2
+"Itapecerica da Serra","SP",53,51,15,7,58,104,184
+"Itapecuru Mirim","MA",7,2,0,1,5,9,15
+"Itapejara d'Oeste","PR",2,5,1,1,4,7,13
+"Itapema","SC",275,738,108,93,111,1013,1325
+"Itapemirim","ES",18,29,6,1,17,47,71
+"Itaperuçu","PR",4,6,2,1,2,10,15
+"Itaperuna","RJ",48,58,17,19,36,106,178
+"Itapetim","PE",1,0,0,0,0,1,1
+"Itapetinga","BA",15,10,2,1,12,25,40
+"Itapetininga","SP",153,223,29,16,55,376,476
+"Itapeva","MG",0,1,0,0,0,1,1
+"Itapeva","SP",28,68,18,14,44,96,172
+"Itapevi","SP",103,86,8,5,57,189,259
+"Itapicuru","BA",0,0,0,0,2,0,2
+"Itapipoca","CE",14,11,1,2,7,25,35
+"Itapira","SP",48,61,7,13,37,109,166
+"Itapiranga","SC",3,14,4,3,6,17,30
+"Itapirapuã","GO",0,0,0,1,2,0,3
+"Itapissuma","PE",6,8,1,0,9,14,24
+"Itapiúna","CE",1,0,0,0,0,1,1
+"Itapoá","SC",71,95,15,6,28,166,215
+"Itápolis","SP",10,34,13,4,15,44,76
+"Itaporã","MS",7,11,1,1,5,18,25
+"Itaporanga","PB",3,4,0,0,4,7,11
+"Itaporanga","SP",1,0,0,3,3,1,7
+"Itaporanga d'Ajuda","SE",4,7,0,0,2,11,13
+"Itapororoca","PB",2,1,0,0,0,3,3
+"Itapuã do Oeste","RO",1,2,0,0,2,3,5
+"Itapuca","RS",0,0,1,0,2,0,3
+"Itapuí","SP",0,6,1,0,0,6,7
+"Itapura","SP",1,0,0,0,0,1,1
+"Itapuranga","GO",3,7,2,0,8,10,20
+"Itaquaquecetuba","SP",88,80,17,23,54,168,262
+"Itaquara","BA",0,0,0,0,1,0,1
+"Itaqui","RS",4,5,6,2,6,9,23
+"Itaquiraí","MS",1,0,0,0,1,1,2
+"Itarana","ES",3,4,2,1,7,7,17
+"Itarantim","BA",1,3,1,1,0,4,6
+"Itararé","SP",3,13,3,1,7,16,27
+"Itarema","CE",2,3,1,0,1,5,7
+"Itariri","SP",2,6,1,0,3,8,12
+"Itarumã","GO",1,1,0,0,0,2,2
+"Itati","RS",4,0,0,0,0,4,4
+"Itatiaia","RJ",25,167,5,173,12,192,382
+"Itatiaiuçu","MG",1,1,0,0,0,2,2
+"Itatiba","SP",200,228,60,22,102,428,612
+"Itatiba do Sul","RS",2,0,0,0,0,2,2
+"Itatim","BA",0,1,0,0,0,1,1
+"Itatinga","SP",4,3,0,1,2,7,10
+"Itatira","CE",0,0,0,0,6,0,6
+"Itaú","RN",2,0,1,0,0,2,3
+"Itaú de Minas","MG",0,1,0,0,0,1,1
+"Itaúba","MT",2,1,0,0,0,3,3
+"Itauçu","GO",1,3,2,1,0,4,7
+"Itaueira","PI",1,0,0,1,0,1,2
+"Itaúna","MG",36,41,11,5,15,77,108
+"Itaúna do Sul","PR",1,1,1,0,0,2,3
+"Itinga","MG",1,0,0,0,0,1,1
+"Itinga do Maranhão","MA",4,4,0,0,3,8,11
+"Itiquira","MT",2,1,1,0,4,3,8
+"Itirapina","SP",1,5,0,1,6,6,13
+"Itirapuã","SP",2,2,2,0,0,4,6
+"Itiruçu","BA",0,0,0,0,3,0,3
+"Itiúba","BA",3,0,0,0,0,3,3
+"Itobi","SP",0,0,0,0,3,0,3
+"Itororó","BA",1,1,0,0,1,2,3
+"Itu","SP",436,523,213,112,196,959,1480
+"Ituaçu","BA",1,1,0,0,1,2,3
+"Ituberá","BA",0,1,1,0,0,1,2
+"Itueta","MG",1,0,0,0,3,1,4
+"Ituiutaba","MG",8,15,4,4,4,23,35
+"Itumbiara","GO",95,163,34,28,106,258,426
+"Itupeva","SP",150,161,39,16,45,311,411
+"Itupiranga","PA",1,1,0,1,3,2,6
+"Ituporanga","SC",29,60,7,3,14,89,113
+"Iturama","MG",3,2,1,1,2,5,9
+"Itutinga","MG",1,0,0,0,2,1,3
+"Ituverava","SP",12,46,3,10,14,58,85
+"Iuiu","BA",0,1,0,0,0,1,1
+"Iúna","ES",7,7,5,3,0,14,22
+"Ivaí","PR",2,0,0,0,2,2,4
+"Ivaiporã","PR",8,28,8,4,6,36,54
+"Ivaté","PR",0,1,1,0,2,1,4
+"Ivatuba","PR",1,3,0,1,1,4,6
+"Ivinhema","MS",4,8,0,0,9,12,21
+"Ivorá","RS",0,1,0,0,0,1,1
+"Ivoti","RS",71,36,15,5,22,107,149
+"Jaboatão dos Guararapes","PE",964,417,123,57,166,1381,1727
+"Jaborá","SC",1,1,2,0,1,2,5
+"Jaborandi","BA",0,0,0,1,0,0,1
+"Jaborandi","SP",2,4,1,0,0,6,7
+"Jaboti","PR",1,0,0,0,1,1,2
+"Jaboticaba","RS",1,0,0,0,0,1,1
+"Jaboticabal","SP",53,94,29,20,54,147,250
+"Jaboticatubas","MG",2,4,1,0,1,6,8
+"Jaçanã","RN",0,0,0,0,1,0,1
+"Jacaraci","BA",2,1,0,0,2,3,5
+"Jacaraú","PB",1,0,0,0,0,1,1
+"Jacareacanga","PA",0,0,0,0,1,0,1
+"Jacareí","SP",599,257,63,35,73,856,1027
+"Jacarezinho","PR",10,19,5,0,4,29,38
+"Jaci","SP",3,5,1,0,2,8,11
+"Jaciara","MT",6,14,6,2,11,20,39
+"Jacinto Machado","SC",0,3,0,0,8,3,11
+"Jacobina","BA",20,26,8,5,10,46,69
+"Jacuí","MG",0,0,0,0,4,0,4
+"Jacundá","PA",2,1,0,0,2,3,5
+"Jacupiranga","SP",3,4,0,0,2,7,9
+"Jacutinga","MG",10,11,0,2,0,21,23
+"Jacutinga","RS",1,0,0,0,0,1,1
+"Jaguapitã","PR",5,5,2,0,0,10,12
+"Jaguaquara","BA",6,3,1,1,4,9,15
+"Jaguarão","RS",8,11,4,2,0,19,25
+"Jaguarari","BA",0,2,0,1,1,2,4
+"Jaguaré","ES",3,15,7,1,9,18,35
+"Jaguaretama","CE",1,1,0,0,0,2,2
+"Jaguari","RS",2,1,2,0,1,3,6
+"Jaguariaíva","PR",0,16,4,1,12,16,33
+"Jaguaribara","CE",0,0,1,0,0,0,1
+"Jaguaribe","CE",5,7,2,3,4,12,21
+"Jaguaripe","BA",0,0,0,0,1,0,1
+"Jaguariúna","SP",83,119,34,16,42,202,294
+"Jaguaruana","CE",3,6,1,0,2,9,12
+"Jaguaruna","SC",5,11,4,0,12,16,32
+"Jaíba","MG",0,0,0,1,0,0,1
+"Jaicós","PI",2,0,0,0,0,2,2
+"Jales","SP",30,47,10,3,21,77,111
+"Jambeiro","SP",9,9,2,0,1,18,21
+"Janaúba","MG",7,6,0,0,3,13,16
+"Jandaia","GO",0,0,0,1,1,0,2
+"Jandaia do Sul","PR",9,19,4,2,9,28,43
+"Jandaíra","BA",2,0,0,0,1,2,3
+"Jandira","SP",111,103,22,12,42,214,290
+"Janduís","RN",1,0,0,0,0,1,1
+"Jangada","MT",0,0,0,0,2,0,2
+"Janiópolis","PR",1,0,0,0,0,1,1
+"Januária","MG",0,2,0,0,1,2,3
+"Januário Cicco","RN",1,0,0,0,0,1,1
+"Japaraíba","MG",0,1,0,0,0,1,1
+"Japaratinga","AL",1,4,4,0,7,5,16
+"Japaratuba","SE",1,1,0,0,0,2,2
+"Japeri","RJ",19,14,0,1,6,33,40
+"Japi","RN",2,0,0,0,0,2,2
+"Japira","PR",1,0,0,0,1,1,2
+"Japurá","PR",1,1,1,0,5,2,8
+"Jaraguá","GO",27,14,0,1,11,41,53
+"Jaraguá do Sul","SC",592,516,68,70,83,1108,1329
+"Jaraguari","MS",5,4,0,0,0,9,9
+"Jaramataia","AL",1,0,0,0,0,1,1
+"Jardim","CE",1,1,0,0,1,2,3
+"Jardim","MS",2,11,6,2,4,13,25
+"Jardim Alegre","PR",1,0,2,0,1,1,4
+"Jardim de Piranhas","RN",3,0,0,2,0,3,5
+"Jardim do Mulato","PI",1,0,0,0,0,1,1
+"Jardim do Seridó","RN",5,1,0,0,0,6,6
+"Jardinópolis","SC",2,0,0,0,1,2,3
+"Jardinópolis","SP",27,32,6,3,14,59,82
+"Jarinu","SP",29,23,5,1,10,52,68
+"Jaru","RO",13,24,6,0,7,37,50
+"Jataí","GO",39,129,34,15,77,168,294
+"Jataizinho","PR",11,7,2,0,5,18,25
+"Jataúba","PE",67,2,0,1,0,69,70
+"Jateí","MS",1,0,0,0,4,1,5
+"Jati","CE",1,1,0,0,0,2,2
+"Jatobá","MA",0,0,0,0,1,0,1
+"Jatobá","PE",0,5,0,0,0,5,5
+"Jaú","SP",105,157,36,16,67,262,381
+"Jaupaci","GO",0,1,0,0,2,1,3
+"Jauru","MT",0,2,1,1,1,2,5
+"Jequeri","MG",0,1,0,0,4,1,5
+"Jequiá da Praia","AL",1,1,0,0,0,2,2
+"Jequié","BA",45,41,7,11,39,86,143
+"Jequitinhonha","MG",0,0,0,1,2,0,3
+"Jeremoabo","BA",3,0,2,0,1,3,6
+"Jericó","PB",0,1,0,0,1,1,2
+"Jeriquara","SP",0,1,0,0,1,1,2
+"Jerônimo Monteiro","ES",2,3,0,0,2,5,7
+"Jesuânia","MG",0,0,0,0,1,0,1
+"Jesuítas","PR",0,1,1,1,2,1,5
+"Jesúpolis","GO",0,0,0,0,1,0,1
+"Jijoca de Jericoacoara","CE",4,1,0,0,0,5,5
+"Ji-Paraná","RO",56,45,16,3,50,101,170
+"Jiquiriçá","BA",0,1,0,0,0,1,1
+"Jitaúna","BA",1,1,0,0,0,2,2
+"Joaçaba","SC",55,106,38,12,11,161,222
+"Joanésia","MG",0,0,0,0,1,0,1
+"Joanópolis","SP",8,4,3,1,5,12,21
+"João Alfredo","PE",18,0,0,0,2,18,20
+"João Câmara","RN",4,3,3,0,5,7,15
+"João Dourado","BA",1,4,0,1,4,5,10
+"João Lisboa","MA",4,1,1,0,0,5,6
+"João Monlevade","MG",73,16,3,5,15,89,112
+"João Neiva","ES",5,12,2,2,10,17,31
+"João Pessoa","PB",2387,1490,455,220,638,3877,5190
+"João Pinheiro","MG",1,6,0,2,5,7,14
+"João Ramalho","SP",2,0,0,0,0,2,2
+"Joaquim Felício","MG",0,1,0,0,1,1,2
+"Joaquim Gomes","AL",1,0,0,0,0,1,1
+"Joaquim Nabuco","PE",0,0,0,0,1,0,1
+"Joaquim Távora","PR",0,2,0,0,2,2,4
+"Jóia","RS",1,0,0,0,2,1,3
+"Joinville","SC",1102,1429,293,180,345,2531,3349
+"José Boiteux","SC",4,1,0,0,0,5,5
+"José Bonifácio","SP",16,35,12,0,19,51,82
+"José da Penha","RN",1,1,0,0,0,2,2
+"José de Freitas","PI",4,4,4,0,4,8,16
+"Joselândia","MA",1,0,0,0,0,1,1
+"Joviânia","GO",0,10,0,1,4,10,15
+"Juara","MT",7,8,0,4,9,15,28
+"Juarez Távora","PB",4,0,0,0,3,4,7
+"Juatuba","MG",3,2,0,1,2,5,8
+"Juazeirinho","PB",1,0,0,0,2,1,3
+"Juazeiro","BA",43,55,9,9,32,98,148
+"Juazeiro do Norte","CE",192,204,55,10,103,396,564
+"Jucás","CE",1,1,0,1,0,2,3
+"Jucurutu","RN",4,2,0,0,1,6,7
+"Juína","MT",32,16,2,2,12,48,64
+"Juiz de Fora","MG",915,1254,339,87,332,2169,2927
+"Júlio de Castilhos","RS",4,12,1,1,5,16,23
+"Jumirim","SP",0,0,0,0,2,0,2
+"Junco do Maranhão","MA",0,1,0,0,0,1,1
+"Junco do Seridó","PB",0,0,1,0,0,0,1
+"Jundiaí","SP",1432,1579,405,109,438,3011,3963
+"Jundiaí do Sul","PR",0,0,0,0,1,0,1
+"Junqueiro","AL",3,3,0,2,1,6,9
+"Junqueirópolis","SP",3,3,1,0,10,6,17
+"Jupi","PE",2,0,0,0,3,2,5
+"Jupiá","SC",0,1,0,0,0,1,1
+"Juquiá","SP",1,4,0,0,6,5,11
+"Juquitiba","SP",0,7,2,0,5,7,14
+"Juranda","PR",0,0,0,0,5,0,5
+"Jurema","PE",1,0,1,0,0,1,2
+"Juripiranga","PB",1,0,0,0,0,1,1
+"Juru","PB",0,0,0,1,1,0,2
+"Juruaia","MG",2,0,0,0,2,2,4
+"Juruti","PA",2,0,0,0,0,2,2
+"Juscimeira","MT",2,0,0,0,2,2,4
+"Jussara","BA",1,0,0,0,0,1,1
+"Jussara","GO",1,12,2,1,3,13,19
+"Jussiape","BA",0,0,0,0,1,0,1
+"Juti","MS",0,1,1,0,0,1,2
+"Kaloré","PR",0,0,0,0,3,0,3
+"Lábrea","AM",0,0,0,0,1,0,1
+"Lacerdópolis","SC",1,1,1,0,2,2,5
+"Ladainha","MG",1,0,0,0,1,1,2
+"Ladário","MS",1,0,1,0,5,1,7
+"Lagarto","SE",42,21,7,6,8,63,84
+"Lages","SC",103,200,93,24,71,303,491
+"Lago da Pedra","MA",1,2,0,0,6,3,9
+"Lago do Junco","MA",1,1,0,0,1,2,3
+"Lago dos Rodrigues","MA",17,0,0,0,1,17,18
+"Lago Verde","MA",0,0,0,0,1,0,1
+"Lagoa","PB",4,0,0,0,0,4,4
+"Lagoa Bonita do Sul","RS",0,1,0,0,1,1,2
+"Lagoa da Canoa","AL",7,2,0,0,0,9,9
+"Lagoa da Confusão","TO",0,0,2,0,0,0,2
+"Lagoa da Prata","MG",8,12,1,4,7,20,32
+"Lagoa de Itaenga","PE",4,1,2,0,2,5,9
+"Lagoa de Pedras","RN",1,0,0,0,0,1,1
+"Lagoa de São Francisco","PI",0,0,0,0,1,0,1
+"Lagoa de Velhos","RN",1,0,0,0,0,1,1
+"Lagoa do Carro","PE",4,1,0,1,1,5,7
+"Lagoa do Piauí","PI",0,1,0,0,0,1,1
+"Lagoa dos Gatos","PE",0,0,1,0,2,0,3
+"Lagoa dos Três Cantos","RS",1,0,0,0,0,1,1
+"Lagoa Dourada","MG",0,1,0,0,2,1,3
+"Lagoa Formosa","MG",0,3,0,0,3,3,6
+"Lagoa Grande","MG",1,1,0,0,0,2,2
+"Lagoa Grande","PE",4,1,0,0,2,5,7
+"Lagoa Nova","RN",2,0,0,0,1,2,3
+"Lagoa Real","BA",1,0,0,0,1,1,2
+"Lagoa Salgada","RN",1,0,0,0,0,1,1
+"Lagoa Santa","MG",33,41,7,7,20,74,108
+"Lagoa Seca","PB",23,26,2,1,11,49,63
+"Lagoa Vermelha","RS",7,9,2,1,2,16,21
+"Lagoão","RS",0,0,0,0,1,0,1
+"Lagoinha","SP",0,1,0,0,0,1,1
+"Laguna","SC",25,49,11,8,21,74,114
+"Laguna Carapã","MS",0,2,2,0,1,2,5
+"Laje","BA",1,0,0,1,4,1,6
+"Laje do Muriaé","RJ",5,1,0,0,1,6,7
+"Lajeado","RS",192,161,53,32,109,353,547
+"Lajeado Grande","SC",0,1,0,0,1,1,2
+"Lajedão","BA",0,0,0,0,2,0,2
+"Lajedo","PE",7,2,0,0,3,9,12
+"Lajes","RN",0,2,0,0,0,2,2
+"Lajinha","MG",0,0,1,0,1,0,2
+"Lambari","MG",3,6,1,1,2,9,13
+"Lambari D'Oeste","MT",0,0,1,0,2,0,3
+"Lapa","PR",10,12,3,4,5,22,34
+"Lapão","BA",1,1,0,0,2,2,4
+"Laranja da Terra","ES",0,2,1,1,4,2,8
+"Laranjal do Jari","AP",1,1,0,1,1,2,4
+"Laranjal Paulista","SP",18,36,4,5,6,54,69
+"Laranjeiras","SE",0,3,1,1,2,3,7
+"Laranjeiras do Sul","PR",7,15,3,0,6,22,31
+"Lassance","MG",0,0,0,0,2,0,2
+"Laurentino","SC",6,4,2,0,2,10,14
+"Lauro de Freitas","BA",1291,672,116,41,223,1963,2343
+"Lauro Müller","SC",2,8,1,0,8,10,19
+"Lavínia","SP",2,0,0,0,1,2,3
+"Lavras","MG",25,30,5,7,14,55,81
+"Lavras da Mangabeira","CE",1,4,0,0,2,5,7
+"Lavras do Sul","RS",0,1,0,0,0,1,1
+"Lavrinhas","SP",3,2,0,0,1,5,6
+"Lebon Régis","SC",3,2,0,0,1,5,6
+"Leme","SP",35,100,15,6,28,135,184
+"Lençóis","BA",0,0,1,0,1,0,2
+"Lençóis Paulista","SP",33,62,19,4,22,95,140
+"Leoberto Leal","SC",0,0,0,0,1,0,1
+"Leopoldina","MG",3,15,3,0,4,18,25
+"Leopoldo de Bulhões","GO",2,4,0,0,0,6,6
+"Leópolis","PR",2,0,0,0,0,2,2
+"Liberato Salzano","RS",0,1,0,0,0,1,1
+"Licínio de Almeida","BA",1,3,0,0,0,4,4
+"Lidianópolis","PR",0,0,0,1,0,0,1
+"Lima Campos","MA",3,1,0,0,2,4,6
+"Lima Duarte","MG",4,0,0,0,0,4,4
+"Limeira","SP",493,823,180,41,231,1316,1768
+"Limoeiro","PE",25,5,0,2,9,30,41
+"Limoeiro de Anadia","AL",7,4,0,1,2,11,14
+"Limoeiro do Norte","CE",9,10,3,0,7,19,29
+"Lindoeste","PR",1,2,0,0,0,3,3
+"Lindóia","SP",4,3,1,0,2,7,10
+"Lindóia do Sul","SC",0,0,1,0,0,0,1
+"Lindolfo Collor","RS",7,0,1,0,1,7,9
+"Linha Nova","RS",0,1,0,0,0,1,1
+"Linhares","ES",123,318,86,15,91,441,633
+"Lins","SP",32,61,28,11,38,93,170
+"Livramento de Nossa Senhora","BA",6,4,4,1,4,10,19
+"Loanda","PR",21,9,2,0,2,30,34
+"Lobato","PR",1,1,1,1,1,2,5
+"Londrina","PR",1138,1510,450,125,351,2648,3574
+"Lontras","SC",12,10,2,3,2,22,29
+"Lorena","SP",20,42,14,2,15,62,93
+"Loreto","MA",1,1,0,0,1,2,3
+"Lourdes","SP",0,0,1,0,0,0,1
+"Louveira","SP",108,101,16,5,40,209,270
+"Lucas do Rio Verde","MT",19,113,30,15,28,132,205
+"Lucélia","SP",6,10,1,3,8,16,28
+"Lucena","PB",3,1,0,0,0,4,4
+"Lucrécia","RN",2,0,0,0,0,2,2
+"Luís Antônio","SP",1,9,1,2,3,10,16
+"Luís Correia","PI",6,4,1,5,3,10,19
+"Luís Eduardo Magalhães","BA",100,108,5,12,55,208,280
+"Luís Gomes","RN",1,0,0,0,0,1,1
+"Luiz Alves","SC",11,8,2,2,7,19,30
+"Luiziana","PR",0,2,0,0,0,2,2
+"Luiziânia","SP",0,0,0,0,3,0,3
+"Lunardelli","PR",0,1,0,0,2,1,3
+"Lupércio","SP",1,1,0,0,0,2,2
+"Lupionópolis","PR",2,1,0,0,0,3,3
+"Luz","MG",3,1,0,0,3,4,7
+"Luzerna","SC",0,5,3,0,2,5,10
+"Luziânia","GO",5,2,0,3,8,7,18
+"Luzilândia","PI",2,1,0,0,0,3,3
+"Macaé","RJ",239,351,138,43,253,590,1024
+"Macaíba","RN",47,21,4,3,3,68,78
+"Macambira","SE",0,2,0,0,0,2,2
+"Macapá","AP",531,340,61,25,246,871,1203
+"Macaparana","PE",5,2,0,0,0,7,7
+"Macarani","BA",2,3,0,0,1,5,6
+"Macatuba","SP",5,4,2,0,5,9,16
+"Macau","RN",0,1,1,0,4,1,6
+"Macaubal","SP",3,2,3,0,1,5,9
+"Macaúbas","BA",5,6,0,0,4,11,15
+"Macedônia","SP",1,1,0,0,0,2,2
+"Maceió","AL",2487,2920,716,217,911,5407,7251
+"Machadinho","RS",2,0,2,1,0,2,5
+"Machadinho D'Oeste","RO",0,1,2,0,1,1,4
+"Machado","MG",7,14,3,3,3,21,30
+"Machados","PE",2,2,0,0,3,4,7
+"Macuco","RJ",2,0,0,0,0,2,2
+"Madalena","CE",0,1,0,0,1,1,2
+"Madre de Deus","BA",2,4,1,1,1,6,9
+"Madre de Deus de Minas","MG",0,1,0,0,0,1,1
+"Mãe do Rio","PA",1,3,0,1,5,4,10
+"Maetinga","BA",1,0,0,0,1,1,2
+"Mafra","SC",49,56,24,4,18,105,151
+"Magda","SP",0,0,1,0,1,0,2
+"Magé","RJ",88,57,14,18,51,145,228
+"Maiquinique","BA",0,0,0,0,1,0,1
+"Mairinque","SP",36,30,7,3,9,66,85
+"Mairiporã","SP",131,118,21,10,54,249,334
+"Major Gercino","SC",1,1,0,0,0,2,2
+"Major Isidoro","AL",2,2,0,1,0,4,5
+"Major Vieira","SC",0,0,0,1,0,0,1
+"Malacacheta","MG",0,0,0,0,2,0,2
+"Malhada dos Bois","SE",1,0,0,0,2,1,3
+"Malhador","SE",2,0,1,0,1,2,4
+"Mallet","PR",4,6,2,1,0,10,13
+"Mamanguape","PB",15,9,0,0,2,24,26
+"Mamborê","PR",0,1,0,2,3,1,6
+"Mampituba","RS",2,0,0,0,0,2,2
+"Manacapuru","AM",3,4,5,0,3,7,15
+"Manari","PE",0,1,0,0,0,1,1
+"Manaus","AM",4532,2053,384,386,1000,6585,8355
+"Mâncio Lima","AC",0,0,0,0,2,0,2
+"Mandaguaçu","PR",22,15,1,2,2,37,42
+"Mandaguari","PR",24,28,5,4,5,52,66
+"Mandirituba","PR",10,15,0,0,2,25,27
+"Manduri","SP",1,3,1,0,2,4,7
+"Manfrinópolis","PR",0,0,0,0,1,0,1
+"Manga","MG",0,1,0,0,0,1,1
+"Mangaratiba","RJ",54,61,11,6,44,115,176
+"Mangueirinha","PR",0,2,0,0,4,2,6
+"Manhuaçu","MG",14,20,10,3,46,34,93
+"Manhumirim","MG",1,1,0,1,6,2,9
+"Manoel Ribas","PR",0,4,1,1,2,4,8
+"Manoel Urbano","AC",0,1,0,0,0,1,1
+"Manoel Viana","RS",1,2,1,0,0,3,4
+"Manoel Vitorino","BA",0,0,1,0,1,0,2
+"Mantena","MG",0,0,0,0,3,0,3
+"Mantenópolis","ES",0,1,0,0,2,1,3
+"Maquiné","RS",1,2,1,1,1,3,6
+"Mar de Espanha","MG",0,1,0,0,0,1,1
+"Mara Rosa","GO",2,3,1,0,1,5,7
+"Marabá","PA",122,120,19,24,81,242,366
+"Maracaçumé","MA",0,2,0,0,0,2,2
+"Maracaí","SP",0,2,0,0,0,2,2
+"Maracajá","SC",2,0,0,0,0,2,2
+"Maracaju","MS",6,46,13,12,18,52,95
+"Maracanaú","CE",145,89,9,6,45,234,294
+"Maracás","BA",2,0,3,0,2,2,7
+"Maragogi","AL",11,14,1,0,13,25,39
+"Maragogipe","BA",1,2,0,2,6,3,11
+"Maraial","PE",1,0,0,0,0,1,1
+"Maranguape","CE",18,23,2,1,6,41,50
+"Marapanim","PA",2,1,0,0,0,3,3
+"Marapoama","SP",0,4,0,0,2,4,6
+"Maratá","RS",2,1,0,0,1,3,4
+"Marataízes","ES",28,41,7,5,21,69,102
+"Marau","RS",31,41,10,4,16,72,102
+"Maraú","BA",1,0,0,0,0,1,1
+"Maravilha","AL",1,2,1,0,0,3,4
+"Maravilha","SC",24,38,11,3,7,62,83
+"Maravilhas","MG",2,1,0,0,3,3,6
+"Marcação","PB",1,0,0,0,0,1,1
+"Marcelândia","MT",0,2,0,0,4,2,6
+"Marcelino Ramos","RS",2,3,0,0,0,5,5
+"Marcelino Vieira","RN",0,1,1,0,1,1,3
+"Marcionílio Souza","BA",1,0,0,0,1,1,2
+"Marco","CE",8,1,0,1,1,9,11
+"Marcolândia","PI",0,0,0,0,1,0,1
+"Marechal Cândido Rondon","PR",35,42,11,4,8,77,100
+"Marechal Deodoro","AL",233,179,29,9,36,412,486
+"Marechal Floriano","ES",9,14,5,0,5,23,33
+"Marema","SC",1,0,0,0,0,1,1
+"Mari","PB",3,4,0,0,0,7,7
+"Maria da Fé","MG",2,0,0,0,0,2,2
+"Maria Helena","PR",1,0,0,0,0,1,1
+"Marialva","PR",35,37,4,2,23,72,101
+"Mariana","MG",7,13,4,3,17,20,44
+"Mariano Moro","RS",1,0,0,0,0,1,1
+"Marianópolis do Tocantins","TO",0,1,1,0,1,1,3
+"Mariápolis","SP",3,2,0,0,2,5,7
+"Maribondo","AL",2,6,0,0,2,8,10
+"Maricá","RJ",308,194,43,11,105,502,661
+"Marilac","MG",1,0,0,1,0,1,2
+"Marilândia","ES",4,11,5,0,11,15,31
+"Marilândia do Sul","PR",5,6,1,1,0,11,13
+"Marilena","PR",1,1,0,0,1,2,3
+"Marília","SP",239,519,105,23,260,758,1146
+"Mariluz","PR",0,1,0,0,1,1,2
+"Maringá","PR",993,1600,366,155,326,2593,3440
+"Marinópolis","SP",0,1,1,0,0,1,2
+"Mário Campos","MG",8,3,0,0,1,11,12
+"Mariópolis","PR",0,0,1,0,1,0,2
+"Maripá","PR",1,0,1,1,0,1,3
+"Marituba","PA",22,12,3,2,15,34,54
+"Marizópolis","PB",2,0,0,0,0,2,2
+"Marmeleiro","PR",4,4,0,0,2,8,10
+"Marques de Souza","RS",2,1,0,0,3,3,6
+"Marquinho","PR",0,0,0,0,1,0,1
+"Martinho Campos","MG",0,1,0,0,0,1,1
+"Martinópole","CE",1,2,0,0,0,3,3
+"Martinópolis","SP",5,11,3,2,8,16,29
+"Martins","RN",4,2,0,0,0,6,6
+"Martins Soares","MG",0,0,1,0,3,0,4
+"Maruim","SE",2,2,1,0,0,4,5
+"Marumbi","PR",0,0,1,0,0,0,1
+"Marzagão","GO",0,0,1,0,0,0,1
+"Mascote","BA",0,0,0,0,1,0,1
+"Massapê","CE",6,2,0,0,1,8,9
+"Massaranduba","PB",1,1,0,0,3,2,5
+"Massaranduba","SC",15,18,4,3,7,33,47
+"Mata de São João","BA",25,25,5,1,13,50,69
+"Mata Grande","AL",0,0,1,0,0,0,1
+"Mata Roma","MA",2,1,0,1,1,3,5
+"Mata Verde","MG",0,0,0,0,1,0,1
+"Matão","SP",39,91,21,17,36,130,204
+"Mataraca","PB",1,0,0,0,0,1,1
+"Mateiros","TO",0,1,0,0,1,1,2
+"Matelândia","PR",9,4,1,1,0,13,15
+"Mateus Leme","MG",4,7,0,0,4,11,15
+"Mathias Lobato","MG",0,0,0,0,1,0,1
+"Matias Barbosa","MG",14,3,2,1,5,17,25
+"Matinha","MA",0,0,1,0,2,0,3
+"Matinhos","PR",37,25,12,4,15,62,93
+"Matipó","MG",0,0,0,1,4,0,5
+"Mato Castelhano","RS",1,0,0,0,0,1,1
+"Mato Grosso","PB",0,1,0,0,0,1,1
+"Mato Leitão","RS",1,0,1,0,1,1,3
+"Mato Rico","PR",0,0,1,0,0,0,1
+"Mato Verde","MG",0,1,0,0,0,1,1
+"Matões","MA",1,0,0,0,0,1,1
+"Matões do Norte","MA",1,0,0,0,0,1,1
+"Matos Costa","SC",1,2,0,0,0,3,3
+"Matozinhos","MG",5,3,0,0,1,8,9
+"Matriz de Camaragibe","AL",2,4,0,0,2,6,8
+"Matupá","MT",3,8,1,1,6,11,19
+"Maturéia","PB",0,0,1,0,1,0,2
+"Mauá","SP",149,167,51,31,114,316,512
+"Mauá da Serra","PR",4,1,0,0,0,5,5
+"Maués","AM",1,0,2,0,0,1,3
+"Maurilândia","GO",0,6,0,0,2,6,8
+"Mauriti","CE",0,0,0,0,1,0,1
+"Maxaranguape","RN",4,0,0,0,0,4,4
+"Mazagão","AP",0,1,0,0,2,1,3
+"Medeiros","MG",0,0,0,0,1,0,1
+"Medeiros Neto","BA",0,0,0,2,3,0,5
+"Medianeira","PR",57,29,3,4,17,86,110
+"Medicilândia","PA",2,0,1,1,1,2,5
+"Medina","MG",0,1,0,1,0,1,2
+"Meleiro","SC",0,2,0,1,3,2,6
+"Mendes","RJ",2,3,2,0,6,5,13
+"Mendes Pimentel","MG",0,0,0,0,2,0,2
+"Mendonça","SP",1,3,1,0,0,4,5
+"Mercedes","PR",0,5,1,0,1,5,7
+"Mercês","MG",0,1,0,0,3,1,4
+"Meridiano","SP",0,0,0,2,0,0,2
+"Meruoca","CE",3,5,0,0,0,8,8
+"Mesquita","RJ",71,44,8,6,20,115,149
+"Messias","AL",4,2,1,0,0,6,7
+"Miguel Alves","PI",1,0,1,0,0,1,2
+"Miguel Calmon","BA",1,1,0,0,2,2,4
+"Miguel Pereira","RJ",24,23,7,3,17,47,74
+"Miguelópolis","SP",4,5,0,1,4,9,14
+"Milagres","BA",0,1,0,0,1,1,2
+"Milagres","CE",1,1,2,0,0,2,4
+"Milhã","CE",0,0,0,0,1,0,1
+"Mimoso do Sul","ES",3,4,0,1,7,7,15
+"Minaçu","GO",2,2,0,0,7,4,11
+"Minas do Leão","RS",3,1,0,0,1,4,5
+"Minas Novas","MG",0,0,0,0,1,0,1
+"Minduri","MG",0,1,0,0,1,1,2
+"Mineiros","GO",11,67,15,4,33,78,130
+"Mineiros do Tietê","SP",1,3,0,0,2,4,6
+"Miracatu","SP",2,6,0,0,2,8,10
+"Miracema","RJ",3,10,2,0,2,13,17
+"Miracema do Tocantins","TO",6,1,0,0,1,7,8
+"Mirador","MA",0,0,0,0,1,0,1
+"Mirador","PR",0,1,0,0,0,1,1
+"Miraguaí","RS",0,1,1,0,0,1,2
+"Miraí","MG",0,2,0,0,2,2,4
+"Miraíma","CE",1,0,0,0,0,1,1
+"Miranda","MS",0,0,4,0,2,0,6
+"Miranda do Norte","MA",3,1,0,0,6,4,10
+"Mirandópolis","SP",8,13,2,2,9,21,34
+"Miranorte","TO",0,0,0,0,1,0,1
+"Mirante da Serra","RO",0,2,0,0,1,2,3
+"Mirante do Paranapanema","SP",1,3,1,0,4,4,9
+"Miraselva","PR",0,0,0,0,2,0,2
+"Mirassol","SP",141,224,49,13,32,365,459
+"Mirassol d'Oeste","MT",2,10,2,2,4,12,20
+"Mirassolândia","SP",3,0,0,1,0,3,4
+"Mirim Doce","SC",1,0,0,0,1,1,2
+"Mirinzal","MA",0,0,1,0,1,0,2
+"Missal","PR",6,2,0,1,0,8,9
+"Missão Velha","CE",2,2,1,0,0,4,5
+"Mocajuba","PA",2,1,1,1,0,3,5
+"Mococa","SP",29,58,11,2,18,87,118
+"Modelo","SC",4,1,2,0,1,5,8
+"Moeda","MG",0,0,1,0,1,0,2
+"Moema","MG",1,1,0,0,1,2,3
+"Mogi das Cruzes","SP",724,845,229,113,423,1569,2334
+"Mogi Guaçu","SP",77,116,24,15,76,193,308
+"Mogi Mirim","SP",110,134,40,22,92,244,398
+"Moiporá","GO",1,0,0,0,0,1,1
+"Moita Bonita","SE",2,3,0,0,3,5,8
+"Moju","PA",2,4,1,0,1,6,8
+"Mojuí dos Campos","PA",1,0,0,0,1,1,2
+"Mombaça","CE",3,3,1,0,2,6,9
+"Mombuca","SP",0,8,1,1,1,8,11
+"Monção","MA",0,1,0,0,1,1,2
+"Mondaí","SC",4,7,0,3,1,11,15
+"Mongaguá","SP",16,15,7,5,12,31,55
+"Monsenhor Gil","PI",2,1,0,0,0,3,3
+"Monsenhor Hipólito","PI",1,2,0,0,0,3,3
+"Monsenhor Paulo","MG",0,1,0,0,0,1,1
+"Monsenhor Tabosa","CE",0,1,0,0,1,1,2
+"Montalvânia","MG",0,0,0,0,1,0,1
+"Montanha","ES",0,15,6,0,7,15,28
+"Montanhas","RN",0,2,0,0,0,2,2
+"Montauri","RS",0,1,0,0,1,1,2
+"Monte Alegre","PA",2,4,0,0,1,6,7
+"Monte Alegre","RN",6,2,1,0,1,8,10
+"Monte Alegre de Minas","MG",0,2,1,0,1,2,4
+"Monte Alegre do Piauí","PI",0,0,0,1,0,0,1
+"Monte Alegre do Sul","SP",11,11,2,0,6,22,30
+"Monte Alto","SP",15,57,7,9,25,72,113
+"Monte Aprazível","SP",6,11,5,0,5,17,27
+"Monte Azul Paulista","SP",5,28,6,6,7,33,52
+"Monte Belo","MG",0,0,0,0,3,0,3
+"Monte Belo do Sul","RS",1,0,1,0,1,1,3
+"Monte Carlo","SC",1,3,0,0,0,4,4
+"Monte Carmelo","MG",0,4,2,0,1,4,7
+"Monte Castelo","SC",0,2,0,0,1,2,3
+"Monte Castelo","SP",2,1,0,0,2,3,5
+"Monte das Gameleiras","RN",0,2,0,0,0,2,2
+"Monte Mor","SP",26,31,9,8,46,57,120
+"Monte Negro","RO",0,0,0,0,1,0,1
+"Monte Santo","BA",0,1,1,0,0,1,2
+"Monte Santo de Minas","MG",1,1,0,0,3,2,5
+"Monte Sião","MG",0,2,2,0,2,2,6
+"Monteiro","PB",4,2,3,0,6,6,15
+"Monteiro Lobato","SP",1,1,0,0,0,2,2
+"Monteirópolis","AL",0,2,0,0,1,2,3
+"Montenegro","RS",95,53,8,10,27,148,193
+"Montes Altos","MA",0,0,0,0,2,0,2
+"Montes Claros","MG",301,275,44,28,144,576,792
+"Montes Claros de Goiás","GO",2,0,0,0,2,2,4
+"Montividiu","GO",2,10,3,3,2,12,20
+"Morada Nova","CE",6,7,0,0,1,13,14
+"Moraújo","CE",0,1,0,0,0,1,1
+"Moreilândia","PE",3,0,0,0,0,3,3
+"Moreira Sales","PR",2,1,2,0,1,3,6
+"Moreno","PE",21,9,1,1,6,30,38
+"Morretes","PR",11,12,1,0,5,23,29
+"Morrinhos","CE",3,1,0,0,1,4,5
+"Morrinhos","GO",8,22,3,2,8,30,43
+"Morrinhos do Sul","RS",1,1,0,0,0,2,2
+"Morro Agudo","SP",7,29,5,11,6,36,58
+"Morro da Fumaça","SC",13,22,6,2,15,35,58
+"Morro do Chapéu","BA",1,1,1,0,3,2,6
+"Morro Grande","SC",0,0,0,0,1,0,1
+"Morro Redondo","RS",1,2,2,0,0,3,5
+"Morro Reuter","RS",8,1,0,2,2,9,13
+"Morros","MA",0,1,0,0,1,1,2
+"Mortugaba","BA",0,1,0,0,1,1,2
+"Morungaba","SP",14,8,2,1,3,22,28
+"Mossâmedes","GO",1,2,1,0,2,3,6
+"Mossoró","RN",761,325,24,30,137,1086,1277
+"Mostardas","RS",2,5,1,3,2,7,13
+"Mozarlândia","GO",0,3,3,0,1,3,7
+"Muaná","PA",1,0,0,0,1,1,2
+"Mucajaí","RR",1,0,0,0,1,1,2
+"Mucambo","CE",2,1,0,0,1,3,4
+"Mucugê","BA",2,0,2,0,0,2,4
+"Muçum","RS",3,0,0,0,0,3,3
+"Mucuri","BA",1,1,1,1,7,2,11
+"Mucurici","ES",1,0,1,0,0,1,2
+"Muitos Capões","RS",0,1,0,0,0,1,1
+"Mulungu","CE",2,1,0,0,0,3,3
+"Mundo Novo","BA",0,1,0,0,0,1,1
+"Mundo Novo","MS",3,4,0,0,1,7,8
+"Muniz Freire","ES",9,2,1,0,0,11,12
+"Muquém do São Francisco","BA",0,0,0,0,1,0,1
+"Muqui","ES",0,1,2,0,1,1,4
+"Muriaé","MG",18,23,18,6,69,41,134
+"Muribeca","SE",1,0,0,0,1,1,2
+"Murici","AL",3,3,1,2,2,6,11
+"Murici dos Portelas","PI",0,0,0,0,1,0,1
+"Muricilândia","TO",0,0,0,0,1,0,1
+"Muritiba","BA",5,1,0,0,3,6,9
+"Murutinga do Sul","SP",1,4,0,0,0,5,5
+"Mutuípe","BA",2,0,0,1,3,2,6
+"Mutum","MG",0,0,2,1,3,0,6
+"Mutunópolis","GO",0,0,0,0,1,0,1
+"Muzambinho","MG",3,0,2,0,4,3,9
+"Nacip Raydan","MG",0,0,1,0,0,0,1
+"Nantes","SP",0,0,0,0,1,0,1
+"Nanuque","MG",0,2,0,0,2,2,4
+"Não-Me-Toque","RS",6,13,1,0,6,19,26
+"Naque","MG",0,1,0,0,1,1,2
+"Natal","RN",2775,1445,446,194,423,4220,5283
+"Natividade","RJ",3,4,0,0,2,7,9
+"Natividade da Serra","SP",0,1,0,0,1,1,2
+"Navegantes","SC",101,150,27,12,63,251,353
+"Naviraí","MS",3,19,2,1,8,22,33
+"Nazaré","BA",0,2,0,0,3,2,5
+"Nazaré","TO",0,1,0,0,0,1,1
+"Nazaré da Mata","PE",2,2,0,0,0,4,4
+"Nazaré do Piauí","PI",0,0,0,0,1,0,1
+"Nazaré Paulista","SP",13,8,1,0,5,21,27
+"Nazareno","MG",0,1,0,0,0,1,1
+"Nazarezinho","PB",0,0,0,0,1,0,1
+"Nazária","PI",0,1,0,0,0,1,1
+"Nazário","GO",0,3,0,1,3,3,7
+"Neópolis","SE",1,4,0,0,3,5,8
+"Nepomuceno","MG",1,0,0,0,2,1,3
+"Nerópolis","GO",4,15,0,1,8,19,28
+"Neves Paulista","SP",3,7,2,0,2,10,14
+"Nhandeara","SP",3,5,0,1,4,8,13
+"Nilópolis","RJ",48,22,6,8,40,70,124
+"Nina Rodrigues","MA",0,0,0,0,1,0,1
+"Nioaque","MS",0,0,0,0,1,0,1
+"Niquelândia","GO",0,3,1,0,5,3,9
+"Nísia Floresta","RN",17,5,1,0,4,22,27
+"Niterói","RJ",1063,1390,571,213,607,2453,3844
+"Nobres","MT",3,8,2,2,4,11,19
+"Nonoai","RS",12,1,0,1,1,13,15
+"Nordestina","BA",0,0,0,0,1,0,1
+"Nortelândia","MT",1,1,0,0,2,2,4
+"Nossa Senhora da Glória","SE",7,7,4,4,3,14,25
+"Nossa Senhora das Dores","SE",3,6,0,0,1,9,10
+"Nossa Senhora das Graças","PR",0,1,0,0,0,1,1
+"Nossa Senhora do Livramento","MT",4,6,0,0,1,10,11
+"Nossa Senhora do Socorro","SE",54,24,5,4,10,78,97
+"Nova Aliança","SP",1,5,0,0,0,6,6
+"Nova Aliança do Ivaí","PR",1,0,0,0,0,1,1
+"Nova Alvorada","RS",0,2,0,1,3,2,6
+"Nova Alvorada do Sul","MS",2,5,1,2,3,7,13
+"Nova Andradina","MS",12,23,4,5,9,35,53
+"Nova Araçá","RS",0,0,0,0,3,0,3
+"Nova Aurora","PR",37,4,0,0,1,41,42
+"Nova Bandeirantes","MT",0,1,0,0,0,1,1
+"Nova Bassano","RS",10,2,1,1,1,12,15
+"Nova Belém","MG",0,0,0,0,3,0,3
+"Nova Brasilândia","MT",0,2,0,0,1,2,3
+"Nova Brasilândia D'Oeste","RO",1,0,0,1,2,1,4
+"Nova Bréscia","RS",3,2,0,2,3,5,10
+"Nova Campina","SP",0,1,0,0,2,1,3
+"Nova Canaã","BA",0,1,0,0,0,1,1
+"Nova Canaã do Norte","MT",5,2,0,0,1,7,8
+"Nova Candelária","RS",2,1,0,0,0,3,3
+"Nova Cantu","PR",0,2,1,0,2,2,5
+"Nova Colinas","MA",0,1,1,0,0,1,2
+"Nova Crixás","GO",0,3,1,0,0,3,4
+"Nova Cruz","RN",10,8,1,1,0,18,20
+"Nova Era","MG",4,4,0,0,2,8,10
+"Nova Erechim","SC",0,2,2,0,1,2,5
+"Nova Esperança","PR",4,9,3,1,4,13,21
+"Nova Esperança do Sul","RS",1,1,0,0,0,2,2
+"Nova Europa","SP",0,2,0,1,3,2,6
+"Nova Fátima","BA",1,0,0,0,1,1,2
+"Nova Fátima","PR",0,3,0,0,0,3,3
+"Nova Friburgo","RJ",131,112,72,23,148,243,486
+"Nova Glória","GO",0,0,0,0,3,0,3
+"Nova Granada","SP",10,6,0,1,2,16,19
+"Nova Guarita","MT",0,2,0,0,4,2,6
+"Nova Hartz","RS",10,12,3,0,3,22,28
+"Nova Iguaçu","RJ",372,315,61,41,178,687,967
+"Nova Iguaçu de Goiás","GO",0,0,1,0,1,0,2
+"Nova Independência","SP",0,0,0,0,1,0,1
+"Nova Ipixuna","PA",0,0,0,0,2,0,2
+"Nova Itaberaba","SC",2,4,1,0,2,6,9
+"Nova Itarana","BA",0,0,0,0,1,0,1
+"Nova Lacerda","MT",0,0,0,0,1,0,1
+"Nova Laranjeiras","PR",1,1,1,0,1,2,4
+"Nova Lima","MG",254,363,60,29,41,617,747
+"Nova Londrina","PR",3,4,0,0,4,7,11
+"Nova Luzitânia","SP",0,0,1,0,1,0,2
+"Nova Mamoré","RO",1,7,1,0,0,8,9
+"Nova Marilândia","MT",1,1,1,1,0,2,4
+"Nova Maringá","MT",0,4,0,1,1,4,6
+"Nova Monte Verde","MT",1,2,0,0,1,3,4
+"Nova Mutum","MT",11,52,15,9,33,63,120
+"Nova Odessa","SP",59,113,22,4,28,172,226
+"Nova Olímpia","MT",2,2,0,0,0,4,4
+"Nova Olímpia","PR",0,1,0,1,0,1,2
+"Nova Olinda","CE",1,1,0,0,1,2,3
+"Nova Olinda","TO",0,3,0,0,2,3,5
+"Nova Olinda do Maranhão","MA",0,0,0,0,1,0,1
+"Nova Pádua","RS",1,0,0,0,4,1,5
+"Nova Palma","RS",0,0,0,0,2,0,2
+"Nova Palmeira","PB",4,1,1,0,0,5,6
+"Nova Petrópolis","RS",45,21,6,3,14,66,89
+"Nova Ponte","MG",0,1,1,1,1,1,4
+"Nova Porteirinha","MG",1,0,1,0,0,1,2
+"Nova Prata","RS",27,16,4,3,6,43,56
+"Nova Prata do Iguaçu","PR",0,4,0,0,1,4,5
+"Nova Resende","MG",3,1,0,0,1,4,5
+"Nova Roma do Sul","RS",2,2,0,0,0,4,4
+"Nova Russas","CE",9,4,2,2,1,13,18
+"Nova Santa Bárbara","PR",0,0,1,0,0,0,1
+"Nova Santa Helena","MT",0,1,0,0,2,1,3
+"Nova Santa Rita","RS",50,21,4,3,8,71,86
+"Nova Santa Rosa","PR",16,7,1,0,3,23,27
+"Nova Serrana","MG",8,18,3,3,9,26,41
+"Nova Soure","BA",0,0,1,0,1,0,2
+"Nova Tebas","PR",0,1,0,0,2,1,3
+"Nova Timboteua","PA",0,0,2,0,0,0,2
+"Nova Trento","SC",19,16,6,5,7,35,53
+"Nova Ubiratã","MT",1,6,0,0,2,7,9
+"Nova União","MG",0,1,0,0,0,1,1
+"Nova Venécia","ES",22,40,5,4,13,62,84
+"Nova Veneza","GO",2,4,1,0,1,6,8
+"Nova Veneza","SC",9,18,3,1,7,27,38
+"Nova Viçosa","BA",1,1,4,0,6,2,12
+"Nova Xavantina","MT",0,2,0,1,2,2,5
+"Novais","SP",0,3,0,0,0,3,3
+"Novo Airão","AM",2,0,0,0,1,2,3
+"Novo Brasil","GO",1,1,1,0,0,2,3
+"Novo Cabrais","RS",1,0,0,0,0,1,1
+"Novo Cruzeiro","MG",0,0,0,0,4,0,4
+"Novo Gama","GO",0,1,2,0,0,1,3
+"Novo Hamburgo","RS",807,546,134,101,133,1353,1721
+"Novo Horizonte","BA",0,1,0,0,0,1,1
+"Novo Horizonte","SP",8,38,14,10,4,46,74
+"Novo Horizonte do Norte","MT",0,1,0,1,0,1,2
+"Novo Horizonte do Sul","MS",0,0,0,0,2,0,2
+"Novo Itacolomi","PR",0,1,0,0,2,1,3
+"Novo Lino","AL",2,0,0,0,0,2,2
+"Novo Machado","RS",0,1,0,0,0,1,1
+"Novo Mundo","MT",0,0,1,0,0,0,1
+"Novo Oriente","CE",0,0,0,0,2,0,2
+"Novo Planalto","GO",0,2,0,0,0,2,2
+"Novo Progresso","PA",0,0,0,0,1,0,1
+"Novo Repartimento","PA",0,1,0,0,3,1,4
+"Novo Santo Antônio","MT",0,1,0,0,0,1,1
+"Nuporanga","SP",2,1,0,0,0,3,3
+"Óbidos","PA",1,0,0,0,1,1,2
+"Ocauçu","SP",3,1,0,0,0,4,4
+"Oeiras","PI",1,9,3,0,5,10,18
+"Oeiras do Pará","PA",0,1,0,0,0,1,1
+"Oiapoque","AP",0,0,3,0,0,0,3
+"Óleo","SP",0,0,0,1,1,0,2
+"Olho d'Água das Cunhãs","MA",1,1,0,2,0,2,4
+"Olho d'Água das Flores","AL",7,3,1,0,2,10,13
+"Olho d'Água do Borges","RN",0,0,0,0,2,0,2
+"Olho D'Água do Piauí","PI",0,1,0,0,1,1,2
+"Olho d'Água Grande","AL",1,0,0,0,0,1,1
+"Olímpia","SP",49,73,21,5,15,122,163
+"Olinda","PE",516,207,48,23,74,723,868
+"Olindina","BA",1,1,0,0,2,2,4
+"Olivedos","PB",0,0,0,0,1,0,1
+"Oliveira","MG",5,4,1,0,3,9,13
+"Oliveira dos Brejinhos","BA",1,1,0,1,0,2,3
+"Onda Verde","SP",1,2,1,2,0,3,6
+"Oriente","SP",4,7,1,1,0,11,13
+"Orindiúva","SP",0,5,1,3,1,5,10
+"Oriximiná","PA",11,2,0,0,0,13,13
+"Orizona","GO",0,1,1,0,2,1,4
+"Orlândia","SP",25,55,9,18,11,80,118
+"Orleans","SC",13,16,10,7,22,29,68
+"Orobó","PE",1,0,0,1,1,1,3
+"Orocó","PE",1,0,0,0,0,1,1
+"Orós","CE",0,1,0,0,0,1,1
+"Ortigueira","PR",2,3,1,2,2,5,10
+"Osasco","SP",490,739,245,81,527,1229,2082
+"Oscar Bressane","SP",1,1,1,0,0,2,3
+"Osório","RS",148,52,21,7,39,200,267
+"Osvaldo Cruz","SP",2,7,7,2,18,9,36
+"Otacílio Costa","SC",6,10,4,3,3,16,26
+"Ourém","PA",0,0,1,0,1,0,2
+"Ouriçangas","BA",2,0,0,0,0,2,2
+"Ouricuri","PE",8,4,0,0,2,12,14
+"Ourilândia do Norte","PA",1,2,0,0,3,3,6
+"Ourinhos","SP",33,76,18,17,50,109,194
+"Ourizona","PR",3,0,0,0,0,3,3
+"Ouro","SC",3,5,1,0,3,8,12
+"Ouro Branco","AL",1,0,0,0,0,1,1
+"Ouro Branco","MG",6,12,2,1,3,18,24
+"Ouro Branco","RN",1,0,0,0,1,1,2
+"Ouro Fino","MG",5,3,2,2,2,8,14
+"Ouro Preto","MG",11,8,3,2,8,19,32
+"Ouro Preto do Oeste","RO",1,17,2,0,4,18,24
+"Ouro Verde de Goiás","GO",1,0,0,0,2,1,3
+"Ouroeste","SP",1,3,0,2,1,4,7
+"Ourolândia","BA",3,0,1,0,0,3,4
+"Ouvidor","GO",0,0,0,0,2,0,2
+"Pacaembu","SP",0,0,1,1,1,0,3
+"Pacajá","PA",5,0,0,0,0,5,5
+"Pacajus","CE",14,11,2,0,9,25,36
+"Pacaraima","RR",1,0,0,0,0,1,1
+"Pacatuba","CE",30,13,0,1,28,43,72
+"Paço do Lumiar","MA",194,63,10,13,33,257,313
+"Pacujá","CE",0,1,0,0,1,1,2
+"Padre Bernardo","GO",1,0,0,0,1,1,2
+"Padre Marcos","PI",1,1,0,0,0,2,2
+"Padre Paraíso","MG",1,0,0,0,1,1,2
+"Paiçandu","PR",8,7,3,0,3,15,21
+"Paim Filho","RS",2,4,0,0,1,6,7
+"Pains","MG",0,2,1,0,1,2,4
+"Paiva","MG",0,0,0,0,1,0,1
+"Pajeú do Piauí","PI",1,0,0,0,0,1,1
+"Palestina","SP",1,0,3,0,2,1,6
+"Palhano","CE",2,0,0,0,0,2,2
+"Palhoça","SC",472,426,115,34,110,898,1157
+"Palma","MG",1,0,1,0,1,1,3
+"Palma Sola","SC",1,5,1,0,1,6,8
+"Palmácia","CE",0,1,0,0,0,1,1
+"Palmares","PE",15,11,3,2,6,26,37
+"Palmares do Sul","RS",7,1,0,0,3,8,11
+"Palmares Paulista","SP",1,1,0,0,0,2,2
+"Palmas","PR",4,6,2,2,4,10,18
+"Palmas","TO",920,828,181,153,273,1748,2355
+"Palmas de Monte Alto","BA",0,0,0,0,1,0,1
+"Palmeira","PR",6,23,5,3,9,29,46
+"Palmeira das Missões","RS",8,14,8,9,7,22,46
+"Palmeira d'Oeste","SP",1,1,0,0,4,2,6
+"Palmeira dos Índios","AL",23,29,3,4,19,52,78
+"Palmeirais","PI",0,0,0,0,1,0,1
+"Palmeiras","BA",1,0,0,0,0,1,1
+"Palmeiras de Goiás","GO",1,9,5,2,3,10,20
+"Palmeiras do Tocantins","TO",1,0,0,0,0,1,1
+"Palmeirina","PE",0,0,1,0,0,0,1
+"Palmeirópolis","TO",0,1,0,0,0,1,1
+"Palmelo","GO",0,0,0,0,1,0,1
+"Palminópolis","GO",0,1,0,0,0,1,1
+"Palmital","PR",1,3,2,0,2,4,8
+"Palmital","SP",1,11,3,2,2,12,19
+"Palmitinho","RS",1,0,0,0,0,1,1
+"Palmitos","SC",1,6,1,0,1,7,9
+"Palotina","PR",12,33,11,7,8,45,71
+"Panambi","RS",13,15,6,4,3,28,41
+"Pancas","ES",1,4,2,0,3,5,10
+"Panelas","PE",0,0,0,0,1,0,1
+"Panorama","SP",1,4,2,0,5,5,12
+"Pantano Grande","RS",1,0,1,1,2,1,5
+"Pão de Açúcar","AL",2,3,0,0,0,5,5
+"Papagaios","MG",0,3,0,0,0,3,3
+"Papanduva","SC",5,13,3,2,3,18,26
+"Pará de Minas","MG",24,14,5,5,28,38,76
+"Paracambi","RJ",31,34,3,3,19,65,90
+"Paracatu","MG",1,0,1,2,3,1,7
+"Paracuru","CE",10,8,1,1,7,18,27
+"Paragominas","PA",13,16,5,6,39,29,79
+"Paraguaçu","MG",3,5,2,0,5,8,15
+"Paraguaçu Paulista","SP",8,22,2,1,13,30,46
+"Paraí","RS",3,3,2,1,4,6,13
+"Paraíba do Sul","RJ",10,14,4,3,6,24,37
+"Paraibano","MA",0,0,1,0,2,0,3
+"Paraibuna","SP",4,2,1,2,3,6,12
+"Paraipaba","CE",11,3,2,2,3,14,21
+"Paraíso","SP",1,2,0,0,2,3,5
+"Paraíso das Águas","MS",0,2,2,0,3,2,7
+"Paraíso do Norte","PR",0,3,1,0,1,3,5
+"Paraíso do Sul","RS",1,0,1,0,1,1,3
+"Paraíso do Tocantins","TO",9,18,5,4,10,27,46
+"Paraisópolis","MG",2,1,0,0,1,3,4
+"Parambu","CE",0,1,0,0,0,1,1
+"Paramirim","BA",3,1,1,0,0,4,5
+"Paramoti","CE",1,0,0,0,0,1,1
+"Paranacity","PR",1,2,2,0,4,3,9
+"Paranaguá","PR",74,99,20,15,40,173,248
+"Paranaíba","MS",2,9,5,13,16,11,45
+"Paranaiguara","GO",1,2,0,0,0,3,3
+"Paranaíta","MT",0,1,2,0,1,1,4
+"Paranapanema","SP",9,8,8,3,7,17,35
+"Paranapoema","PR",0,1,0,1,0,1,2
+"Paranapuã","SP",0,1,0,0,0,1,1
+"Paranatinga","MT",3,3,4,1,2,6,13
+"Paranavaí","PR",64,83,18,11,41,147,217
+"Paraopeba","MG",5,2,1,1,5,7,14
+"Parapuã","SP",2,2,0,0,3,4,7
+"Paratinga","BA",1,0,0,0,0,1,1
+"Paraty","RJ",32,28,8,1,7,60,76
+"Parauapebas","PA",182,134,11,7,68,316,402
+"Paraúna","GO",2,7,1,1,9,9,20
+"Pardinho","SP",11,15,1,2,9,26,38
+"Pareci Novo","RS",2,0,1,0,3,2,6
+"Parecis","RO",0,1,0,0,0,1,1
+"Parelhas","RN",5,5,1,0,1,10,12
+"Pariconha","AL",1,0,0,0,1,1,2
+"Parintins","AM",5,3,0,1,1,8,10
+"Paripiranga","BA",10,5,0,0,1,15,16
+"Paripueira","AL",13,12,4,1,4,25,34
+"Pariquera-Açu","SP",4,4,2,2,3,8,15
+"Parisi","SP",0,0,0,0,1,0,1
+"Parnaíba","PI",248,201,10,4,102,449,565
+"Parnamirim","PE",2,0,0,0,0,2,2
+"Parnamirim","RN",1136,405,107,60,95,1541,1803
+"Parnarama","MA",2,0,1,0,0,2,3
+"Parobé","RS",56,12,0,1,10,68,79
+"Passa e Fica","RN",8,0,0,0,1,8,9
+"Passa Quatro","MG",0,2,0,0,1,2,3
+"Passa Sete","RS",0,1,0,0,0,1,1
+"Passa Vinte","MG",0,0,0,0,1,0,1
+"Passagem","RN",0,1,0,0,0,1,1
+"Passagem Franca","MA",1,0,0,0,0,1,1
+"Passira","PE",4,0,0,0,0,4,4
+"Passo de Camaragibe","AL",0,1,0,0,1,1,2
+"Passo de Torres","SC",4,23,6,5,29,27,67
+"Passo do Sobrado","RS",3,0,0,0,2,3,5
+"Passo Fundo","RS",647,429,94,91,91,1076,1352
+"Passos","MG",16,19,19,5,49,35,108
+"Passos Maia","SC",1,1,1,0,2,2,5
+"Pastos Bons","MA",1,4,0,0,1,5,6
+"Pato Bragado","PR",6,2,0,0,1,8,9
+"Pato Branco","PR",140,96,32,4,43,236,315
+"Patos","PB",56,47,13,14,35,103,165
+"Patos de Minas","MG",19,48,25,15,77,67,184
+"Patrocínio","MG",13,26,10,5,15,39,69
+"Patrocínio Paulista","SP",1,5,0,3,0,6,9
+"Patu","RN",3,2,1,1,4,5,11
+"Paty do Alferes","RJ",9,14,3,1,6,23,33
+"Pau D'Arco","PA",0,1,0,0,0,1,1
+"Pau D'Arco","TO",0,1,0,0,0,1,1
+"Pau dos Ferros","RN",23,12,2,2,5,35,44
+"Paudalho","PE",48,13,2,2,8,61,73
+"Paula Cândido","MG",1,0,0,0,2,1,3
+"Paula Freitas","PR",0,1,0,0,0,1,1
+"Paulicéia","SP",1,3,0,0,1,4,5
+"Paulínia","SP",228,322,86,36,127,550,799
+"Paulista","PB",2,1,0,0,2,3,5
+"Paulista","PE",493,126,23,11,49,619,702
+"Paulistana","PI",1,2,0,0,0,3,3
+"Paulistânia","SP",1,0,0,0,0,1,1
+"Paulo Afonso","BA",23,10,2,2,43,33,80
+"Paulo Bento","RS",0,0,0,0,3,0,3
+"Paulo de Faria","SP",0,6,0,0,1,6,7
+"Paulo Frontin","PR",0,3,0,0,0,3,3
+"Paulo Jacinto","AL",0,0,1,0,0,0,1
+"Paulo Lopes","SC",10,10,1,0,7,20,28
+"Paulo Ramos","MA",0,0,0,1,3,0,4
+"Paverama","RS",7,2,0,0,1,9,10
+"Pavussu","PI",0,0,0,0,1,0,1
+"Pé de Serra","BA",0,1,1,0,0,1,2
+"Peabiru","PR",3,1,1,0,1,4,6
+"Peçanha","MG",0,0,1,0,1,0,2
+"Pederneiras","SP",32,25,9,2,19,57,87
+"Pedra","PE",1,1,0,0,0,2,2
+"Pedra Bela","SP",3,2,0,0,2,5,7
+"Pedra Branca","CE",5,2,2,0,5,7,14
+"Pedra do Anta","MG",0,0,1,0,0,0,1
+"Pedra do Indaiá","MG",0,0,0,0,1,0,1
+"Pedra Dourada","MG",0,0,0,0,1,0,1
+"Pedra Lavrada","PB",2,1,0,0,0,3,3
+"Pedra Mole","SE",1,0,0,0,0,1,1
+"Pedra Preta","MT",1,1,0,1,5,2,8
+"Pedralva","MG",0,1,0,0,1,1,2
+"Pedranópolis","SP",1,1,0,0,0,2,2
+"Pedrão","BA",2,1,0,0,0,3,3
+"Pedras Altas","RS",1,0,0,0,0,1,1
+"Pedras de Fogo","PB",5,1,0,0,1,6,7
+"Pedras Grandes","SC",1,1,1,0,2,2,5
+"Pedregulho","SP",2,9,0,1,7,11,19
+"Pedreira","SP",18,30,15,1,19,48,83
+"Pedreiras","MA",6,5,0,0,5,11,16
+"Pedrinhas","SE",1,0,0,0,1,1,2
+"Pedrinhas Paulista","SP",0,1,0,0,2,1,3
+"Pedrinópolis","MG",0,0,1,0,0,0,1
+"Pedro Afonso","TO",0,4,1,0,3,4,8
+"Pedro Alexandre","BA",1,0,0,0,0,1,1
+"Pedro Canário","ES",1,15,2,0,2,16,20
+"Pedro de Toledo","SP",0,2,2,0,1,2,5
+"Pedro do Rosário","MA",1,0,0,0,0,1,1
+"Pedro Gomes","MS",0,2,2,0,1,2,5
+"Pedro II","PI",1,3,0,0,1,4,5
+"Pedro Leopoldo","MG",27,14,5,2,6,41,54
+"Pedro Osório","RS",1,4,0,1,1,5,7
+"Pedro Velho","RN",0,0,0,1,0,0,1
+"Peixe","TO",0,0,0,0,1,0,1
+"Peixe-Boi","PA",0,0,0,1,0,0,1
+"Peixoto de Azevedo","MT",1,10,2,2,6,11,21
+"Pejuçara","RS",1,0,1,0,1,1,3
+"Pelotas","RS",658,448,108,47,144,1106,1405
+"Penaforte","CE",0,1,1,0,1,1,3
+"Penalva","MA",0,5,1,0,3,5,9
+"Penápolis","SP",22,45,12,7,21,67,107
+"Pendências","RN",2,1,0,0,0,3,3
+"Penedo","AL",45,35,3,5,10,80,98
+"Penha","SC",36,71,13,9,26,107,155
+"Pentecoste","CE",1,0,0,0,0,1,1
+"Perdigão","MG",0,0,1,0,3,0,4
+"Perdizes","MG",1,5,0,2,0,6,8
+"Perdões","MG",1,2,1,0,1,3,5
+"Pereira Barreto","SP",3,8,3,0,17,11,31
+"Pereiras","SP",4,7,0,1,4,11,16
+"Pereiro","CE",0,3,0,0,0,3,3
+"Peri Mirim","MA",0,1,0,0,1,1,2
+"Periquito","MG",0,0,0,1,2,0,3
+"Peritiba","SC",3,1,0,0,1,4,5
+"Peritoró","MA",1,1,0,0,0,2,2
+"Perobal","PR",0,2,0,0,1,2,3
+"Pérola","PR",4,4,1,0,3,8,12
+"Pérola d'Oeste","PR",10,2,0,0,1,12,13
+"Perolândia","GO",0,1,0,0,0,1,1
+"Peruíbe","SP",26,33,11,5,23,59,98
+"Pescaria Brava","SC",1,2,1,0,3,3,7
+"Pesqueira","PE",4,3,0,1,2,7,10
+"Petrolândia","PE",1,0,0,0,4,1,5
+"Petrolândia","SC",2,4,0,1,1,6,8
+"Petrolina","PE",1081,426,62,18,166,1507,1753
+"Petrolina de Goiás","GO",3,0,2,0,2,3,7
+"Petrópolis","RJ",344,324,100,46,193,668,1007
+"Piaçabuçu","AL",6,1,0,0,3,7,10
+"Piacatu","SP",2,4,0,1,0,6,7
+"Piancó","PB",0,2,0,0,1,2,3
+"Piatã","BA",1,1,1,0,2,2,5
+"Picada Café","RS",5,4,1,1,2,9,13
+"Picos","PI",45,60,14,4,38,105,161
+"Picuí","PB",4,1,1,0,2,5,8
+"Piedade","SP",22,25,5,4,19,47,75
+"Piedade de Caratinga","MG",1,0,0,0,0,1,1
+"Piedade de Ponte Nova","MG",0,1,0,0,2,1,3
+"Piên","PR",6,3,1,0,0,9,10
+"Pilar","AL",8,8,4,0,4,16,24
+"Pilar","PB",2,0,0,0,0,2,2
+"Pilar de Goiás","GO",0,0,0,0,1,0,1
+"Pilar do Sul","SP",13,16,3,11,13,29,56
+"Pilões","RN",1,0,0,0,0,1,1
+"Pilõezinhos","PB",1,0,0,0,0,1,1
+"Pimenta","MG",1,2,0,0,1,3,4
+"Pimenta Bueno","RO",1,17,1,0,6,18,25
+"Pimenteiras","PI",1,0,0,0,0,1,1
+"Pindamonhangaba","SP",80,94,34,12,43,174,263
+"Pindaré-Mirim","MA",1,0,1,0,1,1,3
+"Pindoba","AL",1,0,0,0,0,1,1
+"Pindorama","SP",7,10,5,1,6,17,29
+"Pindoretama","CE",6,4,0,0,0,10,10
+"Pingo-d'Água","MG",2,0,0,1,0,2,3
+"Pinhais","PR",369,363,31,30,45,732,838
+"Pinhal","RS",20,0,1,0,4,20,25
+"Pinhal de São Bento","PR",2,0,0,0,0,2,2
+"Pinhalão","PR",3,0,0,0,2,3,5
+"Pinhalzinho","SC",6,25,6,3,6,31,46
+"Pinhalzinho","SP",7,4,3,2,5,11,21
+"Pinhão","PR",0,3,1,1,1,3,6
+"Pinheiral","RJ",23,14,2,1,6,37,46
+"Pinheiro","MA",10,14,1,0,8,24,33
+"Pinheiro Machado","RS",2,0,1,0,0,2,3
+"Pinheiro Preto","SC",1,6,1,0,0,7,8
+"Pinheiros","ES",2,12,2,2,4,14,22
+"Pinto Bandeira","RS",2,1,0,0,0,3,3
+"Pio XII","MA",1,0,0,0,1,1,2
+"Piquerobi","SP",1,0,0,0,0,1,1
+"Piquet Carneiro","CE",2,2,0,0,0,4,4
+"Piquete","SP",2,4,0,1,1,6,8
+"Piracaia","SP",18,24,5,5,6,42,58
+"Piracanjuba","GO",5,8,1,2,8,13,24
+"Piracicaba","SP",940,1248,277,78,372,2188,2915
+"Piracuruca","PI",5,6,2,0,5,11,18
+"Piraí","RJ",11,8,0,3,17,19,39
+"Piraí do Norte","BA",0,1,0,0,0,1,1
+"Piraí do Sul","PR",2,5,2,3,4,7,16
+"Piraju","SP",6,8,4,1,16,14,35
+"Pirajuí","SP",2,8,4,2,7,10,23
+"Pirambu","SE",0,1,0,0,0,1,1
+"Pirangi","SP",2,5,1,0,3,7,11
+"Piranhas","AL",4,8,0,0,2,12,14
+"Piranhas","GO",1,5,1,1,4,6,12
+"Pirapetinga","MG",18,2,0,0,1,20,21
+"Pirapora","MG",0,5,2,2,3,5,12
+"Pirapora do Bom Jesus","SP",5,3,0,0,6,8,14
+"Pirapozinho","SP",10,10,6,0,10,20,36
+"Piraquara","PR",79,55,6,3,11,134,154
+"Piraquê","TO",0,1,0,0,0,1,1
+"Pirassununga","SP",30,47,18,9,114,77,218
+"Piratini","RS",1,3,7,1,1,4,13
+"Piratininga","SP",42,37,8,2,8,79,97
+"Piratuba","SC",1,5,0,0,2,6,8
+"Piraúba","MG",0,1,1,0,3,1,5
+"Pirenópolis","GO",0,7,3,0,2,7,12
+"Pires do Rio","GO",11,22,6,5,8,33,52
+"Pires Ferreira","CE",0,1,0,0,0,1,1
+"Piripá","BA",0,1,0,0,0,1,1
+"Piripiri","PI",12,11,2,0,4,23,29
+"Piritiba","BA",1,2,0,0,0,3,3
+"Pitanga","PR",4,13,6,2,1,17,26
+"Pitangueiras","SP",8,15,2,3,4,23,32
+"Pitangui","MG",6,5,1,1,2,11,15
+"Pitimbu","PB",4,2,0,0,1,6,7
+"Piúma","ES",19,23,5,2,7,42,56
+"Piumhi","MG",4,5,1,1,2,9,13
+"Plácido de Castro","AC",2,0,0,0,1,2,3
+"Planaltina","GO",0,0,0,1,0,0,1
+"Planaltina do Paraná","PR",1,2,2,0,2,3,7
+"Planalto","BA",2,2,1,0,1,4,6
+"Planalto","PR",2,0,2,0,0,2,4
+"Planalto","RS",2,0,1,0,2,2,5
+"Planalto","SP",2,1,1,0,0,3,4
+"Planalto Alegre","SC",0,0,0,0,2,0,2
+"Planalto da Serra","MT",0,2,0,1,0,2,3
+"Planura","MG",1,0,0,0,0,1,1
+"Poá","SP",65,63,26,15,33,128,202
+"Poção","PE",6,0,0,0,1,6,7
+"Poção de Pedras","MA",0,0,0,0,2,0,2
+"Pocinhos","PB",2,2,0,0,0,4,4
+"Poço Branco","RN",6,0,0,0,0,6,6
+"Poço das Antas","RS",0,0,0,0,1,0,1
+"Poço das Trincheiras","AL",1,0,0,0,0,1,1
+"Poço de José de Moura","PB",0,1,0,0,0,1,1
+"Poço Fundo","MG",0,3,0,0,3,3,6
+"Poço Redondo","SE",1,2,0,1,1,3,5
+"Poço Verde","SE",2,0,0,1,1,2,4
+"Poções","BA",6,3,0,0,6,9,15
+"Poconé","MT",3,10,7,0,11,13,31
+"Poços de Caldas","MG",230,211,42,19,102,441,604
+"Pojuca","BA",19,9,2,1,14,28,45
+"Poloni","SP",2,1,0,0,0,3,3
+"Pombal","PB",2,0,0,1,6,2,9
+"Pombos","PE",10,3,1,0,1,13,15
+"Pomerode","SC",49,63,8,9,13,112,142
+"Pompéia","SP",12,27,5,2,17,39,63
+"Pompéu","MG",1,3,1,0,2,4,7
+"Pongaí","SP",0,2,1,0,0,2,3
+"Ponta de Pedras","PA",3,1,0,0,0,4,4
+"Ponta Grossa","PR",448,431,102,51,123,879,1155
+"Ponta Porã","MS",9,73,15,14,59,82,170
+"Pontal","SP",0,21,3,1,3,21,28
+"Pontal do Paraná","PR",30,18,4,2,2,48,56
+"Pontalina","GO",3,5,2,3,5,8,18
+"Pontão","RS",0,0,0,0,2,0,2
+"Ponte Alta","SC",2,0,0,0,0,2,2
+"Ponte Alta do Norte","SC",0,0,0,0,1,0,1
+"Ponte Alta do Tocantins","TO",0,0,0,0,1,0,1
+"Ponte Nova","MG",20,19,2,1,9,39,51
+"Ponte Preta","RS",2,0,0,0,0,2,2
+"Ponte Serrada","SC",2,1,1,0,2,3,6
+"Pontes e Lacerda","MT",6,41,7,0,20,47,74
+"Pontes Gestal","SP",0,0,1,0,0,0,1
+"Ponto Belo","ES",1,3,1,1,1,4,7
+"Ponto Novo","BA",0,0,1,0,0,0,1
+"Populina","SP",0,2,0,0,0,2,2
+"Porangaba","SP",5,2,2,0,5,7,14
+"Porangatu","GO",2,13,3,2,6,15,26
+"Porciúncula","RJ",2,3,0,0,3,5,8
+"Porecatu","PR",5,12,0,1,4,17,22
+"Portalegre","RN",0,0,0,1,0,0,1
+"Portão","RS",40,33,6,5,15,73,99
+"Porteirão","GO",1,1,0,0,0,2,2
+"Porteiras","CE",0,0,0,0,1,0,1
+"Porteirinha","MG",0,3,0,0,0,3,3
+"Portel","PA",5,1,0,1,1,6,8
+"Porto","PI",0,1,0,0,0,1,1
+"Porto Acre","AC",4,2,0,0,0,6,6
+"Porto Alegre","RS",5113,4363,1376,725,1341,9476,12918
+"Porto Alegre do Norte","MT",0,2,0,0,0,2,2
+"Porto Amazonas","PR",0,1,0,0,1,1,2
+"Porto Belo","SC",86,112,21,9,22,198,250
+"Porto Calvo","AL",3,1,1,0,3,4,8
+"Porto da Folha","SE",0,1,0,0,3,1,4
+"Porto de Pedras","AL",2,3,1,0,2,5,8
+"Porto dos Gaúchos","MT",0,1,1,1,1,1,4
+"Porto Esperidião","MT",1,1,2,0,3,2,7
+"Porto Estrela","MT",0,0,0,2,0,0,2
+"Porto Feliz","SP",37,55,12,5,52,92,161
+"Porto Ferreira","SP",17,54,6,4,25,71,106
+"Porto Firme","MG",1,0,0,0,3,1,4
+"Porto Franco","MA",4,5,0,0,1,9,10
+"Porto Grande","AP",0,1,0,0,0,1,1
+"Porto Lucena","RS",0,0,0,0,1,0,1
+"Porto Mauá","RS",2,0,0,0,1,2,3
+"Porto Murtinho","MS",1,2,0,0,1,3,4
+"Porto Nacional","TO",8,13,2,0,7,21,30
+"Porto Real","RJ",7,3,1,0,3,10,14
+"Porto Real do Colégio","AL",3,5,1,0,0,8,9
+"Porto Rico","PR",2,6,0,0,0,8,8
+"Porto Seguro","BA",40,34,19,4,53,74,150
+"Porto União","SC",25,34,17,4,8,59,88
+"Porto Velho","RO",1772,922,173,42,326,2694,3235
+"Porto Xavier","RS",2,5,0,1,1,7,9
+"Posse","GO",1,2,1,0,0,3,4
+"Poté","MG",0,0,0,0,2,0,2
+"Potengi","CE",0,1,1,0,0,1,2
+"Potim","SP",3,5,1,0,0,8,9
+"Potiraguá","BA",0,0,0,0,4,0,4
+"Potirendaba","SP",3,1,1,0,5,4,10
+"Pouso Alegre","MG",217,280,58,16,77,497,648
+"Pouso Redondo","SC",5,16,0,1,3,21,25
+"Poxoréu","MT",3,4,0,3,3,7,13
+"Pracinha","SP",1,0,0,0,1,1,2
+"Prado","BA",3,1,3,0,1,4,8
+"Pradópolis","SP",7,11,6,1,5,18,30
+"Prados","MG",1,1,1,0,0,2,3
+"Praia Grande","SC",2,4,1,0,6,6,13
+"Praia Grande","SP",248,271,100,72,146,519,837
+"Prainha","PA",0,1,0,0,0,1,1
+"Pranchita","PR",1,1,0,0,2,2,4
+"Prata","MG",0,0,0,4,1,0,5
+"Prata do Piauí","PI",1,0,0,0,0,1,1
+"Pratânia","SP",3,2,1,0,0,5,6
+"Pratápolis","MG",0,1,0,0,1,1,2
+"Pratinha","MG",0,0,0,0,1,0,1
+"Presidente Alves","SP",0,2,0,0,0,2,2
+"Presidente Bernardes","SP",3,5,0,0,3,8,11
+"Presidente Castello Branco","SC",0,1,0,0,0,1,1
+"Presidente Castelo Branco","PR",2,1,0,0,1,3,4
+"Presidente Dutra","BA",0,2,0,0,2,2,4
+"Presidente Dutra","MA",8,4,4,5,1,12,22
+"Presidente Epitácio","SP",10,27,4,0,18,37,59
+"Presidente Figueiredo","AM",3,1,1,0,0,4,5
+"Presidente Getúlio","SC",7,19,1,1,4,26,32
+"Presidente Jânio Quadros","BA",1,1,0,0,0,2,2
+"Presidente Juscelino","MA",1,0,0,0,0,1,1
+"Presidente Kennedy","ES",7,6,6,0,9,13,28
+"Presidente Lucena","RS",2,1,0,0,1,3,4
+"Presidente Médici","RO",3,0,0,0,2,3,5
+"Presidente Nereu","SC",0,0,0,0,1,0,1
+"Presidente Olegário","MG",0,0,1,0,0,0,1
+"Presidente Prudente","SP",283,464,93,41,220,747,1101
+"Presidente Sarney","MA",0,0,0,0,1,0,1
+"Presidente Tancredo Neves","BA",3,0,0,0,2,3,5
+"Presidente Vargas","MA",1,0,0,0,0,1,1
+"Presidente Venceslau","SP",9,14,3,1,18,23,45
+"Primavera","PE",0,1,0,0,1,1,2
+"Primavera de Rondônia","RO",0,1,0,1,0,1,2
+"Primavera do Leste","MT",45,147,28,25,44,192,289
+"Primeira Cruz","MA",0,0,0,0,1,0,1
+"Primeiro de Maio","PR",3,2,0,0,2,5,7
+"Princesa Isabel","PB",1,1,0,0,0,2,2
+"Progresso","RS",0,1,0,0,4,1,5
+"Promissão","SP",5,15,2,1,5,20,28
+"Propriá","SE",5,3,4,1,0,8,13
+"Prudente de Morais","MG",1,0,0,0,0,1,1
+"Prudentópolis","PR",6,15,6,1,8,21,36
+"Putinga","RS",2,2,0,0,1,4,5
+"Puxinanã","PB",2,0,0,1,1,2,4
+"Quadra","SP",0,3,0,0,1,3,4
+"Quaraí","RS",6,6,5,0,2,12,19
+"Quarto Centenário","PR",0,2,1,0,0,2,3
+"Quatá","SP",1,0,2,0,4,1,7
+"Quatiguá","PR",0,2,0,0,2,2,4
+"Quatipuru","PA",2,0,0,0,0,2,2
+"Quatis","RJ",2,1,0,0,3,3,6
+"Quatro Barras","PR",58,46,7,3,8,104,122
+"Quatro Irmãos","RS",0,0,1,0,0,0,1
+"Quatro Pontes","PR",0,1,1,1,6,1,9
+"Quebrangulo","AL",0,1,1,0,1,1,3
+"Quedas do Iguaçu","PR",5,4,7,0,1,9,17
+"Queimadas","BA",1,0,0,0,0,1,1
+"Queimadas","PB",5,3,1,0,2,8,11
+"Queimados","RJ",40,36,4,1,24,76,105
+"Queiroz","SP",1,0,0,0,0,1,1
+"Queluz","SP",1,5,2,0,0,6,8
+"Queluzito","MG",2,0,0,0,0,2,2
+"Querência","MT",0,4,0,0,4,4,8
+"Querência do Norte","PR",0,1,0,0,0,1,1
+"Quevedos","RS",1,0,0,0,0,1,1
+"Quijingue","BA",0,0,0,0,1,0,1
+"Quilombo","SC",8,5,1,1,1,13,16
+"Quinta do Sol","PR",0,0,0,0,1,0,1
+"Quintana","SP",1,2,5,3,3,3,14
+"Quinze de Novembro","RS",3,0,0,0,0,3,3
+"Quipapá","PE",1,1,0,0,2,2,4
+"Quirinópolis","GO",4,27,4,4,8,31,47
+"Quissamã","RJ",4,2,0,3,3,6,12
+"Quitandinha","PR",3,4,0,0,0,7,7
+"Quiterianópolis","CE",0,1,0,1,1,1,3
+"Quixaba","PB",0,0,0,1,0,0,1
+"Quixaba","PE",0,0,0,0,1,0,1
+"Quixabeira","BA",1,0,0,0,1,1,2
+"Quixadá","CE",24,10,4,2,10,34,50
+"Quixelô","CE",0,1,0,0,1,1,2
+"Quixeramobim","CE",9,14,0,1,2,23,26
+"Quixeré","CE",2,0,0,0,1,2,3
+"Rafael Fernandes","RN",0,0,1,0,0,0,1
+"Rafael Godeiro","RN",0,1,0,0,0,1,1
+"Rafard","SP",3,3,0,1,4,6,11
+"Rancharia","SP",4,12,3,2,12,16,33
+"Rancho Alegre D'Oeste","PR",1,0,0,0,0,1,1
+"Rancho Queimado","SC",5,13,0,0,0,18,18
+"Raposa","MA",19,3,0,0,3,22,25
+"Raposos","MG",1,0,0,0,1,1,2
+"Raul Soares","MG",2,1,0,0,0,3,3
+"Realeza","PR",1,5,1,1,5,6,13
+"Rebouças","PR",1,6,2,0,0,7,9
+"Recife","PE",5381,3798,940,466,1249,9179,11834
+"Recreio","MG",0,0,0,0,1,0,1
+"Redenção","CE",0,1,0,0,1,1,2
+"Redenção","PA",17,30,4,2,26,47,79
+"Redenção da Serra","SP",0,2,0,0,0,2,2
+"Redentora","RS",0,0,0,0,1,0,1
+"Reduto","MG",0,1,0,0,0,1,1
+"Regeneração","PI",2,2,0,0,0,4,4
+"Regente Feijó","SP",17,9,4,3,5,26,38
+"Reginópolis","SP",0,0,1,0,3,0,4
+"Registro","SP",7,22,9,6,42,29,86
+"Relvado","RS",1,1,0,0,0,2,2
+"Remanso","BA",1,2,0,0,2,3,5
+"Remígio","PB",1,2,1,2,2,3,8
+"Renascença","PR",1,1,0,0,0,2,2
+"Reriutaba","CE",2,4,0,0,2,6,8
+"Resende","RJ",495,116,23,8,89,611,731
+"Resende Costa","MG",0,2,0,0,1,2,3
+"Reserva","PR",3,2,0,1,4,5,10
+"Reserva do Cabaçal","MT",0,0,0,0,1,0,1
+"Resplendor","MG",0,1,0,0,3,1,4
+"Restinga","SP",1,3,0,0,2,4,6
+"Restinga Sêca","RS",6,5,2,0,3,11,16
+"Retirolândia","BA",2,1,0,0,0,3,3
+"Riachão","MA",0,2,1,0,0,2,3
+"Riachão das Neves","BA",3,0,0,0,1,3,4
+"Riachão do Bacamarte","PB",0,0,0,0,1,0,1
+"Riachão do Dantas","SE",1,1,0,0,0,2,2
+"Riachão do Jacuípe","BA",14,5,2,0,2,19,23
+"Riacho da Cruz","RN",1,0,0,0,0,1,1
+"Riacho das Almas","PE",7,2,0,1,2,9,12
+"Riacho de Santana","BA",1,1,0,0,1,2,3
+"Riacho de Santana","RN",0,0,1,0,1,0,2
+"Riacho dos Cavalos","PB",0,0,0,0,2,0,2
+"Riachuelo","RN",1,0,0,0,1,1,2
+"Riachuelo","SE",1,0,0,0,0,1,1
+"Rialma","GO",4,8,0,3,3,12,18
+"Rianápolis","GO",0,0,0,0,1,0,1
+"Ribas do Rio Pardo","MS",9,12,1,2,2,21,26
+"Ribeira do Amparo","BA",1,1,0,0,0,2,2
+"Ribeira do Pombal","BA",16,10,3,4,4,26,37
+"Ribeirão","PE",5,1,2,1,1,6,10
+"Ribeirão Bonito","SP",3,3,2,1,0,6,9
+"Ribeirão Branco","SP",0,1,0,0,1,1,2
+"Ribeirão Cascalheira","MT",0,1,0,0,2,1,3
+"Ribeirão Claro","PR",3,11,0,0,7,14,21
+"Ribeirão Corrente","SP",2,1,0,0,4,3,7
+"Ribeirão das Neves","MG",11,11,3,1,6,22,32
+"Ribeirão do Pinhal","PR",0,3,1,0,5,3,9
+"Ribeirão do Sul","SP",1,2,1,0,3,3,7
+"Ribeirão dos Índios","SP",1,0,0,0,1,1,2
+"Ribeirão Grande","SP",4,0,0,0,0,4,4
+"Ribeirão Pires","SP",81,82,36,13,37,163,249
+"Ribeirão Preto","SP",1557,2954,601,386,685,4511,6183
+"Ribeiro Gonçalves","PI",0,1,0,0,0,1,1
+"Ribeirópolis","SE",2,2,0,0,0,4,4
+"Rifaina","SP",2,3,0,0,4,5,9
+"Rincão","SP",0,3,0,0,1,3,4
+"Rinópolis","SP",1,2,0,1,4,3,8
+"Rio Acima","MG",3,0,0,0,0,3,3
+"Rio Azul","PR",6,3,1,0,0,9,10
+"Rio Bananal","ES",4,19,3,1,12,23,39
+"Rio Bonito","RJ",93,28,13,8,21,121,163
+"Rio Bonito do Iguaçu","PR",0,1,0,0,0,1,1
+"Rio Branco","AC",516,185,29,8,214,701,952
+"Rio Branco","MT",1,2,1,0,0,3,4
+"Rio Branco do Ivaí","PR",0,2,0,0,0,2,2
+"Rio Branco do Sul","PR",11,6,0,0,5,17,22
+"Rio Brilhante","MS",7,14,7,4,6,21,38
+"Rio Casca","MG",1,1,1,0,2,2,5
+"Rio Claro","RJ",9,1,1,0,6,10,17
+"Rio Claro","SP",100,245,78,44,186,345,653
+"Rio Crespo","RO",0,1,0,0,0,1,1
+"Rio das Antas","SC",0,0,1,0,0,0,1
+"Rio das Flores","RJ",5,1,0,0,0,6,6
+"Rio das Ostras","RJ",154,208,67,21,121,362,571
+"Rio das Pedras","SP",21,12,4,1,20,33,58
+"Rio de Contas","BA",0,0,0,0,1,0,1
+"Rio de Janeiro","RJ",8618,9875,2955,1847,5254,18493,28549
+"Rio do Antônio","BA",0,0,0,0,4,0,4
+"Rio do Campo","SC",0,1,0,0,1,1,2
+"Rio do Fogo","RN",1,0,0,0,0,1,1
+"Rio do Oeste","SC",0,6,2,1,1,6,10
+"Rio do Pires","BA",0,3,0,0,2,3,5
+"Rio do Sul","SC",130,219,34,21,37,349,441
+"Rio Doce","MG",1,3,0,0,1,4,5
+"Rio dos Cedros","SC",13,4,2,1,2,17,22
+"Rio Formoso","PE",2,2,0,0,0,4,4
+"Rio Fortuna","SC",1,8,1,0,1,9,11
+"Rio Grande","RS",149,100,31,15,36,249,331
+"Rio Grande da Serra","SP",5,10,2,1,5,15,23
+"Rio Grande do Piauí","PI",0,0,1,0,0,0,1
+"Rio Largo","AL",32,19,2,0,14,51,67
+"Rio Maria","PA",0,0,0,1,4,0,5
+"Rio Negrinho","SC",11,26,3,0,8,37,48
+"Rio Negro","MS",1,0,0,0,0,1,1
+"Rio Negro","PR",3,11,4,3,11,14,32
+"Rio Novo","MG",1,1,0,0,1,2,3
+"Rio Novo do Sul","ES",3,6,0,0,4,9,13
+"Rio Paranaíba","MG",0,1,0,0,1,1,2
+"Rio Pardo","RS",9,2,1,1,12,11,25
+"Rio Piracicaba","MG",1,2,0,0,0,3,3
+"Rio Pomba","MG",4,2,2,2,4,6,14
+"Rio Preto","MG",0,4,0,0,0,4,4
+"Rio Preto da Eva","AM",0,2,1,0,0,2,3
+"Rio Quente","GO",3,2,0,0,2,5,7
+"Rio Real","BA",3,2,0,2,6,5,13
+"Rio Tinto","PB",7,2,0,0,3,9,12
+"Rio Verde","GO",304,556,125,45,141,860,1171
+"Rio Verde de Mato Grosso","MS",3,7,1,0,2,10,13
+"Riolândia","SP",0,1,0,1,3,1,5
+"Riozinho","RS",0,1,0,0,2,1,3
+"Riqueza","SC",1,0,2,1,0,1,4
+"Roca Sales","RS",1,1,0,0,4,2,6
+"Rochedo","MS",0,0,0,0,2,0,2
+"Rodeio","SC",7,12,4,5,3,19,31
+"Rodeio Bonito","RS",6,2,0,1,0,8,9
+"Rodeiro","MG",0,0,0,0,3,0,3
+"Rodolfo Fernandes","RN",1,0,0,0,1,1,2
+"Rodrigues Alves","AC",0,0,0,0,1,0,1
+"Rolândia","PR",61,58,16,5,14,119,154
+"Rolante","RS",16,4,2,1,5,20,28
+"Rolim de Moura","RO",15,24,2,2,10,39,53
+"Roncador","PR",1,1,0,0,1,2,3
+"Ronda Alta","RS",1,3,1,0,0,4,5
+"Rondinha","RS",0,1,0,2,0,1,3
+"Rondon","PR",1,0,1,0,2,1,4
+"Rondon do Pará","PA",2,2,0,2,3,4,9
+"Rondonópolis","MT",261,374,96,28,158,635,917
+"Roque Gonzales","RS",0,1,0,0,2,1,3
+"Rosana","SP",3,3,3,0,8,6,17
+"Rosário","MA",5,2,0,0,3,7,10
+"Rosário do Catete","SE",0,0,1,0,0,0,1
+"Rosário do Ivaí","PR",0,1,0,0,0,1,1
+"Rosário do Sul","RS",6,8,8,0,8,14,30
+"Rosário Oeste","MT",2,4,3,0,5,6,14
+"Roseira","SP",1,4,0,2,2,5,9
+"Roteiro","AL",2,0,1,0,0,2,3
+"Rubelita","MG",1,0,0,0,4,1,5
+"Rubiácea","SP",1,0,0,0,0,1,1
+"Rubiataba","GO",2,6,1,2,4,8,15
+"Rubinéia","SP",0,1,0,0,0,1,1
+"Rurópolis","PA",0,1,0,0,1,1,2
+"Russas","CE",12,11,1,0,4,23,28
+"Ruy Barbosa","BA",1,2,0,1,0,3,4
+"Sabará","MG",18,13,3,2,4,31,40
+"Sabáudia","PR",2,6,0,0,0,8,8
+"Sabino","SP",0,2,0,0,0,2,2
+"Sabinópolis","MG",0,1,0,0,1,1,2
+"Sacramento","MG",1,5,0,1,3,6,10
+"Sairé","PE",7,1,0,0,1,8,9
+"Saldanha Marinho","RS",0,0,1,0,1,0,2
+"Sales","SP",0,3,0,1,0,3,4
+"Sales Oliveira","SP",2,8,1,1,9,10,21
+"Salesópolis","SP",0,7,0,0,3,7,10
+"Salete","SC",2,2,1,0,1,4,6
+"Salgadinho","PB",0,0,0,0,1,0,1
+"Salgado","SE",1,1,2,0,0,2,4
+"Salgado de São Félix","PB",1,1,0,0,0,2,2
+"Salgado Filho","PR",1,1,0,0,0,2,2
+"Salgueiro","PE",12,8,3,3,19,20,45
+"Salinas","MG",0,3,0,0,2,3,5
+"Salinas da Margarida","BA",1,0,0,1,1,1,3
+"Salinópolis","PA",4,6,0,0,7,10,17
+"Salmourão","SP",0,1,0,0,0,1,1
+"Saloá","PE",1,1,0,0,1,2,3
+"Saltinho","SP",5,8,3,0,9,13,25
+"Salto","SP",162,160,36,19,85,322,462
+"Salto de Pirapora","SP",29,33,2,2,13,62,79
+"Salto do Céu","MT",0,2,0,0,2,2,4
+"Salto do Jacuí","RS",3,3,2,0,3,6,11
+"Salto do Lontra","PR",2,3,1,0,1,5,7
+"Salto Grande","SP",0,2,0,0,2,2,4
+"Salto Veloso","SC",0,0,1,0,1,0,2
+"Salvador","BA",5529,4438,1469,470,2046,9967,13952
+"Salvador das Missões","RS",2,0,0,0,0,2,2
+"Salvador do Sul","RS",9,8,3,0,3,17,23
+"Salvaterra","PA",1,0,0,0,0,1,1
+"Sambaíba","MA",1,0,0,0,1,1,2
+"Sananduva","RS",16,13,2,3,3,29,37
+"Sanclerlândia","GO",1,0,0,0,2,1,3
+"Sandolândia","TO",1,0,0,0,0,1,1
+"Sangão","SC",7,6,1,0,7,13,21
+"Sanharó","PE",1,0,0,0,0,1,1
+"Santa Adélia","SP",3,7,4,0,2,10,16
+"Santa Albertina","SP",0,0,1,1,1,0,3
+"Santa Amélia","PR",0,1,0,0,1,1,2
+"Santa Bárbara","BA",3,0,2,0,4,3,9
+"Santa Bárbara","MG",3,2,0,0,5,5,10
+"Santa Bárbara de Goiás","GO",6,3,0,0,3,9,12
+"Santa Bárbara do Leste","MG",0,0,0,0,1,0,1
+"Santa Bárbara do Pará","PA",1,0,0,1,1,1,3
+"Santa Bárbara do Sul","RS",3,4,4,3,0,7,14
+"Santa Bárbara do Tugúrio","MG",0,0,0,0,1,0,1
+"Santa Bárbara d'Oeste","SP",135,214,44,18,78,349,489
+"Santa Branca","SP",2,5,2,0,1,7,10
+"Santa Brígida","BA",1,0,0,0,1,1,2
+"Santa Carmem","MT",1,2,0,0,6,3,9
+"Santa Cecília","SC",3,10,3,1,1,13,18
+"Santa Cecília do Pavão","PR",1,0,0,0,1,1,2
+"Santa Cecília do Sul","RS",2,0,0,0,0,2,2
+"Santa Clara do Sul","RS",2,1,1,0,1,3,5
+"Santa Clara d'Oeste","SP",1,3,1,1,0,4,6
+"Santa Cruz","PB",0,0,0,1,1,0,2
+"Santa Cruz","PE",0,0,0,0,1,0,1
+"Santa Cruz","RN",15,6,2,1,4,21,28
+"Santa Cruz Cabrália","BA",8,1,2,0,4,9,15
+"Santa Cruz da Baixa Verde","PE",1,1,0,0,1,2,3
+"Santa Cruz da Conceição","SP",0,1,0,0,0,1,1
+"Santa Cruz da Vitória","BA",1,0,0,0,0,1,1
+"Santa Cruz das Palmeiras","SP",7,13,1,0,6,20,27
+"Santa Cruz de Goiás","GO",0,1,1,0,1,1,3
+"Santa Cruz de Monte Castelo","PR",1,1,0,0,3,2,5
+"Santa Cruz do Capibaribe","PE",50,33,6,3,18,83,110
+"Santa Cruz do Piauí","PI",0,1,0,0,1,1,2
+"Santa Cruz do Rio Pardo","SP",5,19,8,6,17,24,55
+"Santa Cruz do Sul","RS",145,122,35,38,77,267,417
+"Santa Ernestina","SP",6,3,1,0,2,9,12
+"Santa Fé","PR",1,10,2,0,2,11,15
+"Santa Fé de Goiás","GO",0,0,0,0,1,0,1
+"Santa Fé do Sul","SP",9,36,14,1,7,45,67
+"Santa Filomena","PE",1,0,0,0,0,1,1
+"Santa Gertrudes","SP",3,12,5,3,14,15,37
+"Santa Helena","PB",0,0,0,0,1,0,1
+"Santa Helena","PR",4,7,3,1,7,11,22
+"Santa Helena de Goiás","GO",10,31,12,2,15,41,70
+"Santa Inês","BA",0,0,0,0,1,0,1
+"Santa Inês","MA",26,20,4,1,13,46,64
+"Santa Inês","PR",0,1,0,0,0,1,1
+"Santa Isabel","SP",37,40,16,8,18,77,119
+"Santa Isabel do Ivaí","PR",2,4,0,0,2,6,8
+"Santa Isabel do Rio Negro","AM",1,0,0,0,0,1,1
+"Santa Izabel do Oeste","PR",2,1,1,0,0,3,4
+"Santa Izabel do Pará","PA",17,9,1,1,5,26,33
+"Santa Juliana","MG",1,9,1,0,4,10,15
+"Santa Leopoldina","ES",2,1,0,0,2,3,5
+"Santa Lúcia","SP",1,2,0,0,0,3,3
+"Santa Luz","PI",1,0,0,0,0,1,1
+"Santa Luzia","BA",0,0,0,0,1,0,1
+"Santa Luzia","MA",1,0,0,0,6,1,7
+"Santa Luzia","MG",23,27,1,1,8,50,60
+"Santa Luzia","PB",1,1,0,1,3,2,6
+"Santa Luzia do Itanhy","SE",1,0,0,0,0,1,1
+"Santa Luzia do Norte","AL",3,1,0,0,0,4,4
+"Santa Luzia do Pará","PA",0,2,0,0,3,2,5
+"Santa Luzia do Paruá","MA",1,0,0,0,0,1,1
+"Santa Luzia D'Oeste","RO",1,0,0,0,0,1,1
+"Santa Maria","RN",1,0,0,0,0,1,1
+"Santa Maria","RS",702,357,99,31,112,1059,1301
+"Santa Maria da Boa Vista","PE",5,3,0,1,0,8,9
+"Santa Maria da Serra","SP",1,2,1,0,0,3,4
+"Santa Maria da Vitória","BA",3,8,0,0,0,11,11
+"Santa Maria das Barreiras","PA",0,0,0,0,1,0,1
+"Santa Maria de Itabira","MG",0,1,1,0,1,1,3
+"Santa Maria de Jetibá","ES",7,14,9,2,11,21,43
+"Santa Maria do Cambucá","PE",3,0,1,0,1,3,5
+"Santa Maria do Herval","RS",9,1,0,0,0,10,10
+"Santa Maria do Oeste","PR",1,0,0,0,0,1,1
+"Santa Maria do Pará","PA",11,6,1,2,2,17,22
+"Santa Maria do Suaçuí","MG",0,0,0,0,1,0,1
+"Santa Maria Madalena","RJ",0,2,1,1,4,2,8
+"Santa Mariana","PR",1,5,2,1,1,6,10
+"Santa Mercedes","SP",1,0,0,1,0,1,2
+"Santa Quitéria","CE",3,3,0,0,0,6,6
+"Santa Rita","MA",3,1,2,0,1,4,7
+"Santa Rita","PB",60,10,1,3,5,70,79
+"Santa Rita de Caldas","MG",0,1,0,0,0,1,1
+"Santa Rita de Cássia","BA",0,3,1,0,0,3,4
+"Santa Rita de Minas","MG",0,0,0,1,0,0,1
+"Santa Rita do Araguaia","GO",0,1,0,0,1,1,2
+"Santa Rita do Itueto","MG",0,1,1,0,2,1,4
+"Santa Rita do Novo Destino","GO",0,1,0,0,0,1,1
+"Santa Rita do Pardo","MS",0,2,0,0,1,2,3
+"Santa Rita do Passa Quatro","SP",8,18,3,2,9,26,40
+"Santa Rita do Sapucaí","MG",9,22,5,1,1,31,38
+"Santa Rita do Trivelato","MT",0,2,0,0,2,2,4
+"Santa Rita d'Oeste","SP",0,0,0,0,1,0,1
+"Santa Rosa","RS",86,63,10,5,10,149,174
+"Santa Rosa da Serra","MG",0,2,0,0,2,2,4
+"Santa Rosa de Goiás","GO",1,0,0,0,0,1,1
+"Santa Rosa de Lima","SE",1,0,0,0,0,1,1
+"Santa Rosa de Viterbo","SP",8,16,3,1,1,24,29
+"Santa Rosa do Sul","SC",1,1,1,1,5,2,9
+"Santa Rosa do Tocantins","TO",0,1,0,0,0,1,1
+"Santa Teresa","ES",10,33,7,1,10,43,61
+"Santa Tereza","RS",1,0,0,0,0,1,1
+"Santa Tereza de Goiás","GO",0,0,0,0,2,0,2
+"Santa Tereza do Oeste","PR",3,8,0,1,3,11,15
+"Santa Tereza do Tocantins","TO",0,1,0,0,0,1,1
+"Santa Terezinha","BA",0,1,0,0,1,1,2
+"Santa Terezinha de Goiás","GO",0,0,0,0,5,0,5
+"Santa Terezinha de Itaipu","PR",11,9,1,2,2,20,25
+"Santa Vitória","MG",1,2,1,0,1,3,5
+"Santa Vitória do Palmar","RS",7,6,8,3,13,13,37
+"Santaluz","BA",1,2,2,0,6,3,11
+"Santana","AP",88,25,3,1,26,113,143
+"Santana","BA",1,0,0,0,3,1,4
+"Santana da Boa Vista","RS",0,0,0,0,2,0,2
+"Santana da Vargem","MG",0,1,0,0,0,1,1
+"Santana de Parnaíba","SP",1092,1774,272,144,367,2866,3649
+"Santana do Acaraú","CE",0,0,0,0,1,0,1
+"Santana do Araguaia","PA",0,2,0,1,4,2,7
+"Santana do Deserto","MG",0,1,0,0,0,1,1
+"Santana do Garambéu","MG",1,0,0,0,1,1,2
+"Santana do Ipanema","AL",9,17,1,1,7,26,35
+"Santana do Itararé","PR",0,0,1,1,0,0,2
+"Santana do Jacaré","MG",0,0,0,0,1,0,1
+"Sant'Ana do Livramento","RS",11,23,13,7,28,34,82
+"Santana do Matos","RN",1,1,0,0,1,2,3
+"Santana do Mundaú","AL",0,1,0,0,0,1,1
+"Santana do Paraíso","MG",29,8,2,0,5,37,44
+"Santana do Piauí","PI",1,0,0,0,0,1,1
+"Santana do São Francisco","SE",1,0,0,0,0,1,1
+"Santana do Seridó","RN",0,0,0,0,1,0,1
+"Santana dos Garrotes","PB",0,0,0,1,0,0,1
+"Santanópolis","BA",1,2,0,0,8,3,11
+"Santarém","PA",269,80,7,15,77,349,448
+"Santiago","RS",181,88,4,4,6,269,283
+"Santiago do Sul","SC",0,0,0,0,1,0,1
+"Santo Amaro","BA",3,2,1,1,3,5,10
+"Santo Amaro da Imperatriz","SC",43,37,17,3,21,80,121
+"Santo Amaro das Brotas","SE",3,0,0,0,0,3,3
+"Santo Anastácio","SP",8,3,4,0,4,11,19
+"Santo André","SP",827,1259,365,168,627,2086,3246
+"Santo Ângelo","RS",37,57,13,10,25,94,142
+"Santo Antônio","RN",6,3,0,0,1,9,10
+"Santo Antônio da Alegria","SP",1,2,0,0,2,3,5
+"Santo Antônio da Barra","GO",0,1,1,1,1,1,4
+"Santo Antônio da Patrulha","RS",37,16,7,4,15,53,79
+"Santo Antônio da Platina","PR",12,29,11,4,29,41,85
+"Santo Antônio das Missões","RS",0,0,1,1,0,0,2
+"Santo Antônio de Goiás","GO",7,8,1,0,2,15,18
+"Santo Antônio de Jesus","BA",48,56,12,10,41,104,167
+"Santo Antônio de Lisboa","PI",0,1,1,0,1,1,3
+"Santo Antônio de Pádua","RJ",11,16,2,5,10,27,44
+"Santo Antônio de Posse","SP",9,19,4,5,5,28,42
+"Santo Antônio do Amparo","MG",1,0,0,1,0,1,2
+"Santo Antônio do Aracanguá","SP",0,2,1,0,0,2,3
+"Santo Antônio do Grama","MG",0,0,0,0,1,0,1
+"Santo Antônio do Jardim","SP",2,3,3,0,4,5,12
+"Santo Antônio do Leste","MT",0,5,0,0,0,5,5
+"Santo Antônio do Leverger","MT",4,4,1,1,4,8,14
+"Santo Antônio do Monte","MG",1,3,0,1,4,4,9
+"Santo Antônio do Palma","RS",0,1,0,0,4,1,5
+"Santo Antônio do Pinhal","SP",9,7,3,1,4,16,24
+"Santo Antônio do Planalto","RS",0,1,0,0,0,1,1
+"Santo Antônio do Sudoeste","PR",2,10,0,0,2,12,14
+"Santo Antônio do Tauá","PA",2,3,1,0,1,5,7
+"Santo Antônio dos Lopes","MA",1,1,0,0,1,2,3
+"Santo Augusto","RS",4,4,0,2,5,8,15
+"Santo Cristo","RS",4,7,3,1,2,11,17
+"Santo Estêvão","BA",10,17,1,2,5,27,35
+"Santo Expedito do Sul","RS",1,0,0,0,0,1,1
+"Santo Inácio","PR",1,2,0,0,1,3,4
+"Santo Inácio do Piauí","PI",1,0,0,0,0,1,1
+"Santópolis do Aguapeí","SP",0,1,0,0,1,1,2
+"Santos","SP",489,1210,546,255,505,1699,3005
+"Santos Dumont","MG",5,3,0,5,2,8,15
+"São Benedito","CE",8,4,2,0,0,12,14
+"São Benedito do Sul","PE",1,1,0,0,3,2,5
+"São Bentinho","PB",1,0,0,1,0,1,2
+"São Bento","MA",0,1,0,0,0,1,1
+"São Bento","PB",6,6,0,3,4,12,19
+"São Bento do Norte","RN",0,1,0,0,0,1,1
+"São Bento do Sapucaí","SP",1,3,1,1,2,4,8
+"São Bento do Sul","SC",66,84,13,7,28,150,198
+"São Bento do Tocantins","TO",0,1,0,0,0,1,1
+"São Bento do Trairí","RN",0,1,0,0,1,1,2
+"São Bento do Una","PE",4,5,0,2,4,9,15
+"São Bernardo","MA",2,0,0,0,0,2,2
+"São Bernardo do Campo","SP",1087,1402,371,179,738,2489,3777
+"São Bonifácio","SC",0,0,1,0,0,0,1
+"São Borja","RS",17,34,9,6,22,51,88
+"São Brás","AL",1,1,1,0,1,2,4
+"São Brás do Suaçuí","MG",1,0,0,0,0,1,1
+"São Caetano de Odivelas","PA",1,0,0,0,1,1,2
+"São Caetano do Sul","SP",814,733,225,108,340,1547,2220
+"São Caitano","PE",10,4,0,1,1,14,16
+"São Carlos","SC",3,6,1,2,6,9,18
+"São Carlos","SP",252,333,66,42,169,585,862
+"São Carlos do Ivaí","PR",3,1,4,0,0,4,8
+"São Cristóvão","SE",36,21,5,1,8,57,71
+"São Cristóvão do Sul","SC",0,0,1,0,0,0,1
+"São Desidério","BA",4,2,0,0,2,6,8
+"São Domingos","BA",1,0,0,0,0,1,1
+"São Domingos","SC",0,0,2,1,2,0,5
+"São Domingos","SE",1,3,0,1,0,4,5
+"São Domingos das Dores","MG",0,0,0,0,2,0,2
+"São Domingos do Araguaia","PA",1,1,0,0,4,2,6
+"São Domingos do Azeitão","MA",0,2,0,1,2,2,5
+"São Domingos do Capim","PA",0,1,2,0,0,1,3
+"São Domingos do Maranhão","MA",7,1,0,0,1,8,9
+"São Domingos do Norte","ES",0,5,1,0,2,5,8
+"São Domingos do Prata","MG",2,2,0,0,2,4,6
+"São Felipe","BA",1,2,0,1,3,3,7
+"São Felipe D'Oeste","RO",0,1,0,1,0,1,2
+"São Félix","BA",2,3,1,2,7,5,15
+"São Félix de Minas","MG",0,0,0,0,1,0,1
+"São Félix do Araguaia","MT",0,1,0,0,1,1,2
+"São Félix do Coribe","BA",0,2,0,0,2,2,4
+"São Félix do Xingu","PA",0,1,0,0,4,1,5
+"São Fernando","RN",0,0,0,1,0,0,1
+"São Fidélis","RJ",6,5,4,3,5,11,23
+"São Francisco","MG",0,0,0,0,1,0,1
+"São Francisco","SP",0,1,0,0,2,1,3
+"São Francisco","SE",0,1,0,0,0,1,1
+"São Francisco de Assis","RS",2,3,5,0,6,5,16
+"São Francisco de Goiás","GO",0,1,0,0,0,1,1
+"São Francisco de Itabapoana","RJ",9,3,2,0,9,12,23
+"São Francisco de Paula","RS",11,8,0,2,1,19,22
+"São Francisco do Conde","BA",3,2,2,1,2,5,10
+"São Francisco do Guaporé","RO",0,2,0,0,3,2,5
+"São Francisco do Oeste","RN",0,1,0,0,0,1,1
+"São Francisco do Pará","PA",1,1,0,0,1,2,3
+"São Francisco do Sul","SC",56,97,17,19,30,153,219
+"São Gabriel","BA",0,1,0,0,5,1,6
+"São Gabriel","RS",15,20,3,8,7,35,53
+"São Gabriel da Cachoeira","AM",0,0,0,0,1,0,1
+"São Gabriel da Palha","ES",8,16,7,1,9,24,41
+"São Gabriel do Oeste","MS",6,20,3,10,8,26,47
+"São Geraldo","MG",0,2,0,0,3,2,5
+"São Geraldo do Araguaia","PA",0,1,0,0,1,1,2
+"São Geraldo do Baixio","MG",1,0,0,0,0,1,1
+"São Gonçalo","RJ",303,161,30,27,110,464,631
+"São Gonçalo do Abaeté","MG",0,0,0,0,1,0,1
+"São Gonçalo do Amarante","CE",13,7,3,0,7,20,30
+"São Gonçalo do Amarante","RN",63,17,4,0,17,80,101
+"São Gonçalo do Pará","MG",2,2,0,0,1,4,5
+"São Gonçalo do Piauí","PI",0,1,1,0,0,1,2
+"São Gonçalo do Rio Abaixo","MG",0,4,1,0,2,4,7
+"São Gonçalo do Sapucaí","MG",2,3,2,0,3,5,10
+"São Gonçalo dos Campos","BA",15,16,2,0,12,31,45
+"São Gotardo","MG",0,9,8,2,9,9,28
+"São Jerônimo","RS",11,5,2,0,5,16,23
+"São Jerônimo da Serra","PR",0,0,0,0,3,0,3
+"São João","PR",3,10,1,0,2,13,16
+"São João Batista","MA",0,1,0,1,1,1,3
+"São João Batista","SC",35,59,3,7,10,94,114
+"São João Batista do Glória","MG",1,0,0,0,1,1,2
+"São João da Barra","RJ",6,16,1,1,8,22,32
+"São João da Boa Vista","SP",57,127,26,15,98,184,323
+"São João da Fronteira","PI",1,0,0,0,1,1,2
+"São João da Paraúna","GO",1,0,0,0,0,1,1
+"São João da Ponta","PA",1,0,0,0,0,1,1
+"São João da Ponte","MG",0,0,0,1,1,0,2
+"São João da Serra","PI",1,0,0,0,0,1,1
+"São João da Urtiga","RS",1,1,0,0,0,2,2
+"São João de Meriti","RJ",142,45,10,8,75,187,280
+"São João de Pirabas","PA",0,0,0,0,1,0,1
+"São João del Rei","MG",10,11,3,11,3,21,38
+"São João do Caiuá","PR",0,1,0,0,0,1,1
+"São João do Cariri","PB",2,0,1,0,0,2,3
+"São João do Itaperiú","SC",4,5,2,1,0,9,12
+"São João do Ivaí","PR",4,7,2,1,5,11,19
+"São João do Manhuaçu","MG",0,0,0,0,1,0,1
+"São João do Manteninha","MG",0,0,0,0,1,0,1
+"São João do Oeste","SC",5,1,1,0,1,6,8
+"São João do Oriente","MG",1,0,0,0,0,1,1
+"São João do Paraíso","MA",1,0,0,0,0,1,1
+"São João do Pau d'Alho","SP",0,1,0,0,1,1,2
+"São João do Piauí","PI",2,2,0,0,3,4,7
+"São João do Polêsine","RS",2,2,0,1,3,4,8
+"São João do Rio do Peixe","PB",0,0,0,2,5,0,7
+"São João do Sabugi","RN",1,0,0,0,0,1,1
+"São João do Sul","SC",0,1,0,0,1,1,2
+"São João do Triunfo","PR",0,3,3,0,0,3,6
+"São João dos Patos","MA",2,1,0,0,0,3,3
+"São João Evangelista","MG",0,1,0,0,2,1,3
+"São João Nepomuceno","MG",3,6,0,0,1,9,10
+"São Joaquim","SC",1,10,4,2,6,11,23
+"São Joaquim da Barra","SP",10,46,11,13,16,56,96
+"São Joaquim de Bicas","MG",2,4,1,0,1,6,8
+"São Joaquim do Monte","PE",1,0,0,0,0,1,1
+"São Jorge","RS",1,2,1,0,1,3,5
+"São Jorge do Ivaí","PR",0,1,1,0,1,1,3
+"São Jorge do Patrocínio","PR",13,0,0,0,2,13,15
+"São Jorge d'Oeste","PR",4,3,0,0,1,7,8
+"São José","SC",941,763,183,104,134,1704,2125
+"São José da Barra","MG",0,3,0,0,1,3,4
+"São José da Bela Vista","SP",1,2,0,0,2,3,5
+"São José da Boa Vista","PR",1,0,1,0,0,1,2
+"São José da Coroa Grande","PE",6,5,1,0,3,11,15
+"São José da Lagoa Tapada","PB",0,0,0,0,1,0,1
+"São José da Laje","AL",0,1,2,0,2,1,5
+"São José da Lapa","MG",3,5,2,1,3,8,14
+"São José da Vitória","BA",1,0,0,0,1,1,2
+"São José das Missões","RS",0,1,0,0,0,1,1
+"São José de Mipibu","RN",23,7,0,2,3,30,35
+"São José de Piranhas","PB",0,3,0,0,3,3,6
+"São José de Ribamar","MA",293,104,19,12,41,397,469
+"São José de Ubá","RJ",0,3,0,0,3,3,6
+"São José do Barreiro","SP",3,1,0,0,0,4,4
+"São José do Belmonte","PE",4,0,0,0,1,4,5
+"São José do Calçado","ES",2,0,1,0,3,2,6
+"São José do Campestre","RN",3,3,0,0,0,6,6
+"São José do Cedro","SC",1,4,2,0,0,5,7
+"São José do Cerrito","SC",1,1,0,0,1,2,3
+"São José do Divino","PI",0,0,0,0,1,0,1
+"São José do Egito","PE",8,2,0,1,2,10,13
+"São José do Herval","RS",0,0,1,1,0,0,2
+"São José do Hortêncio","RS",2,3,0,0,3,5,8
+"São José do Inhacorá","RS",4,0,1,0,0,4,5
+"São José do Jacuípe","BA",1,1,2,0,1,2,5
+"São José do Norte","RS",1,1,0,0,0,2,2
+"São José do Ouro","RS",1,0,0,0,1,1,2
+"São José do Povo","MT",1,1,0,0,0,2,2
+"São José do Rio Claro","MT",2,5,3,0,5,7,15
+"São José do Rio Pardo","SP",16,45,13,10,16,61,100
+"São José do Rio Preto","SP",1069,1998,464,255,362,3067,4148
+"São José do Sabugi","PB",0,1,0,0,0,1,1
+"São José do Seridó","RN",2,3,0,0,0,5,5
+"São José do Sul","RS",5,1,1,0,1,6,8
+"São José do Vale do Rio Preto","RJ",13,8,0,0,3,21,24
+"São José do Xingu","MT",0,0,0,1,1,0,2
+"São José dos Campos","SP",931,1360,399,164,430,2291,3284
+"São José dos Pinhais","PR",1517,715,153,50,93,2232,2528
+"São José dos Quatro Marcos","MT",3,13,3,2,5,16,26
+"São Julião","PI",0,0,0,0,2,0,2
+"São Leopoldo","RS",354,225,64,36,79,579,758
+"São Lourenço","MG",12,8,2,6,7,20,35
+"São Lourenço da Mata","PE",100,14,3,1,8,114,126
+"São Lourenço da Serra","SP",4,2,1,1,5,6,13
+"São Lourenço do Oeste","SC",6,16,4,4,8,22,38
+"São Lourenço do Sul","RS",17,5,5,0,5,22,32
+"São Ludgero","SC",7,23,8,2,6,30,46
+"São Luís","MA",2374,1281,307,254,683,3655,4899
+"São Luís de Montes Belos","GO",6,14,6,5,8,20,39
+"São Luís do Curu","CE",0,2,0,0,0,2,2
+"São Luís do Quitunde","AL",2,1,0,0,0,3,3
+"São Luís Gonzaga do Maranhão","MA",0,1,0,0,2,1,3
+"São Luiz","RR",0,1,0,0,0,1,1
+"São Luiz do Norte","GO",0,2,0,0,1,2,3
+"São Luiz do Paraitinga","SP",3,8,0,1,2,11,14
+"São Luiz Gonzaga","RS",8,9,4,4,9,17,34
+"São Mamede","PB",0,0,1,0,1,0,2
+"São Manoel do Paraná","PR",2,0,0,0,0,2,2
+"São Manuel","SP",10,18,3,2,8,28,41
+"São Marcos","RS",34,13,4,4,7,47,62
+"São Martinho","RS",2,2,0,0,2,4,6
+"São Martinho","SC",0,4,0,0,1,4,5
+"São Mateus","ES",41,149,40,12,53,190,295
+"São Mateus do Maranhão","MA",2,2,0,0,4,4,8
+"São Mateus do Sul","PR",7,19,8,0,10,26,44
+"São Miguel","RN",9,8,2,1,1,17,21
+"São Miguel Arcanjo","SP",7,10,1,1,10,17,29
+"São Miguel das Matas","BA",0,0,1,0,0,0,1
+"São Miguel das Missões","RS",2,3,0,0,0,5,5
+"São Miguel de Taipu","PB",7,0,1,0,0,7,8
+"São Miguel do Aleixo","SE",0,0,1,0,0,0,1
+"São Miguel do Araguaia","GO",0,7,0,1,0,7,8
+"São Miguel do Gostoso","RN",5,3,0,1,0,8,9
+"São Miguel do Guamá","PA",5,12,1,4,3,17,25
+"São Miguel do Guaporé","RO",1,1,0,0,2,2,4
+"São Miguel do Iguaçu","PR",10,21,0,1,4,31,36
+"São Miguel do Oeste","SC",13,28,20,6,8,41,75
+"São Miguel do Passa Quatro","GO",0,0,0,1,0,0,1
+"São Miguel do Tapuio","PI",2,0,0,0,0,2,2
+"São Miguel do Tocantins","TO",0,0,0,0,1,0,1
+"São Miguel dos Campos","AL",18,18,3,2,6,36,47
+"São Miguel dos Milagres","AL",4,5,1,0,3,9,13
+"São Paulo","SP",19879,37280,11543,5308,19599,57159,93609
+"São Paulo das Missões","RS",0,1,0,0,0,1,1
+"São Paulo do Potengi","RN",4,1,1,0,0,5,6
+"São Pedro","RN",1,2,0,0,0,3,3
+"São Pedro","SP",28,29,8,4,18,57,87
+"São Pedro da Água Branca","MA",1,0,0,0,0,1,1
+"São Pedro da Aldeia","RJ",86,68,13,8,51,154,226
+"São Pedro da Cipa","MT",0,0,1,1,0,0,2
+"São Pedro da Serra","RS",1,0,0,0,0,1,1
+"São Pedro de Alcântara","SC",8,7,1,1,1,15,18
+"São Pedro do Butiá","RS",0,0,1,0,2,0,3
+"São Pedro do Iguaçu","PR",0,0,1,0,0,0,1
+"São Pedro do Ivaí","PR",0,3,2,0,0,3,5
+"São Pedro do Paraná","PR",3,0,0,0,0,3,3
+"São Pedro do Piauí","PI",1,2,0,0,2,3,5
+"São Pedro do Suaçuí","MG",0,1,0,0,0,1,1
+"São Pedro do Sul","RS",6,3,1,0,3,9,13
+"São Pedro do Turvo","SP",0,1,1,0,3,1,5
+"São Pedro dos Ferros","MG",3,0,0,0,0,3,3
+"São Rafael","RN",5,1,0,0,0,6,6
+"São Raimundo das Mangabeiras","MA",0,3,2,1,4,3,10
+"São Raimundo Nonato","PI",1,6,2,0,2,7,11
+"São Roberto","MA",0,1,0,0,0,1,1
+"São Roque","SP",97,116,31,18,45,213,307
+"São Roque de Minas","MG",0,1,1,0,0,1,2
+"São Roque do Canaã","ES",1,5,2,0,1,6,9
+"São Sebastião","AL",8,7,0,1,3,15,19
+"São Sebastião","SP",42,59,25,12,29,101,167
+"São Sebastião da Amoreira","PR",3,0,0,0,2,3,5
+"São Sebastião da Bela Vista","MG",1,1,0,0,0,2,2
+"São Sebastião da Grama","SP",1,7,1,2,4,8,15
+"São Sebastião da Vargem Alegre","MG",2,0,0,0,1,2,3
+"São Sebastião de Lagoa de Roça","PB",5,0,1,0,0,5,6
+"São Sebastião do Alto","RJ",0,0,0,0,2,0,2
+"São Sebastião do Anta","MG",0,0,0,0,2,0,2
+"São Sebastião do Caí","RS",27,17,3,4,8,44,59
+"São Sebastião do Oeste","MG",0,0,0,0,1,0,1
+"São Sebastião do Paraíso","MG",8,8,1,5,5,16,27
+"São Sebastião do Passé","BA",6,9,3,2,3,15,23
+"São Sepé","RS",4,1,2,0,3,5,10
+"São Simão","GO",2,6,5,0,1,8,14
+"São Simão","SP",4,9,4,0,3,13,20
+"São Tomás de Aquino","MG",1,0,1,0,0,1,2
+"São Tomé","PR",0,1,0,0,0,1,1
+"São Tomé","RN",1,1,0,0,1,2,3
+"São Tomé das Letras","MG",1,0,0,0,0,1,1
+"São Vendelino","RS",7,1,0,1,3,8,12
+"São Vicente","RN",1,0,0,0,0,1,1
+"São Vicente","SP",78,80,33,22,54,158,267
+"São Vicente do Sul","RS",2,2,2,0,3,4,9
+"São Vicente Ferrer","MA",0,1,0,0,0,1,1
+"São Vicente Férrer","PE",6,1,0,0,0,7,7
+"Sapé","PB",2,1,0,0,0,3,3
+"Sapeaçu","BA",0,2,0,0,4,2,6
+"Sapezal","MT",0,12,0,1,11,12,24
+"Sapiranga","RS",141,53,15,8,34,194,251
+"Sapopema","PR",0,0,0,0,1,0,1
+"Sapucaia","PA",0,1,0,0,0,1,1
+"Sapucaia","RJ",7,5,1,0,7,12,20
+"Sapucaia do Sul","RS",147,27,18,6,23,174,221
+"Sapucaí-Mirim","MG",1,1,0,0,0,2,2
+"Saquarema","RJ",61,69,13,9,51,130,203
+"Sarandi","PR",89,44,12,3,9,133,157
+"Sarandi","RS",7,13,2,0,3,20,25
+"Sarapuí","SP",5,5,0,0,1,10,11
+"Sarutaiá","SP",0,1,0,0,1,1,2
+"Sarzedo","MG",4,5,2,1,6,9,18
+"Sátiro Dias","BA",2,0,0,0,0,2,2
+"Satuba","AL",13,12,1,1,7,25,34
+"Saubara","BA",3,2,0,1,1,5,7
+"Saudade do Iguaçu","PR",1,1,0,0,0,2,2
+"Saudades","SC",2,4,1,0,1,6,8
+"Saúde","BA",0,1,1,0,1,1,3
+"Schroeder","SC",21,16,2,1,8,37,48
+"Seabra","BA",1,9,1,0,4,10,15
+"Seara","SC",5,8,2,0,4,13,19
+"Sebastianópolis do Sul","SP",1,1,1,0,1,2,4
+"Sebastião Laranjeiras","BA",0,0,0,1,0,0,1
+"Seberi","RS",1,0,2,0,3,1,6
+"Sede Nova","RS",0,0,0,1,0,0,1
+"Segredo","RS",0,1,0,0,0,1,1
+"Selbach","RS",2,10,1,0,3,12,16
+"Selvíria","MS",1,1,1,2,2,2,7
+"Sena Madureira","AC",2,2,0,1,3,4,8
+"Senador Canedo","GO",192,189,21,11,33,381,446
+"Senador Elói de Souza","RN",1,0,0,0,0,1,1
+"Senador Firmino","MG",1,1,0,0,3,2,5
+"Senador Guiomard","AC",5,1,0,0,2,6,8
+"Senador José Porfírio","PA",0,1,0,0,0,1,1
+"Senador La Rocque","MA",2,0,0,0,1,2,3
+"Senador Modestino Gonçalves","MG",0,0,0,0,1,0,1
+"Senador Pompeu","CE",1,2,1,0,0,3,4
+"Senador Rui Palmeira","AL",0,0,0,0,1,0,1
+"Senador Sá","CE",4,1,0,0,0,5,5
+"Senador Salgado Filho","RS",0,0,1,0,0,0,1
+"Sengés","PR",2,4,1,2,2,6,11
+"Senhor do Bonfim","BA",17,11,1,3,3,28,35
+"Senhora de Oliveira","MG",1,0,0,0,0,1,1
+"Senhora dos Remédios","MG",0,1,0,0,0,1,1
+"Sentinela do Sul","RS",2,0,0,0,0,2,2
+"Sento Sé","BA",1,0,0,0,0,1,1
+"Serafina Corrêa","RS",9,10,1,0,1,19,21
+"Sericita","MG",0,0,0,0,1,0,1
+"Seringueiras","RO",0,1,0,0,0,1,1
+"Sério","RS",1,1,0,0,0,2,2
+"Seropédica","RJ",49,25,4,3,31,74,112
+"Serra","ES",759,678,141,56,238,1437,1872
+"Serra Alta","SC",0,1,0,0,1,1,2
+"Serra Azul","SP",2,0,0,0,0,2,2
+"Serra Branca","PB",0,1,0,0,0,1,1
+"Serra Caiada","RN",2,1,0,0,1,3,4
+"Serra de São Bento","RN",1,0,0,0,0,1,1
+"Serra do Mel","RN",4,1,0,0,1,5,6
+"Serra do Ramalho","BA",0,0,0,0,1,0,1
+"Serra do Salitre","MG",0,0,1,0,3,0,4
+"Serra Negra","SP",21,34,6,3,8,55,72
+"Serra Negra do Norte","RN",0,0,1,0,0,0,1
+"Serra Nova Dourada","MT",0,0,0,0,1,0,1
+"Serra Preta","BA",1,0,0,0,3,1,4
+"Serra Talhada","PE",25,39,2,4,27,64,97
+"Serrana","SP",15,27,9,3,5,42,59
+"Serrania","MG",0,0,0,0,1,0,1
+"Serranópolis","GO",0,3,0,0,1,3,4
+"Serranópolis do Iguaçu","PR",2,1,0,0,1,3,4
+"Serrinha","BA",20,23,4,1,19,43,67
+"Serrinha","RN",1,0,0,0,0,1,1
+"Serrinha dos Pintos","RN",0,0,0,0,1,0,1
+"Serrita","PE",2,0,0,0,0,2,2
+"Serro","MG",1,0,1,0,0,1,2
+"Serrolândia","BA",1,0,1,0,2,1,4
+"Sertaneja","PR",1,3,0,0,4,4,8
+"Sertânia","PE",4,1,0,1,0,5,6
+"Sertanópolis","PR",8,14,3,1,2,22,28
+"Sertão","RS",3,1,0,0,0,4,4
+"Sertão Santana","RS",1,1,2,0,1,2,5
+"Sertãozinho","PB",0,0,0,1,0,0,1
+"Sertãozinho","SP",113,178,30,38,48,291,407
+"Sete Barras","SP",3,0,0,0,4,3,7
+"Sete Lagoas","MG",46,56,13,17,49,102,181
+"Setubinha","MG",0,0,1,0,0,0,1
+"Severiano de Almeida","RS",3,1,1,0,0,4,5
+"Severiano Melo","RN",1,0,0,0,0,1,1
+"Severínia","SP",3,5,0,2,1,8,11
+"Siderópolis","SC",3,7,2,1,4,10,17
+"Sidrolândia","MS",4,15,0,5,5,19,29
+"Sigefredo Pacheco","PI",0,1,0,0,0,1,1
+"Silva Jardim","RJ",3,4,1,2,1,7,11
+"Silvânia","GO",3,7,3,0,5,10,18
+"Silvanópolis","TO",0,0,0,0,1,0,1
+"Silveira Martins","RS",1,0,0,0,5,1,6
+"Silveirânia","MG",0,0,0,0,1,0,1
+"Silvianópolis","MG",1,1,0,0,0,2,2
+"Simão Dias","SE",3,9,5,1,1,12,19
+"Simão Pereira","MG",1,0,0,0,0,1,1
+"Simões Filho","BA",71,56,17,2,61,127,207
+"Simonésia","MG",1,0,0,1,2,1,4
+"Simplício Mendes","PI",0,0,2,0,2,0,4
+"Sinimbu","RS",2,1,0,0,1,3,4
+"Sinop","MT",402,307,42,29,141,709,921
+"Siqueira Campos","PR",5,7,1,1,7,12,21
+"Sirinhaém","PE",5,3,0,0,2,8,10
+"Siriri","SE",0,0,1,0,0,0,1
+"Sítio d'Abadia","GO",0,2,0,0,0,2,2
+"Sítio do Quinto","BA",5,0,0,0,0,5,5
+"Sítio Novo","MA",1,0,0,0,0,1,1
+"Sítio Novo do Tocantins","TO",0,1,0,0,1,1,2
+"Sobradinho","BA",0,1,1,0,0,1,2
+"Sobradinho","RS",1,9,1,1,7,10,19
+"Sobrado","PB",0,1,0,0,0,1,1
+"Sobral","CE",175,129,13,10,70,304,397
+"Socorro","SP",16,21,3,4,11,37,55
+"Solânea","PB",12,1,0,1,1,13,15
+"Soledade","PB",2,1,0,0,1,3,4
+"Soledade","RS",14,25,9,2,9,39,59
+"Soledade de Minas","MG",0,0,0,1,0,0,1
+"Solonópole","CE",2,1,0,0,1,3,4
+"Sombrio","SC",12,26,6,3,15,38,62
+"Sonora","MS",0,4,0,0,4,4,8
+"Sooretama","ES",7,10,1,2,5,17,25
+"Sorocaba","SP",1352,1838,587,185,1238,3190,5200
+"Sorriso","MT",118,288,23,35,54,406,518
+"Soure","PA",1,0,0,1,0,1,2
+"Sousa","PB",31,28,8,1,11,59,79
+"Sucupira do Norte","MA",3,0,0,0,0,3,3
+"Sud Mennucci","SP",6,1,1,0,0,7,8
+"Sulina","PR",0,0,1,0,1,0,2
+"Sumaré","SP",154,171,82,22,77,325,506
+"Sumé","PB",4,2,0,0,0,6,6
+"Sumidouro","RJ",2,0,0,0,3,2,5
+"Surubim","PE",35,14,7,2,10,49,68
+"Suzanápolis","SP",0,0,0,0,1,0,1
+"Suzano","SP",170,226,62,27,133,396,618
+"Tabaí","RS",1,1,0,0,1,2,3
+"Tabaporã","MT",1,0,0,0,1,1,2
+"Tabapuã","SP",4,7,4,1,0,11,16
+"Tabatinga","AM",1,0,0,0,2,1,3
+"Tabatinga","SP",13,8,1,0,6,21,28
+"Tabira","PE",2,0,1,0,1,2,4
+"Taboão da Serra","SP",111,151,46,28,106,262,442
+"Tabocas do Brejo Velho","BA",0,1,0,0,0,1,1
+"Tabuleiro","MG",1,0,1,0,1,1,3
+"Tabuleiro do Norte","CE",4,2,0,0,0,6,6
+"Tacaimbó","PE",1,0,0,0,1,1,2
+"Tacaratu","PE",1,0,0,0,0,1,1
+"Taciba","SP",2,1,0,0,1,3,4
+"Tacima","PB",1,0,0,0,0,1,1
+"Tacuru","MS",1,0,0,0,0,1,1
+"Taguaí","SP",1,1,0,1,3,2,6
+"Taguatinga","TO",0,0,0,0,1,0,1
+"Taiaçu","SP",2,1,1,0,0,3,4
+"Tailândia","PA",5,14,5,0,14,19,38
+"Taió","SC",6,8,3,2,4,14,23
+"Taiobeiras","MG",0,9,0,0,2,9,11
+"Taipu","RN",1,0,0,0,0,1,1
+"Taiúva","SP",1,0,0,1,1,1,3
+"Tamandaré","PE",35,2,1,1,2,37,41
+"Tamarana","PR",1,1,0,0,2,2,4
+"Tambaú","SP",1,9,4,1,8,10,23
+"Tamboara","PR",1,0,1,0,2,1,4
+"Tamboril","CE",2,2,2,0,0,4,6
+"Tanabi","SP",7,28,5,0,2,35,42
+"Tangará","RN",3,0,1,0,2,3,6
+"Tangará","SC",2,3,4,0,1,5,10
+"Tangará da Serra","MT",36,95,27,4,54,131,216
+"Tanguá","RJ",4,3,1,1,2,7,11
+"Tanhaçu","BA",2,1,0,1,0,3,4
+"Tanque Novo","BA",2,4,0,0,1,6,7
+"Tanquinho","BA",1,1,0,0,1,2,3
+"Taparuba","MG",0,0,0,0,1,0,1
+"Tapejara","PR",3,2,0,0,5,5,10
+"Tapejara","RS",16,18,6,2,0,34,42
+"Tapera","RS",2,7,4,0,5,9,18
+"Taperoá","BA",1,0,0,0,3,1,4
+"Tapes","RS",0,2,0,0,3,2,5
+"Tapiraí","SP",1,0,0,0,2,1,3
+"Tapiratiba","SP",2,2,0,1,0,4,5
+"Tapurah","MT",4,9,3,0,5,13,21
+"Taquara","RS",47,31,9,11,19,78,117
+"Taquaral","SP",1,1,0,0,0,2,2
+"Taquaral de Goiás","GO",0,1,0,0,0,1,1
+"Taquarana","AL",10,3,0,0,2,13,15
+"Taquari","RS",23,3,2,3,7,26,38
+"Taquaritinga","SP",45,72,14,7,15,117,153
+"Taquaritinga do Norte","PE",10,15,0,1,1,25,27
+"Taquarituba","SP",5,21,5,3,6,26,40
+"Taquarivaí","SP",0,3,1,0,1,3,5
+"Taquaruçu do Sul","RS",1,0,0,0,0,1,1
+"Taquarussu","MS",0,0,0,1,0,0,1
+"Tarauacá","AC",2,1,0,0,1,3,4
+"Tarrafas","CE",1,0,0,0,0,1,1
+"Tarumã","SP",3,2,0,0,0,5,5
+"Tarumirim","MG",0,3,0,1,6,3,10
+"Tatuí","SP",93,140,25,20,72,233,350
+"Tauá","CE",4,5,0,2,5,9,16
+"Taubaté","SP",240,311,89,42,127,551,809
+"Tavares","RS",0,0,0,0,1,0,1
+"Tefé","AM",0,3,0,1,0,3,4
+"Teixeira","PB",0,3,1,0,2,3,6
+"Teixeira de Freitas","BA",13,10,25,4,40,23,92
+"Teixeira Soares","PR",3,2,0,0,0,5,5
+"Teixeiras","MG",3,0,1,0,0,3,4
+"Teixeirópolis","RO",2,0,1,0,0,2,3
+"Tejuçuoca","CE",1,1,0,0,0,2,2
+"Tejupá","SP",0,0,2,0,0,0,2
+"Telêmaco Borba","PR",21,43,12,1,40,64,117
+"Telha","SE",0,1,0,0,0,1,1
+"Tenente Ananias","RN",3,1,0,1,0,4,5
+"Tenente Portela","RS",2,4,0,0,3,6,9
+"Teodoro Sampaio","BA",0,1,0,0,2,1,3
+"Teodoro Sampaio","SP",0,6,0,0,7,6,13
+"Teofilândia","BA",1,2,0,0,1,3,4
+"Teófilo Otoni","MG",9,10,7,5,22,19,53
+"Teotônio Vilela","AL",9,3,2,2,1,12,17
+"Terenos","MS",6,4,1,0,0,10,11
+"Teresina","PI",1785,1766,443,197,668,3551,4859
+"Teresópolis","RJ",157,180,44,45,103,337,529
+"Terezinha","PE",0,0,0,0,3,0,3
+"Terezópolis de Goiás","GO",3,4,1,0,3,7,11
+"Terra Alta","PA",1,0,0,0,0,1,1
+"Terra Boa","PR",5,4,1,1,7,9,18
+"Terra de Areia","RS",3,1,2,0,1,4,7
+"Terra Nova","BA",1,0,0,0,5,1,6
+"Terra Nova","PE",0,2,0,0,0,2,2
+"Terra Nova do Norte","MT",3,0,1,1,2,3,7
+"Terra Rica","PR",1,6,1,1,2,7,11
+"Terra Roxa","PR",1,5,1,0,4,6,11
+"Terra Roxa","SP",1,1,0,1,3,2,6
+"Teutônia","RS",28,13,5,4,17,41,67
+"Theobroma","RO",1,0,0,0,1,1,2
+"Tianguá","CE",27,26,3,2,18,53,76
+"Tibagi","PR",1,3,3,1,2,4,10
+"Tibau","RN",4,0,0,0,1,4,5
+"Tibau do Sul","RN",9,3,0,0,2,12,14
+"Tietê","SP",18,40,11,7,26,58,102
+"Tigrinhos","SC",1,0,0,0,0,1,1
+"Tijucas","SC",76,87,17,15,24,163,219
+"Tijucas do Sul","PR",6,1,1,2,1,7,11
+"Timbaúba","PE",9,1,0,5,3,10,18
+"Timbé do Sul","SC",0,2,1,0,0,2,3
+"Timbiras","MA",1,0,0,0,2,1,3
+"Timbó","SC",77,111,13,15,20,188,236
+"Timbó Grande","SC",1,1,0,1,0,2,3
+"Timon","MA",29,3,0,0,5,32,37
+"Timóteo","MG",56,43,3,9,30,99,141
+"Tio Hugo","RS",0,0,2,0,0,0,2
+"Tiradentes","MG",1,7,2,1,0,8,11
+"Tiros","MG",0,0,0,0,3,0,3
+"Tobias Barreto","SE",4,5,1,1,3,9,14
+"Tocantinópolis","TO",3,3,0,0,1,6,7
+"Tocantins","MG",1,6,0,1,5,7,13
+"Tocos do Moji","MG",0,0,0,0,1,0,1
+"Toledo","MG",1,0,0,0,0,1,1
+"Toledo","PR",136,160,38,12,80,296,426
+"Tomar do Geru","SE",0,0,0,0,1,0,1
+"Tomazina","PR",0,1,0,0,0,1,1
+"Tombos","MG",0,1,0,1,0,1,2
+"Tomé-Açu","PA",6,8,0,2,7,14,23
+"Toritama","PE",26,20,1,2,1,46,50
+"Toropi","RS",1,0,0,0,0,1,1
+"Torre de Pedra","SP",1,1,0,0,0,2,2
+"Torres","RS",118,30,12,11,11,148,182
+"Torrinha","SP",2,3,6,0,2,5,13
+"Touros","RN",7,2,0,0,1,9,10
+"Trabiju","SP",0,1,0,0,0,1,1
+"Tracuateua","PA",1,1,0,0,1,2,3
+"Tracunhaém","PE",2,0,0,0,1,2,3
+"Traipu","AL",5,4,0,0,1,9,10
+"Trairão","PA",1,1,0,0,0,2,2
+"Trairi","CE",1,2,0,0,4,3,7
+"Trajano de Moraes","RJ",0,0,1,0,2,0,3
+"Tramandaí","RS",78,34,7,3,16,112,138
+"Travesseiro","RS",2,0,1,0,1,2,4
+"Tremedal","BA",0,0,0,0,2,0,2
+"Tremembé","SP",28,39,19,14,26,67,126
+"Três Arroios","RS",2,0,0,0,0,2,2
+"Três Barras","SC",4,5,0,1,5,9,15
+"Três Barras do Paraná","PR",0,6,2,0,3,6,11
+"Três Cachoeiras","RS",5,3,0,0,0,8,8
+"Três Corações","MG",9,8,2,0,3,17,22
+"Três Coroas","RS",17,6,2,1,6,23,32
+"Três de Maio","RS",16,17,0,2,4,33,39
+"Três Fronteiras","SP",1,2,0,0,1,3,4
+"Três Lagoas","MS",40,78,33,10,97,118,258
+"Três Marias","MG",0,0,0,1,5,0,6
+"Três Palmeiras","RS",2,0,0,0,2,2,4
+"Três Passos","RS",19,5,4,0,7,24,35
+"Três Pontas","MG",19,25,4,5,5,44,58
+"Três Ranchos","GO",0,1,0,0,0,1,1
+"Três Rios","RJ",56,60,9,8,17,116,150
+"Treviso","SC",1,0,0,0,0,1,1
+"Treze de Maio","SC",4,3,1,0,4,7,12
+"Treze Tílias","SC",2,13,7,0,4,15,26
+"Trindade","GO",128,105,5,8,37,233,283
+"Trindade","PE",4,1,0,1,1,5,7
+"Trindade do Sul","RS",4,0,0,0,1,4,5
+"Triunfo","PB",1,0,0,0,3,1,4
+"Triunfo","PE",1,5,2,0,4,6,12
+"Triunfo","RS",24,4,1,1,9,28,39
+"Triunfo Potiguar","RN",1,0,0,0,1,1,2
+"Trizidela do Vale","MA",0,0,0,0,1,0,1
+"Trombudo Central","SC",0,7,0,1,1,7,9
+"Tubarão","SC",128,230,55,35,139,358,587
+"Tucano","BA",12,9,0,0,7,21,28
+"Tucumã","PA",2,3,0,0,4,5,9
+"Tucunduva","RS",10,0,0,1,2,10,13
+"Tucuruí","PA",5,18,0,1,17,23,41
+"Tuiuti","SP",5,2,0,0,1,7,8
+"Tunápolis","SC",0,0,0,1,0,0,1
+"Tunas do Paraná","PR",1,1,0,2,0,2,4
+"Tuneiras do Oeste","PR",1,0,0,1,1,1,3
+"Tuntum","MA",1,1,0,0,0,2,2
+"Tupã","SP",30,63,13,0,46,93,152
+"Tupaciguara","MG",1,8,0,0,4,9,13
+"Tupanatinga","PE",1,0,0,0,0,1,1
+"Tupanciretã","RS",0,11,4,1,3,11,19
+"Tupandi","RS",3,6,2,1,2,9,14
+"Tuparendi","RS",1,2,0,0,1,3,4
+"Tupãssi","PR",3,1,0,0,1,4,5
+"Tupi Paulista","SP",4,13,3,1,3,17,24
+"Turiaçu","MA",0,1,0,1,0,1,2
+"Turilândia","MA",0,1,0,0,0,1,1
+"Turiúba","SP",1,0,0,0,0,1,1
+"Turmalina","MG",0,0,0,0,1,0,1
+"Turuçu","RS",1,2,0,0,0,3,3
+"Turvânia","GO",1,3,1,1,3,4,9
+"Turvelândia","GO",0,1,0,1,1,1,3
+"Turvo","PR",1,0,1,0,1,1,3
+"Turvo","SC",4,8,2,1,6,12,21
+"Turvolândia","MG",1,0,0,0,1,1,2
+"Tutóia","MA",7,3,0,0,0,10,10
+"Uauá","BA",1,0,2,0,1,1,4
+"Ubá","MG",18,45,13,7,51,63,134
+"Ubaíra","BA",1,3,1,0,2,4,7
+"Ubaitaba","BA",0,1,0,0,1,1,2
+"Ubajara","CE",3,6,0,0,5,9,14
+"Ubaporanga","MG",1,1,1,0,0,2,3
+"Ubarana","SP",1,1,0,0,2,2,4
+"Ubatã","BA",0,0,0,0,4,0,4
+"Ubatuba","SP",53,86,28,14,46,139,227
+"Uberaba","MG",283,314,57,33,155,597,842
+"Uberlândia","MG",1478,1890,488,227,412,3368,4495
+"Ubirajara","SP",0,0,0,0,1,0,1
+"Ubiratã","PR",3,12,0,4,5,15,24
+"Uchoa","SP",8,7,1,0,2,15,18
+"Uibaí","BA",2,0,0,0,2,2,4
+"Uirapuru","GO",0,0,1,0,0,0,1
+"Uiraúna","PB",1,2,0,0,0,3,3
+"Ulianópolis","PA",0,0,0,1,1,0,2
+"Umari","CE",0,1,0,0,0,1,1
+"Umarizal","RN",3,2,0,1,0,5,6
+"Umbaúba","SE",4,2,1,0,6,6,13
+"Umburanas","BA",0,0,0,0,3,0,3
+"Umirim","CE",1,0,0,0,0,1,1
+"Umuarama","PR",91,135,36,14,48,226,324
+"Unaí","MG",1,2,0,4,0,3,7
+"União","PI",5,2,0,0,5,7,12
+"União da Serra","RS",0,0,0,0,1,0,1
+"União da Vitória","PR",11,22,6,9,1,33,49
+"União do Sul","MT",0,0,0,0,1,0,1
+"União dos Palmares","AL",13,8,3,2,3,21,29
+"Upanema","RN",8,0,0,0,3,8,11
+"Uraí","PR",0,3,2,0,1,3,6
+"Urandi","BA",1,0,0,0,2,1,3
+"Urânia","SP",3,4,0,1,1,7,9
+"Urbano Santos","MA",0,1,0,0,1,1,2
+"Uru","SP",0,0,0,0,2,0,2
+"Uruaçu","GO",2,9,0,1,14,11,26
+"Uruana","GO",1,5,1,0,3,6,10
+"Uruará","PA",0,2,0,0,4,2,6
+"Urubici","SC",0,7,1,1,2,7,11
+"Uruburetama","CE",1,0,0,0,0,1,1
+"Urucânia","MG",0,1,0,0,2,1,3
+"Urucará","AM",0,0,1,0,0,0,1
+"Uruçuca","BA",1,0,1,0,1,1,3
+"Uruçuí","PI",3,9,0,0,2,12,14
+"Uruguaiana","RS",30,36,50,9,18,66,143
+"Uruoca","CE",1,1,0,4,0,2,6
+"Urupá","RO",0,1,0,0,0,1,1
+"Urupema","SC",2,0,0,0,1,2,3
+"Urupês","SP",6,14,4,2,6,20,32
+"Urussanga","SC",13,16,2,4,8,29,43
+"Urutaí","GO",0,1,0,0,0,1,1
+"Utinga","BA",0,0,0,1,2,0,3
+"Vacaria","RS",40,23,11,2,8,63,84
+"Vale de São Domingos","MT",0,1,0,0,0,1,1
+"Vale do Anari","RO",0,1,0,0,0,1,1
+"Vale do Paraíso","RO",0,0,0,0,1,0,1
+"Vale Real","RS",6,3,0,0,3,9,12
+"Vale Verde","RS",0,0,1,0,0,0,1
+"Valença","BA",9,9,4,5,11,18,38
+"Valença","RJ",19,19,8,4,15,38,65
+"Valença do Piauí","PI",0,4,0,0,4,4,8
+"Valente","BA",1,4,1,0,4,5,10
+"Valentim Gentil","SP",5,7,1,2,6,12,21
+"Valinhos","SP",639,940,141,55,185,1579,1960
+"Valparaíso","SP",3,1,5,1,4,4,14
+"Valparaíso de Goiás","GO",6,1,1,4,0,7,12
+"Vanini","RS",1,0,0,0,0,1,1
+"Vargeão","SC",0,1,8,1,0,1,10
+"Vargem","SC",0,2,0,0,0,2,2
+"Vargem","SP",10,8,1,0,3,18,22
+"Vargem Alta","ES",12,15,6,1,3,27,37
+"Vargem Bonita","SC",1,0,0,0,2,1,3
+"Vargem Grande","MA",5,5,0,0,3,10,13
+"Vargem Grande do Sul","SP",6,22,3,3,12,28,46
+"Vargem Grande Paulista","SP",86,102,21,11,47,188,267
+"Varginha","MG",123,91,22,12,41,214,289
+"Varjota","CE",5,2,0,0,2,7,9
+"Varre-Sai","RJ",0,2,0,0,0,2,2
+"Várzea","RN",1,0,0,0,0,1,1
+"Várzea Alegre","CE",1,4,0,0,2,5,7
+"Várzea da Palma","MG",0,2,0,1,0,2,3
+"Várzea da Roça","BA",4,5,0,0,0,9,9
+"Várzea do Poço","BA",1,4,0,1,2,5,8
+"Várzea Grande","MT",396,334,92,22,177,730,1021
+"Várzea Grande","PI",0,1,0,0,0,1,1
+"Várzea Nova","BA",0,3,1,0,0,3,4
+"Várzea Paulista","SP",38,40,2,7,15,78,102
+"Varzedo","BA",0,1,1,0,1,1,3
+"Varzelândia","MG",0,0,0,0,1,0,1
+"Vassouras","RJ",32,35,4,3,7,67,81
+"Vazante","MG",0,0,0,0,1,0,1
+"Venâncio Aires","RS",49,28,14,5,30,77,126
+"Venda Nova do Imigrante","ES",12,22,6,8,3,34,51
+"Venturosa","PE",2,0,0,0,2,2,4
+"Vera","MT",2,7,0,0,2,9,11
+"Vera Cruz","BA",14,7,1,1,9,21,32
+"Vera Cruz","RN",3,1,0,0,4,4,8
+"Vera Cruz","RS",12,9,2,2,8,21,33
+"Vera Cruz","SP",2,2,0,0,4,4,8
+"Vera Cruz do Oeste","PR",2,2,0,0,2,4,6
+"Veranópolis","RS",29,21,9,2,9,50,70
+"Verê","PR",5,0,1,0,4,5,10
+"Vermelho Novo","MG",0,0,0,0,1,0,1
+"Vertente do Lério","PE",0,0,0,0,1,0,1
+"Vertentes","PE",1,0,1,0,0,1,2
+"Vespasiano","MG",16,18,3,1,7,34,45
+"Viadutos","RS",4,1,0,0,1,5,6
+"Viamão","RS",300,90,27,21,42,390,480
+"Viana","ES",41,43,7,3,14,84,108
+"Viana","MA",6,1,1,0,0,7,8
+"Vianópolis","GO",2,12,3,0,4,14,21
+"Vicência","PE",3,1,0,0,0,4,4
+"Vicente Dutra","RS",2,0,0,0,0,2,2
+"Vicentina","MS",0,4,0,0,0,4,4
+"Vicentinópolis","GO",0,2,0,1,1,2,4
+"Viçosa","AL",2,4,4,1,6,6,17
+"Viçosa","MG",14,21,12,1,17,35,65
+"Viçosa do Ceará","CE",8,3,1,0,3,11,15
+"Vidal Ramos","SC",0,0,1,0,1,0,2
+"Videira","SC",52,88,37,9,24,140,210
+"Vigia","PA",2,3,2,0,8,5,15
+"Vila Bela da Santíssima Trindade","MT",1,3,0,0,4,4,8
+"Vila Flor","RN",2,0,0,0,0,2,2
+"Vila Flores","RS",4,1,0,1,1,5,7
+"Vila Maria","RS",1,0,0,1,1,1,3
+"Vila Pavão","ES",1,1,0,0,2,2,4
+"Vila Propício","GO",1,0,0,0,1,1,2
+"Vila Rica","MT",0,0,0,0,1,0,1
+"Vila Valério","ES",2,4,5,0,8,6,19
+"Vila Velha","ES",958,1581,470,125,480,2539,3614
+"Vilhena","RO",12,33,13,4,49,45,111
+"Vinhedo","SP",275,421,97,37,139,696,969
+"Viradouro","SP",5,2,1,0,3,7,11
+"Virgínia","MG",0,1,0,0,0,1,1
+"Virginópolis","MG",0,0,0,0,1,0,1
+"Virgolândia","MG",1,0,0,0,1,1,2
+"Visconde do Rio Branco","MG",6,9,4,3,15,15,37
+"Viseu","PA",0,1,0,0,0,1,1
+"Vista Alegre","RS",1,0,0,0,1,1,2
+"Vista Alegre do Alto","SP",1,5,1,0,5,6,12
+"Vista Alegre do Prata","RS",1,0,0,0,0,1,1
+"Vista Gaúcha","RS",0,0,0,1,0,0,1
+"Vista Serrana","PB",1,0,0,0,0,1,1
+"Vitor Meireles","SC",0,2,1,1,1,2,5
+"Vitória","ES",1135,2066,684,272,561,3201,4718
+"Vitória Brasil","SP",0,1,3,0,0,1,4
+"Vitória da Conquista","BA",770,449,86,54,157,1219,1516
+"Vitória de Santo Antão","PE",58,28,14,2,25,86,127
+"Vitória do Jari","AP",3,1,0,0,0,4,4
+"Vitória do Mearim","MA",2,0,0,0,2,2,4
+"Vitória do Xingu","PA",1,0,0,0,0,1,1
+"Vitorino","PR",5,1,0,0,1,6,7
+"Vitorino Freire","MA",2,0,0,0,2,2,4
+"Volta Grande","MG",0,0,0,0,1,0,1
+"Volta Redonda","RJ",327,257,53,26,236,584,899
+"Votorantim","SP",206,272,65,34,65,478,642
+"Votuporanga","SP",57,99,44,17,44,156,261
+"Wanderley","BA",0,0,0,1,0,0,1
+"Wenceslau Braz","PR",3,1,0,0,2,4,6
+"Wenceslau Guimarães","BA",0,1,0,0,1,1,2
+"Westfália","RS",1,3,1,0,2,4,7
+"Witmarsum","SC",2,1,0,0,0,3,3
+"Xambioá","TO",0,2,0,0,0,2,2
+"Xangri-lá","RS",53,62,12,5,14,115,146
+"Xanxerê","SC",24,62,18,15,16,86,135
+"Xapuri","AC",0,0,1,0,0,0,1
+"Xavantina","SC",0,4,0,1,0,4,5
+"Xaxim","SC",14,34,4,5,10,48,67
+"Xinguara","PA",4,7,0,1,5,11,17
+"Xique-Xique","BA",1,1,0,1,3,2,6
+"Zacarias","SP",0,1,0,0,0,1,1
+"Zé Doca","MA",3,0,0,0,2,3,5

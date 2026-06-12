@@ -44,7 +44,7 @@ export function MunicipioScoreLayer({ uf, geojson, scoresByCode }: Props) {
       `<b>${m.nome} (${m.uf})</b><br/>
        Score de oportunidade: <b>${m.scorePercent}/100</b><br/>
        População: ${m.pop.toLocaleString('pt-BR')}<br/>
-       Frota EV (estimada): ${Math.round(m.frotaEst).toLocaleString('pt-BR')}<br/>
+       Frota EV ${m.frotaFonte === 'abve' ? '(BEV+PHEV, ABVE)' : '(estimada)'}: ${Math.round(m.frotaEst).toLocaleString('pt-BR')}<br/>
        Eletropostos: ${detalheEletro}<br/>
        Carência (frota/ponto): ${m.gap.toFixed(1)}<br/>
        <span style="color:#94a3b8;font-size:11px">Fonte eletropostos: ${fonteLabel}</span>`

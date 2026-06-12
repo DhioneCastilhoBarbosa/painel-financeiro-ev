@@ -233,8 +233,8 @@ export default function InstallationMap() {
             ))}
           </ol>
           <p className="text-[0.6rem] text-gray-400 mt-2 leading-snug">
-            Eletropostos: ABVE por município (mai/2026). Frota EV estimada por rateio
-            populacional da frota estadual.
+            Eletropostos e frota EV (BEV+PHEV) por município: ABVE. Cidades fora da
+            base usam estimativa por população.
           </p>
         </div>
       )}

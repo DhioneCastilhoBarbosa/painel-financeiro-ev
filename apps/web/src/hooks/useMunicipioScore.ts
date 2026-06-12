@@ -17,7 +17,8 @@ export interface MunicipioScore {
   nome: string;
   uf: string;
   pop: number;
-  frotaEst: number;      // frota EV estimada (proporcional à população do estado)
+  frotaEst: number;      // frota EV plug-in (ABVE real; ou estimada por população)
+  frotaFonte: 'abve' | 'estimada';
   eletropostos: number;  // eletropostos (ABVE por município; fallback Open Charge Map)
   ac: number;            // pontos AC (ABVE) — 0 se sem dado
   dc: number;            // pontos DC (ABVE) — 0 se sem dado
@@ -81,6 +82,41 @@ function loadAbveEletropostos(): Promise<Map<string, AbveEletro>> {
   return abvePromise;
 }
 
+// ─── Frota EV por município (ABVE — BaseVendas) ───────────────────────────────
+// CSV: municipio,uf,bev,phev,hev,mhev,hev_flex,ev_plugin,total
+// Usamos `ev_plugin` (BEV+PHEV) como a frota que efetivamente recarrega.
+
+interface AbveFrota { bev: number; phev: number; evPlugin: number; total: number }
+let frotaPromise: Promise<Map<string, AbveFrota>> | null = null;
+
+function loadAbveFrota(): Promise<Map<string, AbveFrota>> {
+  if (!frotaPromise) {
+    frotaPromise = fetch('/data/abve/frota_ev_por_municipio.csv')
+      .then((r) => (r.ok ? r.text() : ''))
+      .then((txt) => {
+        const map = new Map<string, AbveFrota>();
+        if (!txt) return map;
+        const parsed = Papa.parse<Record<string, unknown>>(txt, {
+          header: true, dynamicTyping: true, skipEmptyLines: true,
+        });
+        for (const row of parsed.data) {
+          const municipio = String(row.municipio ?? '').trim();
+          const uf = String(row.uf ?? '').trim().toUpperCase();
+          if (!municipio || !uf) continue;
+          map.set(`${uf}|${norm(municipio)}`, {
+            bev: Number(row.bev) || 0,
+            phev: Number(row.phev) || 0,
+            evPlugin: Number(row.ev_plugin) || 0,
+            total: Number(row.total) || 0,
+          });
+        }
+        return map;
+      })
+      .catch(() => new Map<string, AbveFrota>());
+  }
+  return frotaPromise;
+}
+
 function fetchWithTimeout(url: string, ms: number): Promise<Response> {
   const ctrl = new AbortController();
   const id = setTimeout(() => ctrl.abort(), ms);
@@ -142,11 +178,13 @@ export function useMunicipioScore(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [abveMap, setAbveMap] = useState<Map<string, AbveEletro>>(new Map());
+  const [frotaMap, setFrotaMap] = useState<Map<string, AbveFrota>>(new Map());
 
-  // Carrega a base ABVE uma vez (cacheada no módulo).
+  // Carrega as bases ABVE uma vez (cacheadas no módulo).
   useEffect(() => {
     let cancelled = false;
     loadAbveEletropostos().then((m) => { if (!cancelled) setAbveMap(m); });
+    loadAbveFrota().then((m) => { if (!cancelled) setFrotaMap(m); });
     return () => { cancelled = true; };
   }, []);
 
@@ -203,8 +241,15 @@ export function useMunicipioScore(
 
     // 1ª passada: monta inputs brutos
     const raw = entries.map(([code, { pop, nome }]) => {
-      const frotaEst = ufFleet * (pop / ufPopTotal);
-      const abve = abveMap.get(`${uf}|${norm(nome)}`);
+      const key = `${uf}|${norm(nome)}`;
+
+      // Frota EV: ABVE real (BEV+PHEV) quando disponível; senão estimada por população.
+      const frota = frotaMap.get(key);
+      const frotaEst = frota ? frota.evPlugin : ufFleet * (pop / ufPopTotal);
+      const frotaFonte: MunicipioScore['frotaFonte'] = frota ? 'abve' : 'estimada';
+
+      // Eletropostos: ABVE por município; fallback Open Charge Map.
+      const abve = abveMap.get(key);
       let eletropostos: number, ac: number, dc: number, fonte: MunicipioScore['fonte'];
       if (abve) {
         eletropostos = abve.total; ac = abve.ac; dc = abve.dc; fonte = 'abve';
@@ -213,7 +258,7 @@ export function useMunicipioScore(
         eletropostos = ocm; ac = 0; dc = 0; fonte = ocm > 0 ? 'ocm' : 'nenhuma';
       }
       const gap = frotaEst / (eletropostos + 1);
-      return { code, nome, pop, frotaEst, eletropostos, ac, dc, fonte, gap };
+      return { code, nome, pop, frotaEst, frotaFonte, eletropostos, ac, dc, fonte, gap };
     });
 
     // Normaliza dentro do estado
@@ -237,7 +282,7 @@ export function useMunicipioScore(
     const byCode = new Map(scored.map((s) => [s.code, s]));
     const top = [...scored].sort((a, b) => b.score - a.score).slice(0, 10);
     return { scoresByCode: byCode, top };
-  }, [data, abveMap, ocmByNome, frotasPorUF, uf]);
+  }, [data, abveMap, frotaMap, ocmByNome, frotasPorUF, uf]);
 
   return { geojson: data?.geojson ?? null, scoresByCode, top, loading, error };
 }

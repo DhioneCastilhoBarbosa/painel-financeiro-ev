@@ -102,7 +102,7 @@ window.__abveCapture = function (RKEY, OUT) {
       nameByVal[s.Value] = RENAME[raw] || raw.toLowerCase();
     });
     const ds = dsr.DS[0], dicts = ds.ValueDicts || {}; const rows = []; let cols = null, prev = null, hdr = null;
-    for (const ph of ds.PH) { const dm = ph.DM1; if (!dm) continue;
+    for (const ph of ds.PH) { const dm = ph.DM1 || ph.DM0; if (!dm) continue;
       for (const it of dm) {
         if (it.S) { cols = it.S; prev = null; hdr = cols.map(c => nameByVal[c.N] || String(c.N)); }
         const C = it.C || [], R = it.R || 0, N = it['Ø'] || 0; const raw = []; let ci = 0;
