@@ -271,10 +271,10 @@ export function MapSidebar({
           variant="outline"
           className="w-full text-xs gap-1.5 border-[#163134] text-[#163134] hover:bg-[#163134]/5"
           onClick={onExport}
-          disabled={top10.length === 0}
+          disabled={!showMuni}
         >
           <Download className="h-3.5 w-3.5" />
-          Exportar locais selecionados (CSV)
+          Exportar locais (CSV)
         </Button>
       </div>
     </div>

@@ -151,25 +151,31 @@ export default function InstallationMap() {
     setLayers(next);
   }, []);
 
+  // Exporta TODAS as cidades do estado selecionado, com os dados por cidade,
+  // ordenadas por score de oportunidade (desc).
   const handleExport = () => {
-    const rows = [
-      ['uf', 'nome', 'lat', 'lng', 'score', 'renda', 'frota', 'eletropostos', 'gap_abve'],
-      ...filteredScores.map((s) => {
-        const eletro = eletropostosPorUF.find((e) => e.uf === s.uf);
-        return [
-          s.uf, s.nome,
-          s.centroid[0], s.centroid[1],
-          s.scorePercent, s.inputs.renda, s.inputs.frota,
-          eletro?.total_eletropostos ?? 0, s.inputs.gapAbve,
-        ];
-      }),
+    if (!filterUF || muniScores.size === 0) return;
+    const recs = [...muniScores.values()].sort((a, b) => b.score - a.score);
+    const cell = (v: unknown) => {
+      const s = String(v ?? '');
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const header = [
+      'municipio', 'uf', 'score', 'populacao', 'frota_ev_plugin', 'frota_fonte',
+      'eletropostos', 'ac', 'dc', 'fonte_eletropostos', 'carencia_frota_por_ponto',
     ];
-    const csv = rows.map((r) => r.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const rows = [header.join(',')].concat(
+      recs.map((m) => [
+        cell(m.nome), m.uf, m.scorePercent, m.pop, Math.round(m.frotaEst), m.frotaFonte,
+        m.eletropostos, m.ac, m.dc, m.fonte, m.gap.toFixed(1),
+      ].join(','))
+    );
+    // BOM (﻿) para o Excel reconhecer os acentos como UTF-8.
+    const blob = new Blob(['﻿' + rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `locais_oportunidade_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `oportunidades_${filterUF}_${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
