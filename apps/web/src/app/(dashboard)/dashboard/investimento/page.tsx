@@ -276,7 +276,7 @@ interface SimpleInputs {
 }
 
 const DEFAULT_SIMPLE: SimpleInputs = {
-  stations: [{ type: "DC 60 kW", quantity: 1 }],
+  stations: [],
   n_chargers: 1,
   power_kw: 60,
   capex_total: 93500,
@@ -284,7 +284,7 @@ const DEFAULT_SIMPLE: SimpleInputs = {
   energy_cost_per_kwh: 0.72,
   occupancy_pct: 30,
   monthly_opex: 300,
-  revenue_split_pct: 0,
+  revenue_split_pct: 20,
   establishment_name: "",
   location_type: "",
 };
@@ -444,6 +444,16 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     : r.payback_months <= 48 ? "blue"
     : r.payback_months <= 72 ? "amber" : "red";
 
+  const [hiddenScenarios, setHiddenScenarios] = useState<Set<string>>(new Set());
+
+  function toggleScenario(key: string) {
+    setHiddenScenarios(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      return next;
+    });
+  }
+
   // ── Save / Load / Export ───────────────────────────────────────────────────
   const simpleFileRef = useRef<HTMLInputElement>(null);
   const [showSavePanel, setShowSavePanel] = useState(false);
@@ -463,22 +473,27 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     document.title = `Intelbras - Análise de Investimento de Eletroposto${s.establishment_name ? ` - ${s.establishment_name}` : ""}`;
     const sidebar = document.querySelector<HTMLElement>("[data-sidebar]");
     const aside = document.querySelector<HTMLElement>(".simplified-aside");
+    const chartWrapper = document.querySelector<HTMLElement>(".simple-chart-wrapper");
     const toUnclip = Array.from(document.querySelectorAll<HTMLElement>(".h-screen,.h-full,.min-h-0,.overflow-hidden,.overflow-y-auto"));
     const savedSidebar = sidebar ? sidebar.style.display : null;
     const savedAside = aside ? aside.style.display : null;
+    const savedChartHeight = chartWrapper ? chartWrapper.style.height : null;
     const savedUnclip = toUnclip.map(el => ({ el, v: el.style.cssText }));
     if (sidebar) sidebar.style.display = "none";
     if (aside) aside.style.display = "none";
+    if (chartWrapper) chartWrapper.style.height = "440px";
     toUnclip.forEach(el => { el.style.height = "auto"; el.style.maxHeight = "none"; el.style.minHeight = "0"; el.style.overflow = "visible"; });
     const restore = () => {
       document.title = originalTitle;
       if (sidebar && savedSidebar !== null) sidebar.style.display = savedSidebar;
       if (aside && savedAside !== null) aside.style.display = savedAside;
+      if (chartWrapper && savedChartHeight !== null) chartWrapper.style.height = savedChartHeight;
       savedUnclip.forEach(({ el, v }) => { el.style.cssText = v; });
       window.removeEventListener("afterprint", restore);
     };
     window.addEventListener("afterprint", restore);
-    window.print();
+    // Give the chart one frame to resize before printing
+    requestAnimationFrame(() => window.print());
   }
 
   function handleExportSimple() {
@@ -598,26 +613,50 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                 help="Potência nominal de cada carregador." />
             </div>
           ) : (
-            <div className="rounded-lg border dark:border-slate-700 divide-y dark:divide-slate-700 bg-white dark:bg-slate-900">
-              {chargerTypeEntries.map(([type, cfg]) => {
-                const qty = s.stations.find(st => st.type === type)?.quantity ?? 0;
+            <div className="rounded-lg border dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
+              {(() => {
+                const acEntries = chargerTypeEntries.filter(([t]) => t.toUpperCase().startsWith("AC"));
+                const dcEntries = chargerTypeEntries.filter(([t]) => !t.toUpperCase().startsWith("AC"));
+                const renderRow = ([type, cfg]: [string, ChargerConfigEntry]) => {
+                  const qty = s.stations.find(st => st.type === type)?.quantity ?? 0;
+                  return (
+                    <div key={type} className="flex items-center justify-between gap-2 px-3 py-2 border-b dark:border-slate-700 last:border-b-0">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-medium truncate">{type}</p>
+                        <p className="text-[0.62rem] text-muted-foreground">{cfg.power_kw} kW · {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(cfg.price_brl)}</p>
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button type="button" onClick={() => updateStation(type, Math.max(0, qty - 1))}
+                          className="h-6 w-6 rounded border border-input flex items-center justify-center text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed"
+                          disabled={qty === 0}>−</button>
+                        <span className="w-6 text-center text-xs font-medium tabular-nums">{qty}</span>
+                        <button type="button" onClick={() => updateStation(type, qty + 1)}
+                          className="h-6 w-6 rounded border border-input flex items-center justify-center text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800">+</button>
+                      </div>
+                    </div>
+                  );
+                };
                 return (
-                  <div key={type} className="flex items-center justify-between gap-2 px-3 py-2">
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs font-medium truncate">{type}</p>
-                      <p className="text-[0.62rem] text-muted-foreground">{cfg.power_kw} kW · {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(cfg.price_brl)}</p>
-                    </div>
-                    <div className="flex items-center gap-1 shrink-0">
-                      <button type="button" onClick={() => updateStation(type, Math.max(0, qty - 1))}
-                        className="h-6 w-6 rounded border border-input flex items-center justify-center text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed"
-                        disabled={qty === 0}>−</button>
-                      <span className="w-6 text-center text-xs font-medium tabular-nums">{qty}</span>
-                      <button type="button" onClick={() => updateStation(type, qty + 1)}
-                        className="h-6 w-6 rounded border border-input flex items-center justify-center text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800">+</button>
-                    </div>
-                  </div>
+                  <>
+                    {acEntries.length > 0 && (
+                      <>
+                        <div className="px-3 py-1.5 bg-slate-50 dark:bg-slate-800/60 border-b dark:border-slate-700">
+                          <span className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground">AC — Corrente Alternada</span>
+                        </div>
+                        {acEntries.map(renderRow)}
+                      </>
+                    )}
+                    {dcEntries.length > 0 && (
+                      <>
+                        <div className="px-3 py-1.5 bg-slate-50 dark:bg-slate-800/60 border-b dark:border-slate-700 border-t dark:border-slate-700">
+                          <span className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground">DC — Corrente Contínua</span>
+                        </div>
+                        {dcEntries.map(renderRow)}
+                      </>
+                    )}
+                  </>
                 );
-              })}
+              })()}
               <div className="px-3 py-2 text-[0.65rem] text-muted-foreground flex items-center justify-between">
                 <span>{stationsSummary}</span>
                 {suggestedCapex > 0 && suggestedCapex !== s.capex_total && (
@@ -671,7 +710,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
         <NumField label="OPEX mensal (fixo)" value={s.monthly_opex} onChange={v => setV("monthly_opex", v)} prefix="R$"
           help="Soma de todos os custos fixos mensais: manutenção, internet, aluguel, etc." />
         <NumField label="Split de receita" value={s.revenue_split_pct} onChange={v => setV("revenue_split_pct", Math.min(100, v))} suffix="%" step={1}
-          help="% da receita repassada ao dono do espaço (estabelecimento parceiro). 0 = sem split." />
+          help="% da receita bruta repassada ao estabelecimento parceiro (dono do espaço). Inclua também impostos (ex.: Simples Nacional ~6-15%) e taxa da plataforma de gestão (ex.: 3-10%). O padrão de 20% é uma estimativa comum que cobre esses custos combinados." />
       </aside>
 
       {/* Results */}
@@ -692,7 +731,6 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
               <p>{new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}</p>
               {user && <p className="font-medium text-gray-600">{user.name}</p>}
               {user?.organization_name && <p>{user.organization_name}</p>}
-              <p>Intelbras Finance</p>
             </div>
           </div>
         </div>
@@ -840,13 +878,34 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
           </Card>
         </div>
 
-        {/* Break-even chart — taller in print */}
+        {/* Break-even chart */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Recuperação do Investimento (acumulado)</CardTitle>
+            <div className="flex items-start justify-between gap-2 flex-wrap">
+              <CardTitle className="text-sm">Recuperação do Investimento (acumulado)</CardTitle>
+              {r.scenarios.length > 0 && (
+                <div className="flex gap-1 flex-wrap print:hidden">
+                  {r.scenarios.map(sc => (
+                    <button
+                      key={sc.key}
+                      type="button"
+                      onClick={() => toggleScenario(sc.key)}
+                      style={{ borderColor: sc.color, color: hiddenScenarios.has(sc.key) ? undefined : sc.color }}
+                      className={`text-[0.6rem] px-2 py-0.5 rounded-full border font-medium transition-all ${
+                        hiddenScenarios.has(sc.key)
+                          ? "opacity-30 border-muted-foreground text-muted-foreground line-through"
+                          : ""
+                      }`}
+                    >
+                      {sc.off > 0 ? "+" : ""}{sc.off}% ({sc.occ}%)
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
-            <div style={{ width: "100%", height: 280 }} className="print:!h-[420px]">
+            <div className="simple-chart-wrapper" style={{ width: "100%", height: 280 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={r.chart} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
@@ -860,7 +919,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                       <Cell key={i} fill={(entry.acumulado ?? 0) >= 0 ? "#10b981" : "#3b82f6"} />
                     ))}
                   </Bar>
-                  {r.scenarios.map((sc) => (
+                  {r.scenarios.filter(sc => !hiddenScenarios.has(sc.key)).map((sc) => (
                     <Line key={sc.key} type="monotone" dataKey={sc.key} name={`Ocup. ${sc.label}`}
                       stroke={sc.color} strokeWidth={1.5} strokeDasharray={sc.off < 0 ? "4 2" : undefined}
                       dot={false} isAnimationActive={false} />
@@ -885,6 +944,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                     <th className="text-left px-4 py-2.5 font-medium">Ano</th>
                     <th className="text-right px-4 py-2.5 font-medium">Receita gerada</th>
                     <th className="text-right px-4 py-2.5 font-medium">Lucro gerado</th>
+                    <th className="text-right px-4 py-2.5 font-medium">ROI anual</th>
                     <th className="text-right px-4 py-2.5 font-medium">Retorno do investimento</th>
                   </tr>
                 </thead>
@@ -893,12 +953,14 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                     const year = i + 1;
                     const annualRevenue = r.monthly_revenue * 12;
                     const annualNet = r.monthly_net * 12;
+                    const roiAnnual = s.capex_total > 0 ? (annualNet / s.capex_total) * 100 : 0;
                     const cumReturn = annualNet * year - s.capex_total;
                     return (
                       <tr key={year} className="hover:bg-muted/30">
                         <td className="px-4 py-2.5 font-medium">Ano {year}</td>
                         <td className="px-4 py-2.5 text-right text-blue-600 dark:text-blue-400">{formatCurrency(annualRevenue)}</td>
                         <td className={`px-4 py-2.5 text-right font-medium ${annualNet >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>{formatCurrency(annualNet)}</td>
+                        <td className={`px-4 py-2.5 text-right font-medium ${roiAnnual >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>{roiAnnual.toFixed(1)}%</td>
                         <td className={`px-4 py-2.5 text-right font-bold ${cumReturn >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>
                           {cumReturn >= 0 ? "+" : ""}{formatCurrency(cumReturn)}
                         </td>

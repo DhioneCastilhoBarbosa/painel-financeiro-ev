@@ -106,7 +106,7 @@ function LeadsPageContent() {
   const [filterSector, setFilterSector] = useState("");
   const [filterCharger, setFilterCharger] = useState("");
   const [expandedLead, setExpandedLead] = useState<string | null>(null);
-  const [activeTab, setActiveTab]       = useState<"leads" | "analytics" | "config">("leads");
+  const [activeTab, setActiveTab]       = useState<"leads" | "analytics" | "config" | "simulations">("leads");
 
   // ── Analytics period filter ─────────────────────────────────────────────────
   const [analyticsPeriod, setAnalyticsPeriod] = useState<AnalyticsPeriod>("month");
@@ -150,6 +150,16 @@ function LeadsPageContent() {
   );
   const { data: simConfig, mutate: mutateConfig } = useSWR<SimulatorConfig>(
     manageLeads ? "/leads/config/simulator" : null, fetcher, SWR_OPTS,
+  );
+  const { data: savedScenarios = [], isLoading: scenariosLoading } = useSWR<{
+    id: string; name: string; inputs: Record<string, unknown>; results: Record<string, unknown>;
+    created_at: string; updated_at: string;
+  }[]>(
+    manageLeads ? "/payback/scenarios" : null, fetcher, SWR_OPTS,
+  );
+  const simpleScenarios = useMemo(
+    () => savedScenarios.filter(s => s.inputs._mode === "simple"),
+    [savedScenarios]
   );
 
   // ── Access guard ────────────────────────────────────────────────────────────
@@ -400,14 +410,27 @@ function LeadsPageContent() {
             </Button>
           ))}
           {manageLeads && (
-            <Button
-              variant={activeTab === "config" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setActiveTab("config")}
-            >
-              <Settings className="h-3.5 w-3.5 mr-1.5" />
-              Configurações
-            </Button>
+            <>
+              <Button
+                variant={activeTab === "simulations" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setActiveTab("simulations")}
+              >
+                <BarChart2 className="h-3.5 w-3.5 mr-1.5" />
+                Simulações
+                {simpleScenarios.length > 0 && (
+                  <span className="ml-1.5 text-[0.6rem] bg-white/20 px-1 rounded-full">{simpleScenarios.length}</span>
+                )}
+              </Button>
+              <Button
+                variant={activeTab === "config" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setActiveTab("config")}
+              >
+                <Settings className="h-3.5 w-3.5 mr-1.5" />
+                Configurações
+              </Button>
+            </>
           )}
         </div>
       </div>
@@ -955,6 +978,7 @@ function LeadsPageContent() {
                           <th className="text-right px-4 py-2.5 font-medium">Potência (kW)</th>
                           <th className="text-right px-4 py-2.5 font-medium">Sessões/dia</th>
                           <th className="text-right px-4 py-2.5 font-medium">Duração (min)</th>
+                          <th className="text-right px-4 py-2.5 font-medium">Payback est.</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y">
@@ -962,26 +986,41 @@ function LeadsPageContent() {
                           <tr key={name} className="hover:bg-muted/30">
                             <td className="px-4 py-2.5 font-medium">{name}</td>
                             {editingConfig && configDraft ? (
-                              (["price_brl", "power_kw", "avg_sessions_day", "avg_duration_min"] as const).map((field) => (
-                                <td key={field} className="px-4 py-2 text-right">
-                                  <Input type="number" step={field === "power_kw" ? 0.1 : 1}
-                                    value={configDraft.charger_configs[name]?.[field] ?? ""}
-                                    onChange={(e) => {
-                                      const v = parseFloat(e.target.value);
-                                      setConfigDraft((p) => p ? {
-                                        ...p,
-                                        charger_configs: { ...p.charger_configs, [name]: { ...p.charger_configs[name], [field]: v } },
-                                      } : p);
-                                    }}
-                                    className="h-7 text-xs text-right w-24 ml-auto" />
-                                </td>
-                              ))
+                              <>
+                                {(["price_brl", "power_kw", "avg_sessions_day", "avg_duration_min"] as const).map((field) => (
+                                  <td key={field} className="px-4 py-2 text-right">
+                                    <Input type="number" step={field === "power_kw" ? 0.1 : 1}
+                                      value={configDraft.charger_configs[name]?.[field] ?? ""}
+                                      onChange={(e) => {
+                                        const v = parseFloat(e.target.value);
+                                        setConfigDraft((p) => p ? {
+                                          ...p,
+                                          charger_configs: { ...p.charger_configs, [name]: { ...p.charger_configs[name], [field]: v } },
+                                        } : p);
+                                      }}
+                                      className="h-7 text-xs text-right w-24 ml-auto" />
+                                  </td>
+                                ))}
+                                <td className="px-4 py-2 text-right text-xs text-muted-foreground">calculado</td>
+                              </>
                             ) : (
                               <>
                                 <td className="px-4 py-2.5 text-right">{fmtBRL(cfg.price_brl)}</td>
                                 <td className="px-4 py-2.5 text-right">{cfg.power_kw}</td>
                                 <td className="px-4 py-2.5 text-right">{cfg.avg_sessions_day}</td>
                                 <td className="px-4 py-2.5 text-right">{cfg.avg_duration_min}</td>
+                                <td className="px-4 py-2.5 text-right text-xs font-medium">
+                                  {(() => {
+                                    const kwh = cfg.power_kw * (cfg.avg_duration_min / 60) * 0.5;
+                                    const monthlyRev = cfg.avg_sessions_day * 30 * kwh * (activeConfig?.price_per_kwh ?? 0);
+                                    const monthlyOpex = (cfg.price_brl * (activeConfig?.opex_pct ?? 0)) / 12;
+                                    const net = monthlyRev - monthlyOpex;
+                                    if (net <= 0) return <span className="text-red-500">—</span>;
+                                    const months = cfg.price_brl / net;
+                                    const yrs = months / 12;
+                                    return <span className={yrs <= 4 ? "text-emerald-600 dark:text-emerald-400" : yrs <= 7 ? "text-amber-600" : "text-red-500"}>{yrs.toFixed(1)} anos</span>;
+                                  })()}
+                                </td>
                               </>
                             )}
                           </tr>
@@ -1118,6 +1157,78 @@ function LeadsPageContent() {
               )}
             </CardContent>
           </Card>
+        </div>
+      )}
+
+      {/* ══════════════ SIMULATIONS TAB ════════════════════════════════════════ */}
+      {activeTab === "simulations" && manageLeads && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <BarChart2 className="h-4 w-4 text-muted-foreground" />
+            <p className="text-sm font-semibold">Análises de investimento salvas</p>
+            <span className="text-xs text-muted-foreground">({simpleScenarios.length} simulações simplificadas)</span>
+          </div>
+
+          {scenariosLoading ? (
+            <div className="space-y-2">
+              {Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-14 rounded-lg border bg-muted/30 animate-pulse" />)}
+            </div>
+          ) : simpleScenarios.length === 0 ? (
+            <Card>
+              <CardContent className="pt-8 pb-8 flex flex-col items-center gap-3 text-muted-foreground">
+                <BarChart2 className="h-8 w-8 opacity-30" />
+                <p className="text-sm">Nenhuma simulação salva ainda.</p>
+                <p className="text-xs text-center opacity-70">As análises de investimento salvas em Análise de Invest. aparecerão aqui.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="overflow-x-auto rounded-lg border">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/50">
+                  <tr>
+                    {["Nome do projeto", "Estabelecimento", "Estações", "CAPEX", "Payback", "Lucro/mês", "Salvo em"].map(h => (
+                      <th key={h} className="px-4 py-2.5 text-left font-medium text-muted-foreground text-xs">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {simpleScenarios.map(sc => {
+                    const inp = sc.inputs as Record<string, unknown>;
+                    const res = sc.results as Record<string, unknown>;
+                    const estName = (inp.establishment_name as string) || "—";
+                    const stations = (inp.stations as Array<{ type: string; quantity: number }> | undefined) ?? [];
+                    const stationSummary = stations.length > 0
+                      ? stations.filter(s => s.quantity > 0).map(s => `${s.quantity}× ${s.type}`).join(", ")
+                      : `${inp.n_chargers ?? 1}× ${inp.power_kw ?? "?"}kW`;
+                    const capex = (inp.capex_total as number) ?? 0;
+                    const paybackMonths = res.payback_months as number | null;
+                    const monthlyNet = (res.monthly_net as number) ?? 0;
+                    return (
+                      <tr key={sc.id} className="border-t hover:bg-muted/20 transition-colors">
+                        <td className="px-4 py-3 font-medium">{sc.name}</td>
+                        <td className="px-4 py-3 text-muted-foreground">{estName}</td>
+                        <td className="px-4 py-3 text-xs">{stationSummary || "—"}</td>
+                        <td className="px-4 py-3">{fmtBRL(capex)}</td>
+                        <td className="px-4 py-3">
+                          {paybackMonths
+                            ? <span className={paybackMonths <= 48 ? "text-emerald-600 dark:text-emerald-400 font-medium" : "text-amber-600 font-medium"}>
+                                {Math.floor(paybackMonths / 12)}a {Math.round(paybackMonths % 12)}m
+                              </span>
+                            : <span className="text-red-500">Sem retorno</span>}
+                        </td>
+                        <td className={`px-4 py-3 font-medium ${monthlyNet >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>
+                          {fmtBRL(monthlyNet)}
+                        </td>
+                        <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                          {new Date(sc.updated_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
     </div>
