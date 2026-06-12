@@ -37,14 +37,18 @@ L.Icon.Default.mergeOptions({
 const INITIAL_CENTER = [-15.8, -47.9] as [number, number];
 const INITIAL_ZOOM = 5;
 
+// Todas as camadas desativadas por padrão. As camadas (carregadores, gap ABVE,
+// POIs/rodovias/postos, score/heatmap por UF, etc.) e os pesos foram desligados
+// por enquanto — só a análise municipal por estado (choropleth + Top 10) fica
+// ativa. Ver memória do projeto "map-layers-disabled".
 const DEFAULT_LAYERS: LayerVisibility = {
   income: false,
   fleet: false,
-  chargers: true,
+  chargers: false,
   poi: false,
   fuel: false,
   traffic: false,
-  abveGap: true,
+  abveGap: false,
   score: false,
   heatmap: false,
 };

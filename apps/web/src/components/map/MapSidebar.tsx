@@ -113,16 +113,6 @@ export function MapSidebar({
 }: Props) {
   const showMuni = !!filterUF && !!muniTop && muniTop.length > 0;
   const [collapsed, setCollapsed] = useState(false);
-  const [tab, setTab] = useState<'layers' | 'weights' | 'rank'>('layers');
-
-  const toggle = (key: keyof LayerVisibility) =>
-    onLayersChange({ ...layers, [key]: !layers[key] });
-
-  const setWeight = (key: keyof ScoreWeights, val: number[]) =>
-    onWeightsChange({ ...weights, [key]: val[0] });
-
-  const isLayerPending = (key: keyof LayerVisibility) =>
-    NEEDS_IBGE.includes(key) && ibgeLoading;
 
   if (collapsed) {
     return (
@@ -175,126 +165,19 @@ export function MapSidebar({
         )}
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b">
-        {([
-          ['layers', <Layers key="l" className="h-3.5 w-3.5" />, 'Camadas'],
-          ['weights', <SlidersHorizontal key="w" className="h-3.5 w-3.5" />, 'Pesos'],
-          ['rank', <Trophy key="r" className="h-3.5 w-3.5" />, 'Top 10'],
-        ] as const).map(([key, icon, label]) => (
-          <button
-            key={key}
-            onClick={() => setTab(key)}
-            className={cn(
-              'flex-1 flex items-center justify-center gap-1 py-2 text-xs font-medium border-b-2 transition-colors',
-              tab === key
-                ? 'border-[#06CB3F] text-[#163134]'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
-            )}
-          >
-            {icon}
-            <span>{label}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Scrollable content */}
+      {/* Scrollable content — apenas o Top 10 (camadas e pesos desativados) */}
       <div className="flex-1 overflow-y-auto">
 
-        {/* ── CAMADAS ── */}
-        {tab === 'layers' && (
-          <div className="p-4 space-y-3">
-            {(Object.keys(LAYER_LABELS) as (keyof LayerVisibility)[]).map((key) => {
-              const pending = isLayerPending(key);
-              const overpass = NEEDS_OVERPASS.includes(key);
-              return (
-                <div key={key} className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1">
-                      <Label
-                        htmlFor={`layer-${key}`}
-                        className="text-xs text-gray-700 cursor-pointer leading-tight"
-                      >
-                        {LAYER_LABELS[key]}
-                      </Label>
-                      {pending && layers[key] && (
-                        <Loader2 className="h-3 w-3 text-gray-400 animate-spin flex-shrink-0" />
-                      )}
-                    </div>
-                    {LAYER_SUBLABEL[key] && (
-                      <p className="text-[10px] text-gray-400 mt-0.5">{LAYER_SUBLABEL[key]}</p>
-                    )}
-                    {overpass && layers[key] && (
-                      <p className="text-[10px] text-blue-500 mt-0.5">Move o mapa para carregar</p>
-                    )}
-                  </div>
-                  <Switch
-                    id={`layer-${key}`}
-                    checked={layers[key]}
-                    onCheckedChange={() => toggle(key)}
-                    className="flex-shrink-0 mt-0.5"
-                  />
-                </div>
-              );
-            })}
-
-            {/* ABVE Gap legend */}
-            {layers.abveGap && (
-              <div className="mt-3 pt-3 border-t">
-                <p className="text-xs font-medium text-gray-500 mb-2">Legenda — Gap ABVE</p>
-                {(Object.entries(GAP_COLORS) as [GapClassificacao, string][]).map(([k, color]) => (
-                  <div key={k} className="flex items-center gap-2 mb-1">
-                    <div className="w-4 h-4 rounded-sm flex-shrink-0" style={{ background: color }} />
-                    <span className="text-xs text-gray-600 capitalize">{k}</span>
-                  </div>
-                ))}
-                {ibgeLoading && (
-                  <p className="text-[10px] text-amber-600 mt-2">
-                    ⏳ Aguardando polígonos do IBGE para renderizar…
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── PESOS ── */}
-        {tab === 'weights' && (
-          <div className="p-4 space-y-5">
-            {(Object.keys(WEIGHT_LABELS) as (keyof ScoreWeights)[]).map((key) => (
-              <div key={key}>
-                <div className="flex justify-between items-center mb-1">
-                  <Label className="text-xs text-gray-700 leading-tight">
-                    {WEIGHT_LABELS[key]}
-                  </Label>
-                  <span className="text-xs font-mono font-semibold text-[#163134] ml-2 flex-shrink-0">
-                    {weights[key]}
-                  </span>
-                </div>
-                <Slider
-                  min={0}
-                  max={5}
-                  step={0.5}
-                  value={[weights[key]]}
-                  onValueChange={(val) => setWeight(key, val)}
-                  className="mt-1"
-                />
-              </div>
-            ))}
-            <div className="pt-2 border-t">
-              <p className="text-[10px] text-gray-400">
-                Ative as camadas <b>Score de Oportunidade</b> ou <b>Heatmap</b> para ver o resultado.
-              </p>
-            </div>
-          </div>
-        )}
-
         {/* ── TOP 10 ── */}
-        {tab === 'rank' && showMuni && (
+        {showMuni && (
           <div className="p-4">
+            <div className="flex items-center gap-1.5 mb-3">
+              <Trophy className="h-3.5 w-3.5 text-[#06CB3F]" />
+              <span className="text-xs font-semibold text-[#163134]">Top 10 cidades — {filterUF}</span>
+            </div>
             <p className="text-[10px] text-gray-400 mb-3">
-              Top 10 cidades de <b>{filterUF}</b> por score de oportunidade
-              (frota EV real ABVE × eletropostos).
+              Por score de oportunidade (frota EV real ABVE × eletropostos). Clique numa
+              cidade no mapa para ver população, frota, eletropostos e carência.
             </p>
             <ol className="space-y-2">
               {muniTop!.slice(0, 10).map((m, i) => (
@@ -318,11 +201,23 @@ export function MapSidebar({
           </div>
         )}
 
-        {tab === 'rank' && !showMuni && (
+        {!showMuni && (
+          <div className="p-4">
+            <div className="text-center py-8 text-xs text-gray-500 space-y-2">
+              <Trophy className="h-8 w-8 mx-auto text-gray-200" />
+              <p className="font-medium text-gray-600">Selecione um estado (UF)</p>
+              <p className="text-gray-400 leading-relaxed">
+                Escolha um estado no filtro acima para ver o mapa estratificado por
+                cidade e o Top 10 de oportunidades.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* bloco antigo de ranking por UF — desativado (mantido oculto) */}
+        {false && (
           <div className="p-4">
             <p className="text-[10px] text-gray-400 mb-3">
-              Ranking por estado (UF). Selecione um estado no filtro acima para ver o
-              Top 10 de cidades.
               {allScores.length > 0
                 ? ` Score calculado para ${allScores.length} estados.`
                 : ' Aguardando dados…'}
