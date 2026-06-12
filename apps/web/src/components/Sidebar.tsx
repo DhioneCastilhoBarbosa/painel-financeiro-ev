@@ -107,7 +107,11 @@ export function Sidebar({
       <aside
         data-sidebar
         className={cn(
-          "relative flex flex-col border-r transition-all duration-200",
+          // z-index p/ o botão de recolher (que transborda a borda direita) ficar
+          // sobreposto a conteúdos com empilhamento próprio, como o mapa Leaflet.
+          // Moderado (z-20) de propósito: vence o mapa (que fica contido no <main>
+          // estático) mas continua abaixo de modais/diálogos (z-50).
+          "relative z-20 flex flex-col border-r transition-all duration-200",
           mobile ? "w-full h-full" : collapsed ? "w-16" : "w-56",
           className
         )}
@@ -295,7 +299,7 @@ export function Sidebar({
         {/* ── Collapse toggle (apenas desktop) ──────────────────────────── */}
         {!mobile && (
           <button
-            className="absolute bottom-36 -right-3 h-6 w-6 rounded-full shadow-md flex items-center justify-center border transition-colors hover:opacity-90"
+            className="absolute bottom-36 -right-3 z-20 h-6 w-6 rounded-full shadow-md flex items-center justify-center border transition-colors hover:opacity-90"
             style={{
               backgroundColor: DARK,
               borderColor: `${GREEN}40`,
