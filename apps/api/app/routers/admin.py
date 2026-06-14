@@ -789,15 +789,17 @@ async def respond_feedback(
 @router.delete(
     "/feedback/{feedback_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    response_class=Response,
     summary="Excluir um feedback",
 )
 async def delete_feedback(
     feedback_id: uuid.UUID,
     admin: User = _AdminUser,
     db: AsyncSession = Depends(get_db),
-) -> None:
+) -> Response:
     fb = await db.get(Feedback, feedback_id)
     if not fb:
         raise HTTPException(status_code=404, detail="Feedback não encontrado")
     await db.delete(fb)
     await db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

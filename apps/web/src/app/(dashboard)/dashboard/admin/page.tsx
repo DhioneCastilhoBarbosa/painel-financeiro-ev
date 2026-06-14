@@ -774,13 +774,13 @@ export default function AdminPage() {
                         >
                           <SelectTrigger className="h-7 w-32 text-xs">
                             <SelectValue>
-                              {(v: string) => FEEDBACK_STATUS_LABEL[v] ?? v}
+                              {(v: string | null) => v ? (FEEDBACK_STATUS_LABEL[v] ?? v) : "—"}
                             </SelectValue>
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="pending" className="text-xs">Pendente</SelectItem>
-                            <SelectItem value="reviewed" className="text-xs">Em análise</SelectItem>
-                            <SelectItem value="resolved" className="text-xs">Resolvido</SelectItem>
+                            {Object.entries(FEEDBACK_STATUS_LABEL).map(([value, label]) => (
+                              <SelectItem key={value} value={value} className="text-xs">{label}</SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </td>

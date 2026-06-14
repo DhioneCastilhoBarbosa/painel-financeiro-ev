@@ -454,6 +454,8 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     });
   }
 
+  const isPrintingRef = useRef(false);
+
   // ── Save / Load / Export ───────────────────────────────────────────────────
   const simpleFileRef = useRef<HTMLInputElement>(null);
   const [showSavePanel, setShowSavePanel] = useState(false);
@@ -485,6 +487,8 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
   }
 
   function handleSimplePrint() {
+    if (isPrintingRef.current) return;
+    isPrintingRef.current = true;
     void recordPdfSimulation();
     const originalTitle = document.title;
     document.title = `Intelbras - Análise de Investimento de Eletroposto${s.establishment_name ? ` - ${s.establishment_name}` : ""}`;
@@ -498,15 +502,16 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     if (aside) aside.style.display = "none";
     toUnclip.forEach(el => { el.style.height = "auto"; el.style.maxHeight = "none"; el.style.minHeight = "0"; el.style.overflow = "visible"; });
     const restore = () => {
+      isPrintingRef.current = false;
       document.title = originalTitle;
       if (sidebar && savedSidebar !== null) sidebar.style.display = savedSidebar;
       if (aside && savedAside !== null) aside.style.display = savedAside;
       savedUnclip.forEach(({ el, v }) => { el.style.cssText = v; });
-      window.removeEventListener("afterprint", restore);
     };
-    window.addEventListener("afterprint", restore);
-    // Give the print-only chart one frame to mount before printing
-    requestAnimationFrame(() => window.print());
+    // { once: true } auto-removes the listener after it fires, preventing accumulation on repeated prints
+    window.addEventListener("afterprint", restore, { once: true });
+    // Double rAF ensures the print chart's SVG is fully committed before the browser captures the page
+    requestAnimationFrame(() => requestAnimationFrame(() => window.print()));
   }
 
   function handleExportSimple() {
@@ -965,11 +970,13 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
             </div>
 
             {/* Print chart — fixed pixel size so the PDF renders at a proper height
-                (Recharts ResponsiveContainer measures unreliably during window.print) */}
+                (Recharts ResponsiveContainer measures unreliably during window.print).
+                width=640 fits safely inside A4 portrait with 1.5cm margins (~681px usable).
+                All scenarios are rendered unconditionally — hiddenScenarios is a screen-only toggle. */}
             <div className="hidden print:block" style={{ width: "100%" }}>
-              <ComposedChart width={700} height={340} data={r.chart} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
+              <ComposedChart width={640} height={340} data={r.chart} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis dataKey="mes" tick={{ fontSize: 10 }} tickFormatter={(v) => `M${v}`} interval={Math.ceil(r.chart.length / 10)} />
+                <XAxis dataKey="mes" tick={{ fontSize: 10 }} tickFormatter={(v) => `M${v}`} interval={Math.ceil(r.chart.length / 10) || 1} />
                 <YAxis tick={{ fontSize: 10 }} tickFormatter={(v: number) => `${v >= 0 ? "" : "-"}R$${Math.abs(v) >= 1000 ? `${Math.round(Math.abs(v) / 1000)}k` : Math.abs(v)}`} width={72} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 <ReferenceLine y={0} stroke="#ef4444" strokeWidth={2} strokeDasharray="4 2" label={{ value: "Break-even", position: "insideTopRight", fontSize: 10, fill: "#ef4444" }} />
@@ -978,7 +985,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                     <Cell key={i} fill={(entry.acumulado ?? 0) >= 0 ? "#10b981" : "#3b82f6"} />
                   ))}
                 </Bar>
-                {r.scenarios.filter(sc => !hiddenScenarios.has(sc.key)).map((sc) => (
+                {r.scenarios.map((sc) => (
                   <Line key={sc.key} type="monotone" dataKey={sc.key} name={`Ocup. ${sc.label}`}
                     stroke={sc.color} strokeWidth={1.5} strokeDasharray={sc.off < 0 ? "4 2" : undefined}
                     dot={false} isAnimationActive={false} />
