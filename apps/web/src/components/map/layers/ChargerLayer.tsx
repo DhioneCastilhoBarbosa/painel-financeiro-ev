@@ -1,6 +1,6 @@
 'use client';
 import { Marker, Popup } from 'react-leaflet';
-import * as L from 'leaflet';
+import L from 'leaflet';
 import type { Charger } from '@/hooks/useOpenChargeMap';
 import { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
@@ -26,7 +26,8 @@ export function ChargerLayer({ chargers }: Props) {
   return (
     <>
       {chargers.map((c) => (
-        <Marker key={c.id} position={[c.lat, c.lng]} icon={chargerIcon}>
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <Marker key={c.id} position={[c.lat, c.lng]} {...({ icon: chargerIcon } as any)}>
           <Popup>
             <b>{c.title}</b><br />
             {c.address}<br />

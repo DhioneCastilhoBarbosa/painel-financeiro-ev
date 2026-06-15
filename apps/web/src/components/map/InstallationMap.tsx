@@ -1,7 +1,7 @@
 'use client';
 import { useState, useCallback, useEffect } from 'react';
 import { MapContainer, TileLayer, useMapEvents, ZoomControl, useMap } from 'react-leaflet';
-import * as L from 'leaflet';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 import { useIBGEData } from '@/hooks/useIBGEData';
@@ -92,16 +92,19 @@ function MapResizer() {
 function BoundsWatcher({ onBoundsChange }: {
   onBoundsChange: (s: number, w: number, n: number, e: number) => void;
 }) {
-  const map = useMapEvents({
-    moveend() {
-      const b = map.getBounds();
-      onBoundsChange(b.getSouth(), b.getWest(), b.getNorth(), b.getEast());
-    },
-    zoomend() {
-      const b = map.getBounds();
-      onBoundsChange(b.getSouth(), b.getWest(), b.getNorth(), b.getEast());
-    },
-  });
+  const map = useMapEvents(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    {
+      moveend() {
+        const b = map.getBounds();
+        onBoundsChange(b.getSouth(), b.getWest(), b.getNorth(), b.getEast());
+      },
+      zoomend() {
+        const b = map.getBounds();
+        onBoundsChange(b.getSouth(), b.getWest(), b.getNorth(), b.getEast());
+      },
+    } as any
+  );
   return null;
 }
 
@@ -261,19 +264,10 @@ export default function InstallationMap() {
       )}
 
       {/* Map — always visible, no blocking overlay */}
-      {/* @ts-expect-error react-leaflet v4 types */}
-      <MapContainer
-        center={INITIAL_CENTER}
-        zoom={INITIAL_ZOOM}
-        zoomControl={false}
-        style={{ height: '100%', width: '100%' }}
-      >
-        {/* @ts-expect-error react-leaflet v4 types */}
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          maxZoom={18}
-        />
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <MapContainer {...({ center: INITIAL_CENTER, zoom: INITIAL_ZOOM, zoomControl: false, style: { height: '100%', width: '100%' } } as any)}>
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <TileLayer {...({ url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 18 } as any)} />
         <ZoomControl position="bottomright" />
         <MapResizer />
         <BoundsWatcher onBoundsChange={handleBoundsChange} />

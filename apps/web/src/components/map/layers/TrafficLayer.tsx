@@ -1,7 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
-import * as L from 'leaflet';
+import L from 'leaflet';
 import type { OverpassWay } from '@/hooks/useOverpassData';
 
 const HIGHWAY_STYLE: Record<string, { color: string; weight: number }> = {

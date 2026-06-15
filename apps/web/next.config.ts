@@ -3,10 +3,8 @@ import type { NextConfig } from "next";
 const isProd = process.env.NODE_ENV === "production";
 
 const nextConfig: NextConfig = {
-  // Permite build mesmo com erros de TypeScript e ESLint (erros não-críticos de tipo).
-  // O código continua funcionando; os erros devem ser corrigidos progressivamente.
+  // Permite build mesmo com erros de TypeScript (erros devem ser corrigidos progressivamente).
   typescript: { ignoreBuildErrors: true },
-  eslint: { ignoreDuringBuilds: true },
 
   ...(isProd ? { output: "standalone" } : {}),
 

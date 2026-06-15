@@ -192,7 +192,7 @@ export default function RegisterPage() {
                 <FormControl>
                   <Input
                     placeholder="Eletropostos Ltda"
-                    readOnly={isInvitation}
+                    readOnly={isInvitation ?? false}
                     className={isInvitation ? "bg-muted text-muted-foreground cursor-not-allowed" : ""}
                     {...field}
                   />

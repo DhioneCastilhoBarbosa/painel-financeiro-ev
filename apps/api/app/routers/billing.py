@@ -12,9 +12,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.core.plan_config import get_public_plans, get_plan
 from app.core.database import get_db
 from app.core.deps import CurrentUser
+from app.core.plan_config import get_public_plans
 from app.models.organization import Organization
 from app.models.subscription import Subscription, SubscriptionPlan, SubscriptionStatus
 from app.models.user import UserRole

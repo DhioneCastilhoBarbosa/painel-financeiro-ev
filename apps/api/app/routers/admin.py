@@ -28,8 +28,8 @@ from sqlalchemy import delete as sql_delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.core.plan_config import get_all_plans, get_available_features, update_plan
 from app.core.deps import CurrentUser
+from app.core.plan_config import get_all_plans, get_available_features, update_plan
 from app.models.charging_session import ChargingSession
 from app.models.data_file import DataFile
 from app.models.feedback import Feedback

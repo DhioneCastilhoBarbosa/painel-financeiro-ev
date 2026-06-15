@@ -1,8 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
-import * as L from 'leaflet';
-// @ts-expect-error react-leaflet v4 GeoJSON accepts style/onEachFeature from L.GeoJSONOptions
+import L from 'leaflet';
 import { GeoJSON } from 'react-leaflet';
 import type { IBGEGeoJSON } from '@/hooks/useIBGEData';
 import { UF_CODE_TO_SIGLA } from '@/hooks/useIBGEData';
@@ -99,11 +98,7 @@ export function ABVEGapLayer({ geojson, gapScores }: Props) {
   };
 
   return (
-    <GeoJSON
-      key="abve-gap-layer"
-      data={geojson}
-      style={style}
-      onEachFeature={onEachFeature}
-    />
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    <GeoJSON key="abve-gap-layer" {...({ data: geojson, style, onEachFeature } as any)} />
   );
 }

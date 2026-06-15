@@ -3,6 +3,7 @@ Endpoints de analytics — todos os dados do dashboard financeiro.
 Queries no banco → pandas → services/analytics.py → JSON.
 """
 
+import contextlib
 import pickle
 from datetime import date
 
@@ -11,10 +12,10 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.database import get_db
-from app.core.redis import get_redis_bin
 from app.core.analytics_cache import DF_CACHE_TTL, df_cache_key, get_version
+from app.core.database import get_db
 from app.core.deps import CurrentUser
+from app.core.redis import get_redis_bin
 from app.models.charging_session import ChargingSession
 from app.models.cost_configuration import CostConfiguration
 from app.models.organization import Organization
@@ -58,20 +59,16 @@ async def _load_df(
         connectors=sorted(connectors) if connectors else None,
     )
     rbin = get_redis_bin()
-    try:
+    with contextlib.suppress(Exception):
         cached = await rbin.get(key)
         if cached is not None:
             return pickle.loads(cached)
-    except Exception:
-        pass  # qualquer falha de cache → segue para o banco (degradação graciosa)
 
     df = await _load_df_uncached(
         organization_id, db, date_from, date_to, file_ids, stations, connectors
     )
-    try:
+    with contextlib.suppress(Exception):
         await rbin.set(key, pickle.dumps(df), ex=DF_CACHE_TTL)
-    except Exception:
-        pass
     return df
 
 
