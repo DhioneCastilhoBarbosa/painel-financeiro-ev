@@ -34,8 +34,12 @@ class Organization(Base):
     )
     trial_ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
-    users: Mapped[list[User]] = relationship("User", back_populates="organization", passive_deletes=True)
-    data_files: Mapped[list[DataFile]] = relationship("DataFile", back_populates="organization", passive_deletes=True)
+    users: Mapped[list[User]] = relationship(
+        "User", back_populates="organization", passive_deletes=True
+    )
+    data_files: Mapped[list[DataFile]] = relationship(
+        "DataFile", back_populates="organization", passive_deletes=True
+    )
     cost_configurations: Mapped[list[CostConfiguration]] = relationship(
         "CostConfiguration", back_populates="organization", passive_deletes=True
     )
