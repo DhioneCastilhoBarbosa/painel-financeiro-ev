@@ -80,7 +80,7 @@ async def calculate_payback(body: PaybackRequest):
 async def list_scenarios(current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
     result = await db.execute(
         select(PaybackScenario)
-        .where(PaybackScenario.organization_id == current_user.organization_id)
+        .where(PaybackScenario.created_by == current_user.id)
         .order_by(PaybackScenario.updated_at.desc())
     )
     return result.scalars().all()
@@ -132,7 +132,7 @@ async def save_scenario(
 async def get_scenario(
     scenario_id: str, current_user: CurrentUser, db: AsyncSession = Depends(get_db)
 ):
-    sc = await _get_scenario_or_404(scenario_id, current_user.organization_id, db)
+    sc = await _get_scenario_or_404(scenario_id, current_user.id, db)
     return sc
 
 
@@ -143,7 +143,7 @@ async def update_scenario(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
 ):
-    sc = await _get_scenario_or_404(scenario_id, current_user.organization_id, db)
+    sc = await _get_scenario_or_404(scenario_id, current_user.id, db)
     sc.name = body.name
     sc.inputs = body.inputs
     sc.results = body.results
@@ -157,7 +157,7 @@ async def update_scenario(
 async def delete_scenario(
     scenario_id: str, current_user: CurrentUser, db: AsyncSession = Depends(get_db)
 ):
-    sc = await _get_scenario_or_404(scenario_id, current_user.organization_id, db)
+    sc = await _get_scenario_or_404(scenario_id, current_user.id, db)
     await db.delete(sc)
     await db.commit()
 
@@ -166,7 +166,7 @@ async def delete_scenario(
 async def share_scenario(
     scenario_id: str, current_user: CurrentUser, db: AsyncSession = Depends(get_db)
 ):
-    sc = await _get_scenario_or_404(scenario_id, current_user.organization_id, db)
+    sc = await _get_scenario_or_404(scenario_id, current_user.id, db)
     if not sc.share_token:
         sc.share_token = secrets.token_urlsafe(24)
     return {"share_token": sc.share_token, "scenario_id": scenario_id}
@@ -185,9 +185,9 @@ async def get_shared_scenario(share_token: str, db: AsyncSession = Depends(get_d
 
 
 async def _get_scenario_or_404(
-    scenario_id: str, organization_id, db: AsyncSession
+    scenario_id: str, user_id, db: AsyncSession
 ) -> PaybackScenario:
     sc = await db.get(PaybackScenario, scenario_id)
-    if not sc or str(sc.organization_id) != str(organization_id):
+    if not sc or str(sc.created_by) != str(user_id):
         raise HTTPException(status_code=404, detail="Cenário não encontrado")
     return sc

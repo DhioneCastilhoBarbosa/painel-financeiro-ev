@@ -477,7 +477,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
       const dateStr = new Date().toLocaleDateString("pt-BR");
       await api.post("/payback/scenarios", {
         name: `[PDF] ${label} — ${dateStr}`,
-        inputs: { _mode: "simple", _source: "pdf", ...s },
+        inputs: { _mode: "simple", _source: "pdf", _user_email: user?.email ?? "", ...s },
         results: r,
       });
       swrMutate("/payback/scenarios");
@@ -549,7 +549,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     if (!saveName.trim()) return;
     setIsSaving(true);
     try {
-      await api.post("/payback/scenarios", { name: saveName.trim(), inputs: { _mode: "simple", ...s }, results: r });
+      await api.post("/payback/scenarios", { name: saveName.trim(), inputs: { _mode: "simple", _user_email: user?.email ?? "", ...s }, results: r });
       await swrMutate("/payback/scenarios");
       setSaveName("");
       toast.success("Projeto salvo");
@@ -909,7 +909,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                 <strong>Sobre o CAPEX:</strong> representa o investimento inicial total do projeto,
                 compondo equipamentos (carregadores), infraestrutura elétrica, obra civil,
                 transformador/proteção, homologações, software/backend e mão de obra de instalação.
-                Ajuste o valor conforme o orçamento real do seu fornecedor.
+                Ajuste o valor conforme os orçamentos reais de seus fornecedores.
               </p>
               {r.monthly_net <= 0 && (
                 <p className="text-xs text-red-500 pt-1">⚠ O projeto não gera retorno com os parâmetros atuais. Revise a tarifa, ocupação ou OPEX.</p>

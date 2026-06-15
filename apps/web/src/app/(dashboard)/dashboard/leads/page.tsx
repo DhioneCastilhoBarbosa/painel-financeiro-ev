@@ -1186,7 +1186,7 @@ function LeadsPageContent() {
               <table className="w-full text-sm">
                 <thead className="bg-muted/50">
                   <tr>
-                    {["Nome do projeto", "Estabelecimento", "Estações", "CAPEX", "Payback", "Lucro/mês", "Salvo em"].map(h => (
+                    {["Nome do projeto", "E-mail", "Estabelecimento", "Estações", "CAPEX", "Payback", "Lucro/mês", "Salvo em", ""].map(h => (
                       <th key={h} className="px-4 py-2.5 text-left font-medium text-muted-foreground text-xs">{h}</th>
                     ))}
                   </tr>
@@ -1213,6 +1213,7 @@ function LeadsPageContent() {
                             )}
                           </div>
                         </td>
+                        <td className="px-4 py-3 text-xs text-muted-foreground">{(inp._user_email as string) || "—"}</td>
                         <td className="px-4 py-3 text-muted-foreground">{estName}</td>
                         <td className="px-4 py-3 text-xs">{stationSummary || "—"}</td>
                         <td className="px-4 py-3">{fmtBRL(capex)}</td>
@@ -1228,6 +1229,26 @@ function LeadsPageContent() {
                         </td>
                         <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
                           {new Date(sc.updated_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}
+                        </td>
+                        <td className="px-4 py-3">
+                          <button
+                            title="Baixar .fdproj"
+                            onClick={() => {
+                              const blob = new Blob(
+                                [JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), inputs: sc.inputs, results: sc.results }, null, 2)],
+                                { type: "application/json" },
+                              );
+                              const url = URL.createObjectURL(blob);
+                              const a = document.createElement("a");
+                              a.href = url;
+                              a.download = `${sc.name.replace(/[^a-z0-9_\-]/gi, "_")}.fdproj`;
+                              a.click();
+                              URL.revokeObjectURL(url);
+                            }}
+                            className="p-1.5 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                          >
+                            <Download className="h-3.5 w-3.5" />
+                          </button>
                         </td>
                       </tr>
                     );
