@@ -19,6 +19,7 @@ Nota sobre NullPool:
 """
 from __future__ import annotations
 
+import contextlib
 import os
 import uuid
 from typing import AsyncGenerator
@@ -112,6 +113,45 @@ async def client(test_engine) -> AsyncGenerator[AsyncClient, None]:
 
 
 # ── Helpers de autenticação ─────────────────────────────────────────────────
+
+@pytest_asyncio.fixture(scope="session", autouse=True)
+async def _patch_health_engine(test_engine):
+    """Patch the module-level db_engine in app.main so /health/detailed uses the test engine.
+
+    The health_detailed endpoint connects via `db_engine` directly (not through get_db),
+    so the normal dependency override doesn't cover it. Substituting NullPool test_engine
+    ensures each connect() call creates a fresh connection in the current event loop,
+    avoiding "Future attached to a different loop" errors.
+    """
+    import app.main as _app_main
+    original = _app_main.db_engine
+    _app_main.db_engine = test_engine
+    yield
+    _app_main.db_engine = original
+
+
+@pytest_asyncio.fixture(autouse=True)
+async def _reset_redis():
+    """Reset the Redis singleton before and after each test.
+
+    The Redis _pool is a module-level singleton bound to the event loop it was first
+    created in. With function-scoped test loops, a pool from test N is invalid in test N+1
+    (closed loop). Resetting to None before each test forces a fresh pool in the current
+    loop, and closing after prevents leaked connections.
+    """
+    from app.core import redis as redis_mod
+    redis_mod._pool = None
+    redis_mod._bin_pool = None
+    yield
+    if redis_mod._pool is not None:
+        with contextlib.suppress(Exception):
+            await redis_mod._pool.aclose()
+        redis_mod._pool = None
+    if redis_mod._bin_pool is not None:
+        with contextlib.suppress(Exception):
+            await redis_mod._bin_pool.aclose()
+        redis_mod._bin_pool = None
+
 
 @pytest_asyncio.fixture(scope="session")
 async def registered_user(client: AsyncClient) -> dict:
