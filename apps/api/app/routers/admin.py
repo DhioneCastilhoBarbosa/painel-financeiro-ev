@@ -159,7 +159,7 @@ async def list_all_organizations(
                 "users": user_count or 0,
                 "files": file_count or 0,
                 "subscription_status": sub.status if sub else None,
-                "subscription_plan": sub.plan.value if sub else None,
+                "subscription_plan": sub.plan if sub else None,
             }
         )
     return rows
