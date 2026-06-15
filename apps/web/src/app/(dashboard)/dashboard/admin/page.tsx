@@ -68,6 +68,7 @@ interface OrgRow {
   users: number;
   files: number;
   subscription_status: string | null;
+  subscription_plan: string | null;
 }
 
 interface UserRow {
@@ -229,9 +230,13 @@ export default function AdminPage() {
     }
   }
 
-  function copyCode(code: string) {
-    navigator.clipboard.writeText(code);
-    toast.success("Código copiado!");
+  async function copyCode(code: string) {
+    try {
+      await navigator.clipboard.writeText(code);
+      toast.success("Código copiado!");
+    } catch {
+      toast.error("Erro ao copiar código");
+    }
   }
 
   async function updateOrgStatus(orgId: string, newStatus: string) {
@@ -389,7 +394,7 @@ export default function AdminPage() {
           { label: "Organizações", value: stats?.organizations.total, icon: Building2, sub: `${stats?.organizations.active ?? "—"} ativas` },
           { label: "Usuários", value: stats?.users.total, icon: Users, sub: "ativos" },
           { label: "Arquivos", value: stats?.files.total, icon: FileSpreadsheet, sub: "enviados" },
-          { label: "Sessões", value: stats?.sessions.total, icon: Activity, sub: "registros" },
+          { label: "Sessões", value: stats?.sessions.total, icon: Activity, sub: "últ. 30 dias" },
         ].map(({ label, value, icon: Icon, sub }) => (
           <Card key={label}>
             <CardContent className="pt-4 flex items-center gap-3">
@@ -456,7 +461,7 @@ export default function AdminPage() {
                             {STATUS_BADGE[org.status]?.label ?? org.status}
                           </Badge>
                           <span className="text-xs text-muted-foreground">
-                            {PLAN_LABEL[org.plan] ?? org.plan}
+                            {PLAN_LABEL[org.subscription_plan ?? org.plan] ?? (org.subscription_plan ?? org.plan)}
                           </span>
                         </div>
                         <p className="text-xs text-muted-foreground mt-0.5">
@@ -493,7 +498,7 @@ export default function AdminPage() {
                       {/* Actions */}
                       <div className="flex items-center gap-2 shrink-0">
                         <Select
-                          value={org.plan}
+                          value={org.subscription_plan ?? org.plan}
                           onValueChange={(v) => { if (v) updateOrgPlan(org.id, v); }}
                           disabled={loadingAction === `plan-${org.id}`}
                         >
@@ -956,15 +961,11 @@ export default function AdminPage() {
                               {!c.used && !c.expired && (
                                 <Tooltip>
                                   <TooltipTrigger
-                                    render={
-                                      <button
-                                        onClick={() => copyCode(c.code)}
-                                        className="p-1 rounded hover:bg-muted transition-colors"
-                                      >
-                                        <Copy className="h-3.5 w-3.5 text-muted-foreground" />
-                                      </button>
-                                    }
-                                  />
+                                    onClick={() => copyCode(c.code)}
+                                    className="p-1 rounded hover:bg-muted transition-colors"
+                                  >
+                                    <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                                  </TooltipTrigger>
                                   <TooltipContent>Copiar código</TooltipContent>
                                 </Tooltip>
                               )}
@@ -997,15 +998,11 @@ export default function AdminPage() {
                           {!c.used && !c.expired && (
                             <Tooltip>
                               <TooltipTrigger
-                                render={
-                                  <button
-                                    onClick={() => deleteInviteCode(c.id)}
-                                    className="p-1.5 rounded hover:bg-red-50 dark:hover:bg-red-950/40 text-red-500 transition-colors shrink-0 mt-0.5"
-                                  >
-                                    <Trash2 className="h-3.5 w-3.5" />
-                                  </button>
-                                }
-                              />
+                                onClick={() => deleteInviteCode(c.id)}
+                                className="p-1.5 rounded hover:bg-red-50 dark:hover:bg-red-950/40 text-red-500 transition-colors shrink-0 mt-0.5"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </TooltipTrigger>
                               <TooltipContent>Revogar código</TooltipContent>
                             </Tooltip>
                           )}

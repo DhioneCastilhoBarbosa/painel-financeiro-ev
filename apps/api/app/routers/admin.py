@@ -16,6 +16,7 @@ Capacidades:
 
 from __future__ import annotations
 
+import contextlib
 import secrets
 import string
 import uuid
@@ -36,7 +37,7 @@ from app.models.data_file import DataFile
 from app.models.feedback import Feedback
 from app.models.org_invite_code import OrgInviteCode
 from app.models.organization import Organization
-from app.models.subscription import Subscription
+from app.models.subscription import Subscription, SubscriptionPlan
 from app.models.user import User
 from app.services.audit_service import log_action
 
@@ -106,7 +107,10 @@ async def global_stats(
     )
     total_users = await db.scalar(select(func.count(User.id)).where(User.is_active.is_(True)))
     total_files = await db.scalar(select(func.count(DataFile.id)))
-    total_sessions = await db.scalar(select(func.count(ChargingSession.id)))
+    thirty_days_ago = datetime.now(UTC) - timedelta(days=30)
+    total_sessions = await db.scalar(
+        select(func.count(ChargingSession.id)).where(ChargingSession.started_at >= thirty_days_ago)
+    )
     return {
         "organizations": {"total": total_orgs, "active": active_orgs},
         "users": {"total": total_users},
@@ -155,6 +159,7 @@ async def list_all_organizations(
                 "users": user_count or 0,
                 "files": file_count or 0,
                 "subscription_status": sub.status if sub else None,
+                "subscription_plan": sub.plan.value if sub else None,
             }
         )
     return rows
@@ -281,6 +286,10 @@ async def update_organization_plan(
 
     old_plan = org.plan
     org.plan = body.plan
+    sub = await db.scalar(select(Subscription).where(Subscription.organization_id == org.id))
+    if sub:
+        with contextlib.suppress(ValueError):
+            sub.plan = SubscriptionPlan(body.plan)
     await db.flush()  # staging explícito antes do log
     await log_action(
         db,

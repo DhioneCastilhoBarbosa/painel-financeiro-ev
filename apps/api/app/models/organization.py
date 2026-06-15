@@ -34,14 +34,14 @@ class Organization(Base):
     )
     trial_ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
-    users: Mapped[list[User]] = relationship("User", back_populates="organization")
-    data_files: Mapped[list[DataFile]] = relationship("DataFile", back_populates="organization")
+    users: Mapped[list[User]] = relationship("User", back_populates="organization", passive_deletes=True)
+    data_files: Mapped[list[DataFile]] = relationship("DataFile", back_populates="organization", passive_deletes=True)
     cost_configurations: Mapped[list[CostConfiguration]] = relationship(
-        "CostConfiguration", back_populates="organization"
+        "CostConfiguration", back_populates="organization", passive_deletes=True
     )
     payback_scenarios: Mapped[list[PaybackScenario]] = relationship(
-        "PaybackScenario", back_populates="organization"
+        "PaybackScenario", back_populates="organization", passive_deletes=True
     )
     subscription: Mapped[Subscription | None] = relationship(
-        "Subscription", back_populates="organization", uselist=False
+        "Subscription", back_populates="organization", uselist=False, passive_deletes=True
     )
