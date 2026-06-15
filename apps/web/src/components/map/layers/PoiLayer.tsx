@@ -2,13 +2,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
-import { divIcon, marker } from 'leaflet';
+import * as L from 'leaflet';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import { ensureLeafletPlugins } from '@/components/map/leafletPlugins';
 import type { OverpassElement, OverpassNode, OverpassWay } from '@/hooks/useOverpassData';
 
-const poiIcon = divIcon({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const poiIcon = (L as any).divIcon({
   className: '',
   html: `<div style="
     width:20px;height:20px;border-radius:4px;
@@ -21,7 +22,8 @@ const poiIcon = divIcon({
   popupAnchor: [0, -12],
 });
 
-const fuelIcon = divIcon({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const fuelIcon = (L as any).divIcon({
   className: '',
   html: `<div style="
     width:20px;height:20px;border-radius:50%;
@@ -76,7 +78,8 @@ export function PoiLayer({ pois, fuelStations, showPois, showFuel }: Props) {
           const pos = getLatLng(el);
           if (!pos) return;
           const name = el.tags?.name || el.tags?.shop || 'POI';
-          marker(pos, { icon: poiIcon }).bindPopup(`<b>${name}</b>`).addTo(poiCluster);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (L as any).marker(pos, { icon: poiIcon }).bindPopup(`<b>${name}</b>`).addTo(poiCluster);
         });
         map.addLayer(poiCluster);
         groups.push(poiCluster);
@@ -87,7 +90,8 @@ export function PoiLayer({ pois, fuelStations, showPois, showFuel }: Props) {
         fuelStations.forEach((el) => {
           const name = el.tags?.name || 'Posto de combustível';
           const brand = el.tags?.brand || '';
-          marker([el.lat, el.lon], { icon: fuelIcon })
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (L as any).marker([el.lat, el.lon], { icon: fuelIcon })
             .bindPopup(`<b>${name}</b>${brand ? `<br/>${brand}` : ''}<br/><em>Candidato a retrofit EV</em>`)
             .addTo(fuelCluster);
         });

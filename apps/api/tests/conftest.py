@@ -52,6 +52,7 @@ async def test_engine():
     fecha ao terminar. Evita o erro "Future attached to a different loop" quando
     testes assíncronos em function-scope usam conexões criadas em outro loop.
     """
+    import app.models  # noqa: F401 — registers all ORM models with Base.metadata
     from app.core.database import Base
 
     engine = create_async_engine(TEST_DATABASE_URL, echo=False, poolclass=NullPool)

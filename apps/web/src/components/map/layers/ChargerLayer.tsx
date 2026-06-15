@@ -1,11 +1,12 @@
 'use client';
 import { Marker, Popup } from 'react-leaflet';
-import { divIcon, circle } from 'leaflet';
+import * as L from 'leaflet';
 import type { Charger } from '@/hooks/useOpenChargeMap';
 import { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 
-const chargerIcon = divIcon({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const chargerIcon = (L as any).divIcon({
   className: '',
   html: `<div style="
     width:24px;height:24px;border-radius:50%;
@@ -46,7 +47,8 @@ export function ChargerCoverageLayer({ chargers }: { chargers: Charger[] }) {
 
   useEffect(() => {
     const circles = chargers.map((c) =>
-      circle([c.lat, c.lng], {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (L as any).circle([c.lat, c.lng], {
         radius: 10000, // 10 km
         color: '#06CB3F',
         fillColor: '#06CB3F',
