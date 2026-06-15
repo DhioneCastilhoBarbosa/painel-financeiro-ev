@@ -151,15 +151,22 @@ function LeadsPageContent() {
   const { data: simConfig, mutate: mutateConfig } = useSWR<SimulatorConfig>(
     manageLeads ? "/leads/config/simulator" : null, fetcher, SWR_OPTS,
   );
+  const [filterOrg, setFilterOrg] = useState("");
+  const isMother = user?.organization_is_mother === true;
   const { data: savedScenarios = [], isLoading: scenariosLoading } = useSWR<{
-    id: string; name: string; inputs: Record<string, unknown>; results: Record<string, unknown>;
+    id: string; name: string; org_name: string;
+    inputs: Record<string, unknown>; results: Record<string, unknown>;
     created_at: string; updated_at: string;
-  }[]>(
-    manageLeads ? "/payback/scenarios" : null, fetcher, SWR_OPTS,
+  }[]>(manageLeads ? "/payback/scenarios/crm" : null, fetcher, SWR_OPTS);
+  const orgOptions = useMemo(
+    () => [...new Set(savedScenarios.map(s => s.org_name))].sort(),
+    [savedScenarios],
   );
   const simpleScenarios = useMemo(
-    () => savedScenarios.filter(s => s.inputs._mode === "simple"),
-    [savedScenarios]
+    () => savedScenarios.filter(
+      s => s.inputs._mode === "simple" && (!filterOrg || s.org_name === filterOrg)
+    ),
+    [savedScenarios, filterOrg]
   );
 
   // ── Access guard ────────────────────────────────────────────────────────────
@@ -1169,6 +1176,26 @@ function LeadsPageContent() {
             <span className="text-xs text-muted-foreground">({simpleScenarios.length} simulações simplificadas)</span>
           </div>
 
+          {isMother && (
+            <div className="flex items-center gap-2">
+              <select
+                value={filterOrg}
+                onChange={e => setFilterOrg(e.target.value)}
+                className="text-xs border rounded-md px-2 py-1.5 bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              >
+                <option value="">Todas as organizações</option>
+                {orgOptions.map(name => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+              {filterOrg && (
+                <button onClick={() => setFilterOrg("")} className="text-xs text-muted-foreground hover:text-foreground">
+                  Limpar
+                </button>
+              )}
+            </div>
+          )}
+
           {scenariosLoading ? (
             <div className="space-y-2">
               {Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-14 rounded-lg border bg-muted/30 animate-pulse" />)}
@@ -1186,7 +1213,18 @@ function LeadsPageContent() {
               <table className="w-full text-sm">
                 <thead className="bg-muted/50">
                   <tr>
-                    {["Nome do projeto", "E-mail", "Estabelecimento", "Estações", "CAPEX", "Payback", "Lucro/mês", "Salvo em", ""].map(h => (
+                    {[
+                      "Nome do projeto",
+                      ...(isMother ? ["Organização"] : []),
+                      "E-mail",
+                      "Estabelecimento",
+                      "Estações",
+                      "CAPEX",
+                      "Payback",
+                      "Lucro/mês",
+                      "Salvo em",
+                      "",
+                    ].map(h => (
                       <th key={h} className="px-4 py-2.5 text-left font-medium text-muted-foreground text-xs">{h}</th>
                     ))}
                   </tr>
@@ -1213,6 +1251,9 @@ function LeadsPageContent() {
                             )}
                           </div>
                         </td>
+                        {isMother && (
+                          <td className="px-4 py-3 text-xs text-muted-foreground">{sc.org_name || "—"}</td>
+                        )}
                         <td className="px-4 py-3 text-xs text-muted-foreground">{(inp._user_email as string) || "—"}</td>
                         <td className="px-4 py-3 text-muted-foreground">{estName}</td>
                         <td className="px-4 py-3 text-xs">{stationSummary || "—"}</td>

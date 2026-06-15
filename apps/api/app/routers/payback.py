@@ -9,7 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.deps import CurrentUser
+from app.models.custom_role import CustomRole
+from app.models.organization import Organization
 from app.models.payback_scenario import PaybackScenario
+from app.models.user import UserRole
 from app.services.payback import PaybackInputs, calculate
 
 router = APIRouter()
@@ -69,6 +72,26 @@ class ScenarioResponse(BaseModel):
         return v if v is not None else {}
 
 
+class CrmScenarioResponse(BaseModel):
+    id: str
+    name: str
+    org_name: str
+    inputs: dict
+    results: dict
+    created_at: datetime
+    updated_at: datetime
+
+    @field_validator("id", mode="before")
+    @classmethod
+    def _id_to_str(cls, v: object) -> object:
+        return str(v) if v is not None else v
+
+    @field_validator("inputs", "results", mode="before")
+    @classmethod
+    def _none_to_dict(cls, v: object) -> object:
+        return v if v is not None else {}
+
+
 @router.post("/calculate")
 async def calculate_payback(body: PaybackRequest):
     """Calcula payback — stateless, não persiste nada."""
@@ -94,8 +117,6 @@ async def save_scenario(
 ):
     # Limite de cenários por plano (org mãe não tem limite)
     from sqlalchemy import func
-
-    from app.models.organization import Organization
 
     org = await db.get(Organization, current_user.organization_id)
     if not org.is_mother:
@@ -126,6 +147,47 @@ async def save_scenario(
     await db.commit()
     await db.refresh(scenario)
     return scenario
+
+
+@router.get("/scenarios/crm", response_model=list[CrmScenarioResponse])
+async def list_crm_scenarios(
+    current_user: CurrentUser,
+    db: AsyncSession = Depends(get_db),
+):
+    """Cenários para o CRM — managers veem sua org; org mãe vê todas."""
+    if current_user.role not in (UserRole.owner, UserRole.admin):
+        if current_user.custom_role_id:
+            cr = await db.get(CustomRole, current_user.custom_role_id)
+            if not cr or not (cr.permissions.get("manage_leads") or cr.permissions.get("view_leads")):
+                raise HTTPException(status_code=403, detail="Permissão insuficiente")
+        else:
+            raise HTTPException(status_code=403, detail="Permissão insuficiente")
+
+    org = await db.get(Organization, current_user.organization_id)
+
+    q = (
+        select(PaybackScenario, Organization.name.label("org_name"))
+        .join(Organization, PaybackScenario.organization_id == Organization.id)
+        .order_by(PaybackScenario.updated_at.desc())
+    )
+
+    if not (org and org.is_mother):
+        q = q.where(PaybackScenario.organization_id == current_user.organization_id)
+
+    result = await db.execute(q)
+    rows = result.all()
+    return [
+        CrmScenarioResponse(
+            id=row.PaybackScenario.id,
+            name=row.PaybackScenario.name,
+            org_name=row.org_name,
+            inputs=row.PaybackScenario.inputs,
+            results=row.PaybackScenario.results,
+            created_at=row.PaybackScenario.created_at,
+            updated_at=row.PaybackScenario.updated_at,
+        )
+        for row in rows
+    ]
 
 
 @router.get("/scenarios/{scenario_id}", response_model=ScenarioResponse)
