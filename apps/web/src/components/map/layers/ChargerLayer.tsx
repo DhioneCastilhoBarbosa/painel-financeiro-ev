@@ -26,7 +26,7 @@ export function ChargerLayer({ chargers }: Props) {
   return (
     <>
       {chargers.map((c) => (
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         <Marker key={c.id} position={[c.lat, c.lng]} {...({ icon: chargerIcon } as any)}>
           <Popup>
             <b>{c.title}</b><br />
