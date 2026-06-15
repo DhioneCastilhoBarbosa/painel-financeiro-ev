@@ -305,9 +305,9 @@ _plan_dep = [Depends(require_active_plan)]
 app.include_router(
     analytics.router, prefix="/api/v1/analytics", tags=["analytics"], dependencies=_plan_dep
 )
-app.include_router(
-    payback.router, prefix="/api/v1/payback", tags=["payback"], dependencies=_plan_dep
-)
+# payback: calculadora stateless + cenários com limite próprio por plano —
+# acessíveis mesmo com trial expirado/free para não bloquear o uso da ferramenta.
+app.include_router(payback.router, prefix="/api/v1/payback", tags=["payback"])
 app.include_router(files.router, prefix="/api/v1/files", tags=["files"], dependencies=_plan_dep)
 app.include_router(leads.router, prefix="/api/v1/leads", tags=["leads"], dependencies=_plan_dep)
 app.include_router(capex.router, prefix="/api/v1/capex", tags=["capex"], dependencies=_plan_dep)

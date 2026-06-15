@@ -11,41 +11,67 @@ export interface PlanFeatures {
 
 const fetcher = (url: string) => api.get(url).then((r) => r.data);
 
+function storageKey(userId: string) {
+  return `plan_features_${userId}`;
+}
+
+function readCached(userId: string): PlanFeatures | undefined {
+  if (typeof window === 'undefined') return undefined;
+  try {
+    const raw = localStorage.getItem(storageKey(userId));
+    return raw ? (JSON.parse(raw) as PlanFeatures) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function writeCached(userId: string, data: PlanFeatures) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(storageKey(userId), JSON.stringify(data));
+  } catch {}
+}
+
 /**
  * Returns the current org's plan feature flags.
  *
+ * Uses localStorage as fallbackData (keyed per user) so the sidebar never
+ * flashes all-visible → restricted on page load. On the very first login
+ * there's still a brief loading state, but subsequent loads are instant.
+ *
  * `hasFeature(key)` returns:
- *   - `true`  while the initial load is in progress (optimistic — evita flash de tela bloqueada)
- *   - `false` se o request falhou (fail-closed — não expõe features por erro de rede/API)
- *   - `true`  se a chave não existe nas flags (retrocompatibilidade com planos antigos)
- *   - o valor booleano armazenado caso contrário
+ *   - `false` if user not loaded yet or request errored (fail-closed)
+ *   - `true`  if the key doesn't exist in flags (backward-compat with old plans)
+ *   - the stored boolean otherwise
  */
 export function usePlanFeatures() {
   const { user } = useAuth();
+
+  const fallbackData = user ? readCached(user.id) : undefined;
 
   const { data, isLoading, error } = useSWR<PlanFeatures>(
     user ? '/org/features' : null,
     fetcher,
     {
-      // Revalida ao focar a aba — garante que mudanças de plano feitas pelo
-      // admin sejam visíveis rapidamente sem precisar de hard-refresh.
       revalidateOnFocus: true,
-      dedupingInterval: 5_000,   // evita chamadas duplicadas em 5 s
+      dedupingInterval: 5_000,
+      fallbackData,
+      onSuccess: (d) => {
+        if (user) writeCached(user.id, d);
+      },
     }
   );
 
   function hasFeature(key: string): boolean {
-    // Otimista enquanto não autenticado ou durante o carregamento inicial —
-    // evita flash de tela bloqueada e piscar durante rehydration da auth.
-    if (!user || isLoading) return true;
-    // Fail-closed: se o request concluiu com erro, bloqueia o acesso.
+    if (!user) return false;
+    // During initial load without cached data, default to false (fail-closed).
+    // With fallbackData from localStorage this branch is rarely hit after first login.
+    if (isLoading && !fallbackData) return false;
     if (error || !data) return false;
     const flags = data.feature_flags;
-    // Se a chave não estiver nas flags (plano antigo), libera por retrocompatibilidade.
     return key in flags ? flags[key] : true;
   }
 
-  /** True if ANY of the given keys is enabled. */
   function hasAnyFeature(...keys: string[]): boolean {
     return keys.some((k) => hasFeature(k));
   }

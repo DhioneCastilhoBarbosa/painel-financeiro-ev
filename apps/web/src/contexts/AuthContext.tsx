@@ -9,8 +9,19 @@ import {
   ReactNode,
 } from "react";
 import axios from "axios";
+import { mutate as swrMutateAll } from "swr";
 import api, { setToken } from "@/lib/api";
 import type { User } from "@/lib/types";
+
+/** Limpa todo o cache SWR e entradas de plano no localStorage ao trocar de usuário. */
+function clearSwrCache() {
+  void swrMutateAll(() => true, undefined, { revalidate: false });
+  if (typeof window !== "undefined") {
+    Object.keys(localStorage)
+      .filter((k) => k.startsWith("plan_features_"))
+      .forEach((k) => localStorage.removeItem(k));
+  }
+}
 
 interface AuthContextValue {
   user: User | null;
@@ -48,7 +59,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       );
       setToken(data.access_token);
       const { data: me } = await api.get<User>("/auth/me");
-      setUser(me);
+      // Clear SWR cache if the user identity changed (prevents cross-user data leakage)
+      setUser((prev) => {
+        if (prev && prev.id !== me.id) clearSwrCache();
+        return me;
+      });
     } catch {
       // No valid session — stay on whatever page we're on (auth pages handle this)
       setUser(null);
@@ -68,6 +83,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data } = await api.post("/auth/login", { email, password });
     setToken(data.access_token);
     const { data: me } = await api.get<User>("/auth/me");
+    // Always clear SWR cache on login — previous session may have been a different user
+    clearSwrCache();
     setUser(me);
   };
 
@@ -75,6 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await api.post("/auth/logout");
     } finally {
+      clearSwrCache();
       setToken(null);
       setUser(null);
     }
