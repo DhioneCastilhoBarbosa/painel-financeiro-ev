@@ -158,7 +158,9 @@ async def list_crm_scenarios(
     if current_user.role not in (UserRole.owner, UserRole.admin):
         if current_user.custom_role_id:
             cr = await db.get(CustomRole, current_user.custom_role_id)
-            if not cr or not (cr.permissions.get("manage_leads") or cr.permissions.get("view_leads")):
+            if not cr or not (
+                cr.permissions.get("manage_leads") or cr.permissions.get("view_leads")
+            ):
                 raise HTTPException(status_code=403, detail="Permissão insuficiente")
         else:
             raise HTTPException(status_code=403, detail="Permissão insuficiente")
@@ -246,9 +248,7 @@ async def get_shared_scenario(share_token: str, db: AsyncSession = Depends(get_d
     return {"name": sc.name, "inputs": sc.inputs, "results": sc.results}
 
 
-async def _get_scenario_or_404(
-    scenario_id: str, user_id, db: AsyncSession
-) -> PaybackScenario:
+async def _get_scenario_or_404(scenario_id: str, user_id, db: AsyncSession) -> PaybackScenario:
     sc = await db.get(PaybackScenario, scenario_id)
     if not sc or str(sc.created_by) != str(user_id):
         raise HTTPException(status_code=404, detail="Cenário não encontrado")

@@ -52,8 +52,10 @@ async def _load_df(
     """
     version = await get_version(organization_id)
     key = df_cache_key(
-        organization_id, version,
-        date_from=date_from, date_to=date_to,
+        organization_id,
+        version,
+        date_from=date_from,
+        date_to=date_to,
         file_ids=sorted(file_ids) if file_ids else None,
         stations=sorted(stations) if stations else None,
         connectors=sorted(connectors) if connectors else None,

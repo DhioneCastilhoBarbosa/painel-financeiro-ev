@@ -1,7 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
-import L from 'leaflet';
+import { polyline, type Polyline } from 'leaflet';
 import type { OverpassWay } from '@/hooks/useOverpassData';
 
 const HIGHWAY_STYLE: Record<string, { color: string; weight: number }> = {
@@ -18,7 +18,7 @@ export function TrafficLayer({ highways }: Props) {
   const map = useMap();
 
   useEffect(() => {
-    const lines: L.Polyline[] = [];
+    const lines: Polyline[] = [];
 
     highways.forEach((way) => {
       if (!way.geometry?.length) return;
@@ -26,7 +26,7 @@ export function TrafficLayer({ highways }: Props) {
       const type = way.tags?.highway ?? 'primary';
       const style = HIGHWAY_STYLE[type] ?? { color: '#95a5a6', weight: 1.5 };
 
-      const line = L.polyline(latlngs, { color: style.color, weight: style.weight, opacity: 0.75 })
+      const line = polyline(latlngs, { color: style.color, weight: style.weight, opacity: 0.75 })
         .bindPopup(way.tags?.name ?? `Rodovia — ${type}`)
         .addTo(map);
 

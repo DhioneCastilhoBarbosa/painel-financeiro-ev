@@ -281,7 +281,7 @@ async def update_organization_plan(
 
     old_plan = org.plan
     org.plan = body.plan
-    await db.flush()   # staging explícito antes do log
+    await db.flush()  # staging explícito antes do log
     await log_action(
         db,
         admin.organization_id,
@@ -292,7 +292,7 @@ async def update_organization_plan(
         str(org.id),
         f"org={org.name} {old_plan} → {body.plan}",
     )
-    await db.commit()   # commit explícito — não depende apenas do auto-commit
+    await db.commit()  # commit explícito — não depende apenas do auto-commit
     return {"message": f"Plano da organização '{org.name}' atualizado para '{body.plan}'"}
 
 
@@ -439,9 +439,7 @@ def _generate_code() -> str:
     return "".join(secrets.choice(_CODE_ALPHABET) for _ in range(16))
 
 
-async def _serialize_invite_code_async(
-    code: OrgInviteCode, db: AsyncSession
-) -> dict[str, Any]:
+async def _serialize_invite_code_async(code: OrgInviteCode, db: AsyncSession) -> dict[str, Any]:
     """Serializa um OrgInviteCode sem tocar em nenhum atributo de relacionamento.
     Usa apenas await db.get() — seguro em qualquer versão de SQLAlchemy async."""
     now = datetime.now(UTC)

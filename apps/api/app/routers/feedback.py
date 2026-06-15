@@ -1,6 +1,7 @@
 """
 Feedback — sugestões e reclamações dos usuários.
 """
+
 from __future__ import annotations
 
 import uuid

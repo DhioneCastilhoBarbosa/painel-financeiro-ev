@@ -247,7 +247,9 @@ async def list_invitations(current_user: CurrentUser, db: AsyncSession = Depends
             "created_at": inv.created_at,
             "expires_at": inv.expires_at,
             "accepted_at": inv.accepted_at,
-            "status": "concluído" if inv.accepted_at else ("expirado" if inv.expires_at <= now else "pendente"),
+            "status": "concluído"
+            if inv.accepted_at
+            else ("expirado" if inv.expires_at <= now else "pendente"),
         }
         for inv in invites
     ]

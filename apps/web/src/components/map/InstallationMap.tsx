@@ -1,7 +1,7 @@
 'use client';
 import { useState, useCallback, useEffect } from 'react';
 import { MapContainer, TileLayer, useMapEvents, ZoomControl, useMap } from 'react-leaflet';
-import L from 'leaflet';
+import { Icon } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 import { useIBGEData } from '@/hooks/useIBGEData';
@@ -27,8 +27,8 @@ import type { LayerVisibility } from './MapSidebar';
 
 // Fix Leaflet default icon paths broken by webpack
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
+delete (Icon.Default.prototype as any)._getIconUrl;
+Icon.Default.mergeOptions({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',

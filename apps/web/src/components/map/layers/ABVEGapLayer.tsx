@@ -1,7 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
-import L from 'leaflet';
+import { circleMarker, type CircleMarker } from 'leaflet';
 import { GeoJSON } from 'react-leaflet';
 import type { IBGEGeoJSON } from '@/hooks/useIBGEData';
 import { UF_CODE_TO_SIGLA } from '@/hooks/useIBGEData';
@@ -26,11 +26,11 @@ function FallbackCircles({ gapScores }: { gapScores: GapScore[] }) {
   const map = useMap();
 
   useEffect(() => {
-    const circles: L.CircleMarker[] = gapScores.map((gap) => {
+    const circles: CircleMarker[] = gapScores.map((gap) => {
       const centroid = UF_CENTROIDS[gap.uf];
-      if (!centroid) return null as unknown as L.CircleMarker;
+      if (!centroid) return null as unknown as CircleMarker;
 
-      const circle = L.circleMarker(centroid, {
+      const circle = circleMarker(centroid, {
         radius: 18,
         fillColor: GAP_COLORS[gap.classificacao],
         color: '#fff',
