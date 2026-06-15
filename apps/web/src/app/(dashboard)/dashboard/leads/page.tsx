@@ -106,7 +106,7 @@ function LeadsPageContent() {
   const [filterSector, setFilterSector] = useState("");
   const [filterCharger, setFilterCharger] = useState("");
   const [expandedLead, setExpandedLead] = useState<string | null>(null);
-  const [activeTab, setActiveTab]       = useState<"leads" | "analytics" | "config" | "simulations">("leads");
+  const [activeTab, setActiveTab]       = useState<"leads" | "analytics" | "config" | "simulations" | "sim-analytics">("leads");
 
   // ── Analytics period filter ─────────────────────────────────────────────────
   const [analyticsPeriod, setAnalyticsPeriod] = useState<AnalyticsPeriod>("month");
@@ -168,6 +168,62 @@ function LeadsPageContent() {
     ),
     [savedScenarios, filterOrg]
   );
+
+  const simAnalytics = useMemo(() => {
+    const scs = simpleScenarios;
+    if (scs.length === 0) return null;
+
+    const capexList   = scs.map(s => (s.inputs.capex_total as number) ?? 0);
+    const netList     = scs.map(s => (s.results.monthly_net  as number) ?? 0);
+    const pbList      = scs.map(s => s.results.payback_months as number | null).filter((v): v is number => v != null);
+    const avgCapex    = capexList.reduce((a, b) => a + b, 0) / scs.length;
+    const avgNet      = netList.reduce((a, b) => a + b, 0) / scs.length;
+    const avgPayback  = pbList.length > 0 ? pbList.reduce((a, b) => a + b, 0) / pbList.length : null;
+
+    // Trend by day
+    const trendMap: Record<string, number> = {};
+    scs.forEach(s => { const d = s.created_at.slice(0, 10); trendMap[d] = (trendMap[d] ?? 0) + 1; });
+    const trend = Object.entries(trendMap).sort(([a], [b]) => a.localeCompare(b)).map(([date, count]) => ({ date, count }));
+
+    // Station types
+    const stMap: Record<string, { sims: number; qty: number }> = {};
+    scs.forEach(s => {
+      const sts = (s.inputs.stations as Array<{ type: string; quantity: number }> | undefined) ?? [];
+      sts.filter(st => st.quantity > 0).forEach(st => {
+        if (!stMap[st.type]) stMap[st.type] = { sims: 0, qty: 0 };
+        stMap[st.type].sims++;
+        stMap[st.type].qty += st.quantity;
+      });
+    });
+    const stationTypes = Object.entries(stMap)
+      .map(([type, d]) => ({ type, sims: d.sims, qty: d.qty }))
+      .sort((a, b) => b.sims - a.sims);
+
+    // Payback buckets
+    const buckets = [
+      { label: "< 1 ano",    test: (m: number) => m < 12 },
+      { label: "1–2 anos",   test: (m: number) => m >= 12 && m < 24 },
+      { label: "2–3 anos",   test: (m: number) => m >= 24 && m < 36 },
+      { label: "3–5 anos",   test: (m: number) => m >= 36 && m < 60 },
+      { label: "> 5 anos",   test: (m: number) => m >= 60 },
+      { label: "Sem retorno",test: () => false },
+    ];
+    const noReturn = scs.filter(s => !s.results.payback_months).length;
+    const paybackDist = [
+      ...buckets.slice(0, 5).map(b => ({ label: b.label, count: pbList.filter(b.test).length })),
+      { label: "Sem retorno", count: noReturn },
+    ].filter(b => b.count > 0);
+
+    // By org
+    const orgMap: Record<string, number> = {};
+    scs.forEach(s => { orgMap[s.org_name] = (orgMap[s.org_name] ?? 0) + 1; });
+    const byOrg = Object.entries(orgMap)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 12);
+
+    return { total: scs.length, avgCapex, avgNet, avgPayback, trend, stationTypes, paybackDist, byOrg };
+  }, [simpleScenarios]);
 
   // ── Access guard ────────────────────────────────────────────────────────────
   if (!user || !canViewLeads(user)) {
@@ -428,6 +484,14 @@ function LeadsPageContent() {
                 {simpleScenarios.length > 0 && (
                   <span className="ml-1.5 text-[0.6rem] bg-white/20 px-1 rounded-full">{simpleScenarios.length}</span>
                 )}
+              </Button>
+              <Button
+                variant={activeTab === "sim-analytics" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setActiveTab("sim-analytics")}
+              >
+                <TrendingUp className="h-3.5 w-3.5 mr-1.5" />
+                Análise Simul.
               </Button>
               <Button
                 variant={activeTab === "config" ? "default" : "outline"}
@@ -1213,18 +1277,7 @@ function LeadsPageContent() {
               <table className="w-full text-sm">
                 <thead className="bg-muted/50">
                   <tr>
-                    {[
-                      "Nome do projeto",
-                      ...(isMother ? ["Organização"] : []),
-                      "E-mail",
-                      "Estabelecimento",
-                      "Estações",
-                      "CAPEX",
-                      "Payback",
-                      "Lucro/mês",
-                      "Salvo em",
-                      "",
-                    ].map(h => (
+                    {["Nome do projeto", "Organização", "E-mail", "Estabelecimento", "Estações", "CAPEX", "Payback", "Lucro/mês", "Salvo em", ""].map(h => (
                       <th key={h} className="px-4 py-2.5 text-left font-medium text-muted-foreground text-xs">{h}</th>
                     ))}
                   </tr>
@@ -1251,9 +1304,7 @@ function LeadsPageContent() {
                             )}
                           </div>
                         </td>
-                        {isMother && (
-                          <td className="px-4 py-3 text-xs text-muted-foreground">{sc.org_name || "—"}</td>
-                        )}
+                        <td className="px-4 py-3 text-xs text-muted-foreground">{sc.org_name || "—"}</td>
                         <td className="px-4 py-3 text-xs text-muted-foreground">{(inp._user_email as string) || "—"}</td>
                         <td className="px-4 py-3 text-muted-foreground">{estName}</td>
                         <td className="px-4 py-3 text-xs">{stationSummary || "—"}</td>
@@ -1297,6 +1348,206 @@ function LeadsPageContent() {
                 </tbody>
               </table>
             </div>
+          )}
+        </div>
+      )}
+
+      {/* ══════════════ SIM-ANALYTICS TAB ══════════════════════════════════════ */}
+      {activeTab === "sim-analytics" && manageLeads && (
+        <div className="space-y-6">
+          {/* Org filter (master only) */}
+          {isMother && (
+            <div className="flex items-center gap-2">
+              <select
+                value={filterOrg}
+                onChange={e => setFilterOrg(e.target.value)}
+                className="text-xs border rounded-md px-2 py-1.5 bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              >
+                <option value="">Todas as organizações</option>
+                {orgOptions.map(name => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+              {filterOrg && (
+                <button onClick={() => setFilterOrg("")} className="text-xs text-muted-foreground hover:text-foreground">
+                  Limpar
+                </button>
+              )}
+            </div>
+          )}
+
+          {scenariosLoading ? (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-24 rounded-lg border bg-muted/30 animate-pulse" />)}
+            </div>
+          ) : !simAnalytics ? (
+            <Card>
+              <CardContent className="pt-8 pb-8 flex flex-col items-center gap-3 text-muted-foreground">
+                <TrendingUp className="h-8 w-8 opacity-30" />
+                <p className="text-sm">Nenhuma simulação encontrada.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              {/* KPI cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {[
+                  { label: "Total de simulações", value: simAnalytics.total, color: "text-foreground", fmt: (v: number) => v.toString() },
+                  { label: "CAPEX médio",          value: simAnalytics.avgCapex,   color: "text-blue-600",    fmt: fmtBRL },
+                  { label: "Payback médio",
+                    value: simAnalytics.avgPayback,
+                    color: simAnalytics.avgPayback && simAnalytics.avgPayback <= 48 ? "text-emerald-600" : "text-amber-600",
+                    fmt: (v: number) => `${Math.floor(v / 12)}a ${Math.round(v % 12)}m`,
+                    fallback: "—" },
+                  { label: "Lucro/mês médio",      value: simAnalytics.avgNet,     color: simAnalytics.avgNet >= 0 ? "text-emerald-600" : "text-red-500", fmt: fmtBRL },
+                ].map(({ label, value, color, fmt, fallback }) => (
+                  <Card key={label}>
+                    <CardContent className="pt-5">
+                      <p className="text-xs text-muted-foreground">{label}</p>
+                      <p className={`text-2xl font-bold mt-1 ${color}`}>
+                        {value == null ? (fallback ?? "—") : fmt(value as number)}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Trend */}
+              {simAnalytics.trend.length > 0 && (
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                      <Activity className="h-4 w-4" />
+                      Simulações por dia
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={160}>
+                      <AreaChart data={simAnalytics.trend} margin={{ top: 4, right: 8, left: -24, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="simGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%"  stopColor={GREEN} stopOpacity={0.3} />
+                            <stop offset="95%" stopColor={GREEN} stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                        <XAxis dataKey="date" tick={{ fontSize: 9 }} tickFormatter={fmtAxisDate}
+                          interval={simAnalytics.trend.length > 30 ? Math.floor(simAnalytics.trend.length / 10) : 0} />
+                        <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
+                        <Tooltip
+                          labelFormatter={(d) => { const [y, m, day] = (d as string).split("-"); return `${day}/${m}/${y}`; }}
+                          formatter={(v) => [v, "Simulações"]}
+                          contentStyle={{ fontSize: 12 }}
+                        />
+                        <Area type="monotone" dataKey="count" stroke={GREEN} strokeWidth={2} fill="url(#simGrad)" dot={false} />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+              )}
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Station types */}
+                {simAnalytics.stationTypes.length > 0 && (
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                        <Zap className="h-4 w-4" />
+                        Tipos de carregadores analisados
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ResponsiveContainer width="100%" height={simAnalytics.stationTypes.length * 38 + 16}>
+                        <BarChart
+                          data={simAnalytics.stationTypes}
+                          layout="vertical"
+                          margin={{ top: 0, right: 40, left: 8, bottom: 0 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" horizontal={false} />
+                          <XAxis type="number" tick={{ fontSize: 10 }} allowDecimals={false} />
+                          <YAxis type="category" dataKey="type" tick={{ fontSize: 10 }} width={80} />
+                          <Tooltip
+                            formatter={(v, name) => [v, name === "sims" ? "Simulações" : "Unidades"]}
+                            contentStyle={{ fontSize: 12 }}
+                          />
+                          <Bar dataKey="sims" name="sims" radius={[0, 4, 4, 0]}>
+                            {simAnalytics.stationTypes.map((_, i) => (
+                              <Cell key={i} fill={i === 0 ? GREEN : `${GREEN}${Math.round(255 * (1 - i * 0.12)).toString(16).padStart(2, "0")}`} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Payback distribution */}
+                {simAnalytics.paybackDist.length > 0 && (
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        Distribuição de payback
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ResponsiveContainer width="100%" height={simAnalytics.paybackDist.length * 38 + 16}>
+                        <BarChart
+                          data={simAnalytics.paybackDist}
+                          layout="vertical"
+                          margin={{ top: 0, right: 40, left: 8, bottom: 0 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" horizontal={false} />
+                          <XAxis type="number" tick={{ fontSize: 10 }} allowDecimals={false} />
+                          <YAxis type="category" dataKey="label" tick={{ fontSize: 10 }} width={80} />
+                          <Tooltip formatter={(v) => [v, "Projetos"]} contentStyle={{ fontSize: 12 }} />
+                          <Bar dataKey="count" name="count" radius={[0, 4, 4, 0]}>
+                            {simAnalytics.paybackDist.map((b, i) => (
+                              <Cell key={i} fill={
+                                b.label === "Sem retorno" ? "#ef4444"
+                                : b.label === "< 1 ano"   ? GREEN
+                                : DARK
+                              } opacity={b.label === "Sem retorno" ? 0.8 : 1 - i * 0.06} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+
+              {/* By org (master only, multi-org) */}
+              {isMother && simAnalytics.byOrg.length > 1 && (
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                      <Users2 className="h-4 w-4" />
+                      Simulações por organização
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={simAnalytics.byOrg.length * 34 + 16}>
+                      <BarChart
+                        data={simAnalytics.byOrg}
+                        layout="vertical"
+                        margin={{ top: 0, right: 40, left: 8, bottom: 0 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" horizontal={false} />
+                        <XAxis type="number" tick={{ fontSize: 10 }} allowDecimals={false} />
+                        <YAxis type="category" dataKey="name" tick={{ fontSize: 10 }} width={130} />
+                        <Tooltip formatter={(v) => [v, "Simulações"]} contentStyle={{ fontSize: 12 }} />
+                        <Bar dataKey="count" fill={DARK} radius={[0, 4, 4, 0]}>
+                          {simAnalytics.byOrg.map((_, i) => (
+                            <Cell key={i} fill={DARK} opacity={1 - i * 0.06} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+              )}
+            </>
           )}
         </div>
       )}
