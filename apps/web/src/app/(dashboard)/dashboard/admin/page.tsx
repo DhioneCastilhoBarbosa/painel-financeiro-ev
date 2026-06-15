@@ -235,7 +235,21 @@ export default function AdminPage() {
       await navigator.clipboard.writeText(code);
       toast.success("Código copiado!");
     } catch {
-      toast.error("Erro ao copiar código");
+      // Fallback for non-HTTPS contexts
+      try {
+        const el = document.createElement("textarea");
+        el.value = code;
+        el.style.cssText = "position:fixed;opacity:0;top:0;left:0";
+        document.body.appendChild(el);
+        el.focus();
+        el.select();
+        const ok = document.execCommand("copy");
+        document.body.removeChild(el);
+        if (ok) toast.success("Código copiado!");
+        else toast.error("Erro ao copiar código");
+      } catch {
+        toast.error("Erro ao copiar código");
+      }
     }
   }
 
