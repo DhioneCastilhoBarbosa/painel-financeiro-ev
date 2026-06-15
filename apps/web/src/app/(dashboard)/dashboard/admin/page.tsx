@@ -230,26 +230,28 @@ export default function AdminPage() {
     }
   }
 
-  async function copyCode(code: string) {
+  function copyCode(code: string) {
+    if (window.isSecureContext && navigator.clipboard) {
+      navigator.clipboard.writeText(code)
+        .then(() => toast.success("Código copiado!"))
+        .catch(() => toast.error("Erro ao copiar código"));
+      return;
+    }
+    // Fallback síncrono para contextos HTTP (execCommand deve rodar no mesmo tick do clique)
+    const el = document.createElement("textarea");
+    el.value = code;
+    el.style.cssText = "position:fixed;top:0;left:0;opacity:0;pointer-events:none";
+    document.body.appendChild(el);
+    el.focus();
+    el.select();
     try {
-      await navigator.clipboard.writeText(code);
-      toast.success("Código copiado!");
+      const ok = document.execCommand("copy");
+      if (ok) toast.success("Código copiado!");
+      else toast.error("Erro ao copiar código");
     } catch {
-      // Fallback for non-HTTPS contexts
-      try {
-        const el = document.createElement("textarea");
-        el.value = code;
-        el.style.cssText = "position:fixed;opacity:0;top:0;left:0";
-        document.body.appendChild(el);
-        el.focus();
-        el.select();
-        const ok = document.execCommand("copy");
-        document.body.removeChild(el);
-        if (ok) toast.success("Código copiado!");
-        else toast.error("Erro ao copiar código");
-      } catch {
-        toast.error("Erro ao copiar código");
-      }
+      toast.error("Erro ao copiar código");
+    } finally {
+      document.body.removeChild(el);
     }
   }
 
