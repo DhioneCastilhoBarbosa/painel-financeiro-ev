@@ -1,0 +1,61 @@
+name: Deploy to Dokploy
+
+# Dispara em push para main e permite acionamento manual pelo GitHub UI.
+# O Dokploy NÃO deve ter auto-deploy ativo — este workflow controla o gatilho.
+#
+# ─── CONFIGURAÇÃO NECESSÁRIA ──────────────────────────────────────────────────
+#
+# 1. No Dokploy:
+#    a. Vá em Application → General → desative "Auto Deploy"
+#    b. Vá em Application → Deployments → copie a "Webhook URL"
+#
+# 2. No GitHub (Settings → Secrets and variables → Actions):
+#    Adicione o secret:
+#      DOKPLOY_WEBHOOK_URL — URL copiada do Dokploy (ex: https://dokploy.seudominio.com/api/...)
+#
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-dokploy
+  cancel-in-progress: false   # Nunca cancela um deploy já em andamento
+
+jobs:
+
+  # ── Roda todo o CI (lint + testes + docker build) ─────────────────────────
+  # O deploy só avança se este job tiver êxito.
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  # ── Dispara o deploy no Dokploy via webhook ────────────────────────────────
+  deploy:
+    name: Trigger Dokploy deploy
+    runs-on: ubuntu-latest
+    needs: ci   # Só executa se o CI passar inteiro
+
+    steps:
+      - name: Trigger deploy via Dokploy webhook
+        run: |
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST \
+            -H "Content-Type: application/json" \
+            "${{ secrets.DOKPLOY_WEBHOOK_URL }}")
+
+          echo "Dokploy respondeu: HTTP $HTTP_STATUS"
+
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            echo "❌ Webhook falhou com status $HTTP_STATUS"
+            exit 1
+          fi
+
+          echo "✅ Deploy disparado com sucesso"
+
+      - name: Deployment summary
+        run: |
+          echo "Commit : ${{ github.sha }}"
+          echo "Branch : ${{ github.ref_name }}"
+          echo "Autor  : ${{ github.actor }}"
