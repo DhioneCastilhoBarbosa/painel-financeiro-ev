@@ -115,12 +115,12 @@ function KpiCard({
   badge?: string; badgeVariant?: "default" | "secondary" | "destructive" | "outline";
 }) {
   const textColor: Record<string, string> = {
-    slate: "text-slate-700 dark:text-slate-200",
-    emerald: "text-emerald-600",
-    red: "text-red-500",
-    blue: "text-blue-600",
-    amber: "text-amber-600",
-    purple: "text-purple-600",
+    slate:   "text-slate-700 dark:text-slate-200",
+    emerald: "text-emerald-600 dark:text-emerald-400",
+    red:     "text-red-500 dark:text-red-400",
+    blue:    "text-blue-600 dark:text-blue-400",
+    amber:   "text-amber-500 dark:text-amber-400",
+    purple:  "text-purple-600 dark:text-purple-400",
   };
   return (
     <Card className="border dark:border-slate-800">
@@ -492,6 +492,8 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     void recordPdfSimulation();
     const originalTitle = document.title;
     document.title = `Intelbras - Análise de Investimento de Eletroposto${s.establishment_name ? ` - ${s.establishment_name}` : ""}`;
+    const wasDark = document.documentElement.classList.contains("dark");
+    if (wasDark) document.documentElement.classList.remove("dark");
     const sidebar = document.querySelector<HTMLElement>("[data-sidebar]");
     const aside = document.querySelector<HTMLElement>(".simplified-aside");
     const toUnclip = Array.from(document.querySelectorAll<HTMLElement>(".h-screen,.h-full,.min-h-0,.overflow-hidden,.overflow-y-auto"));
@@ -504,6 +506,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     const restore = () => {
       isPrintingRef.current = false;
       document.title = originalTitle;
+      if (wasDark) document.documentElement.classList.add("dark");
       if (sidebar && savedSidebar !== null) sidebar.style.display = savedSidebar;
       if (aside && savedAside !== null) aside.style.display = savedAside;
       savedUnclip.forEach(({ el, v }) => { el.style.cssText = v; });
@@ -876,11 +879,11 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
               {([
                 ["kWh consumido/mês (est.)", `${Math.round(r.monthly_kwh).toLocaleString("pt-BR")} kWh`, "", "Calculado como 50% do kWh teórico máximo (potência × 24h × 30 × ocupação). Na prática, os veículos não operam à potência máxima durante toda a sessão — a potência cai ao final da recarga — resultando nesta redução média de 50%."],
                 ["Receita bruta", formatCurrency(r.monthly_revenue), "text-blue-600 dark:text-blue-400"],
-                ["(-) Custo de energia", formatCurrency(r.monthly_energy), "text-red-500"],
-                ["(-) OPEX fixo", formatCurrency(s.monthly_opex), "text-red-500"],
-                ...(r.monthly_split > 0 ? [["(-) Split de receita", formatCurrency(r.monthly_split), "text-red-500"] as [string, string, string, string?]] : []),
-                ["= Lucro líquido/mês", formatCurrency(r.monthly_net), r.monthly_net >= 0 ? "text-emerald-600 dark:text-emerald-400 font-bold" : "text-red-600 font-bold"],
-                ["ROI anual estimado", `${r.roi_1y.toFixed(1)}%`, r.roi_1y >= 20 ? "text-emerald-600" : "text-amber-600"],
+                ["(-) Custo de energia", formatCurrency(r.monthly_energy), "text-red-500 dark:text-red-400"],
+                ["(-) OPEX fixo", formatCurrency(s.monthly_opex), "text-red-500 dark:text-red-400"],
+                ...(r.monthly_split > 0 ? [["(-) Split de receita", formatCurrency(r.monthly_split), "text-red-500 dark:text-red-400"] as [string, string, string, string?]] : []),
+                ["= Lucro líquido/mês", formatCurrency(r.monthly_net), r.monthly_net >= 0 ? "text-emerald-600 dark:text-emerald-400 font-bold" : "text-red-500 dark:text-red-400 font-bold"],
+                ["ROI anual estimado", `${r.roi_1y.toFixed(1)}%`, r.roi_1y >= 20 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-500 dark:text-amber-400"],
               ] as [string, string, string, string?][]).map(([label, val, cls, help]) => (
                 <div key={label} className="flex justify-between border-b last:border-0 pb-1.5 last:pb-0 dark:border-slate-800">
                   <span className="text-muted-foreground flex items-center gap-1">{label}{help ? <Help text={help} /> : null}</span>
@@ -896,8 +899,8 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
               {([
                 ["CAPEX total", formatCurrency(s.capex_total), ""],
                 ["Capacidade instalada", `${r.total_power_kw.toFixed(1).replace(".0","")} kW`, ""],
-                ["Lucro mensal líquido", formatCurrency(r.monthly_net), r.monthly_net >= 0 ? "text-emerald-600" : "text-red-500"],
-                ["Payback simples", fmtPb(r.payback_months), r.payback_months && r.payback_months <= 48 ? "text-emerald-600 font-bold" : "text-amber-600 font-bold"],
+                ["Lucro mensal líquido", formatCurrency(r.monthly_net), r.monthly_net >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"],
+                ["Payback simples", fmtPb(r.payback_months), r.payback_months && r.payback_months <= 48 ? "text-emerald-600 dark:text-emerald-400 font-bold" : "text-amber-500 dark:text-amber-400 font-bold"],
                 ["ROI 1º ano", `${r.roi_1y.toFixed(1)}%`, ""],
               ] as [string, string, string][]).map(([label, val, cls]) => (
                 <div key={label} className="flex justify-between border-b last:border-0 pb-1.5 last:pb-0 dark:border-slate-800">
@@ -1164,13 +1167,14 @@ export default function InvestimentoPage() {
   }
 
   function handlePrint() {
-    // Hide sidebar and input panel
+    const wasDark = document.documentElement.classList.contains("dark");
+    if (wasDark) document.documentElement.classList.remove("dark");
+
     const toHide = [
       document.querySelector<HTMLElement>("[data-sidebar]"),
       document.querySelector<HTMLElement>("[data-input-panel]"),
     ].filter((el): el is HTMLElement => !!el);
 
-    // Unclip all containers that use Tailwind's overflow/height utilities
     const toUnclip = Array.from(
       document.querySelectorAll<HTMLElement>(
         ".h-screen, .h-full, .min-h-0, .overflow-hidden, .overflow-y-auto"
@@ -1189,6 +1193,7 @@ export default function InvestimentoPage() {
     });
 
     const restore = () => {
+      if (wasDark) document.documentElement.classList.add("dark");
       savedHide.forEach(({ el, v }) => { el.style.display = v; });
       savedUnclip.forEach(({ el, v }) => { el.style.cssText = v; });
       window.removeEventListener("afterprint", restore);
@@ -1836,11 +1841,11 @@ export default function InvestimentoPage() {
               <div className="rounded-lg bg-red-50 dark:bg-red-950/40 p-3 space-y-1">
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">OPEX mensal (estab.)</span>
-                  <span className="font-bold text-red-600">{formatCurrency(results.avg_monthly_opex)}</span>
+                  <span className="font-bold text-red-500 dark:text-red-400">{formatCurrency(results.avg_monthly_opex)}</span>
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">EBITDA mensal (estab.)</span>
-                  <span className={`font-medium ${results.avg_monthly_ebitda >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                  <span className={`font-medium ${results.avg_monthly_ebitda >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}`}>
                     {formatCurrency(results.avg_monthly_ebitda)}
                   </span>
                 </div>
