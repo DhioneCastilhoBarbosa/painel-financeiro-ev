@@ -25,8 +25,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from pydantic import BaseModel, Field
-from sqlalchemy import delete as sql_delete
-from sqlalchemy import func, select
+from sqlalchemy import delete as sql_delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -40,6 +39,7 @@ from app.models.organization import Organization
 from app.models.subscription import Subscription, SubscriptionPlan
 from app.models.user import User
 from app.services.audit_service import log_action
+
 router = APIRouter()
 
 
