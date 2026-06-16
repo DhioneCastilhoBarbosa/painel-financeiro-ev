@@ -28,7 +28,7 @@ if _resend_available:
 
 
 def _from() -> str:
-    return f"FinanceDash <{settings.email_from}>"
+    return f"Intelbras Finance <{settings.email_from}>"
 
 
 def _smtp_from() -> str:
@@ -124,12 +124,12 @@ def _base_template(title: str, body_html: str) -> str:
 </head>
 <body>
   <div class="wrap">
-    <div class="header"><h1>FinanceDash</h1></div>
+    <div class="header"><h1>Intelbras Finance</h1></div>
     <div class="body">
       <h2 style="color:#1e293b;margin-top:0">{title}</h2>
       {body_html}
     </div>
-    <div class="footer">FinanceDash · Gestão Financeira de Eletropostos<br>Este e-mail foi gerado automaticamente, não responda.</div>
+    <div class="footer">Intelbras Finance · Gestão Financeira de Eletropostos<br>Este e-mail foi gerado automaticamente, não responda.</div>
   </div>
 </body></html>"""
 
@@ -139,11 +139,11 @@ async def send_verify_email(to: str, name: str, token: str) -> bool:
     html = _base_template(
         "Verifique seu e-mail",
         f"""<p>Olá, <strong>{name}</strong>!</p>
-<p>Obrigado por criar sua conta no FinanceDash. Clique no botão abaixo para verificar seu e-mail e ativar sua conta.</p>
+<p>Obrigado por criar sua conta no Intelbras Finance. Clique no botão abaixo para verificar seu e-mail e ativar sua conta.</p>
 <p style="text-align:center"><a href="{url}" class="btn">Verificar e-mail</a></p>
-<p style="font-size:13px;color:#64748b">Se você não criou uma conta no FinanceDash, ignore este e-mail.<br>O link expira em <strong>1 hora</strong>.</p>""",
+<p style="font-size:13px;color:#64748b">Se você não criou uma conta no Intelbras Finance, ignore este e-mail.<br>O link expira em <strong>1 hora</strong>.</p>""",
     )
-    return await _send(to, "Verifique seu e-mail — FinanceDash", html)
+    return await _send(to, "Verifique seu e-mail — Intelbras Finance", html)
 
 
 async def send_reset_password_email(to: str, name: str, token: str) -> bool:
@@ -155,30 +155,30 @@ async def send_reset_password_email(to: str, name: str, token: str) -> bool:
 <p style="text-align:center"><a href="{url}" class="btn">Redefinir senha</a></p>
 <p style="font-size:13px;color:#64748b">Se você não solicitou a redefinição, ignore este e-mail. Sua senha não será alterada.<br>O link expira em <strong>1 hora</strong>.</p>""",
     )
-    return await _send(to, "Redefinição de senha — FinanceDash", html)
+    return await _send(to, "Redefinição de senha — Intelbras Finance", html)
 
 
 async def send_invite_email(to: str, org_name: str, role_label: str, token: str) -> bool:
     url = f"{_app_url()}/accept-invite?token={token}"
     html = _base_template(
         f"Você foi convidado para {org_name}",
-        f"""<p>Você recebeu um convite para ingressar na organização <strong>{org_name}</strong> no FinanceDash como <strong>{role_label}</strong>.</p>
+        f"""<p>Você recebeu um convite para ingressar na organização <strong>{org_name}</strong> no Intelbras Finance como <strong>{role_label}</strong>.</p>
 <p>Clique no botão abaixo para aceitar o convite e criar sua conta.</p>
 <p style="text-align:center"><a href="{url}" class="btn">Aceitar convite</a></p>
 <p style="font-size:13px;color:#64748b">O link expira em <strong>48 horas</strong>. Se você não esperava este convite, ignore este e-mail.</p>""",
     )
-    return await _send(to, f"Convite para {org_name} — FinanceDash", html)
+    return await _send(to, f"Convite para {org_name} — Intelbras Finance", html)
 
 
 async def send_trial_ending_email(to: str, name: str, days_left: int) -> bool:
     html = _base_template(
         "Seu período de teste está acabando",
         f"""<p>Olá, <strong>{name}</strong>!</p>
-<p>Seu período de teste gratuito do FinanceDash termina em <strong>{days_left} dia{"s" if days_left != 1 else ""}</strong>.</p>
+<p>Seu período de teste gratuito do Intelbras Finance termina em <strong>{days_left} dia{"s" if days_left != 1 else ""}</strong>.</p>
 <p>Para continuar usando todas as funcionalidades, escolha um plano:</p>
 <p style="text-align:center"><a href="{_app_url()}/dashboard/billing" class="btn">Ver planos</a></p>""",
     )
-    return await _send(to, "Seu trial termina em breve — FinanceDash", html)
+    return await _send(to, "Seu trial termina em breve — Intelbras Finance", html)
 
 
 # ─── Lead / Simulador ─────────────────────────────────────────────────────────
@@ -234,15 +234,15 @@ async def send_lead_confirmation_email(
 </table>
 
 <p style="font-size:13px;color:#64748b;background:#fef9c3;border:1px solid #fde047;padding:12px;border-radius:8px">
-  AVISO: Esta e uma simulacao estimada com parametros medios de mercado. Os resultados reais dependerao de localizacao,
+  AVISO: Esta é uma simulação estimada com parâmetros médios de mercado. Os resultados reais dependerão de localização,
   demanda local, tarifas de energia e outros fatores operacionais.
 </p>
 
 <p>Quer uma análise personalizada e detalhada para o seu negócio? Nossa equipe está pronta para ajudar.</p>
-<p style="text-align:center"><a href="mailto:contato@financedash.com.br" class="btn">Falar com especialista</a></p>
+<p style="text-align:center"><a href="mailto:grupo.mobilidadeeletrica@intelbras.com.br" class="btn">Falar com especialista</a></p>
 """,
     )
-    return await _send(to, "Sua simulacao de ROI em estacoes de recarga - FinanceDash", html)
+    return await _send(to, "Sua simulação de ROI em estações de recarga - Intelbras Finance", html)
 
 
 async def send_lead_notification_email(
@@ -289,7 +289,7 @@ async def send_lead_notification_email(
 """,
     )
     return await _send(
-        to, f"Novo lead: {lead_name} ({charger_type} x {num_chargers}) - FinanceDash", html
+        to, f"Novo lead: {lead_name} ({charger_type} x {num_chargers}) - Intelbras Finance", html
     )
 
 
@@ -321,7 +321,7 @@ async def send_specialist_contact_notification(
 <p style="text-align:center"><a href="{_app_url()}/dashboard/leads" class="btn">Ver lead no CRM</a></p>
 """,
     )
-    return await _send(to, f"{lead_name} quer falar com especialista - FinanceDash", html)
+    return await _send(to, f"{lead_name} quer falar com especialista - Intelbras Finance", html)
 
 
 # ─── Feedback (sugestões / reclamações) ───────────────────────────────────────
@@ -345,7 +345,7 @@ async def send_feedback_response_email(
 <p>Agradecemos por nos ajudar a melhorar a plataforma!</p>
 """,
     )
-    return await _send(to, f"Resposta à sua {type_label} — FinanceDash", html)
+    return await _send(to, f"Resposta à sua {type_label} — Intelbras Finance", html)
 
 
 # ─── Alertas ──────────────────────────────────────────────────────────────────
@@ -402,4 +402,4 @@ def send_alert_triggered_email_sync(
 </p>
 """,
     )
-    return _send_sync(to, f"Alerta: {alert_name} - {org_name} | FinanceDash", html)
+    return _send_sync(to, f"Alerta: {alert_name} - {org_name} | Intelbras Finance", html)
