@@ -1,5 +1,4 @@
 'use client';
-// @ts-expect-error react-leaflet v4 GeoJSON accepts style/onEachFeature from L.GeoJSONOptions
 import { GeoJSON } from 'react-leaflet';
 import type { IBGEGeoJSON, IncomeByUF } from '@/hooks/useIBGEData';
 import { UF_CODE_TO_SIGLA } from '@/hooks/useIBGEData';
@@ -52,11 +51,7 @@ export function IncomeLayer({ geojson, incomeByUF }: Props) {
   };
 
   return (
-    <GeoJSON
-      key="income-layer"
-      data={geojson}
-      style={style}
-      onEachFeature={onEachFeature}
-    />
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    <GeoJSON key="income-layer" {...({ data: geojson, style, onEachFeature } as any)} />
   );
 }

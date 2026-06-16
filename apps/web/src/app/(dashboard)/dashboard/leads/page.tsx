@@ -1,7 +1,7 @@
 "use client";
 
 import { PlanGate } from "@/components/PlanGate";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import useSWR from "swr";
 import { toast } from "sonner";
 import {
@@ -121,6 +121,12 @@ function LeadsPageContent() {
   const [expandedEmailId, setExpandedEmailId] = useState<string | null>(null);
   const [editingStates, setEditingStates] = useState<Record<string, string[]>>({});
   const [savingEmailId, setSavingEmailId] = useState<string | null>(null);
+
+  // ── Pagination ─────────────────────────────────────────────────────────────
+  const [leadsPage, setLeadsPage] = useState(0);
+  const [simsPage, setSimsPage] = useState(0);
+  const LEADS_PER_PAGE = 50;
+  const SIMS_PER_PAGE = 50;
 
   // ── Simulator config state ──────────────────────────────────────────────────
   const [editingConfig, setEditingConfig] = useState(false);
@@ -367,6 +373,16 @@ function LeadsPageContent() {
            l.city.toLowerCase().includes(q);
   });
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => { setLeadsPage(0); }, [search, filterState, filterSector, filterCharger]);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => { setSimsPage(0); }, [filterOrg]);
+
+  const totalLeadsPages = Math.ceil(filtered.length / LEADS_PER_PAGE);
+  const paginatedLeads = filtered.slice(leadsPage * LEADS_PER_PAGE, (leadsPage + 1) * LEADS_PER_PAGE);
+  const totalSimsPages = Math.ceil(simpleScenarios.length / SIMS_PER_PAGE);
+  const paginatedSims = simpleScenarios.slice(simsPage * SIMS_PER_PAGE, (simsPage + 1) * SIMS_PER_PAGE);
+
   // ── Handlers ────────────────────────────────────────────────────────────────
   const handleExport = () =>
     window.open(
@@ -570,7 +586,7 @@ function LeadsPageContent() {
               </div>
             ) : (
               <div className="divide-y">
-                {filtered.map((lead) => (
+                {paginatedLeads.map((lead) => (
                   <div key={lead.id} className="px-6 py-4">
                     <div className="flex items-start justify-between cursor-pointer"
                       onClick={() => setExpandedLead(expandedLead === lead.id ? null : lead.id)}>
@@ -670,6 +686,21 @@ function LeadsPageContent() {
                     )}
                   </div>
                 ))}
+              </div>
+            )}
+            {totalLeadsPages > 1 && (
+              <div className="flex items-center justify-between px-6 py-3 border-t">
+                <span className="text-xs text-muted-foreground">
+                  {filtered.length} leads · página {leadsPage + 1} de {totalLeadsPages}
+                </span>
+                <div className="flex items-center gap-1">
+                  <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setLeadsPage(p => p - 1)} disabled={leadsPage === 0}>
+                    Anterior
+                  </Button>
+                  <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setLeadsPage(p => p + 1)} disabled={leadsPage >= totalLeadsPages - 1}>
+                    Próxima
+                  </Button>
+                </div>
               </div>
             )}
           </CardContent></Card>
@@ -1082,9 +1113,9 @@ function LeadsPageContent() {
                                 <td className="px-4 py-2.5 text-right">{cfg.avg_duration_min}</td>
                                 <td className="px-4 py-2.5 text-right text-xs font-medium">
                                   {(() => {
-                                    const kwh = cfg.power_kw * (cfg.avg_duration_min / 60) * 0.5;
-                                    const monthlyRev = cfg.avg_sessions_day * 30 * kwh * (activeConfig?.price_per_kwh ?? 0);
-                                    const monthlyOpex = (cfg.price_brl * (activeConfig?.opex_pct ?? 0)) / 12;
+                                    const kwhPerSession = cfg.power_kw * (cfg.avg_duration_min / 60);
+                                    const monthlyRev = cfg.avg_sessions_day * 30 * kwhPerSession * (activeConfig?.price_per_kwh ?? 0);
+                                    const monthlyOpex = monthlyRev * (activeConfig?.opex_pct ?? 0);
                                     const net = monthlyRev - monthlyOpex;
                                     if (net <= 0) return <span className="text-red-500">—</span>;
                                     const months = cfg.price_brl / net;
@@ -1283,7 +1314,7 @@ function LeadsPageContent() {
                   </tr>
                 </thead>
                 <tbody>
-                  {simpleScenarios.map(sc => {
+                  {paginatedSims.map(sc => {
                     const inp = sc.inputs as Record<string, unknown>;
                     const res = sc.results as Record<string, unknown>;
                     const estName = (inp.establishment_name as string) || "—";
@@ -1347,6 +1378,21 @@ function LeadsPageContent() {
                   })}
                 </tbody>
               </table>
+              {totalSimsPages > 1 && (
+                <div className="flex items-center justify-between px-6 py-3 border-t">
+                  <span className="text-xs text-muted-foreground">
+                    {simpleScenarios.length} simulações · página {simsPage + 1} de {totalSimsPages}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setSimsPage(p => p - 1)} disabled={simsPage === 0}>
+                      Anterior
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setSimsPage(p => p + 1)} disabled={simsPage >= totalSimsPages - 1}>
+                      Próxima
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

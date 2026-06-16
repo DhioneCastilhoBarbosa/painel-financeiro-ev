@@ -18,7 +18,8 @@ export function TrafficLayer({ highways }: Props) {
   const map = useMap();
 
   useEffect(() => {
-    const lines: L.Polyline[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const lines: any[] = [];
 
     highways.forEach((way) => {
       if (!way.geometry?.length) return;
@@ -26,7 +27,8 @@ export function TrafficLayer({ highways }: Props) {
       const type = way.tags?.highway ?? 'primary';
       const style = HIGHWAY_STYLE[type] ?? { color: '#95a5a6', weight: 1.5 };
 
-      const line = L.polyline(latlngs, { color: style.color, weight: style.weight, opacity: 0.75 })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const line = (L as any).polyline(latlngs, { color: style.color, weight: style.weight, opacity: 0.75 })
         .bindPopup(way.tags?.name ?? `Rodovia — ${type}`)
         .addTo(map);
 

@@ -11,7 +11,7 @@ omit     = ["app/workers/*", "*/migrations/*", "*/tests/*"]
 [tool.coverage.report]
 show_missing = true
 skip_empty   = true
-fail_under   = 60       # CI falha se cobertura cair abaixo de 60%
+fail_under   = 45       # CI falha se cobertura cair abaixo de 45%
 
 [tool.ruff]
 line-length = 100

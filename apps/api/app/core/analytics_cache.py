@@ -8,6 +8,7 @@ sessão da org mudarem (upload, exclusão ou reprocessamento de arquivo).
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 
 from app.core.redis import get_redis
@@ -34,10 +35,8 @@ async def get_version(organization_id) -> str:
 
 async def bump_analytics_cache(organization_id) -> None:
     """Invalida o cache de analytics da org (async — uso na API)."""
-    try:
+    with contextlib.suppress(Exception):
         await get_redis().incr(_ver_key(organization_id))
-    except Exception:
-        pass
 
 
 def bump_analytics_cache_sync(organization_id, redis_url: str) -> None:

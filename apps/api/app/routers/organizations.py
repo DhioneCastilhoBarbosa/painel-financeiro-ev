@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.deps import CurrentUser
+from app.core.plan_config import get_plan, get_plan_limits
 from app.models.cost_configuration import CostConfiguration
 from app.models.data_file import DataFile
 from app.models.invitation import Invitation
@@ -23,7 +24,6 @@ from app.schemas.organization import (
     UpdateRoleRequest,
     UsageResponse,
 )
-from app.core.plan_config import get_plan, get_plan_limits
 from app.services.audit_service import log_action
 
 router = APIRouter()
@@ -247,7 +247,9 @@ async def list_invitations(current_user: CurrentUser, db: AsyncSession = Depends
             "created_at": inv.created_at,
             "expires_at": inv.expires_at,
             "accepted_at": inv.accepted_at,
-            "status": "concluído" if inv.accepted_at else ("expirado" if inv.expires_at <= now else "pendente"),
+            "status": "concluído"
+            if inv.accepted_at
+            else ("expirado" if inv.expires_at <= now else "pendente"),
         }
         for inv in invites
     ]
