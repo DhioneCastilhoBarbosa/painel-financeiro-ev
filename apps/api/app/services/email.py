@@ -38,6 +38,7 @@ def _smtp_from() -> str:
 def _html_to_plain(html: str) -> str:
     """Extrai texto plano simples do HTML para alternativa text/plain."""
     import re
+
     text = re.sub(r"<br\s*/?>", "\n", html, flags=re.IGNORECASE)
     text = re.sub(r"</p>|</tr>|</div>", "\n", text, flags=re.IGNORECASE)
     text = re.sub(r"<[^>]+>", "", text)
