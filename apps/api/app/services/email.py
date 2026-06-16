@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 import smtplib
+import ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -44,8 +45,13 @@ def _send_via_smtp(to: str, subject: str, html: str) -> bool:
         msg.attach(MIMEText(html, "html", "utf-8"))
 
         with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=20) as server:
+            server.ehlo()
             if settings.smtp_use_tls:
-                server.starttls()
+                # SECLEVEL=1 allows the smaller DH keys used by postal.intelbras.com.br
+                ctx = ssl.create_default_context()
+                ctx.set_ciphers("DEFAULT:@SECLEVEL=1")
+                server.starttls(context=ctx)
+                server.ehlo()
             if settings.smtp_user and settings.smtp_password:
                 server.login(settings.smtp_user, settings.smtp_password)
             server.sendmail(_smtp_from(), [to], msg.as_string())
