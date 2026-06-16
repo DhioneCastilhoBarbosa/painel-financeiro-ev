@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -44,23 +44,23 @@ const schema = z
 
 type FormData = z.infer<typeof schema>;
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const router       = useRouter();
   const searchParams = useSearchParams();
   const token        = searchParams.get("token");
 
   const [loading, setLoading] = useState(false);
   const [done,    setDone]    = useState(false);
-  const [invalid, setInvalid] = useState(!token);
+  const [invalid, setInvalid] = useState(false);
+
+  useEffect(() => {
+    if (!token) setInvalid(true);
+  }, [token]);
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { new_password: "", confirm: "" },
   });
-
-  useEffect(() => {
-    if (!token) setInvalid(true);
-  }, [token]);
 
   const onSubmit = async (values: FormData) => {
     if (!token) return;
@@ -186,5 +186,13 @@ export default function ResetPasswordPage() {
         </Form>
       )}
     </Card>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={null}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }
