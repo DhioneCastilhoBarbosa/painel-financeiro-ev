@@ -35,6 +35,16 @@ def _smtp_from() -> str:
     return settings.smtp_from or settings.smtp_user or settings.email_from
 
 
+def _html_to_plain(html: str) -> str:
+    """Extrai texto plano simples do HTML para alternativa text/plain."""
+    import re
+    text = re.sub(r"<br\s*/?>", "\n", html, flags=re.IGNORECASE)
+    text = re.sub(r"</p>|</tr>|</div>", "\n", text, flags=re.IGNORECASE)
+    text = re.sub(r"<[^>]+>", "", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
+
+
 def _send_via_smtp(to: str, subject: str, html: str) -> bool:
     """Envia via servidor SMTP (postal.intelbras.com.br por padrão)."""
     try:
@@ -42,6 +52,8 @@ def _send_via_smtp(to: str, subject: str, html: str) -> bool:
         msg["Subject"] = subject
         msg["From"] = _smtp_from()
         msg["To"] = to
+        # text/plain primeiro (fallback), html por último (preferido)
+        msg.attach(MIMEText(_html_to_plain(html), "plain", "utf-8"))
         msg.attach(MIMEText(html, "html", "utf-8"))
 
         with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=20) as server:
@@ -112,7 +124,7 @@ def _base_template(title: str, body_html: str) -> str:
 </head>
 <body>
   <div class="wrap">
-    <div class="header"><h1>⚡ FinanceDash</h1></div>
+    <div class="header"><h1>FinanceDash</h1></div>
     <div class="body">
       <h2 style="color:#1e293b;margin-top:0">{title}</h2>
       {body_html}
@@ -222,7 +234,7 @@ async def send_lead_confirmation_email(
 </table>
 
 <p style="font-size:13px;color:#64748b;background:#fef9c3;border:1px solid #fde047;padding:12px;border-radius:8px">
-  ⚠️ Esta é uma simulação estimada com parâmetros médios de mercado. Os resultados reais dependerão de localização,
+  AVISO: Esta e uma simulacao estimada com parametros medios de mercado. Os resultados reais dependerao de localizacao,
   demanda local, tarifas de energia e outros fatores operacionais.
 </p>
 
@@ -230,7 +242,7 @@ async def send_lead_confirmation_email(
 <p style="text-align:center"><a href="mailto:contato@financedash.com.br" class="btn">Falar com especialista</a></p>
 """,
     )
-    return await _send(to, "📊 Sua simulação de ROI em estações de recarga — FinanceDash", html)
+    return await _send(to, "Sua simulacao de ROI em estacoes de recarga - FinanceDash", html)
 
 
 async def send_lead_notification_email(
@@ -277,7 +289,7 @@ async def send_lead_notification_email(
 """,
     )
     return await _send(
-        to, f"🔔 Novo lead: {lead_name} ({charger_type} × {num_chargers}) — FinanceDash", html
+        to, f"Novo lead: {lead_name} ({charger_type} x {num_chargers}) - FinanceDash", html
     )
 
 
@@ -309,7 +321,7 @@ async def send_specialist_contact_notification(
 <p style="text-align:center"><a href="{_app_url()}/dashboard/leads" class="btn">Ver lead no CRM</a></p>
 """,
     )
-    return await _send(to, f"💬 {lead_name} quer falar com especialista — FinanceDash", html)
+    return await _send(to, f"{lead_name} quer falar com especialista - FinanceDash", html)
 
 
 # ─── Feedback (sugestões / reclamações) ───────────────────────────────────────
@@ -354,7 +366,7 @@ def send_alert_triggered_email_sync(
     Versão síncrona — chamada diretamente pelo Celery task (sem event loop).
     """
     html = _base_template(
-        f"⚠️ Alerta disparado: {alert_name}",
+        f"Alerta disparado: {alert_name}",
         f"""
 <p>O alerta <strong>"{alert_name}"</strong> foi acionado para a organização <strong>{org_name}</strong>.</p>
 
@@ -390,4 +402,4 @@ def send_alert_triggered_email_sync(
 </p>
 """,
     )
-    return _send_sync(to, f"⚠️ Alerta: {alert_name} — {org_name} | FinanceDash", html)
+    return _send_sync(to, f"Alerta: {alert_name} - {org_name} | FinanceDash", html)
