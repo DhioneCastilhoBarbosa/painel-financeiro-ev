@@ -41,12 +41,13 @@ jobs:
       - name: Trigger deploy via Dokploy webhook
         run: |
           HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            -L --max-redirs 5 \
             "${{ secrets.DOKPLOY_WEBHOOK_URL }}")
 
           echo "Dokploy respondeu: HTTP $HTTP_STATUS"
 
-          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+          # Dokploy aceita o webhook e responde com 2xx ou 3xx (redirect para status page).
+          # Falha apenas em erro de conexão (0) ou erro de servidor (5xx).
+          if [ "$HTTP_STATUS" -eq 0 ] || [ "$HTTP_STATUS" -ge 500 ]; then
             echo "❌ Webhook falhou com status $HTTP_STATUS"
             exit 1
           fi
