@@ -1,3 +1,5 @@
+import re
+
 from pydantic import BaseModel, EmailStr, field_validator
 
 
@@ -22,8 +24,19 @@ class RegisterRequest(BaseModel):
     @field_validator("password")
     @classmethod
     def password_strength(cls, v: str) -> str:
+        errors = []
         if len(v) < 8:
-            raise ValueError("Senha deve ter pelo menos 8 caracteres")
+            errors.append("mínimo 8 caracteres")
+        if not re.search(r"[A-Z]", v):
+            errors.append("uma letra maiúscula")
+        if not re.search(r"[a-z]", v):
+            errors.append("uma letra minúscula")
+        if not re.search(r"[0-9]", v):
+            errors.append("um número")
+        if not re.search(r"[^A-Za-z0-9]", v):
+            errors.append("um caractere especial")
+        if errors:
+            raise ValueError("A senha deve conter: " + ", ".join(errors))
         return v
 
     @field_validator("name", "organization_name")
@@ -88,8 +101,19 @@ class ResetPasswordRequest(BaseModel):
     @field_validator("new_password")
     @classmethod
     def password_strength(cls, v: str) -> str:
+        errors = []
         if len(v) < 8:
-            raise ValueError("Senha deve ter pelo menos 8 caracteres")
+            errors.append("mínimo 8 caracteres")
+        if not re.search(r"[A-Z]", v):
+            errors.append("uma letra maiúscula")
+        if not re.search(r"[a-z]", v):
+            errors.append("uma letra minúscula")
+        if not re.search(r"[0-9]", v):
+            errors.append("um número")
+        if not re.search(r"[^A-Za-z0-9]", v):
+            errors.append("um caractere especial")
+        if errors:
+            raise ValueError("A senha deve conter: " + ", ".join(errors))
         return v
 
 

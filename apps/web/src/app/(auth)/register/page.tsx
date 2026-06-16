@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordStrengthChecker, PasswordMatchIndicator } from "@/components/ui/PasswordStrength";
+import { passwordSchema } from "@/lib/password";
 import api, { apiErrMsg } from "@/lib/api";
 
 const GREEN = "#06CB3F";
@@ -22,7 +24,7 @@ const schema = z.object({
   name:              z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   organization_name: z.string().min(2, "Nome da empresa deve ter pelo menos 2 caracteres"),
   email:             z.string().email("E-mail inválido"),
-  password:          z.string().min(8, "Senha deve ter pelo menos 8 caracteres"),
+  password:          passwordSchema,
   confirm_password:  z.string(),
   invite_code:       z.string().min(16, "Código deve ter pelo menos 16 caracteres"),
 }).refine((d) => d.password === d.confirm_password, {
@@ -211,26 +213,26 @@ export default function RegisterPage() {
               </FormItem>
             )} />
 
-            <div className="grid grid-cols-2 gap-3">
-              <FormField control={form.control} name="password" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Senha</FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <FormField control={form.control} name="confirm_password" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirmar</FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-            </div>
+            <FormField control={form.control} name="password" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Senha</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="Crie uma senha forte" autoComplete="new-password" {...field} />
+                </FormControl>
+                <PasswordStrengthChecker password={field.value} />
+                <FormMessage />
+              </FormItem>
+            )} />
+            <FormField control={form.control} name="confirm_password" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirmar senha</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="Repita a senha" autoComplete="new-password" {...field} />
+                </FormControl>
+                <PasswordMatchIndicator password={form.watch("password")} confirm={field.value} />
+                <FormMessage />
+              </FormItem>
+            )} />
 
             <Button type="submit" className="w-full font-semibold" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

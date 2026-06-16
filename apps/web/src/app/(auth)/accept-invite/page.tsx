@@ -26,6 +26,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordStrengthChecker, PasswordMatchIndicator } from "@/components/ui/PasswordStrength";
+import { passwordSchema } from "@/lib/password";
 import api, { apiErrMsg } from "@/lib/api";
 
 const GREEN = "#06CB3F";
@@ -34,7 +36,7 @@ const DARK  = "#163134";
 const schema = z
   .object({
     name:     z.string().min(2, "Nome deve ter ao menos 2 caracteres"),
-    password: z.string().min(8, "A senha deve ter ao menos 8 caracteres"),
+    password: passwordSchema,
     confirm:  z.string(),
   })
   .refine((d) => d.password === d.confirm, {
@@ -209,8 +211,9 @@ function AcceptInviteForm() {
                   <FormItem>
                     <FormLabel>Senha</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Mínimo 8 caracteres" autoComplete="new-password" {...field} />
+                      <Input type="password" placeholder="Crie uma senha forte" autoComplete="new-password" {...field} />
                     </FormControl>
+                    <PasswordStrengthChecker password={field.value} />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -224,6 +227,7 @@ function AcceptInviteForm() {
                     <FormControl>
                       <Input type="password" placeholder="Repita a senha" autoComplete="new-password" {...field} />
                     </FormControl>
+                    <PasswordMatchIndicator password={form.watch("password")} confirm={field.value} />
                     <FormMessage />
                   </FormItem>
                 )}

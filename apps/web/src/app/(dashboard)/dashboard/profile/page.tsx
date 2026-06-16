@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import api from "@/lib/api";
 import { ROLE_LABELS } from "@/lib/permissions";
 import { UserCircle, Lock, Building2, Mail, ShieldCheck } from "lucide-react";
+import { PasswordStrengthChecker, PasswordMatchIndicator } from "@/components/ui/PasswordStrength";
+import { passwordValid } from "@/lib/password";
 
 export default function ProfilePage() {
   const { user, refresh } = useAuth();
@@ -48,12 +50,12 @@ export default function ProfilePage() {
 
   async function handleChangePassword(e: React.FormEvent) {
     e.preventDefault();
-    if (newPw !== confirmPw) {
-      toast.error("As senhas não coincidem");
+    if (!passwordValid(newPw)) {
+      toast.error("A nova senha não atende aos critérios de segurança");
       return;
     }
-    if (newPw.length < 8) {
-      toast.error("A nova senha deve ter pelo menos 8 caracteres");
+    if (newPw !== confirmPw) {
+      toast.error("As senhas não coincidem");
       return;
     }
     setPwLoading(true);
@@ -182,10 +184,11 @@ export default function ProfilePage() {
                 value={newPw}
                 onChange={e => setNewPw(e.target.value)}
                 className={inputClass}
-                placeholder="Mínimo 8 caracteres"
+                placeholder="Crie uma senha forte"
+                autoComplete="new-password"
                 required
-                minLength={8}
               />
+              <PasswordStrengthChecker password={newPw} />
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-muted-foreground">Confirmar nova senha</label>
@@ -195,16 +198,15 @@ export default function ProfilePage() {
                 onChange={e => setConfirmPw(e.target.value)}
                 className={inputClass}
                 placeholder="Repita a nova senha"
+                autoComplete="new-password"
                 required
               />
+              <PasswordMatchIndicator password={newPw} confirm={confirmPw} />
             </div>
-            {newPw && confirmPw && newPw !== confirmPw && (
-              <p className="text-xs text-red-500">As senhas não coincidem</p>
-            )}
             <Button
               type="submit"
               size="sm"
-              disabled={pwLoading || !currentPw || !newPw || !confirmPw || newPw !== confirmPw}
+              disabled={pwLoading || !currentPw || !passwordValid(newPw) || !confirmPw || newPw !== confirmPw}
             >
               {pwLoading ? "Alterando..." : "Alterar senha"}
             </Button>
