@@ -533,11 +533,11 @@ function LeadsPageContent() {
             </CardContent></Card>
             <Card><CardContent className="pt-5">
               <p className="text-sm text-muted-foreground">Receita/mês média</p>
-              <p className="text-3xl font-bold mt-1 text-emerald-600">{isLoading ? "—" : fmtBRL(avgRevenue)}</p>
+              <p className="text-3xl font-bold mt-1 text-emerald-600 dark:text-emerald-400">{isLoading ? "—" : fmtBRL(avgRevenue)}</p>
             </CardContent></Card>
             <Card><CardContent className="pt-5">
               <p className="text-sm text-muted-foreground">Payback médio</p>
-              <p className="text-3xl font-bold mt-1 text-blue-600">
+              <p className="text-3xl font-bold mt-1 text-blue-600 dark:text-blue-400">
                 {isLoading ? "—" : avgPayback ? `${avgPayback.toFixed(0)} meses` : "—"}
               </p>
             </CardContent></Card>
@@ -621,9 +621,9 @@ function LeadsPageContent() {
                       </div>
                       <div className="flex items-center gap-6 shrink-0 ml-4 text-right">
                         <div><p className="text-xs text-muted-foreground">Receita/mês</p>
-                          <p className="font-bold text-emerald-600 text-sm">{fmtBRL(lead.monthly_revenue)}</p></div>
+                          <p className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">{fmtBRL(lead.monthly_revenue)}</p></div>
                         <div><p className="text-xs text-muted-foreground">Payback</p>
-                          <p className="font-bold text-blue-600 text-sm">
+                          <p className="font-bold text-blue-600 dark:text-blue-400 text-sm">
                             {lead.payback_months ? `${lead.payback_months.toFixed(0)} m` : "—"}
                           </p></div>
                         <div><p className="text-xs text-muted-foreground">ROI 5a</p>
@@ -780,21 +780,21 @@ function LeadsPageContent() {
                     label: "Taxa de interesse especialista",
                     value: `${analytics.specialistRate.toFixed(1)}%`,
                     sub: "leads que pediram contato",
-                    color: "text-amber-600",
+                    color: "text-amber-600 dark:text-amber-400",
                   },
                   {
                     icon: <TrendingUp className="h-4 w-4" />,
                     label: "Receita mensal potencial",
                     value: fmtBRL(analytics.totalRevenue),
                     sub: `${fmtBRL(analytics.totalRevenue * 12)} ao ano`,
-                    color: "text-emerald-600",
+                    color: "text-emerald-600 dark:text-emerald-400",
                   },
                   {
                     icon: <Zap className="h-4 w-4" />,
                     label: "Pontos de carga demandados",
                     value: analytics.totalPoints,
                     sub: analytics.topState ? `UF líder: ${analytics.topState.uf} (${analytics.topState.count})` : "—",
-                    color: "text-blue-600",
+                    color: "text-blue-600 dark:text-blue-400",
                   },
                 ].map(({ icon, label, value, sub, color }) => (
                   <Card key={label}>
@@ -1117,10 +1117,10 @@ function LeadsPageContent() {
                                     const monthlyRev = cfg.avg_sessions_day * 30 * kwhPerSession * (activeConfig?.price_per_kwh ?? 0);
                                     const monthlyOpex = monthlyRev * (activeConfig?.opex_pct ?? 0);
                                     const net = monthlyRev - monthlyOpex;
-                                    if (net <= 0) return <span className="text-red-500">—</span>;
+                                    if (net <= 0) return <span className="text-red-500 dark:text-red-400">—</span>;
                                     const months = cfg.price_brl / net;
                                     const yrs = months / 12;
-                                    return <span className={yrs <= 4 ? "text-emerald-600 dark:text-emerald-400" : yrs <= 7 ? "text-amber-600" : "text-red-500"}>{yrs.toFixed(1)} anos</span>;
+                                    return <span className={yrs <= 4 ? "text-emerald-600 dark:text-emerald-400" : yrs <= 7 ? "text-amber-600 dark:text-amber-400" : "text-red-500 dark:text-red-400"}>{yrs.toFixed(1)} anos</span>;
                                   })()}
                                 </td>
                               </>
@@ -1342,10 +1342,10 @@ function LeadsPageContent() {
                         <td className="px-4 py-3">{fmtBRL(capex)}</td>
                         <td className="px-4 py-3">
                           {paybackMonths
-                            ? <span className={paybackMonths <= 48 ? "text-emerald-600 dark:text-emerald-400 font-medium" : "text-amber-600 font-medium"}>
+                            ? <span className={paybackMonths <= 48 ? "text-emerald-600 dark:text-emerald-400 font-medium" : "text-amber-600 dark:text-amber-400 font-medium"}>
                                 {Math.floor(paybackMonths / 12)}a {Math.round(paybackMonths % 12)}m
                               </span>
-                            : <span className="text-red-500">Sem retorno</span>}
+                            : <span className="text-red-500 dark:text-red-400">Sem retorno</span>}
                         </td>
                         <td className={`px-4 py-3 font-medium ${monthlyNet >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>
                           {fmtBRL(monthlyNet)}
@@ -1439,13 +1439,13 @@ function LeadsPageContent() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
                   { label: "Total de simulações", value: simAnalytics.total, color: "text-foreground", fmt: (v: number) => v.toString() },
-                  { label: "CAPEX médio",          value: simAnalytics.avgCapex,   color: "text-blue-600",    fmt: fmtBRL },
+                  { label: "CAPEX médio",          value: simAnalytics.avgCapex,   color: "text-blue-600 dark:text-blue-400",    fmt: fmtBRL },
                   { label: "Payback médio",
                     value: simAnalytics.avgPayback,
-                    color: simAnalytics.avgPayback && simAnalytics.avgPayback <= 48 ? "text-emerald-600" : "text-amber-600",
+                    color: simAnalytics.avgPayback && simAnalytics.avgPayback <= 48 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400",
                     fmt: (v: number) => `${Math.floor(v / 12)}a ${Math.round(v % 12)}m`,
                     fallback: "—" },
-                  { label: "Lucro/mês médio",      value: simAnalytics.avgNet,     color: simAnalytics.avgNet >= 0 ? "text-emerald-600" : "text-red-500", fmt: fmtBRL },
+                  { label: "Lucro/mês médio",      value: simAnalytics.avgNet,     color: simAnalytics.avgNet >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400", fmt: fmtBRL },
                 ].map(({ label, value, color, fmt, fallback }) => (
                   <Card key={label}>
                     <CardContent className="pt-5">
