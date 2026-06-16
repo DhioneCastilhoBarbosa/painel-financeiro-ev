@@ -66,7 +66,7 @@ class Settings(BaseSettings):
     smtp_use_tls: bool = True
     # E-mail(s) que sempre recebem notificações de leads, independente da config
     # por organização. Separe múltiplos por vírgula.
-    lead_notify_always: str = "jorge.schmidt@intelbras.com.br"
+    lead_notify_always: str = ""
 
     # Stripe
     stripe_secret_key: str = ""

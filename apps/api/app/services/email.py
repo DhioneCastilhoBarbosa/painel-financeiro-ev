@@ -263,7 +263,7 @@ async def send_lead_notification_email(
     payback = sim.get("payback_months")
     payback_str = f"{payback:.0f} meses" if payback else "Acima de 5 anos"
     html = _base_template(
-        "🔔 Novo lead — Simulador de Investimento",
+        "Novo lead — Simulador de Investimento",
         f"""
 <p>Um novo lead realizou a simulação de investimento em estações de recarga:</p>
 
@@ -304,7 +304,7 @@ async def send_specialist_contact_notification(
     lead_id: str,
 ) -> bool:
     html = _base_template(
-        "💬 Lead quer falar com um especialista",
+        "Lead quer falar com um especialista",
         f"""
 <p><strong>{lead_name}</strong> ({lead_email}) enviou uma mensagem pedindo contato com especialista:</p>
 
