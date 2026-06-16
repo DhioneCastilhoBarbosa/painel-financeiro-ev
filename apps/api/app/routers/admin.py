@@ -25,7 +25,8 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from pydantic import BaseModel, Field
-from sqlalchemy import delete as sql_delete, func, select
+from sqlalchemy import delete as sql_delete
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
