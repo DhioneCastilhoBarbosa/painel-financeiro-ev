@@ -41,6 +41,7 @@ jobs:
       - name: Trigger deploy via Dokploy webhook
         run: |
           HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -L \
             -X POST \
             -H "Content-Type: application/json" \
             "${{ secrets.DOKPLOY_WEBHOOK_URL }}")
