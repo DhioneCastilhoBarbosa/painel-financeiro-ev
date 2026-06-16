@@ -107,6 +107,19 @@ async def _send(to: str, subject: str, html: str) -> bool:
     return _send_sync(to, subject, html)
 
 
+_BTN_STYLE = (
+    "display:inline-block;background:#2563eb;color:#ffffff !important;"
+    "padding:12px 28px;border-radius:8px;text-decoration:none !important;"
+    "font-weight:600;margin:20px 0;font-family:Arial,sans-serif;font-size:14px;"
+    "mso-padding-alt:0;"
+)
+
+
+def _btn(url: str, label: str) -> str:
+    """Botão inline-styled — funciona em todos os clientes de e-mail."""
+    return f'<a href="{url}" style="{_BTN_STYLE}" target="_blank">{label}</a>'
+
+
 def _base_template(title: str, body_html: str) -> str:
     return f"""<!DOCTYPE html>
 <html lang="pt-BR">
@@ -117,7 +130,6 @@ def _base_template(title: str, body_html: str) -> str:
   .header{{background:#2563eb;padding:24px 32px;text-align:center}}
   .header h1{{color:#fff;font-size:20px;margin:0}}
   .body{{padding:32px}}
-  .btn{{display:inline-block;background:#2563eb;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;margin:20px 0}}
   .footer{{background:#f1f5f9;padding:16px 32px;text-align:center;font-size:12px;color:#64748b}}
   p{{color:#334155;line-height:1.6}}
 </style>
@@ -140,7 +152,7 @@ async def send_verify_email(to: str, name: str, token: str) -> bool:
         "Verifique seu e-mail",
         f"""<p>Olá, <strong>{name}</strong>!</p>
 <p>Obrigado por criar sua conta no Intelbras Finance. Clique no botão abaixo para verificar seu e-mail e ativar sua conta.</p>
-<p style="text-align:center"><a href="{url}" class="btn">Verificar e-mail</a></p>
+<p style="text-align:center">{_btn(url, "Verificar e-mail")}</p>
 <p style="font-size:13px;color:#64748b">Se você não criou uma conta no Intelbras Finance, ignore este e-mail.<br>O link expira em <strong>1 hora</strong>.</p>""",
     )
     return await _send(to, "Verifique seu e-mail — Intelbras Finance", html)
@@ -152,7 +164,7 @@ async def send_reset_password_email(to: str, name: str, token: str) -> bool:
         "Redefinir senha",
         f"""<p>Olá, <strong>{name}</strong>!</p>
 <p>Recebemos uma solicitação de redefinição de senha para sua conta. Clique no botão abaixo para criar uma nova senha.</p>
-<p style="text-align:center"><a href="{url}" class="btn">Redefinir senha</a></p>
+<p style="text-align:center">{_btn(url, "Redefinir senha")}</p>
 <p style="font-size:13px;color:#64748b">Se você não solicitou a redefinição, ignore este e-mail. Sua senha não será alterada.<br>O link expira em <strong>1 hora</strong>.</p>""",
     )
     return await _send(to, "Redefinição de senha — Intelbras Finance", html)
@@ -164,7 +176,7 @@ async def send_invite_email(to: str, org_name: str, role_label: str, token: str)
         f"Você foi convidado para {org_name}",
         f"""<p>Você recebeu um convite para ingressar na organização <strong>{org_name}</strong> no Intelbras Finance como <strong>{role_label}</strong>.</p>
 <p>Clique no botão abaixo para aceitar o convite e criar sua conta.</p>
-<p style="text-align:center"><a href="{url}" class="btn">Aceitar convite</a></p>
+<p style="text-align:center">{_btn(url, "Aceitar convite")}</p>
 <p style="font-size:13px;color:#64748b">O link expira em <strong>48 horas</strong>. Se você não esperava este convite, ignore este e-mail.</p>""",
     )
     return await _send(to, f"Convite para {org_name} — Intelbras Finance", html)
@@ -176,7 +188,7 @@ async def send_trial_ending_email(to: str, name: str, days_left: int) -> bool:
         f"""<p>Olá, <strong>{name}</strong>!</p>
 <p>Seu período de teste gratuito do Intelbras Finance termina em <strong>{days_left} dia{"s" if days_left != 1 else ""}</strong>.</p>
 <p>Para continuar usando todas as funcionalidades, escolha um plano:</p>
-<p style="text-align:center"><a href="{_app_url()}/dashboard/billing" class="btn">Ver planos</a></p>""",
+<p style="text-align:center">{_btn(f"{_app_url()}/dashboard/billing", "Ver planos")}</p>""",
     )
     return await _send(to, "Seu trial termina em breve — Intelbras Finance", html)
 
@@ -239,7 +251,7 @@ async def send_lead_confirmation_email(
 </p>
 
 <p>Quer uma análise personalizada e detalhada para o seu negócio? Nossa equipe está pronta para ajudar.</p>
-<p style="text-align:center"><a href="mailto:grupo.mobilidadeeletrica@intelbras.com.br" class="btn">Falar com especialista</a></p>
+<p style="text-align:center">{_btn("mailto:grupo.mobilidadeeletrica@intelbras.com.br", "Falar com especialista")}</p>
 """,
     )
     return await _send(to, "Sua simulação de ROI em estações de recarga - Intelbras Finance", html)
@@ -285,7 +297,7 @@ async def send_lead_notification_email(
   <tr><td style="padding:8px 14px;font-size:13px;color:#64748b">ROI 5 anos</td><td style="padding:8px 14px;font-weight:600">{sim.get("roi_5y_pct", 0):.1f}%</td></tr>
 </table>
 
-<p style="text-align:center"><a href="{_app_url()}/dashboard/leads" class="btn">Ver todos os leads</a></p>
+<p style="text-align:center">{_btn(f"{_app_url()}/dashboard/leads", "Ver todos os leads")}</p>
 """,
     )
     return await _send(
@@ -318,7 +330,7 @@ async def send_specialist_contact_notification(
   <tr><td style="padding:8px 14px;font-size:13px;color:#64748b">Telefone</td><td style="padding:8px 14px"><a href="tel:{lead_phone}">{lead_phone}</a></td></tr>
 </table>
 
-<p style="text-align:center"><a href="{_app_url()}/dashboard/leads" class="btn">Ver lead no CRM</a></p>
+<p style="text-align:center">{_btn(f"{_app_url()}/dashboard/leads", "Ver lead no CRM")}</p>
 """,
     )
     return await _send(to, f"{lead_name} quer falar com especialista - Intelbras Finance", html)
@@ -397,9 +409,7 @@ def send_alert_triggered_email_sync(
   Este alerta não será re-disparado nas próximas 24 horas.
 </p>
 
-<p style="text-align:center">
-  <a href="{_app_url()}/dashboard" class="btn">Acessar Dashboard</a>
-</p>
+<p style="text-align:center">{_btn(f"{_app_url()}/dashboard", "Acessar Dashboard")}</p>
 """,
     )
     return _send_sync(to, f"Alerta: {alert_name} - {org_name} | Intelbras Finance", html)

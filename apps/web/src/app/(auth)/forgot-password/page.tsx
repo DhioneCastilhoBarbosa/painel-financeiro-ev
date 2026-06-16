@@ -119,7 +119,7 @@ export default function ForgotPasswordPage() {
                 type="submit"
                 className="w-full font-semibold"
                 disabled={loading}
-                style={{ backgroundColor: DARK }}
+                style={{ backgroundColor: DARK, color: "#fff" }}
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Enviar link de redefinição
