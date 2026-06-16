@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     debug: bool = False
     allowed_origins: str = "http://localhost:3000"
     # URL pública do frontend — usada nos links de e-mail transacional
-    app_url: str = "http://localhost:3000"
+    app_url: str = "http://54.159.164.244:3003"
 
     # Database
     database_url: str = (

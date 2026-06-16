@@ -115,15 +115,15 @@ export default function ForgotPasswordPage() {
               />
             </CardContent>
             <CardFooter className="flex flex-col gap-3 pb-6">
-              <Button
+              <button
                 type="submit"
-                className="w-full font-semibold"
                 disabled={loading}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-opacity disabled:opacity-50"
                 style={{ backgroundColor: DARK, color: "#fff" }}
               >
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {loading && <Loader2 className="h-4 w-4 animate-spin" />}
                 Enviar link de redefinição
-              </Button>
+              </button>
             </CardFooter>
           </form>
         </Form>
