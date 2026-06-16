@@ -40,6 +40,7 @@ from app.models.organization import Organization
 from app.models.subscription import Subscription, SubscriptionPlan
 from app.models.user import User
 from app.services.audit_service import log_action
+from app.services.email import _send_via_smtp
 
 router = APIRouter()
 
@@ -811,3 +812,58 @@ async def delete_feedback(
     await db.delete(fb)
     await db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+# ─── Diagnóstico SMTP (temporário) ────────────────────────────────────────────
+
+
+@router.post("/diag/smtp-test", summary="Testar envio SMTP do servidor")
+async def smtp_test(
+    to: str = Query(..., description="Endereço de destino do e-mail de teste"),
+    admin: User = _AdminUser,
+) -> dict:
+    """Envia um e-mail de teste via SMTP e retorna sucesso ou mensagem de erro detalhada."""
+    import smtplib
+    import ssl as _ssl
+    import traceback
+
+    from app.core.config import settings
+
+    result: dict[str, Any] = {
+        "smtp_host": settings.smtp_host,
+        "smtp_port": settings.smtp_port,
+        "smtp_user": settings.smtp_user,
+        "smtp_use_tls": settings.smtp_use_tls,
+        "smtp_from": settings.smtp_from or settings.smtp_user,
+        "lead_notify_always": settings.lead_notify_always,
+        "to": to,
+    }
+
+    try:
+        ctx = _ssl.create_default_context()
+        ctx.set_ciphers("DEFAULT:@SECLEVEL=1")
+        with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=20) as server:
+            server.set_debuglevel(0)
+            server.ehlo()
+            caps = list(server.esmtp_features.keys())
+            result["esmtp_caps"] = caps
+            if settings.smtp_use_tls:
+                server.starttls(context=ctx)
+                server.ehlo()
+            server.login(settings.smtp_user, settings.smtp_password)
+            result["login"] = "ok"
+
+            from email.mime.multipart import MIMEMultipart
+            from email.mime.text import MIMEText
+            msg = MIMEMultipart("alternative")
+            msg["Subject"] = "Diagnóstico SMTP — FinanceDash"
+            msg["From"] = result["smtp_from"]
+            msg["To"] = to
+            msg.attach(MIMEText("<p>Teste de conectividade SMTP do servidor de produção.</p>", "html", "utf-8"))
+            server.sendmail(result["smtp_from"], [to], msg.as_string())
+            result["send"] = "ok"
+    except Exception as exc:
+        result["error"] = str(exc)
+        result["traceback"] = traceback.format_exc()
+
+    return result
