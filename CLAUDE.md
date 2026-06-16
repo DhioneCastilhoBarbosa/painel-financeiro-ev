@@ -67,6 +67,8 @@ LEAD_NOTIFY_ALWAYS=                       # vazio — não notifica nenhum e-mai
 | `/register` | `register/page.tsx` |
 | `/forgot-password` | `forgot-password/page.tsx` |
 | `/reset-password?token=...` | `reset-password/page.tsx` — requer `<Suspense>` por usar `useSearchParams()` |
+| `/verify-email?token=...` | `verify-email/page.tsx` — chama `POST /auth/verify-email` no mount |
+| `/accept-invite?token=...` | `accept-invite/page.tsx` — valida via `GET /auth/invite-lookup`, exibe form de cadastro |
 
 ### Dashboard (`/apps/web/src/app/(dashboard)/dashboard/`)
 | Rota | Conteúdo |
@@ -184,19 +186,9 @@ O servidor de e-mail `@intelbras.com.br` rejeita mensagens com emoji no assunto.
 
 ---
 
-## Endpoint temporário — remover futuramente
-
-`POST /api/v1/admin/diag/smtp-test` — endpoint de diagnóstico SMTP em `admin.py:820`.
-Foi adicionado para debug de produção. Pode ser removido quando não for mais necessário.
-
----
-
 ## Implementações futuras / pendentes
 
 - [ ] Domínio próprio (`https://...`) → adicionar `APP_URL` no Dokploy e habilitar `cookie_secure=True`
-- [ ] Remover endpoint de diagnóstico SMTP (`/admin/diag/smtp-test`) quando não for mais necessário
-- [ ] Página `/verify-email?token=...` — o e-mail de verificação existe, mas a rota frontend pode não existir
-- [ ] Página `/accept-invite?token=...` — convite por e-mail, verificar se rota frontend existe
 - [ ] Camadas adicionais do mapa (pesos, heatmap, clusters por setor) — desligadas, a ativar futuramente
 - [ ] Stripe integração completa — chaves configuradas mas fluxo de checkout pode estar incompleto
 - [ ] Sentry — DSN não configurado em produção (`sentry_dsn=""`)
