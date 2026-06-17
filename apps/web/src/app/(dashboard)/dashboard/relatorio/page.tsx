@@ -362,14 +362,14 @@ function RelatorioPageContent() {
                           <tr key={r.period} className="border-b">
                             <td className="py-1 font-medium">{r.period}</td>
                             <td className="text-right py-1 tabular-nums">{formatCurrency(r.net_revenue)}</td>
-                            <td className="text-right py-1 tabular-nums text-red-600">{formatCurrency(r.total_costs)}</td>
+                            <td className="text-right py-1 tabular-nums text-red-500 dark:text-red-400">{formatCurrency(r.total_costs)}</td>
                             <td className="text-right py-1 tabular-nums">{formatCurrency(r.ebitda)}</td>
                             <td className="text-right py-1">
                               <Badge variant={r.ebitda_margin_pct >= 0 ? "default" : "destructive"} className="text-[9px] py-0">
                                 {formatPct(r.ebitda_margin_pct)}
                               </Badge>
                             </td>
-                            <td className={`text-right py-1 tabular-nums font-semibold ${r.ebit >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                            <td className={`text-right py-1 tabular-nums font-semibold ${r.ebit >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}`}>
                               {formatCurrency(r.ebit)}
                             </td>
                             <td className="text-right py-1 tabular-nums text-muted-foreground">{formatNumber(r.sessions)}</td>

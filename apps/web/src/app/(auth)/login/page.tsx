@@ -79,8 +79,7 @@ export default function LoginPage() {
         <div className="relative flex justify-center items-center">
           <Link
             href="/"
-            className="absolute left-0 flex items-center gap-1.5 text-xs font-medium transition-colors hover:opacity-70"
-            style={{ color: DARK }}
+            className="absolute left-0 flex items-center gap-1.5 text-xs font-medium transition-colors hover:opacity-70 text-[#163134] dark:text-muted-foreground"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Voltar

@@ -215,13 +215,13 @@ function UsuariosPageContent() {
                         }
                       </td>
                       <td className="py-2 pr-3 text-right font-medium">{formatNumber(u.sessions)}</td>
-                      <td className="py-2 pr-3 text-right text-emerald-600 font-medium">{formatCurrency(u.revenue)}</td>
+                      <td className="py-2 pr-3 text-right text-emerald-600 dark:text-emerald-400 font-medium">{formatCurrency(u.revenue)}</td>
                       <td className="py-2 pr-3 text-right">{formatCurrency(u.avg_ticket)}</td>
                       <td className="py-2 pr-3 text-right">{u.avg_duration.toFixed(0)} min</td>
                       <td className="py-2 pr-3 text-right">{u.kwh.toFixed(1)}</td>
                       <td className="py-2 pr-3 text-right">{formatNumber(u.voucher_sessions)}</td>
                       <td className="py-2 text-right">
-                        <span className={u.voucher_pct > 50 ? "text-amber-600 font-medium" : "text-muted-foreground"}>
+                        <span className={u.voucher_pct > 50 ? "text-amber-600 dark:text-amber-400 font-medium" : "text-muted-foreground"}>
                           {formatPct(u.voucher_pct)}
                         </span>
                       </td>
@@ -277,7 +277,7 @@ function UsuariosPageContent() {
           <Card className="border-l-4 border-l-amber-500">
             <CardContent className="pt-5">
               <p className="text-sm text-muted-foreground">Sessões com Voucher</p>
-              <div className="text-2xl font-bold mt-1 text-amber-600">
+              <div className="text-2xl font-bold mt-1 text-amber-600 dark:text-amber-400">
                 {isLoading ? <Skeleton className="h-8 w-24" /> : formatNumber(voucher?.total_sessions ?? 0)}
               </div>
               <p className="text-xs text-muted-foreground mt-0.5">
@@ -288,7 +288,7 @@ function UsuariosPageContent() {
           <Card className="border-l-4 border-l-blue-500">
             <CardContent className="pt-5">
               <p className="text-sm text-muted-foreground">Usuários Retidos pós-Voucher</p>
-              <div className="text-2xl font-bold mt-1 text-blue-600">
+              <div className="text-2xl font-bold mt-1 text-blue-600 dark:text-blue-400">
                 {isLoading ? <Skeleton className="h-8 w-24" /> : formatNumber(voucher?.retained_users ?? 0)}
               </div>
               <p className="text-xs text-muted-foreground mt-0.5">voltaram sem usar voucher</p>
@@ -297,7 +297,7 @@ function UsuariosPageContent() {
           <Card className="border-l-4 border-l-emerald-500">
             <CardContent className="pt-5">
               <p className="text-sm text-muted-foreground">Taxa de Retenção Voucher</p>
-              <div className="text-2xl font-bold mt-1 text-emerald-600">
+              <div className="text-2xl font-bold mt-1 text-emerald-600 dark:text-emerald-400">
                 {isLoading ? <Skeleton className="h-8 w-24" /> : formatPct(voucher?.retention_rate ?? 0)}
               </div>
               <p className="text-xs text-muted-foreground mt-0.5">de quem usou voucher voltou pago</p>

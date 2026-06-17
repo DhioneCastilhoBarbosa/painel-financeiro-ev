@@ -2,7 +2,6 @@
 import { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 import * as L from 'leaflet';
-// @ts-expect-error react-leaflet v4 GeoJSON accepts style/onEachFeature from L.GeoJSONOptions
 import { GeoJSON } from 'react-leaflet';
 import type { IBGEGeoJSON } from '@/hooks/useIBGEData';
 import { UF_CODE_TO_SIGLA } from '@/hooks/useIBGEData';
@@ -27,11 +26,13 @@ function FallbackCircles({ gapScores }: { gapScores: GapScore[] }) {
   const map = useMap();
 
   useEffect(() => {
-    const circles: L.CircleMarker[] = gapScores.map((gap) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const circles: any[] = gapScores.map((gap) => {
       const centroid = UF_CENTROIDS[gap.uf];
-      if (!centroid) return null as unknown as L.CircleMarker;
+      if (!centroid) return null;
 
-      const circle = L.circleMarker(centroid, {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const circle = (L as any).circleMarker(centroid, {
         radius: 18,
         fillColor: GAP_COLORS[gap.classificacao],
         color: '#fff',
@@ -99,11 +100,7 @@ export function ABVEGapLayer({ geojson, gapScores }: Props) {
   };
 
   return (
-    <GeoJSON
-      key="abve-gap-layer"
-      data={geojson}
-      style={style}
-      onEachFeature={onEachFeature}
-    />
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    <GeoJSON key="abve-gap-layer" {...({ data: geojson, style, onEachFeature } as any)} />
   );
 }

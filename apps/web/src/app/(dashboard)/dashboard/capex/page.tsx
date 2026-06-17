@@ -221,9 +221,9 @@ function CapexPageContent() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { label: "CAPEX total investido",  value: fmtBRL(totalCapex),   color: "text-foreground" },
-            { label: "Receita acumulada",       value: fmtBRL(totalRevenue), color: "text-emerald-600" },
-            { label: "Lucro líquido acumulado", value: fmtBRL(totalNet),     color: totalNet >= 0 ? "text-emerald-600" : "text-red-500" },
-            { label: "Posição vs CAPEX",        value: fmtBRL(totalCumul),   color: totalCumul >= 0 ? "text-emerald-600" : "text-red-500" },
+            { label: "Receita acumulada",       value: fmtBRL(totalRevenue), color: "text-emerald-600 dark:text-emerald-400" },
+            { label: "Lucro líquido acumulado", value: fmtBRL(totalNet),     color: totalNet >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400" },
+            { label: "Posição vs CAPEX",        value: fmtBRL(totalCumul),   color: totalCumul >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400" },
           ].map(({ label, value, color }) => (
             <Card key={label}>
               <CardContent className="pt-5">
@@ -322,9 +322,9 @@ function CapexPageContent() {
                   <div className="grid grid-cols-2 gap-2">
                     {[
                       { label: "CAPEX investido",  value: fmtBRL(r.capex_brl),     color: "text-foreground" },
-                      { label: "Receita acumulada", value: fmtBRL(p.revenue_total), color: "text-emerald-600" },
-                      { label: "OPEX + Impostos",   value: fmtBRL(p.opex_total + p.tax_total), color: "text-orange-500" },
-                      { label: "Lucro líquido",     value: fmtBRL(p.net_total),     color: p.net_total >= 0 ? "text-emerald-600" : "text-red-500" },
+                      { label: "Receita acumulada", value: fmtBRL(p.revenue_total), color: "text-emerald-600 dark:text-emerald-400" },
+                      { label: "OPEX + Impostos",   value: fmtBRL(p.opex_total + p.tax_total), color: "text-orange-500 dark:text-orange-400" },
+                      { label: "Lucro líquido",     value: fmtBRL(p.net_total),     color: p.net_total >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400" },
                     ].map(({ label, value, color }) => (
                       <div key={label} className="bg-muted/40 rounded-lg p-2.5">
                         <p className="text-xs text-muted-foreground">{label}</p>
@@ -369,19 +369,19 @@ function CapexPageContent() {
                         <TrendingUp className="h-3 w-3" />
                         {p.data_source === "sessions" ? "Receita/mês (últimos 90 dias)" : "Receita/mês estimada"}
                       </span>
-                      <span className="font-semibold text-emerald-600">{fmtBRL(p.monthly_revenue_avg)}</span>
+                      <span className="font-semibold text-emerald-600 dark:text-emerald-400">{fmtBRL(p.monthly_revenue_avg)}</span>
                     </div>
                   )}
 
                   {/* Data source */}
                   {p.data_source === "estimate" && (
-                    <div className="flex items-center gap-1.5 text-xs text-amber-600 bg-amber-50 rounded-lg px-3 py-2">
+                    <div className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 rounded-lg px-3 py-2">
                       <AlertCircle className="h-3.5 w-3.5 shrink-0" />
                       Usando receita estimada. Vincule uma estação para dados reais.
                     </div>
                   )}
                   {p.data_source === "sessions" && (
-                    <div className="flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 rounded-lg px-3 py-2">
+                    <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg px-3 py-2">
                       <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
                       {p.sessions_count.toLocaleString("pt-BR")} sessões reais importadas
                     </div>

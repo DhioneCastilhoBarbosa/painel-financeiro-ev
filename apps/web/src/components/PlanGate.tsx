@@ -1,7 +1,8 @@
 'use client';
 import { Lock } from 'lucide-react';
 import { usePlanFeatures } from '@/hooks/usePlanFeatures';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
 interface Props {
@@ -26,9 +27,9 @@ function UpgradePrompt({ planName }: { planName: string }) {
           Faça upgrade para desbloqueá-la.
         </p>
       </div>
-      <Button asChild size="sm" className="gap-1.5">
-        <Link href="/dashboard/billing">Ver planos disponíveis</Link>
-      </Button>
+      <Link href="/dashboard/billing" className={cn(buttonVariants({ size: 'sm' }), 'gap-1.5')}>
+        Ver planos disponíveis
+      </Link>
     </div>
   );
 }

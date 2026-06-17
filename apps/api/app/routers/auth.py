@@ -105,9 +105,7 @@ async def invite_lookup(token: str, db: AsyncSession = Depends(get_db)):
         }
 
     # 2. Verifica se é código de OrgInviteCode (cria nova org)
-    code = await db.scalar(
-        select(OrgInviteCode).where(OrgInviteCode.code == token.upper().strip())
-    )
+    code = await db.scalar(select(OrgInviteCode).where(OrgInviteCode.code == token.upper().strip()))
     if code:
         if code.used_at:
             return {"valid": False, "error": "Este código já foi utilizado."}
@@ -144,14 +142,12 @@ async def register(request: Request, body: RegisterRequest, db: AsyncSession = D
         raise HTTPException(status_code=409, detail="E-mail já cadastrado")
 
     # ── Validar código/token de convite ──────────────────────────────────────
-    invitation: Invitation | None = None   # token de convite de membro (junta org existente)
-    invite: OrgInviteCode | None = None    # código de convite de org (cria nova org)
+    invitation: Invitation | None = None  # token de convite de membro (junta org existente)
+    invite: OrgInviteCode | None = None  # código de convite de org (cria nova org)
 
     if body.invite_code:
         # Tenta primeiro como Invitation token (convite de membro)
-        invitation = await db.scalar(
-            select(Invitation).where(Invitation.token == body.invite_code)
-        )
+        invitation = await db.scalar(select(Invitation).where(Invitation.token == body.invite_code))
         if invitation:
             if invitation.accepted_at:
                 raise HTTPException(status_code=400, detail="Este convite já foi utilizado.")
@@ -165,7 +161,9 @@ async def register(request: Request, body: RegisterRequest, db: AsyncSession = D
             if not invite:
                 raise HTTPException(status_code=400, detail="Código de convite inválido.")
             if invite.used_at:
-                raise HTTPException(status_code=400, detail="Este código de convite já foi utilizado.")
+                raise HTTPException(
+                    status_code=400, detail="Este código de convite já foi utilizado."
+                )
             if invite.expires_at < datetime.now(_UTC):
                 raise HTTPException(status_code=400, detail="Este código de convite expirou.")
 
@@ -190,7 +188,10 @@ async def register(request: Request, body: RegisterRequest, db: AsyncSession = D
 
         invitation.accepted_at = datetime.now(UTC)
 
-        return {"message": "Conta criada e vinculada à organização. Você já pode entrar.", "joined_org": True}
+        return {
+            "message": "Conta criada e vinculada à organização. Você já pode entrar.",
+            "joined_org": True,
+        }
 
     # ── Fluxo B: Cria nova organização ───────────────────────────────────────
     # Protege o nome reservado "Intelbras" e garante unicidade de nome
@@ -291,7 +292,10 @@ async def login(
 
     org = await db.get(Organization, user.organization_id)
     if org and org.status == "blocked":
-        raise HTTPException(status_code=403, detail="Organização bloqueada. Entre em contato com o suporte Intelbras.")
+        raise HTTPException(
+            status_code=403,
+            detail="Organização bloqueada. Entre em contato com o suporte Intelbras.",
+        )
 
     user.last_login_at = datetime.now(UTC)
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { PlanGate } from "@/components/PlanGate";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import useSWR from "swr";
 import { toast } from "sonner";
 import {
@@ -121,6 +121,12 @@ function LeadsPageContent() {
   const [expandedEmailId, setExpandedEmailId] = useState<string | null>(null);
   const [editingStates, setEditingStates] = useState<Record<string, string[]>>({});
   const [savingEmailId, setSavingEmailId] = useState<string | null>(null);
+
+  // ── Pagination ─────────────────────────────────────────────────────────────
+  const [leadsPage, setLeadsPage] = useState(0);
+  const [simsPage, setSimsPage] = useState(0);
+  const LEADS_PER_PAGE = 50;
+  const SIMS_PER_PAGE = 50;
 
   // ── Simulator config state ──────────────────────────────────────────────────
   const [editingConfig, setEditingConfig] = useState(false);
@@ -367,6 +373,16 @@ function LeadsPageContent() {
            l.city.toLowerCase().includes(q);
   });
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => { setLeadsPage(0); }, [search, filterState, filterSector, filterCharger]);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => { setSimsPage(0); }, [filterOrg]);
+
+  const totalLeadsPages = Math.ceil(filtered.length / LEADS_PER_PAGE);
+  const paginatedLeads = filtered.slice(leadsPage * LEADS_PER_PAGE, (leadsPage + 1) * LEADS_PER_PAGE);
+  const totalSimsPages = Math.ceil(simpleScenarios.length / SIMS_PER_PAGE);
+  const paginatedSims = simpleScenarios.slice(simsPage * SIMS_PER_PAGE, (simsPage + 1) * SIMS_PER_PAGE);
+
   // ── Handlers ────────────────────────────────────────────────────────────────
   const handleExport = () =>
     window.open(
@@ -517,11 +533,11 @@ function LeadsPageContent() {
             </CardContent></Card>
             <Card><CardContent className="pt-5">
               <p className="text-sm text-muted-foreground">Receita/mês média</p>
-              <p className="text-3xl font-bold mt-1 text-emerald-600">{isLoading ? "—" : fmtBRL(avgRevenue)}</p>
+              <p className="text-3xl font-bold mt-1 text-emerald-600 dark:text-emerald-400">{isLoading ? "—" : fmtBRL(avgRevenue)}</p>
             </CardContent></Card>
             <Card><CardContent className="pt-5">
               <p className="text-sm text-muted-foreground">Payback médio</p>
-              <p className="text-3xl font-bold mt-1 text-blue-600">
+              <p className="text-3xl font-bold mt-1 text-blue-600 dark:text-blue-400">
                 {isLoading ? "—" : avgPayback ? `${avgPayback.toFixed(0)} meses` : "—"}
               </p>
             </CardContent></Card>
@@ -570,7 +586,7 @@ function LeadsPageContent() {
               </div>
             ) : (
               <div className="divide-y">
-                {filtered.map((lead) => (
+                {paginatedLeads.map((lead) => (
                   <div key={lead.id} className="px-6 py-4">
                     <div className="flex items-start justify-between cursor-pointer"
                       onClick={() => setExpandedLead(expandedLead === lead.id ? null : lead.id)}>
@@ -605,9 +621,9 @@ function LeadsPageContent() {
                       </div>
                       <div className="flex items-center gap-6 shrink-0 ml-4 text-right">
                         <div><p className="text-xs text-muted-foreground">Receita/mês</p>
-                          <p className="font-bold text-emerald-600 text-sm">{fmtBRL(lead.monthly_revenue)}</p></div>
+                          <p className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">{fmtBRL(lead.monthly_revenue)}</p></div>
                         <div><p className="text-xs text-muted-foreground">Payback</p>
-                          <p className="font-bold text-blue-600 text-sm">
+                          <p className="font-bold text-blue-600 dark:text-blue-400 text-sm">
                             {lead.payback_months ? `${lead.payback_months.toFixed(0)} m` : "—"}
                           </p></div>
                         <div><p className="text-xs text-muted-foreground">ROI 5a</p>
@@ -670,6 +686,21 @@ function LeadsPageContent() {
                     )}
                   </div>
                 ))}
+              </div>
+            )}
+            {totalLeadsPages > 1 && (
+              <div className="flex items-center justify-between px-6 py-3 border-t">
+                <span className="text-xs text-muted-foreground">
+                  {filtered.length} leads · página {leadsPage + 1} de {totalLeadsPages}
+                </span>
+                <div className="flex items-center gap-1">
+                  <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setLeadsPage(p => p - 1)} disabled={leadsPage === 0}>
+                    Anterior
+                  </Button>
+                  <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setLeadsPage(p => p + 1)} disabled={leadsPage >= totalLeadsPages - 1}>
+                    Próxima
+                  </Button>
+                </div>
               </div>
             )}
           </CardContent></Card>
@@ -749,21 +780,21 @@ function LeadsPageContent() {
                     label: "Taxa de interesse especialista",
                     value: `${analytics.specialistRate.toFixed(1)}%`,
                     sub: "leads que pediram contato",
-                    color: "text-amber-600",
+                    color: "text-amber-600 dark:text-amber-400",
                   },
                   {
                     icon: <TrendingUp className="h-4 w-4" />,
                     label: "Receita mensal potencial",
                     value: fmtBRL(analytics.totalRevenue),
                     sub: `${fmtBRL(analytics.totalRevenue * 12)} ao ano`,
-                    color: "text-emerald-600",
+                    color: "text-emerald-600 dark:text-emerald-400",
                   },
                   {
                     icon: <Zap className="h-4 w-4" />,
                     label: "Pontos de carga demandados",
                     value: analytics.totalPoints,
                     sub: analytics.topState ? `UF líder: ${analytics.topState.uf} (${analytics.topState.count})` : "—",
-                    color: "text-blue-600",
+                    color: "text-blue-600 dark:text-blue-400",
                   },
                 ].map(({ icon, label, value, sub, color }) => (
                   <Card key={label}>
@@ -1082,14 +1113,14 @@ function LeadsPageContent() {
                                 <td className="px-4 py-2.5 text-right">{cfg.avg_duration_min}</td>
                                 <td className="px-4 py-2.5 text-right text-xs font-medium">
                                   {(() => {
-                                    const kwh = cfg.power_kw * (cfg.avg_duration_min / 60) * 0.5;
-                                    const monthlyRev = cfg.avg_sessions_day * 30 * kwh * (activeConfig?.price_per_kwh ?? 0);
-                                    const monthlyOpex = (cfg.price_brl * (activeConfig?.opex_pct ?? 0)) / 12;
+                                    const kwhPerSession = cfg.power_kw * (cfg.avg_duration_min / 60);
+                                    const monthlyRev = cfg.avg_sessions_day * 30 * kwhPerSession * (activeConfig?.price_per_kwh ?? 0);
+                                    const monthlyOpex = monthlyRev * (activeConfig?.opex_pct ?? 0);
                                     const net = monthlyRev - monthlyOpex;
-                                    if (net <= 0) return <span className="text-red-500">—</span>;
+                                    if (net <= 0) return <span className="text-red-500 dark:text-red-400">—</span>;
                                     const months = cfg.price_brl / net;
                                     const yrs = months / 12;
-                                    return <span className={yrs <= 4 ? "text-emerald-600 dark:text-emerald-400" : yrs <= 7 ? "text-amber-600" : "text-red-500"}>{yrs.toFixed(1)} anos</span>;
+                                    return <span className={yrs <= 4 ? "text-emerald-600 dark:text-emerald-400" : yrs <= 7 ? "text-amber-600 dark:text-amber-400" : "text-red-500 dark:text-red-400"}>{yrs.toFixed(1)} anos</span>;
                                   })()}
                                 </td>
                               </>
@@ -1283,7 +1314,7 @@ function LeadsPageContent() {
                   </tr>
                 </thead>
                 <tbody>
-                  {simpleScenarios.map(sc => {
+                  {paginatedSims.map(sc => {
                     const inp = sc.inputs as Record<string, unknown>;
                     const res = sc.results as Record<string, unknown>;
                     const estName = (inp.establishment_name as string) || "—";
@@ -1311,10 +1342,10 @@ function LeadsPageContent() {
                         <td className="px-4 py-3">{fmtBRL(capex)}</td>
                         <td className="px-4 py-3">
                           {paybackMonths
-                            ? <span className={paybackMonths <= 48 ? "text-emerald-600 dark:text-emerald-400 font-medium" : "text-amber-600 font-medium"}>
+                            ? <span className={paybackMonths <= 48 ? "text-emerald-600 dark:text-emerald-400 font-medium" : "text-amber-600 dark:text-amber-400 font-medium"}>
                                 {Math.floor(paybackMonths / 12)}a {Math.round(paybackMonths % 12)}m
                               </span>
-                            : <span className="text-red-500">Sem retorno</span>}
+                            : <span className="text-red-500 dark:text-red-400">Sem retorno</span>}
                         </td>
                         <td className={`px-4 py-3 font-medium ${monthlyNet >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>
                           {fmtBRL(monthlyNet)}
@@ -1347,6 +1378,21 @@ function LeadsPageContent() {
                   })}
                 </tbody>
               </table>
+              {totalSimsPages > 1 && (
+                <div className="flex items-center justify-between px-6 py-3 border-t">
+                  <span className="text-xs text-muted-foreground">
+                    {simpleScenarios.length} simulações · página {simsPage + 1} de {totalSimsPages}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setSimsPage(p => p - 1)} disabled={simsPage === 0}>
+                      Anterior
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setSimsPage(p => p + 1)} disabled={simsPage >= totalSimsPages - 1}>
+                      Próxima
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -1393,13 +1439,13 @@ function LeadsPageContent() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
                   { label: "Total de simulações", value: simAnalytics.total, color: "text-foreground", fmt: (v: number) => v.toString() },
-                  { label: "CAPEX médio",          value: simAnalytics.avgCapex,   color: "text-blue-600",    fmt: fmtBRL },
+                  { label: "CAPEX médio",          value: simAnalytics.avgCapex,   color: "text-blue-600 dark:text-blue-400",    fmt: fmtBRL },
                   { label: "Payback médio",
                     value: simAnalytics.avgPayback,
-                    color: simAnalytics.avgPayback && simAnalytics.avgPayback <= 48 ? "text-emerald-600" : "text-amber-600",
+                    color: simAnalytics.avgPayback && simAnalytics.avgPayback <= 48 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400",
                     fmt: (v: number) => `${Math.floor(v / 12)}a ${Math.round(v % 12)}m`,
                     fallback: "—" },
-                  { label: "Lucro/mês médio",      value: simAnalytics.avgNet,     color: simAnalytics.avgNet >= 0 ? "text-emerald-600" : "text-red-500", fmt: fmtBRL },
+                  { label: "Lucro/mês médio",      value: simAnalytics.avgNet,     color: simAnalytics.avgNet >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400", fmt: fmtBRL },
                 ].map(({ label, value, color, fmt, fallback }) => (
                   <Card key={label}>
                     <CardContent className="pt-5">

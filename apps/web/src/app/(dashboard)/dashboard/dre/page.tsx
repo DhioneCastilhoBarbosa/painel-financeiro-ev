@@ -155,11 +155,11 @@ function DREPageContent() {
 
   function cellClass(style: RowDef["style"]) {
     switch (style) {
-      case "green":      return "text-emerald-600 font-semibold";
-      case "red":        return "text-red-600";
-      case "green-bold": return "text-emerald-600 font-bold bg-emerald-50 dark:bg-emerald-950/40";
-      case "red-bold":   return "text-red-700 font-bold";
-      case "blue-italic":return "text-blue-600 text-[0.7rem] italic pl-6";
+      case "green":      return "text-emerald-600 dark:text-emerald-400 font-semibold";
+      case "red":        return "text-red-500 dark:text-red-400";
+      case "green-bold": return "text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/40";
+      case "red-bold":   return "text-red-600 dark:text-red-400 font-bold";
+      case "blue-italic":return "text-blue-600 dark:text-blue-400 text-[0.7rem] italic pl-6";
     }
   }
 
@@ -221,9 +221,9 @@ function DREPageContent() {
       {/* Summary cards — row 1 */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {[
-          { label: "ROL — Receita Líquida", value: formatCurrency(totals.revenue), color: "text-blue-600", border: "border-l-blue-500" },
-          { label: "EBITDA Total", value: formatCurrency(totals.ebitda), color: "text-emerald-600", border: "border-l-emerald-500" },
-          { label: "Margem Líquida Média", value: formatPct(avgMargin), color: avgMargin >= 0 ? "text-emerald-600" : "text-red-500", border: avgMargin >= 0 ? "border-l-emerald-500" : "border-l-red-500" },
+          { label: "ROL — Receita Líquida", value: formatCurrency(totals.revenue), color: "text-blue-600 dark:text-blue-400", border: "border-l-blue-500" },
+          { label: "EBITDA Total", value: formatCurrency(totals.ebitda), color: "text-emerald-600 dark:text-emerald-400", border: "border-l-emerald-500" },
+          { label: "Margem Líquida Média", value: formatPct(avgMargin), color: avgMargin >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400", border: avgMargin >= 0 ? "border-l-emerald-500" : "border-l-red-500" },
         ].map(({ label, value, color, border }) => (
           <Card key={label} className={`border-l-4 ${border}`}>
             <CardContent className="pt-5">
@@ -237,8 +237,8 @@ function DREPageContent() {
       {/* Summary cards — row 1b: annualized projections */}
       <div className="grid grid-cols-2 gap-4">
         {[
-          { label: "Receita Anualizada (proj.)", value: formatCurrency(annualizedNetRevenue), color: "text-blue-600", border: "border-l-blue-500", sub: `média de ${formatCurrency(avgNetRevenue)}/período` },
-          { label: "Lucro Anualizado (proj.)", value: formatCurrency(annualizedNetIncome), color: annualizedNetIncome >= 0 ? "text-emerald-600" : "text-red-500", border: annualizedNetIncome >= 0 ? "border-l-emerald-500" : "border-l-red-500", sub: `média de ${formatCurrency(avgNetIncome)}/período` },
+          { label: "Receita Anualizada (proj.)", value: formatCurrency(annualizedNetRevenue), color: "text-blue-600 dark:text-blue-400", border: "border-l-blue-500", sub: `média de ${formatCurrency(avgNetRevenue)}/período` },
+          { label: "Lucro Anualizado (proj.)", value: formatCurrency(annualizedNetIncome), color: annualizedNetIncome >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400", border: annualizedNetIncome >= 0 ? "border-l-emerald-500" : "border-l-red-500", sub: `média de ${formatCurrency(avgNetIncome)}/período` },
         ].map(({ label, value, color, border, sub }) => (
           <Card key={label} className={`border-l-4 ${border}`}>
             <CardContent className="pt-5">
@@ -253,9 +253,9 @@ function DREPageContent() {
       {/* Summary cards — row 2 */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {[
-          { label: "Custo Total", value: formatCurrency(totals.total_costs), color: "text-red-600", border: "border-l-red-500", sub: `${formatPct(totals.revenue > 0 ? totals.total_costs / totals.revenue * 100 : 0)} da receita` },
-          { label: "Lucro Bruto", value: formatCurrency(grossProfit), color: grossProfit >= 0 ? "text-emerald-600" : "text-red-500", border: grossProfit >= 0 ? "border-l-emerald-500" : "border-l-red-500", sub: "ROL – Custo Energia" },
-          { label: "Lucro / Dia", value: formatCurrency(profitPerDay), color: profitPerDay >= 0 ? "text-emerald-600" : "text-red-500", border: profitPerDay >= 0 ? "border-l-emerald-500" : "border-l-red-500", sub: `base ${totalDays} dias` },
+          { label: "Custo Total", value: formatCurrency(totals.total_costs), color: "text-red-500 dark:text-red-400", border: "border-l-red-500", sub: `${formatPct(totals.revenue > 0 ? totals.total_costs / totals.revenue * 100 : 0)} da receita` },
+          { label: "Lucro Bruto", value: formatCurrency(grossProfit), color: grossProfit >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400", border: grossProfit >= 0 ? "border-l-emerald-500" : "border-l-red-500", sub: "ROL – Custo Energia" },
+          { label: "Lucro / Dia", value: formatCurrency(profitPerDay), color: profitPerDay >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400", border: profitPerDay >= 0 ? "border-l-emerald-500" : "border-l-red-500", sub: `base ${totalDays} dias` },
         ].map(({ label, value, color, border, sub }) => (
           <Card key={label} className={`border-l-4 ${border}`}>
             <CardContent className="pt-5">

@@ -371,7 +371,7 @@ function StationsPageContent() {
         <Card className="border-l-4 border-l-blue-500">
           <CardContent className="pt-5">
             <p className="text-sm text-muted-foreground">Duração Média das Sessões</p>
-            <p className="text-2xl font-bold mt-1 text-blue-600">
+            <p className="text-2xl font-bold mt-1 text-blue-600 dark:text-blue-400">
               {durLoading ? "..." : `${avgDuration.toFixed(0)} min`}
             </p>
           </CardContent>
@@ -379,7 +379,7 @@ function StationsPageContent() {
         <Card className="border-l-4 border-l-purple-500">
           <CardContent className="pt-5">
             <p className="text-sm text-muted-foreground">Duração Mediana das Sessões</p>
-            <p className="text-2xl font-bold mt-1 text-purple-600">
+            <p className="text-2xl font-bold mt-1 text-purple-600 dark:text-purple-400">
               {durLoading ? "..." : `${medianDuration.toFixed(0)} min`}
             </p>
           </CardContent>

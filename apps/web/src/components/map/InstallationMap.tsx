@@ -27,8 +27,9 @@ import type { LayerVisibility } from './MapSidebar';
 
 // Fix Leaflet default icon paths broken by webpack
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
+delete ((L as any).Icon.Default.prototype as any)._getIconUrl;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(L as any).Icon.Default.mergeOptions({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
@@ -92,16 +93,19 @@ function MapResizer() {
 function BoundsWatcher({ onBoundsChange }: {
   onBoundsChange: (s: number, w: number, n: number, e: number) => void;
 }) {
-  const map = useMapEvents({
-    moveend() {
-      const b = map.getBounds();
-      onBoundsChange(b.getSouth(), b.getWest(), b.getNorth(), b.getEast());
-    },
-    zoomend() {
-      const b = map.getBounds();
-      onBoundsChange(b.getSouth(), b.getWest(), b.getNorth(), b.getEast());
-    },
-  });
+  const map = useMapEvents(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    {
+      moveend() {
+        const b = map.getBounds();
+        onBoundsChange(b.getSouth(), b.getWest(), b.getNorth(), b.getEast());
+      },
+      zoomend() {
+        const b = map.getBounds();
+        onBoundsChange(b.getSouth(), b.getWest(), b.getNorth(), b.getEast());
+      },
+    } as any
+  );
   return null;
 }
 
@@ -261,19 +265,10 @@ export default function InstallationMap() {
       )}
 
       {/* Map — always visible, no blocking overlay */}
-      {/* @ts-expect-error react-leaflet v4 types */}
-      <MapContainer
-        center={INITIAL_CENTER}
-        zoom={INITIAL_ZOOM}
-        zoomControl={false}
-        style={{ height: '100%', width: '100%' }}
-      >
-        {/* @ts-expect-error react-leaflet v4 types */}
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          maxZoom={18}
-        />
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <MapContainer {...({ center: INITIAL_CENTER, zoom: INITIAL_ZOOM, zoomControl: false, style: { height: '100%', width: '100%' } } as any)}>
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <TileLayer {...({ url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 18 } as any)} />
         <ZoomControl position="bottomright" />
         <MapResizer />
         <BoundsWatcher onBoundsChange={handleBoundsChange} />

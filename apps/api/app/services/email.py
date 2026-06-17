@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 import smtplib
+import ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -27,11 +28,22 @@ if _resend_available:
 
 
 def _from() -> str:
-    return f"FinanceDash <{settings.email_from}>"
+    return f"Intelbras Finance <{settings.email_from}>"
 
 
 def _smtp_from() -> str:
     return settings.smtp_from or settings.smtp_user or settings.email_from
+
+
+def _html_to_plain(html: str) -> str:
+    """Extrai texto plano simples do HTML para alternativa text/plain."""
+    import re
+
+    text = re.sub(r"<br\s*/?>", "\n", html, flags=re.IGNORECASE)
+    text = re.sub(r"</p>|</tr>|</div>", "\n", text, flags=re.IGNORECASE)
+    text = re.sub(r"<[^>]+>", "", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
 
 
 def _send_via_smtp(to: str, subject: str, html: str) -> bool:
@@ -41,11 +53,18 @@ def _send_via_smtp(to: str, subject: str, html: str) -> bool:
         msg["Subject"] = subject
         msg["From"] = _smtp_from()
         msg["To"] = to
+        # text/plain primeiro (fallback), html por último (preferido)
+        msg.attach(MIMEText(_html_to_plain(html), "plain", "utf-8"))
         msg.attach(MIMEText(html, "html", "utf-8"))
 
         with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=20) as server:
+            server.ehlo()
             if settings.smtp_use_tls:
-                server.starttls()
+                # SECLEVEL=1 allows the smaller DH keys used by postal.intelbras.com.br
+                ctx = ssl.create_default_context()
+                ctx.set_ciphers("DEFAULT:@SECLEVEL=1")
+                server.starttls(context=ctx)
+                server.ehlo()
             if settings.smtp_user and settings.smtp_password:
                 server.login(settings.smtp_user, settings.smtp_password)
             server.sendmail(_smtp_from(), [to], msg.as_string())
@@ -89,6 +108,19 @@ async def _send(to: str, subject: str, html: str) -> bool:
     return _send_sync(to, subject, html)
 
 
+_BTN_STYLE = (
+    "display:inline-block;background:#2563eb;color:#ffffff !important;"
+    "padding:12px 28px;border-radius:8px;text-decoration:none !important;"
+    "font-weight:600;margin:20px 0;font-family:Arial,sans-serif;font-size:14px;"
+    "mso-padding-alt:0;"
+)
+
+
+def _btn(url: str, label: str) -> str:
+    """Botão inline-styled — funciona em todos os clientes de e-mail."""
+    return f'<a href="{url}" style="{_BTN_STYLE}" target="_blank">{label}</a>'
+
+
 def _base_template(title: str, body_html: str) -> str:
     return f"""<!DOCTYPE html>
 <html lang="pt-BR">
@@ -99,19 +131,18 @@ def _base_template(title: str, body_html: str) -> str:
   .header{{background:#2563eb;padding:24px 32px;text-align:center}}
   .header h1{{color:#fff;font-size:20px;margin:0}}
   .body{{padding:32px}}
-  .btn{{display:inline-block;background:#2563eb;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;margin:20px 0}}
   .footer{{background:#f1f5f9;padding:16px 32px;text-align:center;font-size:12px;color:#64748b}}
   p{{color:#334155;line-height:1.6}}
 </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="header"><h1>⚡ FinanceDash</h1></div>
+    <div class="header"><h1>Intelbras Finance</h1></div>
     <div class="body">
       <h2 style="color:#1e293b;margin-top:0">{title}</h2>
       {body_html}
     </div>
-    <div class="footer">FinanceDash · Gestão Financeira de Eletropostos<br>Este e-mail foi gerado automaticamente, não responda.</div>
+    <div class="footer">Intelbras Finance · Gestão Financeira de Eletropostos<br>Este e-mail foi gerado automaticamente, não responda.</div>
   </div>
 </body></html>"""
 
@@ -121,11 +152,11 @@ async def send_verify_email(to: str, name: str, token: str) -> bool:
     html = _base_template(
         "Verifique seu e-mail",
         f"""<p>Olá, <strong>{name}</strong>!</p>
-<p>Obrigado por criar sua conta no FinanceDash. Clique no botão abaixo para verificar seu e-mail e ativar sua conta.</p>
-<p style="text-align:center"><a href="{url}" class="btn">Verificar e-mail</a></p>
-<p style="font-size:13px;color:#64748b">Se você não criou uma conta no FinanceDash, ignore este e-mail.<br>O link expira em <strong>1 hora</strong>.</p>""",
+<p>Obrigado por criar sua conta no Intelbras Finance. Clique no botão abaixo para verificar seu e-mail e ativar sua conta.</p>
+<p style="text-align:center">{_btn(url, "Verificar e-mail")}</p>
+<p style="font-size:13px;color:#64748b">Se você não criou uma conta no Intelbras Finance, ignore este e-mail.<br>O link expira em <strong>1 hora</strong>.</p>""",
     )
-    return await _send(to, "Verifique seu e-mail — FinanceDash", html)
+    return await _send(to, "Verifique seu e-mail — Intelbras Finance", html)
 
 
 async def send_reset_password_email(to: str, name: str, token: str) -> bool:
@@ -134,33 +165,33 @@ async def send_reset_password_email(to: str, name: str, token: str) -> bool:
         "Redefinir senha",
         f"""<p>Olá, <strong>{name}</strong>!</p>
 <p>Recebemos uma solicitação de redefinição de senha para sua conta. Clique no botão abaixo para criar uma nova senha.</p>
-<p style="text-align:center"><a href="{url}" class="btn">Redefinir senha</a></p>
+<p style="text-align:center">{_btn(url, "Redefinir senha")}</p>
 <p style="font-size:13px;color:#64748b">Se você não solicitou a redefinição, ignore este e-mail. Sua senha não será alterada.<br>O link expira em <strong>1 hora</strong>.</p>""",
     )
-    return await _send(to, "Redefinição de senha — FinanceDash", html)
+    return await _send(to, "Redefinição de senha — Intelbras Finance", html)
 
 
 async def send_invite_email(to: str, org_name: str, role_label: str, token: str) -> bool:
     url = f"{_app_url()}/accept-invite?token={token}"
     html = _base_template(
         f"Você foi convidado para {org_name}",
-        f"""<p>Você recebeu um convite para ingressar na organização <strong>{org_name}</strong> no FinanceDash como <strong>{role_label}</strong>.</p>
+        f"""<p>Você recebeu um convite para ingressar na organização <strong>{org_name}</strong> no Intelbras Finance como <strong>{role_label}</strong>.</p>
 <p>Clique no botão abaixo para aceitar o convite e criar sua conta.</p>
-<p style="text-align:center"><a href="{url}" class="btn">Aceitar convite</a></p>
+<p style="text-align:center">{_btn(url, "Aceitar convite")}</p>
 <p style="font-size:13px;color:#64748b">O link expira em <strong>48 horas</strong>. Se você não esperava este convite, ignore este e-mail.</p>""",
     )
-    return await _send(to, f"Convite para {org_name} — FinanceDash", html)
+    return await _send(to, f"Convite para {org_name} — Intelbras Finance", html)
 
 
 async def send_trial_ending_email(to: str, name: str, days_left: int) -> bool:
     html = _base_template(
         "Seu período de teste está acabando",
         f"""<p>Olá, <strong>{name}</strong>!</p>
-<p>Seu período de teste gratuito do FinanceDash termina em <strong>{days_left} dia{"s" if days_left != 1 else ""}</strong>.</p>
+<p>Seu período de teste gratuito do Intelbras Finance termina em <strong>{days_left} dia{"s" if days_left != 1 else ""}</strong>.</p>
 <p>Para continuar usando todas as funcionalidades, escolha um plano:</p>
-<p style="text-align:center"><a href="{_app_url()}/dashboard/billing" class="btn">Ver planos</a></p>""",
+<p style="text-align:center">{_btn(f"{_app_url()}/dashboard/billing", "Ver planos")}</p>""",
     )
-    return await _send(to, "Seu trial termina em breve — FinanceDash", html)
+    return await _send(to, "Seu trial termina em breve — Intelbras Finance", html)
 
 
 # ─── Lead / Simulador ─────────────────────────────────────────────────────────
@@ -216,15 +247,15 @@ async def send_lead_confirmation_email(
 </table>
 
 <p style="font-size:13px;color:#64748b;background:#fef9c3;border:1px solid #fde047;padding:12px;border-radius:8px">
-  ⚠️ Esta é uma simulação estimada com parâmetros médios de mercado. Os resultados reais dependerão de localização,
+  AVISO: Esta é uma simulação estimada com parâmetros médios de mercado. Os resultados reais dependerão de localização,
   demanda local, tarifas de energia e outros fatores operacionais.
 </p>
 
 <p>Quer uma análise personalizada e detalhada para o seu negócio? Nossa equipe está pronta para ajudar.</p>
-<p style="text-align:center"><a href="mailto:contato@financedash.com.br" class="btn">Falar com especialista</a></p>
+<p style="text-align:center">{_btn("mailto:grupo.mobilidadeeletrica@intelbras.com.br", "Falar com especialista")}</p>
 """,
     )
-    return await _send(to, "📊 Sua simulação de ROI em estações de recarga — FinanceDash", html)
+    return await _send(to, "Sua simulação de ROI em estações de recarga - Intelbras Finance", html)
 
 
 async def send_lead_notification_email(
@@ -245,7 +276,7 @@ async def send_lead_notification_email(
     payback = sim.get("payback_months")
     payback_str = f"{payback:.0f} meses" if payback else "Acima de 5 anos"
     html = _base_template(
-        "🔔 Novo lead — Simulador de Investimento",
+        "Novo lead — Simulador de Investimento",
         f"""
 <p>Um novo lead realizou a simulação de investimento em estações de recarga:</p>
 
@@ -267,11 +298,11 @@ async def send_lead_notification_email(
   <tr><td style="padding:8px 14px;font-size:13px;color:#64748b">ROI 5 anos</td><td style="padding:8px 14px;font-weight:600">{sim.get("roi_5y_pct", 0):.1f}%</td></tr>
 </table>
 
-<p style="text-align:center"><a href="{_app_url()}/dashboard/leads" class="btn">Ver todos os leads</a></p>
+<p style="text-align:center">{_btn(f"{_app_url()}/dashboard/leads", "Ver todos os leads")}</p>
 """,
     )
     return await _send(
-        to, f"🔔 Novo lead: {lead_name} ({charger_type} × {num_chargers}) — FinanceDash", html
+        to, f"Novo lead: {lead_name} ({charger_type} x {num_chargers}) - Intelbras Finance", html
     )
 
 
@@ -286,7 +317,7 @@ async def send_specialist_contact_notification(
     lead_id: str,
 ) -> bool:
     html = _base_template(
-        "💬 Lead quer falar com um especialista",
+        "Lead quer falar com um especialista",
         f"""
 <p><strong>{lead_name}</strong> ({lead_email}) enviou uma mensagem pedindo contato com especialista:</p>
 
@@ -300,10 +331,10 @@ async def send_specialist_contact_notification(
   <tr><td style="padding:8px 14px;font-size:13px;color:#64748b">Telefone</td><td style="padding:8px 14px"><a href="tel:{lead_phone}">{lead_phone}</a></td></tr>
 </table>
 
-<p style="text-align:center"><a href="{_app_url()}/dashboard/leads" class="btn">Ver lead no CRM</a></p>
+<p style="text-align:center">{_btn(f"{_app_url()}/dashboard/leads", "Ver lead no CRM")}</p>
 """,
     )
-    return await _send(to, f"💬 {lead_name} quer falar com especialista — FinanceDash", html)
+    return await _send(to, f"{lead_name} quer falar com especialista - Intelbras Finance", html)
 
 
 # ─── Feedback (sugestões / reclamações) ───────────────────────────────────────
@@ -327,7 +358,7 @@ async def send_feedback_response_email(
 <p>Agradecemos por nos ajudar a melhorar a plataforma!</p>
 """,
     )
-    return await _send(to, f"Resposta à sua {type_label} — FinanceDash", html)
+    return await _send(to, f"Resposta à sua {type_label} — Intelbras Finance", html)
 
 
 # ─── Alertas ──────────────────────────────────────────────────────────────────
@@ -348,7 +379,7 @@ def send_alert_triggered_email_sync(
     Versão síncrona — chamada diretamente pelo Celery task (sem event loop).
     """
     html = _base_template(
-        f"⚠️ Alerta disparado: {alert_name}",
+        f"Alerta disparado: {alert_name}",
         f"""
 <p>O alerta <strong>"{alert_name}"</strong> foi acionado para a organização <strong>{org_name}</strong>.</p>
 
@@ -379,9 +410,7 @@ def send_alert_triggered_email_sync(
   Este alerta não será re-disparado nas próximas 24 horas.
 </p>
 
-<p style="text-align:center">
-  <a href="{_app_url()}/dashboard" class="btn">Acessar Dashboard</a>
-</p>
+<p style="text-align:center">{_btn(f"{_app_url()}/dashboard", "Acessar Dashboard")}</p>
 """,
     )
-    return _send_sync(to, f"⚠️ Alerta: {alert_name} — {org_name} | FinanceDash", html)
+    return _send_sync(to, f"Alerta: {alert_name} - {org_name} | Intelbras Finance", html)
