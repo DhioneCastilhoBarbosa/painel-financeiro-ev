@@ -145,7 +145,7 @@ function OverviewContent() {
 
       {/* Risk alert */}
       {kpis && kpis.pending_rev > 0 && (
-        <Alert className="border-red-200 bg-red-50 dark:bg-red-950">
+        <Alert className="border-red-200 bg-red-50 dark:bg-red-950/30">
           <AlertTriangle className="h-4 w-4 text-red-600" />
           <AlertDescription className="text-red-700 dark:text-red-300">
             <strong>Risco financeiro:</strong> {formatCurrency(kpis.pending_rev)} em pagamentos com status <em>pending</em>. Verificar integração de gateway.
@@ -435,10 +435,10 @@ function OverviewContent() {
 
       {/* Payback CTA */}
       {hasData && (
-        <Card className="border-blue-200 bg-blue-50 dark:bg-blue-950/30 dark:border-blue-900">
+        <Card className="border-emerald-200 bg-emerald-50 dark:bg-emerald-950/30 dark:border-emerald-900">
           <CardContent className="pt-5 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <Calculator className="h-8 w-8 text-blue-600 shrink-0" />
+              <Calculator className="h-8 w-8 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <div>
                 <p className="font-semibold text-sm">Análise de Investimento & Payback</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
@@ -448,7 +448,7 @@ function OverviewContent() {
             </div>
             <Link
               href="/dashboard/investimento"
-              className={cn(buttonVariants({ variant: "outline", size: "sm" }), "shrink-0 border-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900")}
+              className={cn(buttonVariants({ variant: "outline", size: "sm" }), "shrink-0 border-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900")}
             >
               Calcular Payback
             </Link>
@@ -468,10 +468,10 @@ function OverviewContent() {
                   key={i}
                   className={
                     ins.severity === "warning"
-                      ? "border-amber-200 bg-amber-50 dark:bg-amber-950"
+                      ? "border-amber-200 bg-amber-50 dark:bg-amber-950/30"
                       : ins.severity === "success"
-                      ? "border-emerald-200 bg-emerald-50 dark:bg-emerald-950"
-                      : "border-blue-200 bg-blue-50 dark:bg-blue-950"
+                      ? "border-emerald-200 bg-emerald-50 dark:bg-emerald-950/30"
+                      : "border-blue-200 bg-blue-50 dark:bg-blue-950/30"
                   }
                 >
                   <AlertDescription>

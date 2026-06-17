@@ -472,11 +472,11 @@ function HeatmapCard({ data }: { data: Array<{ weekday: number; hour: number; se
   const cellColor = (sessions: number): string => {
     if (sessions === 0) return "bg-slate-100 dark:bg-slate-800";
     const intensity = sessions / maxSessions;
-    if (intensity < 0.2) return "bg-blue-100 dark:bg-blue-950";
-    if (intensity < 0.4) return "bg-blue-200 dark:bg-blue-900";
-    if (intensity < 0.6) return "bg-blue-400 dark:bg-blue-700";
-    if (intensity < 0.8) return "bg-blue-600 dark:bg-blue-500";
-    return "bg-blue-800 dark:bg-blue-400";
+    if (intensity < 0.2) return "bg-emerald-100 dark:bg-emerald-950";
+    if (intensity < 0.4) return "bg-emerald-200 dark:bg-emerald-900";
+    if (intensity < 0.6) return "bg-emerald-400 dark:bg-emerald-700";
+    if (intensity < 0.8) return "bg-emerald-600 dark:bg-emerald-500";
+    return "bg-emerald-800 dark:bg-emerald-400";
   };
 
   return (
@@ -515,7 +515,7 @@ function HeatmapCard({ data }: { data: Array<{ weekday: number; hour: number; se
             {/* Legend */}
             <div className="flex items-center gap-1.5 mt-2 text-[0.65rem] text-muted-foreground">
               <span>Menos</span>
-              {["bg-slate-100 dark:bg-slate-800", "bg-blue-100 dark:bg-blue-950", "bg-blue-200 dark:bg-blue-900", "bg-blue-400 dark:bg-blue-700", "bg-blue-600 dark:bg-blue-500", "bg-blue-800 dark:bg-blue-400"].map((cls, i) => (
+              {["bg-slate-100 dark:bg-slate-800", "bg-emerald-100 dark:bg-emerald-950", "bg-emerald-200 dark:bg-emerald-900", "bg-emerald-400 dark:bg-emerald-700", "bg-emerald-600 dark:bg-emerald-500", "bg-emerald-800 dark:bg-emerald-400"].map((cls, i) => (
                 <div key={i} className={`w-3 h-3 rounded-sm ${cls}`} />
               ))}
               <span>Mais</span>
