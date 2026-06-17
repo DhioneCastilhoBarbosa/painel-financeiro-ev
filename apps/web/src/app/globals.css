@@ -101,26 +101,26 @@
 
 .dark {
   --chart-grid: #334155;
-  --background: oklch(0.145 0 0);
+  --background: oklch(0.165 0.04 196);        /* verde escuro — base da página em dark mode */
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: oklch(0.2187 0.04 196);             /* #163134 — verde escuro Intelbras */
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
+  --popover: oklch(0.2187 0.04 196);          /* igual ao card */
   --popover-foreground: oklch(0.985 0 0);
 
   /* Primary stays Intelbras green in dark mode too */
   --primary: oklch(0.7245 0.2311 143);
   --primary-foreground: oklch(0.2187 0.04 196);
 
-  --secondary: oklch(0.269 0 0);
+  --secondary: oklch(0.27 0.035 196);         /* verde escuro levemente mais claro que o card */
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
+  --muted: oklch(0.27 0.035 196);
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.7245 0.2311 143 / 0.15);
   --accent-foreground: oklch(0.7245 0.2311 143);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
+  --border: oklch(1 0 0 / 12%);               /* ligeiramente mais visível no fundo verde */
+  --input: oklch(1 0 0 / 18%);
   --ring: oklch(0.7245 0.2311 143);
 
   --chart-1: oklch(0.7245 0.2311 143);
@@ -155,12 +155,32 @@
 /* Print styles — outside @layer so they beat all utility classes */
 @media print {
   [data-sidebar], [data-input-panel] { display: none !important; }
-  html, body { height: auto !important; overflow: visible !important; background: white !important; }
+  html, body { height: auto !important; overflow: visible !important; background: white !important; color: black !important; }
+  /* Reset CSS variables to light-mode values regardless of .dark class presence —
+     handles race condition where .dark may still be on <html> when browser captures print. */
+  :root, .dark {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+  }
   /* Undo the clipping flex containers from the dashboard layout */
   .h-screen, .h-full, .min-h-0 { height: auto !important; min-height: 0 !important; }
   .overflow-hidden, .overflow-y-auto { overflow: visible !important; }
   /* Let recharts SVGs render fully */
   .recharts-wrapper, .recharts-surface { overflow: visible !important; }
+  /* Force ALL element backgrounds to transparent — SVG charts use `fill`, not background-color,
+     so this is safe and eliminates any dark container leaking into the PDF. */
+  *, *::before, *::after { background-color: transparent !important; background-image: none !important; }
+  html, body { background-color: white !important; }
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   @page { margin: 1.5cm; size: A4 portrait; }
 }

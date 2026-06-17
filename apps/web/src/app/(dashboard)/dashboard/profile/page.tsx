@@ -74,13 +74,13 @@ export default function ProfilePage() {
   }
 
   const inputClass =
-    "w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900";
+    "w-full rounded-lg border border-input bg-transparent dark:bg-input/30 px-3 py-2 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
 
   return (
     <div className="p-6 max-w-2xl space-y-6">
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-2">
-          <UserCircle className="h-6 w-6 text-blue-600" />
+          <UserCircle className="h-6 w-6 text-primary" />
           Meu Perfil
         </h1>
         <p className="text-muted-foreground text-sm mt-0.5">Gerencie suas informações pessoais e senha de acesso</p>
@@ -91,7 +91,7 @@ export default function ProfilePage() {
         <CardContent className="pt-5">
           <div className="flex items-center gap-4 mb-5">
             <Avatar className="h-14 w-14">
-              <AvatarFallback className="text-lg font-semibold bg-blue-100 text-blue-700">{initials}</AvatarFallback>
+              <AvatarFallback className="text-lg font-semibold bg-primary/15 text-primary-foreground">{initials}</AvatarFallback>
             </Avatar>
             <div>
               <p className="font-semibold text-base">{user?.name}</p>
@@ -103,14 +103,14 @@ export default function ProfilePage() {
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-sm">
-            <div className="flex items-center gap-2 rounded-lg border dark:border-slate-800 p-3">
+            <div className="flex items-center gap-2 rounded-lg border dark:border-white/10 p-3">
               <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
               <div>
                 <p className="text-[0.65rem] text-muted-foreground uppercase tracking-wide">Organização</p>
                 <p className="font-medium">{user?.organization_name}</p>
               </div>
             </div>
-            <div className="flex items-center gap-2 rounded-lg border dark:border-slate-800 p-3">
+            <div className="flex items-center gap-2 rounded-lg border dark:border-white/10 p-3">
               <ShieldCheck className="h-4 w-4 text-muted-foreground shrink-0" />
               <div>
                 <p className="text-[0.65rem] text-muted-foreground uppercase tracking-wide">Papel</p>
@@ -127,7 +127,7 @@ export default function ProfilePage() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <UserCircle className="h-4 w-4 text-blue-600" />
+            <UserCircle className="h-4 w-4 text-primary" />
             Alterar nome
           </CardTitle>
         </CardHeader>
@@ -159,7 +159,7 @@ export default function ProfilePage() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <Lock className="h-4 w-4 text-blue-600" />
+            <Lock className="h-4 w-4 text-primary" />
             Alterar senha
           </CardTitle>
         </CardHeader>

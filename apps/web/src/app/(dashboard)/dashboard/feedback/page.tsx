@@ -21,7 +21,7 @@ interface FeedbackItem {
 }
 
 const TYPE_CONFIG = {
-  suggestion: { label: "Sugestão", icon: Lightbulb, color: "bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 border-blue-200 dark:border-blue-800" },
+  suggestion: { label: "Sugestão", icon: Lightbulb, color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800" },
   complaint:  { label: "Reclamação", icon: AlertCircle, color: "bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-400 border-red-200 dark:border-red-800" },
 };
 
@@ -66,7 +66,7 @@ export default function FeedbackPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-2">
-          <MessageSquarePlus className="h-6 w-6 text-blue-600" />
+          <MessageSquarePlus className="h-6 w-6 text-primary" />
           Sugestões e Reclamações
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
@@ -112,7 +112,7 @@ export default function FeedbackPage() {
                 onChange={e => setTitle(e.target.value)}
                 maxLength={255}
                 required
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
+                className="w-full rounded-lg border border-input bg-transparent dark:bg-input/30 px-3 py-2 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
               />
             </div>
 
@@ -127,7 +127,7 @@ export default function FeedbackPage() {
                 onChange={e => setContent(e.target.value)}
                 rows={5}
                 required
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 resize-none"
+                className="w-full rounded-lg border border-input bg-transparent dark:bg-input/30 px-3 py-2 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 resize-none"
               />
             </div>
 
@@ -175,9 +175,9 @@ export default function FeedbackPage() {
                         </div>
                         <p className="text-sm text-muted-foreground line-clamp-2">{item.content}</p>
                         {item.admin_response && (
-                          <div className="mt-2 rounded-lg border border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/30 p-3">
-                            <p className="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-1">Resposta da equipe</p>
-                            <p className="text-sm text-blue-900 dark:text-blue-200 whitespace-pre-wrap">{item.admin_response}</p>
+                          <div className="mt-2 rounded-lg border border-emerald-200 bg-emerald-50 dark:border-emerald-900 dark:bg-emerald-950/30 p-3">
+                            <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 mb-1">Resposta da equipe</p>
+                            <p className="text-sm text-emerald-900 dark:text-emerald-200 whitespace-pre-wrap">{item.admin_response}</p>
                           </div>
                         )}
                         <p className="text-xs text-muted-foreground">

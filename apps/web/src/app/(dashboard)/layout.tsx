@@ -35,7 +35,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <Suspense>
         <FilterURLSync />
       </Suspense>
-      <div className="flex h-screen overflow-hidden bg-[#EFEFED] dark:bg-slate-950">
+      <div className="flex h-screen overflow-hidden bg-[#EFEFED] dark:bg-background">
         <Sidebar className="max-md:hidden" />
         <main className="flex-1 overflow-y-auto flex flex-col">
           <div className="print:hidden"><MobileNav /></div>
