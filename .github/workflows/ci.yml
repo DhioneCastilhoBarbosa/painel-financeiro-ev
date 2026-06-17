@@ -129,6 +129,9 @@ jobs:
       - name: TypeScript check
         run: npx tsc --noEmit
 
+      - name: Unit tests
+        run: npm test
+
       - name: ESLint
         run: npm run lint -- --max-warnings=0
         continue-on-error: true   # Remover quando lint estiver limpo
@@ -138,7 +141,6 @@ jobs:
     name: Docker build check
     runs-on: ubuntu-latest
     needs: [backend-tests, frontend-check]
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
 
     steps:
       - uses: actions/checkout@v4
