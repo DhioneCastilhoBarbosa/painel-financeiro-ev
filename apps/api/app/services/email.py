@@ -109,7 +109,7 @@ async def _send(to: str, subject: str, html: str) -> bool:
 
 
 _BTN_STYLE = (
-    "display:inline-block;background:#2563eb;color:#ffffff !important;"
+    "display:inline-block;background:#06CB3F;color:#163134 !important;"
     "padding:12px 28px;border-radius:8px;text-decoration:none !important;"
     "font-weight:600;margin:20px 0;font-family:Arial,sans-serif;font-size:14px;"
     "mso-padding-alt:0;"
@@ -128,8 +128,8 @@ def _base_template(title: str, body_html: str) -> str:
 <style>
   body{{font-family:Arial,sans-serif;background:#f8fafc;margin:0;padding:0}}
   .wrap{{max-width:520px;margin:40px auto;background:#fff;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden}}
-  .header{{background:#2563eb;padding:24px 32px;text-align:center}}
-  .header h1{{color:#fff;font-size:20px;margin:0}}
+  .header{{background:#163134;padding:24px 32px;text-align:center}}
+  .header h1{{color:#06CB3F;font-size:20px;margin:0}}
   .body{{padding:32px}}
   .footer{{background:#f1f5f9;padding:16px 32px;text-align:center;font-size:12px;color:#64748b}}
   p{{color:#334155;line-height:1.6}}
@@ -145,6 +145,56 @@ def _base_template(title: str, body_html: str) -> str:
     <div class="footer">Intelbras Finance · Gestão Financeira de Eletropostos<br>Este e-mail foi gerado automaticamente, não responda.</div>
   </div>
 </body></html>"""
+
+
+def _cash_flow_chart_html(projections: list) -> str:
+    """Gráfico de barras HTML compatível com clientes de e-mail (sem SVG/canvas)."""
+    if not projections:
+        return ""
+    pts = projections[:24]
+    values = [p.get("cumulative", 0) for p in pts]
+    abs_max = max((abs(v) for v in values), default=1) or 1
+    chart_h = 80
+    payback_month = next((p["month"] for p in pts if p.get("cumulative", 0) >= 0), None)
+
+    bars = ""
+    for p in pts:
+        v = p.get("cumulative", 0)
+        h = max(2, int(abs(v) / abs_max * chart_h))
+        color = "#06CB3F" if v >= 0 else "#ef4444"
+        bars += (
+            f'<td valign="bottom" style="vertical-align:bottom;padding:0 1px">'
+            f'<table cellpadding="0" cellspacing="0" style="width:100%"><tr>'
+            f'<td height="{h}" bgcolor="{color}" style="background-color:{color};height:{h}px;'
+            f'font-size:0;line-height:{h}px">&nbsp;</td>'
+            f"</tr></table></td>"
+        )
+
+    labels = ""
+    for p in pts:
+        m = p["month"]
+        label = str(m) if m % 6 == 0 or m == 1 else "&nbsp;"
+        labels += f'<td style="text-align:center;font-size:9px;color:#94a3b8;padding:2px 0">{label}</td>'
+
+    payback_html = (
+        f'<p style="text-align:center;color:#059669;font-size:12px;font-weight:600;margin:6px 0 0 0">'
+        f"Payback no mes {payback_month}</p>"
+        if payback_month
+        else ""
+    )
+
+    return (
+        f'<div style="background:#f0fdf4;border-radius:8px;padding:16px;border:1px solid #bbf7d0;margin:20px 0">'
+        f'<p style="font-weight:700;color:#163134;margin:0 0 8px 0;font-size:13px">'
+        f"Fluxo de Caixa Acumulado &mdash; {len(pts)} meses</p>"
+        f'<table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;table-layout:fixed">'
+        f"<tbody>"
+        f'<tr style="height:{chart_h}px" valign="bottom">{bars}</tr>'
+        f"<tr>{labels}</tr>"
+        f"</tbody></table>"
+        f"{payback_html}"
+        f"</div>"
+    )
 
 
 async def send_verify_email(to: str, name: str, token: str) -> bool:
@@ -210,6 +260,7 @@ async def send_lead_confirmation_email(
         if payback
         else "Acima de 5 anos"
     )
+    chart_html = _cash_flow_chart_html(sim.get("monthly_projections", []))
     html = _base_template(
         f"Sua análise de investimento está aqui, {name.split()[0]}!",
         f"""
@@ -234,17 +285,15 @@ async def send_lead_confirmation_email(
   </tr>
   <tr style="background:#f1f5f9">
     <td style="padding:10px 14px;font-size:13px;color:#64748b">Payback estimado</td>
-    <td style="padding:10px 14px;font-weight:700;color:#1e293b">{payback_str}</td>
+    <td style="padding:10px 14px;font-weight:700;color:#163134">{payback_str}</td>
   </tr>
   <tr>
-    <td style="padding:10px 14px;font-size:13px;color:#64748b">VPL em 5 anos</td>
-    <td style="padding:10px 14px;font-weight:700;color:#2563eb">{_fmt_brl(sim.get("npv_5y", 0))}</td>
-  </tr>
-  <tr style="background:#f1f5f9">
     <td style="padding:10px 14px;font-size:13px;color:#64748b">ROI em 5 anos</td>
-    <td style="padding:10px 14px;font-weight:700;color:#2563eb">{sim.get("roi_5y_pct", 0):.1f}%</td>
+    <td style="padding:10px 14px;font-weight:700;color:#06CB3F">{sim.get("roi_5y_pct", 0):.1f}%</td>
   </tr>
 </table>
+
+{chart_html}
 
 <p style="font-size:13px;color:#64748b;background:#fef9c3;border:1px solid #fde047;padding:12px;border-radius:8px">
   AVISO: Esta é uma simulação estimada com parâmetros médios de mercado. Os resultados reais dependerão de localização,
@@ -255,7 +304,7 @@ async def send_lead_confirmation_email(
 <p style="text-align:center">{_btn("mailto:grupo.mobilidadeeletrica@intelbras.com.br", "Falar com especialista")}</p>
 """,
     )
-    return await _send(to, "Sua simulação de ROI em estações de recarga - Intelbras Finance", html)
+    return await _send(to, "Sua simulação de retorno em estações de recarga - Intelbras Finance", html)
 
 
 async def send_lead_notification_email(
@@ -281,7 +330,7 @@ async def send_lead_notification_email(
 <p>Um novo lead realizou a simulação de investimento em estações de recarga:</p>
 
 <table style="width:100%;border-collapse:collapse;margin:16px 0">
-  <tr style="background:#eff6ff"><td colspan="2" style="padding:8px 14px;font-weight:700;color:#1e40af;font-size:13px">DADOS DO LEAD</td></tr>
+  <tr style="background:#f0fdf4"><td colspan="2" style="padding:8px 14px;font-weight:700;color:#163134;font-size:13px">DADOS DO LEAD</td></tr>
   <tr><td style="padding:8px 14px;font-size:13px;color:#64748b;width:40%">Nome</td><td style="padding:8px 14px;font-weight:600">{lead_name}</td></tr>
   <tr style="background:#f8fafc"><td style="padding:8px 14px;font-size:13px;color:#64748b">CNPJ</td><td style="padding:8px 14px">{cnpj or "—"}</td></tr>
   <tr><td style="padding:8px 14px;font-size:13px;color:#64748b">E-mail</td><td style="padding:8px 14px"><a href="mailto:{lead_email}">{lead_email}</a></td></tr>
@@ -291,7 +340,7 @@ async def send_lead_notification_email(
   <tr><td style="padding:8px 14px;font-size:13px;color:#64748b">Cargo</td><td style="padding:8px 14px">{position}</td></tr>
   {f'<tr style="background:#fff9e6"><td style="padding:8px 14px;font-size:13px;color:#64748b">Mensagem</td><td style="padding:8px 14px;font-style:italic">{message}</td></tr>' if message else ""}
 
-  <tr style="background:#eff6ff"><td colspan="2" style="padding:8px 14px;font-weight:700;color:#1e40af;font-size:13px">SIMULAÇÃO</td></tr>
+  <tr style="background:#f0fdf4"><td colspan="2" style="padding:8px 14px;font-weight:700;color:#163134;font-size:13px">SIMULAÇÃO</td></tr>
   <tr><td style="padding:8px 14px;font-size:13px;color:#64748b">Carregador</td><td style="padding:8px 14px;font-weight:600">{charger_type} × {num_chargers} pontos</td></tr>
   <tr><td style="padding:8px 14px;font-size:13px;color:#64748b">Receita/mês</td><td style="padding:8px 14px;color:#059669;font-weight:600">{_fmt_brl(sim.get("monthly_revenue", 0))}</td></tr>
   <tr style="background:#f8fafc"><td style="padding:8px 14px;font-size:13px;color:#64748b">Payback</td><td style="padding:8px 14px;font-weight:600">{payback_str}</td></tr>
@@ -351,7 +400,7 @@ async def send_feedback_response_email(
 <p>Olá, <strong>{first}</strong>!</p>
 <p>Recebemos a sua {type_label} <strong>"{title}"</strong> e temos uma resposta para você:</p>
 
-<blockquote style="border-left:4px solid #2563eb;margin:16px 0;padding:12px 16px;background:#eff6ff;border-radius:0 8px 8px 0;color:#334155">
+<blockquote style="border-left:4px solid #06CB3F;margin:16px 0;padding:12px 16px;background:#f0fdf4;border-radius:0 8px 8px 0;color:#334155">
   {response}
 </blockquote>
 

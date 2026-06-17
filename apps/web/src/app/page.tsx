@@ -552,7 +552,7 @@ export default function LandingPage() {
                   { label: "Receita/mês", value: "R$ 9.800", color: BRAND.primary },
                   { label: "Payback", value: "18 meses", color: "#85FFC5" },
                   { label: "ROI 5 anos", value: "245%", color: "#85FFC5" },
-                  { label: "VPL 5 anos", value: "R$ 312k", color: BRAND.primary },
+                  { label: "Sessões/mês", value: "~180", color: BRAND.primary },
                 ].map(({ label, value, color }) => (
                   <div key={label} className="bg-white/5 rounded-xl p-4">
                     <p className="text-xs text-white/40 mb-1">{label}</p>
@@ -1140,7 +1140,7 @@ export default function LandingPage() {
                 {
                   label: "ROI projetado em 5 anos",
                   value: `${result.roi_5y_pct.toFixed(0)}%`,
-                  sub: `VPL: ${fmtBRL(result.npv_5y)}`,
+                  sub: "",
                   color: BRAND.dark,
                 },
               ].map(({ label, value, sub, color }) => (
@@ -1153,11 +1153,10 @@ export default function LandingPage() {
             </div>
 
             {/* Secondary */}
-            <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-2 gap-4 mb-6">
               {[
                 { label: "Sessões/mês", value: fmtNum(result.sessions_per_month) },
                 { label: "kWh/mês", value: fmtNum(result.kwh_per_month) },
-                { label: "TIR estimada", value: `${result.irr_annual_pct.toFixed(1)}% a.a.` },
               ].map(({ label, value }) => (
                 <div key={label} className="bg-white border border-slate-100 rounded-xl p-4 text-center shadow-sm">
                   <p className="text-xs text-slate-500 mb-1 font-medium">{label}</p>
