@@ -141,7 +141,6 @@ jobs:
     name: Docker build check
     runs-on: ubuntu-latest
     needs: [backend-tests, frontend-check]
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
 
     steps:
       - uses: actions/checkout@v4
