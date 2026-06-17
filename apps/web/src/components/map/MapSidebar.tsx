@@ -153,7 +153,7 @@ export function MapSidebar({
         <select
           value={filterUF}
           onChange={(e) => onFilterUFChange(e.target.value)}
-          className="w-full text-sm border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-[#06CB3F]"
+          className="w-full text-sm border border-gray-200 rounded-lg px-2 py-1.5 bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#06CB3F]"
         >
           <option value="">Todos os estados</option>
           {UFS.map((uf) => <option key={uf} value={uf}>{uf}</option>)}

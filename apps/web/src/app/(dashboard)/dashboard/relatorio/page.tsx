@@ -33,7 +33,7 @@ function dateLabel(v: string): string {
 function ReportSection({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) {
   return (
     <div className={`mb-8 break-inside-avoid ${className ?? ""}`}>
-      <h2 className="text-sm font-bold uppercase tracking-wide text-blue-700 border-b border-blue-100 pb-1.5 mb-3">{title}</h2>
+      <h2 className="text-sm font-bold uppercase tracking-wide text-[#029d39] border-b border-emerald-100 pb-1.5 mb-3">{title}</h2>
       {children}
     </div>
   );
@@ -155,7 +155,7 @@ function RelatorioPageContent() {
           </div>
         </div>
 
-        <p className="text-xs text-muted-foreground no-print bg-blue-50 dark:bg-blue-950 border border-blue-200 rounded p-2">
+        <p className="text-xs text-muted-foreground no-print bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded p-2">
           <strong>Dica:</strong> Clique em "Imprimir / Salvar PDF". No diálogo de impressão, selecione <strong>Salvar como PDF</strong> como destino.
           Para melhor qualidade, defina margens como <em>Mínimas</em> e ative <em>Gráficos de fundo</em>.
         </p>
@@ -405,9 +405,9 @@ function RelatorioPageContent() {
               <div className="space-y-2">
                 {insightList.slice(0, 8).map((ins, i) => (
                   <div key={i} className={`flex gap-2 p-2 rounded text-xs ${
-                    ins.severity === "warning" ? "bg-amber-50 border border-amber-200 dark:bg-amber-950"
-                    : ins.severity === "success" ? "bg-emerald-50 border border-emerald-200 dark:bg-emerald-950"
-                    : "bg-blue-50 border border-blue-200 dark:bg-blue-950"
+                    ins.severity === "warning" ? "bg-amber-50 border border-amber-200 dark:bg-amber-950/30"
+                    : ins.severity === "success" ? "bg-emerald-50 border border-emerald-200 dark:bg-emerald-950/30"
+                    : "bg-blue-50 border border-blue-200 dark:bg-blue-950/30"
                   }`}>
                     <Badge variant="outline" className={`text-[9px] shrink-0 h-fit ${
                       ins.severity === "warning" ? "border-amber-400 text-amber-700"

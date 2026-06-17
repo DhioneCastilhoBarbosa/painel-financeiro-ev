@@ -240,7 +240,7 @@ function CapexPageContent() {
         <Card>
           <CardContent className="pt-5">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-semibold" style={{ color: DARK }}>Progresso geral de recuperação do CAPEX</p>
+              <p className="text-sm font-semibold text-[#163134] dark:text-foreground">Progresso geral de recuperação do CAPEX</p>
               <span className="text-sm font-bold" style={{ color: recovered >= 100 ? GREEN : undefined }}>
                 {recovered.toFixed(1)}%
               </span>
@@ -289,7 +289,7 @@ function CapexPageContent() {
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="font-bold truncate" style={{ color: DARK }}>{r.name}</p>
+                      <p className="font-bold truncate text-[#163134] dark:text-card-foreground">{r.name}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
                         {r.charger_type && <span>{r.charger_type} · </span>}
                         {r.num_chargers} {r.num_chargers === 1 ? "ponto" : "pontos"}
@@ -405,7 +405,7 @@ function CapexPageContent() {
             <div
               className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b bg-background"
             >
-              <h2 className="font-bold text-lg" style={{ color: DARK }}>
+              <h2 className="font-bold text-lg text-[#163134] dark:text-foreground">
                 {editId ? "Editar carregador" : "Novo carregador"}
               </h2>
               <button onClick={() => setShowForm(false)} className="p-1.5 rounded-lg hover:bg-muted">
@@ -416,7 +416,7 @@ function CapexPageContent() {
             <div className="px-6 py-5 space-y-4">
               {/* Nome */}
               <div>
-                <label className="text-sm font-semibold block mb-1.5" style={{ color: DARK }}>
+                <label className="text-sm font-semibold block mb-1.5 text-[#163134] dark:text-foreground">
                   Nome do carregador / grupo *
                 </label>
                 <Input
@@ -429,19 +429,19 @@ function CapexPageContent() {
               <div className="grid grid-cols-2 gap-3">
                 {/* Tipo */}
                 <div>
-                  <label className="text-sm font-semibold block mb-1.5" style={{ color: DARK }}>Tipo de carregador</label>
+                  <label className="text-sm font-semibold block mb-1.5 text-[#163134] dark:text-foreground">Tipo de carregador</label>
                   <Input placeholder="DC 60 kW" value={form.charger_type} onChange={(e) => setF("charger_type", e.target.value)} />
                 </div>
                 {/* Pontos */}
                 <div>
-                  <label className="text-sm font-semibold block mb-1.5" style={{ color: DARK }}>Nº de pontos</label>
+                  <label className="text-sm font-semibold block mb-1.5 text-[#163134] dark:text-foreground">Nº de pontos</label>
                   <Input type="number" min={1} value={form.num_chargers} onChange={(e) => setF("num_chargers", e.target.value)} />
                 </div>
               </div>
 
               {/* CAPEX */}
               <div>
-                <label className="text-sm font-semibold block mb-1.5" style={{ color: DARK }}>
+                <label className="text-sm font-semibold block mb-1.5 text-[#163134] dark:text-foreground">
                   CAPEX total (R$) *
                 </label>
                 <Input
@@ -455,13 +455,13 @@ function CapexPageContent() {
               <div className="grid grid-cols-2 gap-3">
                 {/* OPEX */}
                 <div>
-                  <label className="text-sm font-semibold block mb-1.5" style={{ color: DARK }}>OPEX (%)</label>
+                  <label className="text-sm font-semibold block mb-1.5 text-[#163134] dark:text-foreground">OPEX (%)</label>
                   <Input type="number" min={0} max={100} step={0.1} value={form.opex_pct}
                     onChange={(e) => setF("opex_pct", e.target.value)} />
                 </div>
                 {/* Imposto */}
                 <div>
-                  <label className="text-sm font-semibold block mb-1.5" style={{ color: DARK }}>Impostos (%)</label>
+                  <label className="text-sm font-semibold block mb-1.5 text-[#163134] dark:text-foreground">Impostos (%)</label>
                   <Input type="number" min={0} max={100} step={0.1} value={form.tax_pct}
                     onChange={(e) => setF("tax_pct", e.target.value)} />
                 </div>
@@ -469,7 +469,7 @@ function CapexPageContent() {
 
               {/* Data instalação */}
               <div>
-                <label className="text-sm font-semibold block mb-1.5" style={{ color: DARK }}>
+                <label className="text-sm font-semibold block mb-1.5 text-[#163134] dark:text-foreground">
                   Data de início de operação *
                 </label>
                 <Input type="date" value={form.installed_at} onChange={(e) => setF("installed_at", e.target.value)} />
@@ -477,7 +477,7 @@ function CapexPageContent() {
 
               {/* Station key */}
               <div>
-                <label className="text-sm font-semibold block mb-1.5" style={{ color: DARK }}>
+                <label className="text-sm font-semibold block mb-1.5 text-[#163134] dark:text-foreground">
                   Vincular a estação dos dados <span className="font-normal text-muted-foreground">(opcional)</span>
                 </label>
                 <Input
@@ -493,7 +493,7 @@ function CapexPageContent() {
 
               {/* Receita estimada */}
               <div>
-                <label className="text-sm font-semibold block mb-1.5" style={{ color: DARK }}>
+                <label className="text-sm font-semibold block mb-1.5 text-[#163134] dark:text-foreground">
                   Receita mensal estimada (R$) <span className="font-normal text-muted-foreground">(opcional)</span>
                 </label>
                 <Input
@@ -509,7 +509,7 @@ function CapexPageContent() {
 
               {/* Observações */}
               <div>
-                <label className="text-sm font-semibold block mb-1.5" style={{ color: DARK }}>
+                <label className="text-sm font-semibold block mb-1.5 text-[#163134] dark:text-foreground">
                   Observações <span className="font-normal text-muted-foreground">(opcional)</span>
                 </label>
                 <textarea
