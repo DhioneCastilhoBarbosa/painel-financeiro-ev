@@ -49,7 +49,7 @@ function Help({ text }: { text: string }) {
   return (
     <Tooltip>
       <TooltipTrigger className="inline-flex items-center">
-        <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help shrink-0 hover:text-blue-500 transition-colors" />
+        <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help shrink-0 hover:text-primary transition-colors" />
       </TooltipTrigger>
       <TooltipContent side="right" className="max-w-64 text-xs leading-snug">{text}</TooltipContent>
     </Tooltip>
@@ -98,7 +98,7 @@ function NumField({
             onChange(final);
             setRaw(String(final));
           }}
-          className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm text-right focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
+          className="w-full rounded-lg border border-input bg-transparent px-2 py-1.5 text-sm text-right transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
         />
         {suffix && <span className="text-xs text-muted-foreground shrink-0">{suffix}</span>}
       </div>
@@ -118,12 +118,12 @@ function KpiCard({
     slate:   "text-slate-700 dark:text-slate-200",
     emerald: "text-emerald-600 dark:text-emerald-400",
     red:     "text-red-500 dark:text-red-400",
-    blue:    "text-blue-600 dark:text-blue-400",
+    blue:    "text-primary dark:text-primary",
     amber:   "text-amber-500 dark:text-amber-400",
     purple:  "text-purple-600 dark:text-purple-400",
   };
   return (
-    <Card className="border dark:border-slate-800">
+    <Card className="border dark:border-white/10">
       <CardContent className="pt-4 pb-3">
         <p className="text-xs text-muted-foreground mb-1">{label}</p>
         <div className="flex items-end gap-2 flex-wrap">
@@ -150,10 +150,10 @@ function fmtPayback(months: number | null, horizon: number): string {
 
 function insightIcon(severity: string) {
   switch (severity) {
-    case "success": return <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />;
-    case "warning": return <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />;
-    case "error":   return <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />;
-    default:        return <Info className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />;
+    case "success": return <CheckCircle2 className="h-4 w-4 text-emerald-500 dark:text-emerald-400 shrink-0 mt-0.5" />;
+    case "warning": return <AlertTriangle className="h-4 w-4 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />;
+    case "error":   return <AlertTriangle className="h-4 w-4 text-red-500 dark:text-red-400 shrink-0 mt-0.5" />;
+    default:        return <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />;
   }
 }
 
@@ -492,8 +492,20 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     void recordPdfSimulation();
     const originalTitle = document.title;
     document.title = `Intelbras - Análise de Investimento de Eletroposto${s.establishment_name ? ` - ${s.establishment_name}` : ""}`;
+
     const wasDark = document.documentElement.classList.contains("dark");
     if (wasDark) document.documentElement.classList.remove("dark");
+
+    // Inject a real screen stylesheet — applies immediately with !important, bypassing any
+    // @media print timing issues where the browser may capture the page before the media
+    // query is evaluated. The injected rule wins over all Tailwind class-based backgrounds.
+    const printOverride = document.createElement("style");
+    printOverride.setAttribute("data-print-override", "");
+    printOverride.textContent =
+      "* { background-color: transparent !important; background-image: none !important; }" +
+      "html, body { background-color: white !important; }";
+    document.head.appendChild(printOverride);
+
     const sidebar = document.querySelector<HTMLElement>("[data-sidebar]");
     const aside = document.querySelector<HTMLElement>(".simplified-aside");
     const toUnclip = Array.from(document.querySelectorAll<HTMLElement>(".h-screen,.h-full,.min-h-0,.overflow-hidden,.overflow-y-auto"));
@@ -502,18 +514,23 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     const savedUnclip = toUnclip.map(el => ({ el, v: el.style.cssText }));
     if (sidebar) sidebar.style.display = "none";
     if (aside) aside.style.display = "none";
-    toUnclip.forEach(el => { el.style.height = "auto"; el.style.maxHeight = "none"; el.style.minHeight = "0"; el.style.overflow = "visible"; });
+    toUnclip.forEach(el => {
+      el.style.height = "auto";
+      el.style.maxHeight = "none";
+      el.style.minHeight = "0";
+      el.style.overflow = "visible";
+    });
+
     const restore = () => {
       isPrintingRef.current = false;
       document.title = originalTitle;
       if (wasDark) document.documentElement.classList.add("dark");
+      document.head.querySelector("[data-print-override]")?.remove();
       if (sidebar && savedSidebar !== null) sidebar.style.display = savedSidebar;
       if (aside && savedAside !== null) aside.style.display = savedAside;
       savedUnclip.forEach(({ el, v }) => { el.style.cssText = v; });
     };
-    // { once: true } auto-removes the listener after it fires, preventing accumulation on repeated prints
     window.addEventListener("afterprint", restore, { once: true });
-    // Double rAF ensures the print chart's SVG is fully committed before the browser captures the page
     requestAnimationFrame(() => requestAnimationFrame(() => window.print()));
   }
 
@@ -584,10 +601,10 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
   return (
     <div className="flex flex-1 min-h-0 overflow-hidden">
       {/* Inputs */}
-      <aside className="simplified-aside w-72 shrink-0 border-r dark:border-slate-800 overflow-y-auto bg-slate-50/50 dark:bg-slate-900/50 p-4 space-y-3 print:hidden">
+      <aside className="simplified-aside w-72 shrink-0 border-r dark:border-white/10 overflow-y-auto bg-slate-50/50 dark:bg-black/25 p-4 space-y-3 print:hidden">
         <div>
           <h2 className="font-semibold text-sm flex items-center gap-2">
-            <Target className="h-4 w-4 text-blue-600" />
+            <Target className="h-4 w-4 text-primary" />
             Parâmetros Essenciais
           </h2>
           <p className="text-[0.7rem] text-muted-foreground mt-0.5">Preencha os valores principais do projeto</p>
@@ -601,7 +618,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
             placeholder="Ex: Shopping Vila Olímpia"
             value={s.establishment_name}
             onChange={e => setV("establishment_name", e.target.value)}
-            className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-lg border border-input bg-transparent px-2 py-1.5 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
           />
         </div>
 
@@ -611,7 +628,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
           <select
             value={s.location_type}
             onChange={e => setV("location_type", e.target.value)}
-            className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-lg border border-input bg-transparent px-2 py-1.5 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
           >
             <option value="">Selecione o tipo de local</option>
             {LOCATION_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
@@ -634,25 +651,25 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                 help="Potência nominal de cada carregador." />
             </div>
           ) : (
-            <div className="rounded-lg border dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
+            <div className="rounded-lg border dark:border-white/15 overflow-hidden bg-white dark:bg-background">
               {(() => {
                 const acEntries = chargerTypeEntries.filter(([t]) => t.toUpperCase().startsWith("AC"));
                 const dcEntries = chargerTypeEntries.filter(([t]) => !t.toUpperCase().startsWith("AC"));
                 const renderRow = ([type, cfg]: [string, ChargerConfigEntry]) => {
                   const qty = s.stations.find(st => st.type === type)?.quantity ?? 0;
                   return (
-                    <div key={type} className="flex items-center justify-between gap-2 px-3 py-2 border-b dark:border-slate-700 last:border-b-0">
+                    <div key={type} className="flex items-center justify-between gap-2 px-3 py-2 border-b dark:border-white/15 last:border-b-0">
                       <div className="min-w-0 flex-1">
                         <p className="text-xs font-medium truncate">{type}</p>
                         <p className="text-[0.62rem] text-muted-foreground">{cfg.power_kw} kW · {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(cfg.price_brl)}</p>
                       </div>
                       <div className="flex items-center gap-1 shrink-0">
                         <button type="button" onClick={() => updateStation(type, Math.max(0, qty - 1))}
-                          className="h-6 w-6 rounded border border-input flex items-center justify-center text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="h-6 w-6 rounded border border-input flex items-center justify-center text-sm font-bold hover:bg-slate-100 dark:hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed"
                           disabled={qty === 0}>−</button>
                         <span className="w-6 text-center text-xs font-medium tabular-nums">{qty}</span>
                         <button type="button" onClick={() => updateStation(type, qty + 1)}
-                          className="h-6 w-6 rounded border border-input flex items-center justify-center text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800">+</button>
+                          className="h-6 w-6 rounded border border-input flex items-center justify-center text-sm font-bold hover:bg-slate-100 dark:hover:bg-white/10">+</button>
                       </div>
                     </div>
                   );
@@ -661,7 +678,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                   <>
                     {acEntries.length > 0 && (
                       <>
-                        <div className="px-3 py-1.5 bg-slate-50 dark:bg-slate-800/60 border-b dark:border-slate-700">
+                        <div className="px-3 py-1.5 bg-slate-50 dark:bg-black/20 border-b dark:border-white/15">
                           <span className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground">AC — Corrente Alternada</span>
                         </div>
                         {acEntries.map(renderRow)}
@@ -669,7 +686,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                     )}
                     {dcEntries.length > 0 && (
                       <>
-                        <div className="px-3 py-1.5 bg-slate-50 dark:bg-slate-800/60 border-b dark:border-slate-700 border-t dark:border-slate-700">
+                        <div className="px-3 py-1.5 bg-slate-50 dark:bg-black/20 border-b dark:border-white/15 border-t dark:border-white/15">
                           <span className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground">DC — Corrente Contínua</span>
                         </div>
                         {dcEntries.map(renderRow)}
@@ -681,7 +698,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
               <div className="px-3 py-2 text-[0.65rem] text-muted-foreground flex items-center justify-between">
                 <span>{stationsSummary}</span>
                 {suggestedCapex > 0 && suggestedCapex !== s.capex_total && (
-                  <button type="button" className="text-blue-500 hover:underline"
+                  <button type="button" className="text-primary hover:underline"
                     onClick={() => setV("capex_total", suggestedCapex)}>
                     Usar sugerido
                   </button>
@@ -713,7 +730,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
             {OCC_PRESETS.map(preset => (
               <button key={preset.label} type="button" onClick={() => setV("occupancy_pct", preset.value)}
                 className={`flex-1 font-medium py-2 px-1 rounded-lg border transition-colors leading-tight ${
-                  s.occupancy_pct === preset.value ? preset.active : "border-input text-muted-foreground hover:bg-slate-50 dark:hover:bg-slate-800"
+                  s.occupancy_pct === preset.value ? preset.active : "border-input text-muted-foreground hover:bg-slate-50 dark:hover:bg-white/10"
                 }`}>
                 <span className="block text-xs font-semibold">{preset.label}</span>
                 <span className="block text-sm font-bold">{preset.value}%</span>
@@ -724,7 +741,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
           <div className="flex items-center gap-1">
             <input type="number" min={0} max={100} step={1} value={s.occupancy_pct}
               onChange={e => { const v = parseFloat(e.target.value); if (!isNaN(v)) setV("occupancy_pct", Math.min(100, Math.max(0, v))); }}
-              className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm text-right focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900" />
+              className="w-full rounded-lg border border-input bg-transparent px-2 py-1.5 text-sm text-right transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30" />
             <span className="text-xs text-muted-foreground shrink-0">%</span>
           </div>
         </div>
@@ -737,7 +754,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
       </aside>
 
       {/* Results */}
-      <main className="flex-1 overflow-y-auto bg-white dark:bg-slate-950">
+      <main className="flex-1 overflow-y-auto bg-white dark:bg-background">
 
         {/* Print header — hidden on screen, visible in PDF */}
         <div className="hidden print:block px-0 pt-0 pb-4 mb-4 border-b-2 border-gray-300">
@@ -763,11 +780,11 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
         </div>
 
         {/* Screen header — hidden in PDF */}
-        <div className="px-6 pt-6 pb-4 border-b dark:border-slate-800 print:hidden">
+        <div className="px-6 pt-6 pb-4 border-b dark:border-white/10 print:hidden">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-2">
-                <BarChart3 className="h-6 w-6 text-blue-600" />
+                <BarChart3 className="h-6 w-6 text-primary" />
                 Análise Simplificada
               </h1>
               <p className="text-muted-foreground text-sm mt-0.5">
@@ -781,7 +798,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 mt-3 pt-3 border-t dark:border-slate-800 flex-wrap">
+          <div className="flex items-center gap-2 mt-3 pt-3 border-t dark:border-white/10 flex-wrap">
             <Button size="sm" variant="outline" className="text-xs gap-1.5 h-8" onClick={handleSimplePrint}>
               <Printer className="h-3.5 w-3.5" />Exportar PDF
             </Button>
@@ -800,18 +817,18 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                 )}
               </Button>
               {showSavePanel && (
-                <div className="absolute left-0 top-full mt-1 z-50 w-80 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xl p-4 space-y-3">
+                <div className="absolute left-0 top-full mt-1 z-50 w-80 rounded-xl border border-slate-200 dark:border-white/15 bg-white dark:bg-background shadow-xl p-4 space-y-3">
                   <p className="text-xs font-semibold">Salvar configuração atual</p>
                   <div className="flex items-center gap-2">
                     <input type="text" placeholder="Nome do projeto..." value={saveName}
                       onChange={e => setSaveName(e.target.value)}
                       onKeyDown={e => { if (e.key === "Enter") handleSaveSimple(); }}
-                      className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900" />
+                      className="flex-1 rounded-lg border border-input bg-transparent px-2 py-1.5 text-xs transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30" />
                     <Button size="sm" className="h-7 gap-1 text-xs shrink-0" onClick={handleSaveSimple} disabled={!saveName.trim() || isSaving}>
                       {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}Salvar
                     </Button>
                   </div>
-                  <div className="border-t dark:border-slate-700 pt-2 space-y-2">
+                  <div className="border-t dark:border-white/15 pt-2 space-y-2">
                     <p className="text-[0.7rem] text-muted-foreground font-medium">
                       Projetos salvos{simpleSavedConfigs.length > 0 && <span className="ml-1 text-muted-foreground/60">({simpleSavedConfigs.length})</span>}
                     </p>
@@ -820,7 +837,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                     ) : (
                       <div className="space-y-1 max-h-52 overflow-y-auto -mr-1 pr-1">
                         {simpleSavedConfigs.map(cfg => (
-                          <div key={cfg.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 group">
+                          <div key={cfg.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-white/10 group">
                             <button className="flex-1 text-left min-w-0" onClick={() => handleLoadSimple(cfg)}>
                               <p className="text-xs font-medium truncate">{cfg.name}</p>
                               <p className="text-[0.62rem] text-muted-foreground">
@@ -851,7 +868,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
 
         {/* Test simulator warning — visible on screen */}
         <div className="rounded-lg border border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/30 px-4 py-3 flex items-start gap-2 print:hidden">
-          <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+          <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
           <p className="text-xs text-amber-800 dark:text-amber-300 leading-snug">
             <strong>Simulador em fase de testes.</strong> Esta ferramenta está em validação e pode
             apresentar problemas ou resultados incorretos. Utilize os valores apenas como referência
@@ -885,7 +902,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                 ["= Lucro líquido/mês", formatCurrency(r.monthly_net), r.monthly_net >= 0 ? "text-emerald-600 dark:text-emerald-400 font-bold" : "text-red-500 dark:text-red-400 font-bold"],
                 ["ROI anual estimado", `${r.roi_1y.toFixed(1)}%`, r.roi_1y >= 20 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-500 dark:text-amber-400"],
               ] as [string, string, string, string?][]).map(([label, val, cls, help]) => (
-                <div key={label} className="flex justify-between border-b last:border-0 pb-1.5 last:pb-0 dark:border-slate-800">
+                <div key={label} className="flex justify-between border-b last:border-0 pb-1.5 last:pb-0 dark:border-white/10">
                   <span className="text-muted-foreground flex items-center gap-1">{label}{help ? <Help text={help} /> : null}</span>
                   <span className={`font-medium ${cls}`}>{val}</span>
                 </div>
@@ -903,7 +920,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                 ["Payback simples", fmtPb(r.payback_months), r.payback_months && r.payback_months <= 48 ? "text-emerald-600 dark:text-emerald-400 font-bold" : "text-amber-500 dark:text-amber-400 font-bold"],
                 ["ROI 1º ano", `${r.roi_1y.toFixed(1)}%`, ""],
               ] as [string, string, string][]).map(([label, val, cls]) => (
-                <div key={label} className="flex justify-between border-b last:border-0 pb-1.5 last:pb-0 dark:border-slate-800">
+                <div key={label} className="flex justify-between border-b last:border-0 pb-1.5 last:pb-0 dark:border-white/10">
                   <span className="text-muted-foreground">{label}</span>
                   <span className={`font-medium ${cls}`}>{val}</span>
                 </div>
@@ -915,7 +932,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                 Ajuste o valor conforme os orçamentos reais de seus fornecedores.
               </p>
               {r.monthly_net <= 0 && (
-                <p className="text-xs text-red-500 pt-1">⚠ O projeto não gera retorno com os parâmetros atuais. Revise a tarifa, ocupação ou OPEX.</p>
+                <p className="text-xs text-red-500 dark:text-red-400 pt-1">⚠ O projeto não gera retorno com os parâmetros atuais. Revise a tarifa, ocupação ou OPEX.</p>
               )}
             </CardContent>
           </Card>
@@ -955,7 +972,9 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                   <XAxis dataKey="mes" tick={{ fontSize: 10 }} tickFormatter={(v) => `M${v}`} interval={Math.ceil(r.chart.length / 10)} />
                   <YAxis tick={{ fontSize: 10 }} tickFormatter={(v: number) => `${v >= 0 ? "" : "-"}R$${Math.abs(v) >= 1000 ? `${Math.round(Math.abs(v) / 1000)}k` : Math.abs(v)}`} width={72} />
-                  <RechartTooltip formatter={(v: number, name: string) => [formatCurrency(v), name]} labelFormatter={(l) => `Mês ${l}`} />
+                  <RechartTooltip
+                    contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", color: "var(--card-foreground)", borderRadius: "0.5rem" }}
+                    formatter={(v: number, name: string) => [formatCurrency(v), name]} labelFormatter={(l) => `Mês ${l}`} />
                   <Legend wrapperStyle={{ fontSize: 11 }} />
                   <ReferenceLine y={0} stroke="#ef4444" strokeWidth={2} strokeDasharray="4 2" label={{ value: "Break-even", position: "insideTopRight", fontSize: 10, fill: "#ef4444" }} />
                   <Bar dataKey="acumulado" name={`Base (${r.baseOcc}%)`} radius={[2, 2, 0, 0]}>
@@ -1006,7 +1025,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-sm">Projeção dos Primeiros 5 Anos</CardTitle></CardHeader>
           <CardContent>
-            <div className="overflow-x-auto rounded-lg border dark:border-slate-700">
+            <div className="overflow-x-auto rounded-lg border dark:border-white/15">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-muted/50 text-xs text-muted-foreground">
@@ -1029,9 +1048,9 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                       <tr key={year} className="hover:bg-muted/30">
                         <td className="px-4 py-2.5 font-medium">Ano {year}</td>
                         <td className="px-4 py-2.5 text-right text-blue-600 dark:text-blue-400">{formatCurrency(annualRevenue)}</td>
-                        <td className={`px-4 py-2.5 text-right font-medium ${annualNet >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>{formatCurrency(annualNet)}</td>
-                        <td className={`px-4 py-2.5 text-right font-medium ${roiCumulative >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>{roiCumulative.toFixed(1)}%</td>
-                        <td className={`px-4 py-2.5 text-right font-bold ${cumReturn >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>
+                        <td className={`px-4 py-2.5 text-right font-medium ${annualNet >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}`}>{formatCurrency(annualNet)}</td>
+                        <td className={`px-4 py-2.5 text-right font-medium ${roiCumulative >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}`}>{roiCumulative.toFixed(1)}%</td>
+                        <td className={`px-4 py-2.5 text-right font-bold ${cumReturn >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}`}>
                           {cumReturn >= 0 ? "+" : ""}{formatCurrency(cumReturn)}
                         </td>
                       </tr>
@@ -1322,9 +1341,9 @@ export default function InvestimentoPage() {
       <PlanGate feature={["investment_simple", "investment_advanced"]}>
       <div className="flex flex-col h-full min-h-0">
         {/* ── Mode toggle bar ── */}
-        <div className="flex items-center gap-3 px-4 py-2 border-b dark:border-slate-800 bg-background shrink-0 print:hidden">
+        <div className="flex items-center gap-3 px-4 py-2 border-b dark:border-white/10 bg-background shrink-0 print:hidden">
           <span className="text-xs font-medium text-muted-foreground">Análise:</span>
-          <div className="flex rounded-lg overflow-hidden border dark:border-slate-700 text-xs">
+          <div className="flex rounded-lg overflow-hidden border dark:border-white/15 text-xs">
             {(["simple", "advanced"] as const)
               .filter((m) => m === "simple" ? canSimple : canAdvanced)
               .map((m) => (
@@ -1333,8 +1352,8 @@ export default function InvestimentoPage() {
                   type="button"
                   onClick={() => setAnalysisMode(m)}
                   className={`px-3 py-1.5 transition-colors font-medium ${analysisMode === m
-                    ? "bg-blue-600 text-white"
-                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+                    ? "bg-primary text-white"
+                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10"}`}
                 >
                   {m === "simple" ? "Simplificada" : "Avançada"}
                 </button>
@@ -1355,10 +1374,10 @@ export default function InvestimentoPage() {
         ) : (
         <div className="flex flex-1 min-h-0">
         {/* ── LEFT PANEL: Inputs ── */}
-        <aside data-input-panel className="w-72 shrink-0 border-r dark:border-slate-800 overflow-y-auto bg-slate-50/50 dark:bg-slate-900/50">
-          <div className="p-4 border-b dark:border-slate-800">
+        <aside data-input-panel className="w-72 shrink-0 border-r dark:border-white/10 overflow-y-auto bg-slate-50/50 dark:bg-black/25">
+          <div className="p-4 border-b dark:border-white/10">
             <h2 className="font-semibold text-sm flex items-center gap-2">
-              <Target className="h-4 w-4 text-blue-600" />
+              <Target className="h-4 w-4 text-primary" />
               Parâmetros do Projeto
             </h2>
             <p className="text-[0.7rem] text-muted-foreground mt-0.5">Recálculo automático em tempo real</p>
@@ -1374,12 +1393,12 @@ export default function InvestimentoPage() {
               {hasRealData ? "Preencher com dados reais" : "Sem dados no sistema"}
             </Button>
             {showFillPanel && hasRealData && (
-              <div className="mt-2 p-3 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50/60 dark:bg-blue-950/30 space-y-2">
-                <p className="text-[0.7rem] font-medium text-blue-700 dark:text-blue-400">Filtrar por tipo de conector:</p>
+              <div className="mt-2 p-3 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/30 space-y-2">
+                <p className="text-[0.7rem] font-medium text-emerald-700 dark:text-emerald-400">Filtrar por tipo de conector:</p>
                 <select
                   value={fillConnectorType}
                   onChange={e => setFillConnectorType(e.target.value)}
-                  className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
+                  className="w-full rounded-lg border border-input bg-transparent px-2 py-1.5 text-xs transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
                 >
                   <option value="all">Todos os tipos</option>
                   {connectorData?.map((c: { connector_type: string; sessions: number }) => (
@@ -1400,12 +1419,12 @@ export default function InvestimentoPage() {
           </div>
 
           <Tabs defaultValue="capex" className="w-full">
-            <TabsList className="w-full rounded-none border-b dark:border-slate-800 bg-transparent h-auto p-0 flex">
+            <TabsList className="w-full rounded-none border-b dark:border-white/10 bg-transparent h-auto p-0 flex">
               {["capex", "receita", "opex", "params"].map((tab) => (
                 <TabsTrigger
                   key={tab}
                   value={tab}
-                  className="flex-1 rounded-none text-[0.65rem] py-2 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:bg-transparent uppercase tracking-wide"
+                  className="flex-1 rounded-none text-[0.65rem] py-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:bg-transparent uppercase tracking-wide"
                 >
                   {tab === "params" ? "Config" : tab.charAt(0).toUpperCase() + tab.slice(1)}
                 </TabsTrigger>
@@ -1422,7 +1441,7 @@ export default function InvestimentoPage() {
                     <Help text="Número de conectores por carregador. Um carregador pode ter, usualmente, 1 ou 2 conectores, dividindo a potência total pelo número de conectores ao serem utilizados simultaneamente." />
                   </div>
                   <input type="number" min={1} value={inputs.n_connectors} onChange={e => set("n_connectors", parseInt(e.target.value) || 1)}
-                    className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm text-right focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900" />
+                    className="w-full rounded-lg border border-input bg-transparent px-2 py-1.5 text-sm text-right transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30" />
                 </div>
               </div>
               <div className="space-y-1">
@@ -1432,7 +1451,7 @@ export default function InvestimentoPage() {
                 </div>
                 <div className="flex items-center gap-1">
                   <input type="number" min={0} step={0.5} value={inputs.power_kw} onChange={e => set("power_kw", parseFloat(e.target.value) || 0)}
-                    className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm text-right focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900" />
+                    className="w-full rounded-lg border border-input bg-transparent px-2 py-1.5 text-sm text-right transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30" />
                   <span className="text-xs text-muted-foreground shrink-0">kW</span>
                 </div>
                 <p className="text-[0.65rem] text-muted-foreground">
@@ -1446,7 +1465,7 @@ export default function InvestimentoPage() {
                   <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">Composição do CAPEX</p>
                   <Help text="'Total': insira o valor global do investimento. 'Detalhado': especifique cada componente." />
                 </div>
-                <div className="flex rounded-md border dark:border-slate-700 overflow-hidden text-[0.6rem]">
+                <div className="flex rounded-md border dark:border-white/15 overflow-hidden text-[0.6rem]">
                   {(["total", "detailed"] as const).map((m) => (
                     <button
                       key={m}
@@ -1458,8 +1477,8 @@ export default function InvestimentoPage() {
                         set("capex_mode", m);
                       }}
                       className={`px-2 py-1 transition-colors ${(inputs.capex_mode ?? "detailed") === m
-                        ? "bg-blue-600 text-white font-medium"
-                        : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+                        ? "bg-primary text-white font-medium"
+                        : "text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10"}`}
                     >
                       {m === "total" ? "Total" : "Detalhado"}
                     </button>
@@ -1506,14 +1525,14 @@ export default function InvestimentoPage() {
                 <Help text="Parcelas mensais para o pagamento do CAPEX. Com taxa de juros, o valor da parcela é calculado pela fórmula Price (PMT). O payback e TIR refletem o impacto no fluxo de caixa." />
               </div>
               {/* Completo / Separado toggle */}
-              <div className="flex rounded-md border dark:border-slate-700 overflow-hidden text-xs">
+              <div className="flex rounded-md border dark:border-white/15 overflow-hidden text-xs">
                 {(["all", "separate"] as const).map((mode) => (
                   <button
                     key={mode}
                     onClick={() => set("payment_split", mode)}
                     className={`flex-1 py-1.5 transition-colors ${inputs.payment_split === mode
-                      ? "bg-blue-600 text-white font-medium"
-                      : "hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"}`}
+                      ? "bg-primary text-white font-medium"
+                      : "hover:bg-slate-50 dark:hover:bg-white/10 text-slate-600 dark:text-slate-400"}`}
                   >
                     {mode === "all" ? "Completo" : "Separado"}
                   </button>
@@ -1536,7 +1555,7 @@ export default function InvestimentoPage() {
                 <select
                   value={inputs.payment_installments}
                   onChange={e => set("payment_installments", parseInt(e.target.value))}
-                  className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
+                  className="w-full rounded-lg border border-input bg-transparent px-2 py-1.5 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
                 >
                   <option value={1}>À vista (1×) — {formatCurrency(capex)}</option>
                   {[2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 18, 24, 36, 48, 60].map(n => {
@@ -1560,7 +1579,7 @@ export default function InvestimentoPage() {
                     <select
                       value={inputs.charger_installments}
                       onChange={e => set("charger_installments", parseInt(e.target.value))}
-                      className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
+                      className="w-full rounded-lg border border-input bg-transparent px-2 py-1.5 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
                     >
                       <option value={1}>À vista (1×)</option>
                       {[2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 18, 24, 36, 48, 60].map(n => {
@@ -1583,7 +1602,7 @@ export default function InvestimentoPage() {
                     <select
                       value={inputs.other_installments}
                       onChange={e => set("other_installments", parseInt(e.target.value))}
-                      className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
+                      className="w-full rounded-lg border border-input bg-transparent px-2 py-1.5 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
                     >
                       <option value={1}>À vista (1×)</option>
                       {[2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 18, 24, 36, 48, 60].map(n => {
@@ -1616,7 +1635,7 @@ export default function InvestimentoPage() {
                   role="switch"
                   aria-checked={inputs.depreciation_as_cash}
                   onClick={() => set("depreciation_as_cash", !inputs.depreciation_as_cash)}
-                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${inputs.depreciation_as_cash ? "bg-blue-600" : "bg-slate-200 dark:bg-slate-700"}`}
+                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${inputs.depreciation_as_cash ? "bg-primary" : "bg-slate-200 dark:bg-white/20"}`}
                 >
                   <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition-transform ${inputs.depreciation_as_cash ? "translate-x-4" : "translate-x-0"}`} />
                 </button>
@@ -1631,10 +1650,10 @@ export default function InvestimentoPage() {
                 </div>
               </div>
 
-              <div className="rounded-lg bg-blue-50 dark:bg-blue-950/40 p-3 space-y-1">
+              <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/40 p-3 space-y-1">
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">CAPEX Total</span>
-                  <span className="font-bold text-blue-700 dark:text-blue-400">{formatCurrency(capex)}</span>
+                  <span className="font-bold text-emerald-700 dark:text-emerald-400">{formatCurrency(capex)}</span>
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Por carregador</span>
@@ -1649,7 +1668,7 @@ export default function InvestimentoPage() {
                   <span className="font-medium">{formatCurrency(results.capex_per_connector)}</span>
                 </div>
                 {inputs.payment_installments > 1 && (
-                  <div className="flex justify-between text-xs border-t dark:border-blue-900 pt-1 mt-1">
+                  <div className="flex justify-between text-xs border-t dark:border-emerald-900 pt-1 mt-1">
                     <span className="text-muted-foreground">{inputs.payment_installments}× parcela</span>
                     <span className="font-semibold text-amber-600">{formatCurrency(capex / inputs.payment_installments)}/mês</span>
                   </div>
@@ -1720,7 +1739,7 @@ export default function InvestimentoPage() {
                 {inputs.start_fee_per_session > 0 && (
                   <div className="flex justify-between text-xs">
                     <span className="text-muted-foreground">Tarifa início (est.)</span>
-                    <span className="font-medium text-emerald-600">
+                    <span className="font-medium text-emerald-600 dark:text-emerald-400">
                       {formatCurrency(inputs.start_fee_per_session * inputs.sessions_per_day * 30 * (inputs.target_occupancy_12m_pct / 100))}/mês
                     </span>
                   </div>
@@ -1753,14 +1772,14 @@ export default function InvestimentoPage() {
                 />
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Base de cálculo</p>
-                  <div className="grid grid-cols-3 rounded-md border dark:border-slate-700 overflow-hidden text-[0.65rem] font-medium">
+                  <div className="grid grid-cols-3 rounded-md border dark:border-white/15 overflow-hidden text-[0.65rem] font-medium">
                     {(["revenue", "ebitda", "profit"] as const).map((base) => (
                       <button
                         key={base}
                         onClick={() => set("rev_split_base", base)}
                         className={`py-1.5 transition-colors ${(inputs.rev_split_base ?? "revenue") === base
-                          ? "bg-blue-600 text-white"
-                          : "hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"}`}
+                          ? "bg-primary text-white"
+                          : "hover:bg-slate-50 dark:hover:bg-white/10 text-slate-600 dark:text-slate-400"}`}
                       >
                         {base === "revenue" ? "Receita" : base === "ebitda" ? "EBITDA" : "Lucro liq."}
                       </button>
@@ -1783,7 +1802,7 @@ export default function InvestimentoPage() {
                   <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">Custos Fixos Mensais</p>
                   <Help text="'Total': insira a soma de todos os custos fixos mensais (exceto energia). 'Detalhado': especifique cada item." />
                 </div>
-                <div className="flex rounded-md border dark:border-slate-700 overflow-hidden text-[0.6rem]">
+                <div className="flex rounded-md border dark:border-white/15 overflow-hidden text-[0.6rem]">
                   {(["total", "detailed"] as const).map((m) => (
                     <button
                       key={m}
@@ -1795,8 +1814,8 @@ export default function InvestimentoPage() {
                         set("opex_mode", m);
                       }}
                       className={`px-2 py-1 transition-colors ${(inputs.opex_mode ?? "total") === m
-                        ? "bg-blue-600 text-white font-medium"
-                        : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+                        ? "bg-primary text-white font-medium"
+                        : "text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10"}`}
                     >
                       {m === "total" ? "Total" : "Detalhado"}
                     </button>
@@ -1882,14 +1901,14 @@ export default function InvestimentoPage() {
                     set("tax_regime", regime);
                     set("tax_base", regime === "SN" ? "revenue" : "profit");
                   }}
-                  className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
+                  className="w-full rounded-lg border border-input bg-transparent px-2 py-1.5 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
                 >
                   <option value="SN">SN — Simples Nacional (sobre a receita)</option>
                   <option value="LP">LP — Lucro Presumido (sobre o lucro)</option>
                   <option value="LR">LR — Lucro Real (sobre o lucro)</option>
                 </select>
               </div>
-              <div className="rounded-lg bg-slate-100 dark:bg-slate-800/50 p-3 space-y-1.5 text-xs text-muted-foreground">
+              <div className="rounded-lg bg-slate-100 dark:bg-black/20 p-3 space-y-1.5 text-xs text-muted-foreground">
                 <p className="font-semibold text-slate-600 dark:text-slate-400">Referências de alíquota</p>
                 <div className="flex justify-between"><span>Simples Nacional</span><span>6–15%</span></div>
                 <div className="flex justify-between"><span>Lucro Presumido</span><span>~15%</span></div>
@@ -1899,11 +1918,11 @@ export default function InvestimentoPage() {
                 <div className="rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-3 space-y-1 text-xs">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{inputs.depreciation_as_cash ? "Provisão reposição/mês" : "Depreciação contábil"}</span>
-                    <span className={`font-medium ${inputs.depreciation_as_cash ? "text-amber-600" : ""}`}>{formatCurrency(results.monthly_depreciation)}</span>
+                    <span className={`font-medium ${inputs.depreciation_as_cash ? "text-amber-600 dark:text-amber-400" : ""}`}>{formatCurrency(results.monthly_depreciation)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">FCL pós-imposto (estab.)</span>
-                    <span className={`font-medium ${results.avg_monthly_fcf >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                    <span className={`font-medium ${results.avg_monthly_fcf >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}`}>
                       {formatCurrency(results.avg_monthly_fcf)}
                     </span>
                   </div>
@@ -1914,7 +1933,7 @@ export default function InvestimentoPage() {
         </aside>
 
         {/* ── RIGHT PANEL: Results ── */}
-        <main className="flex-1 overflow-y-auto bg-white dark:bg-slate-950">
+        <main className="flex-1 overflow-y-auto bg-white dark:bg-background">
           {/* Print header — hidden on screen */}
           <div className="hidden print:flex items-start justify-between px-0 pt-0 pb-4 mb-2 border-b border-gray-300">
             <div>
@@ -1933,11 +1952,11 @@ export default function InvestimentoPage() {
           </div>
 
           {/* Header (screen only) */}
-          <div className="px-6 pt-6 pb-4 border-b dark:border-slate-800 print:hidden">
+          <div className="px-6 pt-6 pb-4 border-b dark:border-white/10 print:hidden">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div>
                 <h1 className="text-2xl font-bold flex items-center gap-2">
-                  <BarChart3 className="h-6 w-6 text-blue-600" />
+                  <BarChart3 className="h-6 w-6 text-primary" />
                   Análise de Investimento
                 </h1>
                 <p className="text-muted-foreground text-sm mt-0.5">
@@ -1958,7 +1977,7 @@ export default function InvestimentoPage() {
             </div>
 
             {/* Action bar: PDF, Export, Import, Save */}
-            <div className="flex items-center gap-2 mt-3 pt-3 border-t dark:border-slate-800 flex-wrap print:hidden">
+            <div className="flex items-center gap-2 mt-3 pt-3 border-t dark:border-white/10 flex-wrap print:hidden">
               <Button size="sm" variant="outline" className="text-xs gap-1.5 h-8" onClick={handlePrint}>
                 <Printer className="h-3.5 w-3.5" />
                 Exportar PDF
@@ -1985,7 +2004,7 @@ export default function InvestimentoPage() {
                   )}
                 </Button>
                 {showSavePanel && (
-                  <div className="absolute left-0 top-full mt-1 z-50 w-80 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xl p-4 space-y-3">
+                  <div className="absolute left-0 top-full mt-1 z-50 w-80 rounded-xl border border-slate-200 dark:border-white/15 bg-white dark:bg-background shadow-xl p-4 space-y-3">
                     {/* ── Salvar ── */}
                     <p className="text-xs font-semibold">Salvar configuração atual</p>
                     <div className="flex items-center gap-2">
@@ -1995,7 +2014,7 @@ export default function InvestimentoPage() {
                         value={saveName}
                         onChange={e => setSaveName(e.target.value)}
                         onKeyDown={e => { if (e.key === "Enter") handleSaveConfig(); }}
-                        className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900"
+                        className="flex-1 rounded-lg border border-input bg-transparent px-2 py-1.5 text-xs transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
                       />
                       <Button
                         size="sm"
@@ -2009,7 +2028,7 @@ export default function InvestimentoPage() {
                     </div>
 
                     {/* ── Lista de projetos ── */}
-                    <div className="border-t dark:border-slate-700 pt-2 space-y-2">
+                    <div className="border-t dark:border-white/15 pt-2 space-y-2">
                       <div className="flex items-center justify-between">
                         <p className="text-[0.7rem] text-muted-foreground font-medium">
                           Projetos salvos
@@ -2026,7 +2045,7 @@ export default function InvestimentoPage() {
                             placeholder="Buscar projeto..."
                             value={scenarioSearch}
                             onChange={e => setScenarioSearch(e.target.value)}
-                            className="w-full pl-6 pr-2 py-1 rounded-md border border-input bg-background text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800"
+                            className="w-full pl-6 pr-2 py-1 rounded-lg border border-input bg-transparent text-xs transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
                           />
                         </div>
                       )}
@@ -2040,7 +2059,7 @@ export default function InvestimentoPage() {
                           {savedConfigs
                             .filter(cfg => cfg.name.toLowerCase().includes(scenarioSearch.toLowerCase()))
                             .map(cfg => (
-                              <div key={cfg.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 group">
+                              <div key={cfg.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-white/10 group">
                                 <button className="flex-1 text-left min-w-0" onClick={() => handleLoadConfig(cfg)}>
                                   <p className="text-xs font-medium truncate">{cfg.name}</p>
                                   <p className="text-[0.62rem] text-muted-foreground">
@@ -2114,7 +2133,7 @@ export default function InvestimentoPage() {
             <Card className="print:break-before-page">
               <CardHeader className="pb-2">
                 <CardTitle className="text-base flex items-center gap-2 flex-wrap">
-                  <TrendingUp className="h-4 w-4 text-blue-600" />
+                  <TrendingUp className="h-4 w-4 text-primary" />
                   Fluxo de Caixa Acumulado
                   {paybackMonth && (
                     <Badge variant="outline" className="text-xs ml-auto">
@@ -2140,6 +2159,7 @@ export default function InvestimentoPage() {
                       <XAxis dataKey="label" tick={{ fontSize: 9 }} interval="preserveStartEnd" />
                       <YAxis tick={{ fontSize: 10 }} tickFormatter={(v: number) => `R$${(v / 1000).toFixed(0)}k`} width={60} />
                       <RechartTooltip
+                        contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", color: "var(--card-foreground)", borderRadius: "0.5rem" }}
                         formatter={(v: number, name: string) => {
                           const labels: Record<string, string> = {
                             cumulative_fcf: "FCL Acumulado",
@@ -2184,13 +2204,15 @@ export default function InvestimentoPage() {
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                       <XAxis dataKey="label" tick={{ fontSize: 9 }} interval="preserveStartEnd" />
                       <YAxis tick={{ fontSize: 10 }} tickFormatter={(v: number) => `R$${(v / 1000).toFixed(0)}k`} width={56} />
-                      <RechartTooltip formatter={(v: number, name: string) => {
-                        const labels: Record<string, string> = {
-                          revenue: "Receita", opex: "OPEX", ebitda: "EBITDA",
-                          depreciation: "Depreciação/Provisão", fcf: "FCL",
-                        };
-                        return [formatCurrency(v), labels[name] ?? name];
-                      }} />
+                      <RechartTooltip
+                        contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", color: "var(--card-foreground)", borderRadius: "0.5rem" }}
+                        formatter={(v: number, name: string) => {
+                          const labels: Record<string, string> = {
+                            revenue: "Receita", opex: "OPEX", ebitda: "EBITDA",
+                            depreciation: "Depreciação/Provisão", fcf: "FCL",
+                          };
+                          return [formatCurrency(v), labels[name] ?? name];
+                        }} />
                       <Legend formatter={(v: string) => ({ revenue: "Receita", opex: "OPEX", ebitda: "EBITDA", depreciation: "Deprec.", fcf: "FCL" }[v] ?? v)} wrapperStyle={{ fontSize: 11 }} />
                       <Bar dataKey="revenue" fill="#2563eb" opacity={0.85} name="revenue" />
                       <Bar dataKey="opex" fill="#ef4444" opacity={0.75} name="opex" />
@@ -2208,7 +2230,7 @@ export default function InvestimentoPage() {
             {/* ── CENÁRIOS DE OCUPAÇÃO ── */}
             <div>
               <h2 className="text-base font-semibold mb-1 flex items-center gap-2">
-                <Target className="h-4 w-4 text-blue-600" />
+                <Target className="h-4 w-4 text-primary" />
                 Cenários por Nível de Ocupação
               </h2>
               <p className="text-xs text-muted-foreground mb-3">
@@ -2259,7 +2281,9 @@ export default function InvestimentoPage() {
                         <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                         <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                         <YAxis tick={{ fontSize: 11 }} label={{ value: "meses", angle: -90, position: "insideLeft", fontSize: 10 }} width={50} />
-                        <RechartTooltip formatter={(v: number) => [`${v} meses`, "Payback"]} />
+                        <RechartTooltip
+                          contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", color: "var(--card-foreground)", borderRadius: "0.5rem" }}
+                          formatter={(v: number) => [`${v} meses`, "Payback"]} />
                         <Bar dataKey="payback" radius={[4, 4, 0, 0]}>
                           {allScenarios.map((s, i) => <Cell key={i} fill={s.color} />)}
                         </Bar>
@@ -2292,10 +2316,12 @@ export default function InvestimentoPage() {
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" horizontal={false} />
                       <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={(v: number) => `${v > 0 ? "+" : ""}${v}m`} />
                       <YAxis type="category" dataKey="variable" tick={{ fontSize: 10 }} width={150} />
-                      <RechartTooltip formatter={(v: number, name: string) => [
-                        `${v > 0 ? "+" : ""}${v} meses`,
-                        name === "adverso" ? "Pior caso" : "Melhor caso",
-                      ]} />
+                      <RechartTooltip
+                        contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", color: "var(--card-foreground)", borderRadius: "0.5rem" }}
+                        formatter={(v: number, name: string) => [
+                          `${v > 0 ? "+" : ""}${v} meses`,
+                          name === "adverso" ? "Pior caso" : "Melhor caso",
+                        ]} />
                       <ReferenceLine x={0} stroke="#94a3b8" />
                       <Bar dataKey="adverso" fill="#ef4444" opacity={0.85} radius={[0, 3, 3, 0]} name="adverso" />
                       <Bar dataKey="favoravel" fill="#10b981" opacity={0.85} radius={[3, 0, 0, 3]} name="favoravel" />
@@ -2316,10 +2342,10 @@ export default function InvestimentoPage() {
                       {results.sensitivity.map((s) => (
                         <tr key={s.variable} className="border-b last:border-0">
                           <td className="py-1.5 pr-4 font-medium">{s.variable}</td>
-                          <td className={`text-right py-1.5 pr-4 ${s.high_delta > 0 ? "text-red-500" : s.high_delta < 0 ? "text-emerald-600" : "text-muted-foreground"}`}>
+                          <td className={`text-right py-1.5 pr-4 ${s.high_delta > 0 ? "text-red-500 dark:text-red-400" : s.high_delta < 0 ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
                             {s.high_delta > 0 ? "+" : ""}{s.high_delta}m
                           </td>
-                          <td className={`text-right py-1.5 ${s.low_delta < 0 ? "text-emerald-600" : s.low_delta > 0 ? "text-red-500" : "text-muted-foreground"}`}>
+                          <td className={`text-right py-1.5 ${s.low_delta < 0 ? "text-emerald-600 dark:text-emerald-400" : s.low_delta > 0 ? "text-red-500 dark:text-red-400" : "text-muted-foreground"}`}>
                             {s.low_delta > 0 ? "+" : ""}{s.low_delta}m
                           </td>
                         </tr>
@@ -2336,7 +2362,7 @@ export default function InvestimentoPage() {
             {/* ── INSIGHTS ── */}
             <div>
               <h2 className="text-base font-semibold mb-3 flex items-center gap-2">
-                <Info className="h-4 w-4 text-blue-600" />
+                <Info className="h-4 w-4 text-primary" />
                 Insights Automáticos
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -2346,7 +2372,7 @@ export default function InvestimentoPage() {
                       ins.severity === "success" ? "border-emerald-200 bg-emerald-50/60 dark:bg-emerald-950/20 dark:border-emerald-800" :
                       ins.severity === "warning" ? "border-amber-200 bg-amber-50/60 dark:bg-amber-950/20 dark:border-amber-800" :
                       ins.severity === "error"   ? "border-red-200 bg-red-50/60 dark:bg-red-950/20 dark:border-red-800" :
-                      "border-blue-200 bg-blue-50/60 dark:bg-blue-950/20 dark:border-blue-800"
+                      "border-emerald-200 bg-emerald-50/60 dark:bg-emerald-950/20 dark:border-emerald-800"
                     }`}>
                     {insightIcon(ins.severity)}
                     <div>
@@ -2374,7 +2400,9 @@ export default function InvestimentoPage() {
                       <XAxis dataKey="label" tick={{ fontSize: 9 }} interval="preserveStartEnd" />
                       <YAxis yAxisId="left" tick={{ fontSize: 10 }} tickFormatter={(v: number) => `${v}%`} domain={[0, 100]} width={40} />
                       <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10 }} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} width={44} />
-                      <RechartTooltip formatter={(v: number, name: string) => name === "occupancy" ? [`${v}%`, "Ocupação"] : [`${v.toLocaleString("pt-BR")} kWh`, "kWh"]} />
+                      <RechartTooltip
+                        contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", color: "var(--card-foreground)", borderRadius: "0.5rem" }}
+                        formatter={(v: number, name: string) => name === "occupancy" ? [`${v}%`, "Ocupação"] : [`${v.toLocaleString("pt-BR")} kWh`, "kWh"]} />
                       <Legend wrapperStyle={{ fontSize: 11 }} formatter={(v: string) => v === "occupancy" ? "Ocupação (%)" : "kWh"} />
                       <Area yAxisId="left" type="monotone" dataKey="occupancy" fill="#8b5cf633" stroke="#8b5cf6" strokeWidth={2} dot={false} name="occupancy" />
                       <Line yAxisId="right" type="monotone" dataKey="kwh" stroke="#06b6d4" strokeWidth={2} dot={false} name="kwh" />
@@ -2442,7 +2470,7 @@ function DRESection({ results, inputs }: { results: ProjectResults; inputs: Proj
 
   function cellColor(key: string, value: number) {
     if (key === "resultado" || key === "ebitda" || key === "ebit") {
-      return value >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500";
+      return value >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400";
     }
     return "";
   }
@@ -2451,7 +2479,7 @@ function DRESection({ results, inputs }: { results: ProjectResults; inputs: Proj
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="text-base flex items-center gap-2">
-          <BarChart3 className="h-4 w-4 text-blue-600" />
+          <BarChart3 className="h-4 w-4 text-primary" />
           DRE — Demonstração de Resultado do Exercício
         </CardTitle>
         <p className="text-xs text-muted-foreground">Projeção anual baseada nos parâmetros configurados. Valores em R$.</p>
@@ -2460,7 +2488,7 @@ function DRESection({ results, inputs }: { results: ProjectResults; inputs: Proj
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr className="border-b dark:border-slate-700">
+              <tr className="border-b dark:border-white/15">
                 <th className="text-left pb-2 pr-4 font-medium text-muted-foreground w-56">Linha</th>
                 {dreRows.map(r => (
                   <th key={r.year} className="text-right pb-2 px-3 font-semibold text-slate-700 dark:text-slate-300">
@@ -2471,10 +2499,10 @@ function DRESection({ results, inputs }: { results: ProjectResults; inputs: Proj
             </thead>
             <tbody>
               {dreLines.map((line) => (
-                <tr key={line.key} className={`border-b dark:border-slate-800/60 last:border-0 ${line.separator ? "border-t-2 dark:border-slate-700" : ""}`}>
+                <tr key={line.key} className={`border-b dark:border-white/10/60 last:border-0 ${line.separator ? "border-t-2 dark:border-white/15" : ""}`}>
                   <td className={`py-1.5 pr-4 ${line.bold ? "font-semibold" : "text-muted-foreground"} ${
                     line.highlight === "emerald" ? "text-emerald-700 dark:text-emerald-400" :
-                    line.highlight === "blue" ? "text-blue-700 dark:text-blue-400" :
+                    line.highlight === "blue" ? "text-emerald-700 dark:text-emerald-400" :
                     line.highlight === "amber" ? "text-amber-700 dark:text-amber-400" : ""
                   }`}>
                     {line.label}
@@ -2535,7 +2563,7 @@ function ExpansionSimulator({ base, inputs }: { base: ProjectResults; inputs: Pr
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
-              <TrendingUp className="h-4 w-4 text-blue-600 shrink-0" />
+              <TrendingUp className="h-4 w-4 text-emerald-500 dark:text-emerald-400 shrink-0" />
               <CardTitle className="text-base">Simulação de Expansão</CardTitle>
             </div>
             <div className="flex items-center gap-2 shrink-0">
@@ -2573,30 +2601,30 @@ function ExpansionSimulator({ base, inputs }: { base: ProjectResults; inputs: Pr
             ))}
           </div>
           <div className="mt-3 grid grid-cols-3 gap-3 text-xs">
-            <div className="rounded-lg bg-slate-50 dark:bg-slate-900 p-3 space-y-1">
+            <div className="rounded-lg bg-slate-50 dark:bg-background p-3 space-y-1">
               <p className="font-semibold text-muted-foreground uppercase text-[0.65rem]">Base</p>
               <div className="flex justify-between"><span>Carregadores</span><span className="font-medium">{inputs.n_chargers}</span></div>
               <div className="flex justify-between"><span>Payback</span><span className="font-medium">{fmtPayback(base.payback_months, inputs.horizon_years * 12)}</span></div>
               <div className="flex justify-between"><span>VPL</span><span className="font-medium">{formatCurrency(base.npv)}</span></div>
             </div>
-            <div className="rounded-lg bg-blue-50 dark:bg-blue-950/30 p-3 space-y-1">
-              <p className="font-semibold text-blue-600 uppercase text-[0.65rem]">Expansão</p>
+            <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/30 p-3 space-y-1">
+              <p className="font-semibold text-emerald-600 dark:text-emerald-400 uppercase text-[0.65rem]">Expansão</p>
               <div className="flex justify-between"><span>Carregadores</span><span className="font-medium">{inputs.n_chargers + extraChargers}</span></div>
               <div className="flex justify-between"><span>Payback</span><span className="font-medium">{fmtPayback(expanded.payback_months, inputs.horizon_years * 12)}</span></div>
               <div className="flex justify-between"><span>VPL</span><span className="font-medium">{formatCurrency(expanded.npv)}</span></div>
             </div>
             <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/30 p-3 space-y-1">
-              <p className="font-semibold text-emerald-600 uppercase text-[0.65rem]">Δ Delta</p>
+              <p className="font-semibold text-emerald-600 dark:text-emerald-400 uppercase text-[0.65rem]">Δ Delta</p>
               <div className="flex justify-between"><span>Carregadores</span><span className="font-medium">+{extraChargers}</span></div>
               <div className="flex justify-between"><span>Payback</span>
-                <span className={`font-medium ${(expanded.payback_months ?? 999) < (base.payback_months ?? 999) ? "text-emerald-600" : "text-red-500"}`}>
+                <span className={`font-medium ${(expanded.payback_months ?? 999) < (base.payback_months ?? 999) ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}`}>
                   {base.payback_months && expanded.payback_months
                     ? `${expanded.payback_months - base.payback_months > 0 ? "+" : ""}${expanded.payback_months - base.payback_months}m`
                     : "—"}
                 </span>
               </div>
               <div className="flex justify-between"><span>VPL</span>
-                <span className={`font-medium ${expanded.npv - base.npv >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                <span className={`font-medium ${expanded.npv - base.npv >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}`}>
                   {expanded.npv - base.npv >= 0 ? "+" : ""}{formatCurrency(expanded.npv - base.npv)}
                 </span>
               </div>
