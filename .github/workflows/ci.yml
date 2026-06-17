@@ -129,6 +129,9 @@ jobs:
       - name: TypeScript check
         run: npx tsc --noEmit
 
+      - name: Unit tests
+        run: npm test
+
       - name: ESLint
         run: npm run lint -- --max-warnings=0
         continue-on-error: true   # Remover quando lint estiver limpo
