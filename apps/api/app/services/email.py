@@ -174,7 +174,9 @@ def _cash_flow_chart_html(projections: list) -> str:
     for p in pts:
         m = p["month"]
         label = str(m) if m % 6 == 0 or m == 1 else "&nbsp;"
-        labels += f'<td style="text-align:center;font-size:9px;color:#94a3b8;padding:2px 0">{label}</td>'
+        labels += (
+            f'<td style="text-align:center;font-size:9px;color:#94a3b8;padding:2px 0">{label}</td>'
+        )
 
     payback_html = (
         f'<p style="text-align:center;color:#059669;font-size:12px;font-weight:600;margin:6px 0 0 0">'
@@ -304,7 +306,9 @@ async def send_lead_confirmation_email(
 <p style="text-align:center">{_btn("mailto:grupo.mobilidadeeletrica@intelbras.com.br", "Falar com especialista")}</p>
 """,
     )
-    return await _send(to, "Sua simulação de retorno em estações de recarga - Intelbras Finance", html)
+    return await _send(
+        to, "Sua simulação de retorno em estações de recarga - Intelbras Finance", html
+    )
 
 
 async def send_lead_notification_email(
