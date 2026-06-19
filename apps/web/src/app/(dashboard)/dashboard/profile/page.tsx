@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+import useSWR from "swr";
 import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -10,12 +11,49 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import api from "@/lib/api";
 import { ROLE_LABELS } from "@/lib/permissions";
-import { UserCircle, Lock, Building2, Mail, ShieldCheck } from "lucide-react";
+import { UserCircle, Lock, Building2, Mail, ShieldCheck, ImageIcon, X, Loader2 } from "lucide-react";
 import { PasswordStrengthChecker, PasswordMatchIndicator } from "@/components/ui/PasswordStrength";
 import { passwordValid } from "@/lib/password";
 
 export default function ProfilePage() {
   const { user, refresh } = useAuth();
+
+  const { data: org, mutate: mutateOrg } = useSWR<{ settings?: { logo_url?: string } }>(
+    "/org",
+    (url: string) => api.get(url).then(r => r.data),
+  );
+  const canManage = user?.role === "owner" || user?.role === "admin";
+  const logoFileRef = useRef<HTMLInputElement>(null);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+
+  const uploadLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingLogo(true);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      await api.post("/org/logo", form);
+      await mutateOrg();
+      toast.success("Logo atualizada com sucesso");
+    } catch {
+      toast.error("Erro ao enviar logo. Verifique o formato e tamanho (máx. 300 KB).");
+    } finally {
+      setUploadingLogo(false);
+      if (logoFileRef.current) logoFileRef.current.value = "";
+    }
+  };
+
+  const removeLogo = async () => {
+    if (!confirm("Remover a logo da organização?")) return;
+    try {
+      await api.delete("/org/logo");
+      await mutateOrg();
+      toast.success("Logo removida");
+    } catch {
+      toast.error("Erro ao remover logo");
+    }
+  };
 
   const [name, setName] = useState(user?.name ?? "");
   const [nameLoading, setNameLoading] = useState(false);
@@ -211,6 +249,59 @@ export default function ProfilePage() {
               {pwLoading ? "Alterando..." : "Alterar senha"}
             </Button>
           </form>
+        </CardContent>
+      </Card>
+
+      {/* Organization logo */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <ImageIcon className="h-4 w-4 text-emerald-600" />
+            <CardTitle className="text-base">Logo da Organização</CardTitle>
+          </div>
+          <CardDescription className="text-xs mt-0.5">
+            Usada nos relatórios PDF exportados. PNG, JPEG, SVG ou WebP (máx. 300 KB).
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-4">
+            {org?.settings?.logo_url ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={org.settings.logo_url}
+                alt="Logo da organização"
+                className="h-14 max-w-[140px] object-contain border border-slate-200 rounded-lg p-1 bg-white"
+              />
+            ) : (
+              <div className="h-14 w-28 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center">
+                <ImageIcon className="h-6 w-6 text-slate-400" />
+              </div>
+            )}
+            <div className="flex gap-2">
+              <input
+                ref={logoFileRef}
+                type="file"
+                accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp"
+                className="hidden"
+                onChange={uploadLogo}
+              />
+              {canManage && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={uploadingLogo}
+                  onClick={() => logoFileRef.current?.click()}
+                >
+                  {uploadingLogo ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : org?.settings?.logo_url ? "Trocar logo" : "Enviar logo"}
+                </Button>
+              )}
+              {canManage && org?.settings?.logo_url && (
+                <Button size="sm" variant="ghost" className="text-red-500 hover:text-red-600" onClick={removeLogo}>
+                  <X className="h-3.5 w-3.5" />
+                </Button>
+              )}
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

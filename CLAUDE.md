@@ -34,6 +34,7 @@ pytest -k "test_login"             # teste por nome
 ruff check app/                     # lint
 ruff format app/                    # formatar
 ruff check app/ --fix               # corrigir automaticamente
+# Se ruff não estiver no PATH local: python -m ruff format app/
 
 # Migrations
 alembic revision --autogenerate -m "descrição"
@@ -246,6 +247,18 @@ Verificar com `python -c "import app.main"` antes de commitar — `py_compile` n
 O servidor de e-mail `@intelbras.com.br` rejeita mensagens com emoji no assunto.
 **Nunca adicionar emoji em `subject` ou corpo principal dos e-mails.**
 
+### PDF export — padrão `window.print()` com dark mode
+Usar `beforeprint` (síncrono, garantido antes do snapshot de print) — NÃO usar double `requestAnimationFrame` (timing não garantido).
+Padrão: registrar `beforeprint` → remover `.dark` + injetar `<style data-print-override>` com regras de tela (sem `@media print`) cobrindo `background-color`, `border-color`, `outline`, `box-shadow`. Em `afterprint`: restaurar `.dark` + remover `<style>` + desregistrar listeners.
+`globals.css @media print` já tem regras de CSS puro para fallback (border-color, background, variáveis CSS). As duas camadas (CSS estático + JS dinâmico no `beforeprint`) são complementares.
+Páginas com esse padrão: `relatorio/page.tsx` (handlePrint) e `investimento/page.tsx` (handlePrint e handleSimplePrint).
+
+### FastAPI — `CurrentUser` + `UploadFile`
+`CurrentUser = Annotated[User, Depends(...)]` — nunca adicionar `= Depends()` nem `= ...`. Em endpoints com `UploadFile`, colocar `current_user: CurrentUser` antes de `file: UploadFile = File(...)`.
+
+### Logo da organização
+Armazenada como data URL base64 em `org.settings["logo_url"]` (JSONB) — sem migration necessária. Endpoints em `organizations.py`: `POST /org/logo` e `DELETE /org/logo`. Frontend usa `useSWR("/org", ...)` e acessa `orgData?.settings?.logo_url` para exibir nos PDFs.
+
 ---
 
 ## Implementações futuras / pendentes
@@ -263,5 +276,29 @@ O servidor de e-mail `@intelbras.com.br` rejeita mensagens com emoji no assunto.
 ```
 Verde Intelbras: #06CB3F
 Verde escuro:    #163134
-Azul padrão:     #2563eb  (botões de e-mail)
+Azul padrão:     #2563eb  (não usar em e-mails — substituído pelo verde Intelbras)
 ```
+
+---
+
+## Dark mode — padrões e armadilhas
+
+- `style={{ color: "#163134" }}` em texto → **invisível em dark mode**. Usar `className="text-[#163134] dark:text-foreground"`.
+- `dark:bg-*-950` sem opacidade → fundo quase preto. Sempre usar `/30`, ex: `dark:bg-amber-950/30`.
+- `<select>` nativo precisa de `text-gray-900` explícito mesmo com `bg-white` — browsers aplicam dark mode no texto nativamente.
+- Heatmaps e paletas em dark mode: preferir `emerald` ao invés de `blue` para alinhar com tema Intelbras.
+
+---
+
+## Ferramentas locais
+
+- `ruff` não está no PATH local — usar `python -m ruff format app/` e `python -m ruff check app/`.
+- `gh` CLI não instalado — criar PRs pela URL: `https://github.com/DhioneCastilhoBarbosa/painel-financeiro-ev/pull/new/<branch>`.
+
+---
+
+## E-mail — simulador de leads
+
+- `run_simulation` e `run_simulation_multi` já retornam `monthly_projections` (24 meses) — disponível em `sim.get("monthly_projections", [])` no e-mail.
+- Gráfico de fluxo de caixa usa `<table>` com `bgcolor`/`height` (sem SVG/canvas) para compatibilidade com Outlook.
+- Nunca usar azul (`#2563eb`) nos e-mails — paleta é verde Intelbras: botões `#06CB3F`, cabeçalho `#163134`.

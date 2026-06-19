@@ -386,6 +386,12 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
   const { user } = useAuth();
   const [s, setS] = useState<SimpleInputs>(DEFAULT_SIMPLE);
 
+  const { data: orgData } = useSWR<{ settings?: { logo_url?: string } }>(
+    "/org",
+    (url: string) => api.get(url).then(rr => rr.data),
+  );
+  const orgLogoUrl = orgData?.settings?.logo_url ?? null;
+
   // Fetch simulator config for charger types & CAPEX suggestions
   const { data: simCfg } = useSWR<{ charger_configs: Record<string, ChargerConfigEntry> }>(
     "/leads/config/simulator",
@@ -490,48 +496,34 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     if (isPrintingRef.current) return;
     isPrintingRef.current = true;
     void recordPdfSimulation();
-    const originalTitle = document.title;
-    document.title = `Intelbras - Análise de Investimento de Eletroposto${s.establishment_name ? ` - ${s.establishment_name}` : ""}`;
-
-    const wasDark = document.documentElement.classList.contains("dark");
-    if (wasDark) document.documentElement.classList.remove("dark");
-
-    // Inject a real screen stylesheet — applies immediately with !important, bypassing any
-    // @media print timing issues where the browser may capture the page before the media
-    // query is evaluated. The injected rule wins over all Tailwind class-based backgrounds.
-    const printOverride = document.createElement("style");
-    printOverride.setAttribute("data-print-override", "");
-    printOverride.textContent =
-      "* { background-color: transparent !important; background-image: none !important; }" +
-      "html, body { background-color: white !important; }";
-    document.head.appendChild(printOverride);
-
+    const html = document.documentElement;
+    const wasDark = html.classList.contains("dark");
     const sidebar = document.querySelector<HTMLElement>("[data-sidebar]");
-    const aside = document.querySelector<HTMLElement>(".simplified-aside");
-    const toUnclip = Array.from(document.querySelectorAll<HTMLElement>(".h-screen,.h-full,.min-h-0,.overflow-hidden,.overflow-y-auto"));
-    const savedSidebar = sidebar ? sidebar.style.display : null;
-    const savedAside = aside ? aside.style.display : null;
-    const savedUnclip = toUnclip.map(el => ({ el, v: el.style.cssText }));
-    if (sidebar) sidebar.style.display = "none";
-    if (aside) aside.style.display = "none";
-    toUnclip.forEach(el => {
-      el.style.height = "auto";
-      el.style.maxHeight = "none";
-      el.style.minHeight = "0";
-      el.style.overflow = "visible";
-    });
 
-    const restore = () => {
-      isPrintingRef.current = false;
-      document.title = originalTitle;
-      if (wasDark) document.documentElement.classList.add("dark");
-      document.head.querySelector("[data-print-override]")?.remove();
-      if (sidebar && savedSidebar !== null) sidebar.style.display = savedSidebar;
-      if (aside && savedAside !== null) aside.style.display = savedAside;
-      savedUnclip.forEach(({ el, v }) => { el.style.cssText = v; });
+    const beforePrint = () => {
+      if (wasDark) html.classList.remove("dark");
+      if (sidebar) sidebar.style.display = "none";
+      const printStyle = document.createElement("style");
+      printStyle.setAttribute("data-print-override", "");
+      printStyle.textContent = [
+        "*, *::before, *::after { background-color: transparent !important; border-color: #e5e7eb !important; outline: none !important; box-shadow: none !important; }",
+        "html, body { background-color: #fff !important; color: #111 !important; }",
+      ].join("\n");
+      document.head.appendChild(printStyle);
     };
-    window.addEventListener("afterprint", restore, { once: true });
-    requestAnimationFrame(() => requestAnimationFrame(() => window.print()));
+
+    const afterPrint = () => {
+      if (wasDark) html.classList.add("dark");
+      if (sidebar) sidebar.style.display = "";
+      document.head.querySelector("[data-print-override]")?.remove();
+      window.removeEventListener("beforeprint", beforePrint);
+      window.removeEventListener("afterprint", afterPrint);
+      isPrintingRef.current = false;
+    };
+
+    window.addEventListener("beforeprint", beforePrint);
+    window.addEventListener("afterprint", afterPrint);
+    window.print();
   }
 
   function handleExportSimple() {
@@ -601,7 +593,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
   return (
     <div className="flex flex-1 min-h-0 overflow-hidden">
       {/* Inputs */}
-      <aside className="simplified-aside w-72 shrink-0 border-r dark:border-white/10 overflow-y-auto bg-slate-50/50 dark:bg-black/25 p-4 space-y-3 print:hidden">
+      <aside className="simplified-aside w-72 shrink-0 border-r dark:border-white/10 overflow-y-auto bg-white dark:bg-black/25 p-4 space-y-3 print:hidden">
         <div>
           <h2 className="font-semibold text-sm flex items-center gap-2">
             <Target className="h-4 w-4 text-primary" />
@@ -754,7 +746,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
       </aside>
 
       {/* Results */}
-      <main className="flex-1 overflow-y-auto bg-white dark:bg-background">
+      <main id="iv-simple-main" className="flex-1 overflow-y-auto bg-white dark:bg-background">
 
         {/* Print header — hidden on screen, visible in PDF */}
         <div className="hidden print:block px-0 pt-0 pb-4 mb-4 border-b-2 border-gray-300">
@@ -768,6 +760,10 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
               <p className="text-xs text-gray-500 mt-1">{stationsSummary} · CAPEX {formatCurrency(s.capex_total)}</p>
             </div>
             <div className="text-right text-xs text-gray-400 space-y-0.5">
+              {orgLogoUrl && (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={orgLogoUrl} alt="Logo da organização" style={{ display: "block", marginLeft: "auto", marginBottom: "6px", maxWidth: "35mm", maxHeight: "12mm", objectFit: "contain" }} />
+              )}
               <p>{new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}</p>
               {user && <p className="font-medium text-gray-600">{user.name}</p>}
               {user?.organization_name && <p>{user.organization_name}</p>}
@@ -1123,6 +1119,12 @@ export default function InvestimentoPage() {
     [allSavedConfigs]
   );
 
+  const { data: orgData } = useSWR<{ settings?: { logo_url?: string } }>(
+    "/org",
+    (url: string) => api.get(url).then(r => r.data),
+  );
+  const orgLogoUrl = orgData?.settings?.logo_url ?? null;
+
   // Operating hours as local slider state (minutes from midnight)
   const [startMin, setStartMin] = useState(8 * 60);   // 08:00
   const [endMin, setEndMin] = useState(18 * 60);       // 18:00
@@ -1186,38 +1188,35 @@ export default function InvestimentoPage() {
   }
 
   function handlePrint() {
-    const wasDark = document.documentElement.classList.contains("dark");
-    if (wasDark) document.documentElement.classList.remove("dark");
+    const html = document.documentElement;
+    const wasDark = html.classList.contains("dark");
+    const sidebar = document.querySelector<HTMLElement>("[data-sidebar]");
+    const inputPanel = document.querySelector<HTMLElement>("[data-input-panel]");
 
-    const toHide = [
-      document.querySelector<HTMLElement>("[data-sidebar]"),
-      document.querySelector<HTMLElement>("[data-input-panel]"),
-    ].filter((el): el is HTMLElement => !!el);
-
-    const toUnclip = Array.from(
-      document.querySelectorAll<HTMLElement>(
-        ".h-screen, .h-full, .min-h-0, .overflow-hidden, .overflow-y-auto"
-      )
-    );
-
-    const savedHide = toHide.map(el => ({ el, v: el.style.display }));
-    const savedUnclip = toUnclip.map(el => ({ el, v: el.style.cssText }));
-
-    toHide.forEach(el => { el.style.display = "none"; });
-    toUnclip.forEach(el => {
-      el.style.height = "auto";
-      el.style.maxHeight = "none";
-      el.style.minHeight = "0";
-      el.style.overflow = "visible";
-    });
-
-    const restore = () => {
-      if (wasDark) document.documentElement.classList.add("dark");
-      savedHide.forEach(({ el, v }) => { el.style.display = v; });
-      savedUnclip.forEach(({ el, v }) => { el.style.cssText = v; });
-      window.removeEventListener("afterprint", restore);
+    const beforePrint = () => {
+      if (wasDark) html.classList.remove("dark");
+      if (sidebar) sidebar.style.display = "none";
+      if (inputPanel) inputPanel.style.display = "none";
+      const printStyle = document.createElement("style");
+      printStyle.setAttribute("data-print-override", "");
+      printStyle.textContent = [
+        "*, *::before, *::after { background-color: transparent !important; border-color: #e5e7eb !important; outline: none !important; box-shadow: none !important; }",
+        "html, body { background-color: #fff !important; color: #111 !important; }",
+      ].join("\n");
+      document.head.appendChild(printStyle);
     };
-    window.addEventListener("afterprint", restore);
+
+    const afterPrint = () => {
+      if (wasDark) html.classList.add("dark");
+      if (sidebar) sidebar.style.display = "";
+      if (inputPanel) inputPanel.style.display = "";
+      document.head.querySelector("[data-print-override]")?.remove();
+      window.removeEventListener("beforeprint", beforePrint);
+      window.removeEventListener("afterprint", afterPrint);
+    };
+
+    window.addEventListener("beforeprint", beforePrint);
+    window.addEventListener("afterprint", afterPrint);
     window.print();
   }
 
@@ -1374,7 +1373,7 @@ export default function InvestimentoPage() {
         ) : (
         <div className="flex flex-1 min-h-0">
         {/* ── LEFT PANEL: Inputs ── */}
-        <aside data-input-panel className="w-72 shrink-0 border-r dark:border-white/10 overflow-y-auto bg-slate-50/50 dark:bg-black/25">
+        <aside data-input-panel className="w-72 shrink-0 border-r dark:border-white/10 overflow-y-auto bg-white dark:bg-black/25">
           <div className="p-4 border-b dark:border-white/10">
             <h2 className="font-semibold text-sm flex items-center gap-2">
               <Target className="h-4 w-4 text-primary" />
@@ -1933,7 +1932,7 @@ export default function InvestimentoPage() {
         </aside>
 
         {/* ── RIGHT PANEL: Results ── */}
-        <main className="flex-1 overflow-y-auto bg-white dark:bg-background">
+        <main id="iv-advanced-main" className="flex-1 overflow-y-auto bg-white dark:bg-background">
           {/* Print header — hidden on screen */}
           <div className="hidden print:flex items-start justify-between px-0 pt-0 pb-4 mb-2 border-b border-gray-300">
             <div>
@@ -1945,6 +1944,10 @@ export default function InvestimentoPage() {
               </p>
             </div>
             <div className="text-right text-xs text-gray-400">
+              {orgLogoUrl && (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={orgLogoUrl} alt="Logo da organização" style={{ display: "block", marginLeft: "auto", marginBottom: "6px", maxWidth: "40mm", maxHeight: "14mm", objectFit: "contain" }} />
+              )}
               <p>{new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}</p>
               {user?.name && <p className="mt-0.5">Gerado por: <span className="font-medium text-gray-600">{user.name}</span></p>}
               {user?.organization_name && <p className="mt-0.5">Organização: <span className="font-medium text-gray-600">{user.organization_name}</span></p>}

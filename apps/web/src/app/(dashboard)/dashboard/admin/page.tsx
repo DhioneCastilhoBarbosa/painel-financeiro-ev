@@ -106,6 +106,7 @@ const STATUS_BADGE: Record<string, { label: string; variant: "default" | "second
   active:    { label: "Ativo",      variant: "default" },
   suspended: { label: "Suspenso",   variant: "secondary" },
   blocked:   { label: "Bloqueado",  variant: "destructive" },
+  trial:     { label: "Trial",      variant: "outline" },
   trialing:  { label: "Trial",      variant: "outline" },
   past_due:  { label: "Em atraso",  variant: "destructive" },
   canceled:  { label: "Cancelado",  variant: "destructive" },
@@ -477,7 +478,7 @@ export default function AdminPage() {
                             {STATUS_BADGE[org.status]?.label ?? org.status}
                           </Badge>
                           <span className="text-xs text-muted-foreground">
-                            {PLAN_LABEL[org.subscription_plan ?? org.plan] ?? (org.subscription_plan ?? org.plan)}
+                            {PLAN_LABEL[(org.subscription_plan ?? org.plan)?.toLowerCase()] ?? (org.subscription_plan ?? org.plan)}
                           </span>
                         </div>
                         <p className="text-xs text-muted-foreground mt-0.5">
@@ -514,12 +515,14 @@ export default function AdminPage() {
                       {/* Actions */}
                       <div className="flex items-center gap-2 shrink-0">
                         <Select
-                          value={org.subscription_plan ?? org.plan}
+                          value={(org.subscription_plan ?? org.plan)?.toLowerCase()}
                           onValueChange={(v) => { if (v) updateOrgPlan(org.id, v); }}
                           disabled={loadingAction === `plan-${org.id}`}
                         >
                           <SelectTrigger className="h-8 w-32 text-xs">
-                            <SelectValue />
+                            <span className="truncate">
+                              {PLAN_LABEL[(org.subscription_plan ?? org.plan)?.toLowerCase()] ?? (org.subscription_plan ?? org.plan)}
+                            </span>
                           </SelectTrigger>
                           <SelectContent>
                             {["trial", "starter", "pro", "enterprise", "free"].map((p) => (

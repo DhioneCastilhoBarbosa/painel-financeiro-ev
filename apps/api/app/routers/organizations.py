@@ -1,8 +1,9 @@
+import base64
 import secrets
 import uuid
 from datetime import UTC, datetime, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -125,6 +126,47 @@ async def update_org(
             f"name={body.name}",
         )
     return {"message": "Organização atualizada"}
+
+
+@router.post("/logo")
+async def upload_org_logo(
+    current_user: CurrentUser,
+    db: AsyncSession = Depends(get_db),
+    file: UploadFile = File(...),
+):
+    """Salva a logo da organização como data URL em settings.logo_url."""
+    if current_user.role not in (UserRole.owner, UserRole.admin):
+        raise HTTPException(status_code=403, detail="Permissão insuficiente")
+    allowed = {"image/png", "image/jpeg", "image/jpg", "image/svg+xml", "image/webp"}
+    if file.content_type not in allowed:
+        raise HTTPException(
+            status_code=400, detail="Formato não suportado. Use PNG, JPEG, SVG ou WebP."
+        )
+    content = await file.read()
+    if len(content) > 300_000:
+        raise HTTPException(status_code=400, detail="Logo deve ter no máximo 300 KB")
+    b64 = base64.b64encode(content).decode()
+    data_url = f"data:{file.content_type};base64,{b64}"
+    org = await db.get(Organization, current_user.organization_id)
+    org.settings = {**org.settings, "logo_url": data_url}
+    await db.commit()
+    return {"logo_url": data_url}
+
+
+@router.delete("/logo")
+async def delete_org_logo(
+    current_user: CurrentUser,
+    db: AsyncSession = Depends(get_db),
+):
+    """Remove a logo da organização."""
+    if current_user.role not in (UserRole.owner, UserRole.admin):
+        raise HTTPException(status_code=403, detail="Permissão insuficiente")
+    org = await db.get(Organization, current_user.organization_id)
+    settings = dict(org.settings)
+    settings.pop("logo_url", None)
+    org.settings = settings
+    await db.commit()
+    return {"message": "Logo removida"}
 
 
 @router.get("/members", response_model=list[MemberResponse])

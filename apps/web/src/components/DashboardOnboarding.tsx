@@ -103,12 +103,12 @@ export function DashboardOnboarding({ hasFiles, hasAlerts }: Props) {
   const progressPct = Math.round((completedCount / steps.length) * 100);
 
   return (
-    <Card className="border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 to-slate-50 dark:from-blue-950/30 dark:to-slate-900">
+    <Card className="border-emerald-200 dark:border-primary/30 bg-gradient-to-br from-emerald-50 to-slate-50 dark:from-[#163134] dark:to-[#163134]">
       <CardContent className="pt-5 pb-5">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center shrink-0">
+            <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center shrink-0">
               <Zap className="h-5 w-5 text-white fill-current" />
             </div>
             <div>
@@ -130,9 +130,9 @@ export function DashboardOnboarding({ hasFiles, hasAlerts }: Props) {
         </div>
 
         {/* Progress bar */}
-        <div className="h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mb-5 overflow-hidden">
+        <div className="h-1.5 bg-slate-200 dark:bg-white/10 rounded-full mb-5 overflow-hidden">
           <div
-            className="h-full bg-blue-600 rounded-full transition-all duration-500"
+            className="h-full bg-primary rounded-full transition-all duration-500"
             style={{ width: `${progressPct}%` }}
           />
         </div>
@@ -145,7 +145,7 @@ export function DashboardOnboarding({ hasFiles, hasAlerts }: Props) {
               className={`flex items-start gap-3 p-3 rounded-lg border transition-colors ${
                 step.done
                   ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800"
-                  : "bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
+                  : "bg-white dark:bg-white/5 border-slate-200 dark:border-white/10"
               }`}
             >
               <div className={`mt-0.5 shrink-0 ${step.done ? "text-emerald-500" : "text-slate-400"}`}>

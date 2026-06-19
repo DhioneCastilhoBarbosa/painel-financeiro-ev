@@ -409,7 +409,7 @@ docker compose build api worker && docker compose up -d api worker`}</Pre>
               ["Task Queue",           "Celery 5 + Redis"],
               ["Banco de dados",       "TimescaleDB (PostgreSQL 16 + extensão time-series)"],
               ["Cache/Broker",         "Redis 7"],
-              ["E-mail",               "Resend"],
+              ["E-mail",               "SMTP — postal.intelbras.com.br (Resend como fallback)"],
               ["Pagamentos",           "Stripe"],
               ["Monitoramento",        "Sentry"],
               ["Rate limiting",        "slowapi (limita por IP real via X-Forwarded-For)"],
@@ -435,7 +435,12 @@ docker compose build api worker && docker compose up -d api worker`}</Pre>
               ["ALLOWED_ORIGINS",         "localhost:3000", "CORS — domínios do frontend separados por vírgula"],
               ["APP_URL",                 "localhost:3000", "URL pública do frontend (usada nos links de e-mail)"],
               ["STORAGE_BACKEND",         "local",          "local | s3 (Cloudflare R2 ou Amazon S3)"],
-              ["RESEND_API_KEY",          "(vazio)",        "API key do Resend — e-mails ficam em modo no-op sem isso"],
+              ["SMTP_HOST",               "postal.intelbras.com.br", "Servidor SMTP (tem prioridade sobre Resend)"],
+              ["SMTP_PORT",               "2525",           "Porta SMTP (2525 = STARTTLS Postal)"],
+              ["SMTP_USER",               "(vazio)",        "Usuário SMTP"],
+              ["SMTP_PASSWORD",           "(vazio)",        "Senha SMTP"],
+              ["SMTP_FROM",               "(vazio)",        "Endereço de envio (ex: licenca.cve@intelbras.com.br)"],
+              ["RESEND_API_KEY",          "(vazio)",        "API key do Resend — usado como fallback quando SMTP não está configurado"],
               ["STRIPE_SECRET_KEY",       "(vazio)",        "Chave secreta do Stripe — cobrança fica em modo no-op"],
               ["STRIPE_WEBHOOK_SECRET",   "(vazio)",        "Assinatura do webhook Stripe"],
               ["STRIPE_PRICE_STARTER",    "(vazio)",        "ID do preço Stripe do plano Starter (R$197/mês)"],
@@ -673,9 +678,13 @@ Margem Líquida     = Lucro Líquido / Receita Líquida × 100%`}</Formula>
           <H1 id="investimento">10. Análise de Investimento</H1>
           <P>Rota: <Code>/dashboard/investimento</Code> — analista, admin, owner.</P>
           <P>
-            Calculadora interativa completa que projeta mês a mês o retorno do investimento em carregadores EV.
-            Todos os cálculos são feitos no frontend (<Code>investimentoCalc.ts</Code>) via <Code>computeProject()</Code> — sem roundtrip de API.
+            Calculadora interativa disponível em dois modos selecionáveis no topo da página:
           </P>
+          <Ul>
+            <Li><strong>Análise Simplificada</strong> — estimativa rápida: selecione os tipos de carregador, defina CAPEX e ocupação estimada. Ideal para avaliação inicial de viabilidade. Gera PDF diretamente no navegador.</Li>
+            <Li><strong>Análise de Investimento</strong> — projeção completa mês a mês com OPEX detalhado, split de receita, impostos, financiamento parcelado, VPL, TIR e DRE. Todos os cálculos são feitos no frontend via <Code>investimentoCalc.ts</Code> / <Code>computeProject()</Code> — sem roundtrip de API.</Li>
+          </Ul>
+          <Note>A logo da organização (configurada em <Code>/dashboard/settings</Code>) é incluída automaticamente no cabeçalho do PDF exportado.</Note>
 
           <H2>Entradas: CAPEX</H2>
           <Table
@@ -926,9 +935,10 @@ GET /api/v1/payback/scenarios
           <H1 id="relatorio">12. Relatório PDF</H1>
           <P>Rota: <Code>/dashboard/relatorio</Code> — viewer, analista, admin, owner.</P>
           <P>
-            Gera um relatório executivo com os KPIs principais, gráficos de receita e ranking de estações, exportável em PDF. Utiliza <strong>ReportLab</strong> no backend para composição do documento.
+            Gera um relatório executivo com os KPIs principais, gráficos de receita e ranking de estações. O PDF é gerado diretamente no navegador via <Code>window.print()</Code> — sem roundtrip de API, sem espera de processamento.
           </P>
-          <Note>A geração de PDF é processada na API — pode levar alguns segundos para conjuntos de dados grandes.</Note>
+          <Note>Para melhor qualidade: no diálogo de impressão, selecione <strong>Salvar como PDF</strong>, margens <strong>Mínimas</strong> e ative <strong>Gráficos de fundo</strong>. O relatório é sempre exportado em modo claro, independente do tema ativo.</Note>
+          <Note>Se a organização tiver uma logo configurada em <Code>/dashboard/settings</Code>, ela aparece automaticamente no cabeçalho do PDF ao lado das informações do emissor.</Note>
 
 
           {/* ════════════════════════════════════════════════════════════════════
