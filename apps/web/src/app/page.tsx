@@ -1334,7 +1334,7 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-6 text-sm text-white/40">
             <Link href="/login" className="hover:text-white transition-colors">Entrar</Link>
-            <a href="mailto:contato@financedash.com.br" className="hover:text-white transition-colors">Contato</a>
+            <a href="mailto:grupo.mobilidadeeletrica@intelbras.com.br" className="hover:text-white transition-colors">Contato</a>
           </div>
         </div>
       </footer>

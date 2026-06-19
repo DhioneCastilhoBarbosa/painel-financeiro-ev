@@ -1,8 +1,10 @@
 ﻿"use client";
 
 import { PlanGate } from "@/components/PlanGate";
-import { useRef, useState } from "react";
-import { Printer, Download, BarChart2, TrendingUp, Users } from "lucide-react";
+import { useState } from "react";
+import useSWR from "swr";
+import api from "@/lib/api";
+import { Download, BarChart2, TrendingUp, Users, Printer } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -98,6 +100,11 @@ function RelatorioPageContent() {
   });
 
   const today = new Date().toLocaleDateString("pt-BR");
+  const { data: orgData } = useSWR<{ settings?: { logo_url?: string } }>(
+    "/org",
+    (url: string) => api.get(url).then(r => r.data),
+  );
+  const orgLogoUrl = orgData?.settings?.logo_url ?? null;
 
   // Temporarily strip the `.dark` class so reports always print/export in light mode
   const withLightMode = async (fn: () => void | Promise<void>) => {
@@ -114,12 +121,30 @@ function RelatorioPageContent() {
   const handlePrint = () => {
     const html = document.documentElement;
     const wasDark = html.classList.contains("dark");
-    if (wasDark) html.classList.remove("dark");
-    const restore = () => {
-      if (wasDark) html.classList.add("dark");
-      window.removeEventListener("afterprint", restore);
+    const sidebar = document.querySelector<HTMLElement>("[data-sidebar]");
+
+    const beforePrint = () => {
+      if (wasDark) html.classList.remove("dark");
+      if (sidebar) sidebar.style.display = "none";
+      const printStyle = document.createElement("style");
+      printStyle.setAttribute("data-print-override", "");
+      printStyle.textContent = [
+        "*, *::before, *::after { background-color: transparent !important; border-color: #e5e7eb !important; outline: none !important; box-shadow: none !important; }",
+        "html, body { background-color: #fff !important; color: #111 !important; }",
+      ].join("\n");
+      document.head.appendChild(printStyle);
     };
-    window.addEventListener("afterprint", restore);
+
+    const afterPrint = () => {
+      if (wasDark) html.classList.add("dark");
+      if (sidebar) sidebar.style.display = "";
+      document.head.querySelector("[data-print-override]")?.remove();
+      window.removeEventListener("beforeprint", beforePrint);
+      window.removeEventListener("afterprint", afterPrint);
+    };
+
+    window.addEventListener("beforeprint", beforePrint);
+    window.addEventListener("afterprint", afterPrint);
     window.print();
   };
 
@@ -127,12 +152,14 @@ function RelatorioPageContent() {
     <>
       <style>{`
         @media print {
+          html, body { background: white !important; }
           body * { visibility: hidden; }
           #report-content, #report-content * { visibility: visible; }
           #report-content {
             position: absolute; top: 0; left: 0; width: 100%;
             padding: 0; border: none !important;
             box-shadow: none !important; border-radius: 0 !important;
+            background: white !important;
           }
           .no-print { display: none !important; }
           @page { margin: 15mm; }
@@ -149,19 +176,13 @@ function RelatorioPageContent() {
           <div className="flex items-center gap-2">
             <FilterBar />
             <Button onClick={handlePrint} className="gap-2">
-              <Printer className="h-4 w-4" />
-              Imprimir / Salvar PDF
+              <Printer className="h-4 w-4" />Imprimir / Salvar PDF
             </Button>
           </div>
         </div>
 
-        <p className="text-xs text-muted-foreground no-print bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded p-2">
-          <strong>Dica:</strong> Clique em "Imprimir / Salvar PDF". No diálogo de impressão, selecione <strong>Salvar como PDF</strong> como destino.
-          Para melhor qualidade, defina margens como <em>Mínimas</em> e ative <em>Gráficos de fundo</em>.
-        </p>
-
         {/* Report */}
-        <div id="report-content" className="bg-white dark:bg-slate-900 p-8">
+        <div id="report-content" className="bg-white dark:bg-card p-8">
 
           {/* Cover / header */}
           <div className="flex items-start justify-between mb-6 pb-5 border-b-2 border-green-600">
@@ -180,6 +201,10 @@ function RelatorioPageContent() {
               </p>
             </div>
             <div className="text-right text-xs text-muted-foreground">
+              {orgLogoUrl && (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={orgLogoUrl} alt="Logo da organização" style={{ display: "block", marginLeft: "auto", marginBottom: "8px", maxWidth: "40mm", maxHeight: "14mm", objectFit: "contain" }} />
+              )}
               <p className="font-medium text-sm text-foreground">Emitido em {today}</p>
               {user?.name && <p className="mt-1">Gerado por: <span className="font-medium text-foreground">{user.name}</span></p>}
               {user?.organization_name && <p className="mt-0.5">Organização: <span className="font-medium text-foreground">{user.organization_name}</span></p>}
@@ -405,9 +430,9 @@ function RelatorioPageContent() {
               <div className="space-y-2">
                 {insightList.slice(0, 8).map((ins, i) => (
                   <div key={i} className={`flex gap-2 p-2 rounded text-xs ${
-                    ins.severity === "warning" ? "bg-amber-50 border border-amber-200 dark:bg-amber-950/30"
-                    : ins.severity === "success" ? "bg-emerald-50 border border-emerald-200 dark:bg-emerald-950/30"
-                    : "bg-blue-50 border border-blue-200 dark:bg-blue-950/30"
+                    ins.severity === "warning" ? "bg-amber-50 border border-amber-200 dark:bg-amber-950/30 dark:border-amber-800"
+                    : ins.severity === "success" ? "bg-emerald-50 border border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-800"
+                    : "bg-blue-50 border border-blue-200 dark:bg-blue-950/30 dark:border-blue-800"
                   }`}>
                     <Badge variant="outline" className={`text-[9px] shrink-0 h-fit ${
                       ins.severity === "warning" ? "border-amber-400 text-amber-700"
