@@ -265,12 +265,30 @@ interface SimpleInputs {
   stations: StationEntry[];
   n_chargers: number;
   power_kw: number;
+  // CAPEX
+  capex_mode?: "total" | "detailed";
   capex_total: number;
+  charger_value: number;
+  electrical_infra: number;
+  civil_work: number;
+  transformer: number;
+  electrical_protection: number;
+  homologation: number;
+  software_backend: number;
+  installation: number;
+  other_capex: number;
+  // Revenue
   tariff_per_kwh: number;
+  start_fee_per_session: number;
+  sessions_per_day: number;
   energy_cost_per_kwh: number;
   occupancy_pct: number;
   monthly_opex: number;
   revenue_split_pct: number;
+  // Tax
+  tax_rate_pct: number;
+  tax_regime?: "SN" | "LP" | "LR";
+  // Info
   establishment_name: string;
   location_type: string;
 }
@@ -279,12 +297,26 @@ const DEFAULT_SIMPLE: SimpleInputs = {
   stations: [],
   n_chargers: 1,
   power_kw: 60,
+  capex_mode: undefined,
   capex_total: 93500,
+  charger_value: 80000,
+  electrical_infra: 5000,
+  civil_work: 2000,
+  transformer: 0,
+  electrical_protection: 2000,
+  homologation: 1500,
+  software_backend: 1000,
+  installation: 2000,
+  other_capex: 0,
   tariff_per_kwh: 2.20,
+  start_fee_per_session: 0,
+  sessions_per_day: 10,
   energy_cost_per_kwh: 0.72,
   occupancy_pct: 30,
   monthly_opex: 300,
-  revenue_split_pct: 20,
+  revenue_split_pct: 6,
+  tax_rate_pct: 0,
+  tax_regime: undefined,
   establishment_name: "",
   location_type: "",
 };
@@ -315,6 +347,16 @@ interface SimpleScenario {
 
 function calcSimple(s: SimpleInputs, configs?: Record<string, ChargerConfigEntry>) {
   const baseOcc = s.occupancy_pct;
+  const taxRate = (s.tax_rate_pct ?? 0) / 100;
+  const taxBase: "revenue" | "profit" = s.tax_regime === "SN" ? "revenue" : "profit";
+
+  // Effective CAPEX: total override or sum of detailed components
+  const capexMode = s.capex_mode ?? "detailed";
+  const detailedCapexTotal =
+    (s.charger_value ?? 0) + (s.electrical_infra ?? 0) + (s.civil_work ?? 0) +
+    (s.transformer ?? 0) + (s.electrical_protection ?? 0) + (s.homologation ?? 0) +
+    (s.software_backend ?? 0) + (s.installation ?? 0) + (s.other_capex ?? 0);
+  const effective_capex = capexMode === "total" ? (s.capex_total ?? 0) : detailedCapexTotal;
 
   // Derive effective totals from stations or legacy n_chargers/power_kw
   let n_chargers: number;
@@ -332,20 +374,30 @@ function calcSimple(s: SimpleInputs, configs?: Record<string, ChargerConfigEntry
   const monthly_kwh_theoretical = total_power_kw * 24 * 30 * (baseOcc / 100);
   const monthly_kwh = monthly_kwh_theoretical * 0.5;
 
-  const monthly_revenue = monthly_kwh * s.tariff_per_kwh;
+  const monthly_session_fee = (s.start_fee_per_session ?? 0) * (s.sessions_per_day ?? 0) * 30 * (baseOcc / 100);
+  const monthly_revenue = monthly_kwh * s.tariff_per_kwh + monthly_session_fee;
   const monthly_energy  = monthly_kwh * s.energy_cost_per_kwh;
   const monthly_split   = monthly_revenue * (s.revenue_split_pct / 100);
-  const monthly_net     = monthly_revenue - monthly_energy - s.monthly_opex - monthly_split;
-  const payback_months  = monthly_net > 0 ? s.capex_total / monthly_net : null;
-  const roi_1y          = monthly_net > 0 ? ((monthly_net * 12) / s.capex_total) * 100 : 0;
+  const monthly_pre_tax = monthly_revenue - monthly_energy - s.monthly_opex - monthly_split;
+  const monthly_tax     = taxRate > 0
+    ? (taxBase === "revenue" ? monthly_revenue * taxRate : Math.max(0, monthly_pre_tax * taxRate))
+    : 0;
+  const monthly_net     = monthly_pre_tax - monthly_tax;
+  const payback_months  = monthly_net > 0 ? effective_capex / monthly_net : null;
+  const roi_1y          = monthly_net > 0 ? ((monthly_net * 12) / effective_capex) * 100 : 0;
   const horizon         = Math.min(84, Math.ceil((payback_months ?? 60) * 2.5));
 
   function netForOcc(occ: number): number {
     const kwh = total_power_kw * 24 * 30 * (occ / 100) * 0.5;
-    const rev = kwh * s.tariff_per_kwh;
+    const sessionFee = (s.start_fee_per_session ?? 0) * (s.sessions_per_day ?? 0) * 30 * (occ / 100);
+    const rev = kwh * s.tariff_per_kwh + sessionFee;
     const eng = kwh * s.energy_cost_per_kwh;
     const spl = rev * (s.revenue_split_pct / 100);
-    return rev - eng - s.monthly_opex - spl;
+    const preTax = rev - eng - s.monthly_opex - spl;
+    const tax = taxRate > 0
+      ? (taxBase === "revenue" ? rev * taxRate : Math.max(0, preTax * taxRate))
+      : 0;
+    return preTax - tax;
   }
 
   const OFFSETS: { off: number; color: string }[] = [
@@ -366,19 +418,20 @@ function calcSimple(s: SimpleInputs, configs?: Record<string, ChargerConfigEntry
       key: `occ_${occ}`,
       label: `${occ}%`,
       monthly_net: net,
-      payback_months: net > 0 ? s.capex_total / net : null,
+      payback_months: net > 0 ? effective_capex / net : null,
     });
   }
 
   const chart = Array.from({ length: horizon + 1 }, (_, i) => {
-    const row: Record<string, number> = { mes: i, acumulado: Math.round(monthly_net * i - s.capex_total) };
-    for (const sc of scenarios) row[sc.key] = Math.round(sc.monthly_net * i - s.capex_total);
+    const row: Record<string, number> = { mes: i, acumulado: Math.round(monthly_net * i - effective_capex) };
+    for (const sc of scenarios) row[sc.key] = Math.round(sc.monthly_net * i - effective_capex);
     return row;
   });
 
   return {
-    monthly_kwh, monthly_kwh_theoretical, monthly_revenue, monthly_energy, monthly_split,
-    monthly_net, payback_months, roi_1y, baseOcc, n_chargers, total_power_kw, scenarios, chart,
+    monthly_kwh, monthly_kwh_theoretical, monthly_session_fee, monthly_revenue, monthly_energy,
+    monthly_split, monthly_tax, monthly_pre_tax, monthly_net, payback_months, roi_1y,
+    baseOcc, n_chargers, total_power_kw, scenarios, chart, effective_capex, detailedCapexTotal,
   };
 }
 
@@ -429,12 +482,17 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     return s.stations.reduce((sum, st) => sum + (chargerConfigs[st.type]?.price_brl ?? 0) * st.quantity, 0);
   }, [s.stations, chargerConfigs]);
 
-  // Auto-fill CAPEX from suggestion when stations change and CAPEX wasn't manually edited
+  // Auto-fill CAPEX from suggestion when stations change
   const prevSuggestedCapex = useRef(suggestedCapex);
   useEffect(() => {
     if (suggestedCapex > 0 && suggestedCapex !== prevSuggestedCapex.current) {
       prevSuggestedCapex.current = suggestedCapex;
-      setS(prev => ({ ...prev, capex_total: suggestedCapex }));
+      setS(prev => {
+        if ((prev.capex_mode ?? "detailed") === "detailed") {
+          return { ...prev, charger_value: suggestedCapex };
+        }
+        return { ...prev, capex_total: suggestedCapex };
+      });
     }
   }, [suggestedCapex]);
 
@@ -549,7 +607,11 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
         const data = parsed.inputs ?? parsed;
         if (data._mode !== "simple") { toast.error("Este arquivo é de uma análise avançada. Use na aba Avançada."); return; }
         const { _mode: _ignored, ...rest } = data as Record<string, unknown>;
-        setS(prev => ({ ...DEFAULT_SIMPLE, ...prev, ...(rest as Partial<SimpleInputs>) }));
+        const imported = rest as Partial<SimpleInputs>;
+        if (imported.capex_total !== undefined && imported.charger_value === undefined) {
+          imported.capex_mode = "total";
+        }
+        setS(prev => ({ ...DEFAULT_SIMPLE, ...prev, ...imported }));
         toast.success("Projeto importado");
       } catch { toast.error("Arquivo inválido. Importe um .fdproj exportado por esta ferramenta."); }
     };
@@ -572,7 +634,12 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
   function handleLoadSimple(cfg: SavedConfig) {
     const { _mode, ...rest } = cfg.inputs;
     void _mode;
-    setS(prev => ({ ...DEFAULT_SIMPLE, ...prev, ...(rest as Partial<SimpleInputs>) }));
+    const data = rest as Partial<SimpleInputs>;
+    // Backward compat: old saves have capex_total but no charger_value → use total mode
+    if (data.capex_total !== undefined && data.charger_value === undefined) {
+      data.capex_mode = "total";
+    }
+    setS(prev => ({ ...DEFAULT_SIMPLE, ...prev, ...data }));
     setShowSavePanel(false);
     toast.success(`Projeto "${cfg.name}" carregado`);
   }
@@ -689,9 +756,15 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
               })()}
               <div className="px-3 py-2 text-[0.65rem] text-muted-foreground flex items-center justify-between">
                 <span>{stationsSummary}</span>
-                {suggestedCapex > 0 && suggestedCapex !== s.capex_total && (
+                {suggestedCapex > 0 && suggestedCapex !== ((s.capex_mode ?? "detailed") === "detailed" ? s.charger_value : s.capex_total) && (
                   <button type="button" className="text-primary hover:underline"
-                    onClick={() => setV("capex_total", suggestedCapex)}>
+                    onClick={() => {
+                      if ((s.capex_mode ?? "detailed") === "detailed") {
+                        setV("charger_value", suggestedCapex);
+                      } else {
+                        setV("capex_total", suggestedCapex);
+                      }
+                    }}>
                     Usar sugerido
                   </button>
                 )}
@@ -700,15 +773,75 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
           )}
         </div>
 
-        {/* CAPEX */}
-        <NumField label="CAPEX total" value={s.capex_total} onChange={v => setV("capex_total", v)} prefix="R$"
-          help="Investimento inicial total. O valor sugerido é baseado nos equipamentos selecionados e pode ser ajustado."
-          hint={suggestedCapex > 0 ? `Sugerido: ${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(suggestedCapex)}` : undefined} />
+        {/* CAPEX Composition */}
+        <div className="flex items-center justify-between gap-1.5">
+          <div className="flex items-center gap-1.5">
+            <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">Composição do CAPEX</p>
+            <Help text="'Total': insira o valor global do investimento. 'Detalhado': especifique cada componente." />
+          </div>
+          <div className="flex rounded-md border dark:border-white/15 overflow-hidden text-[0.6rem]">
+            {(["total", "detailed"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => setV("capex_mode", m)}
+                className={`px-2 py-1 transition-colors ${(s.capex_mode ?? "detailed") === m
+                  ? "bg-primary text-white font-medium"
+                  : "text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10"}`}
+              >
+                {m === "total" ? "Total" : "Detalhado"}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {(s.capex_mode ?? "detailed") === "total" ? (
+          <>
+            <NumField label="CAPEX Total" value={s.capex_total} onChange={v => setV("capex_total", v)} prefix="R$"
+              help="Valor total do investimento inicial (carregadores, infra, instalação, etc.). Para especificar cada componente, alterne para 'Detalhado'." />
+            <p className="text-[0.6rem] text-muted-foreground -mt-1">
+              Equivalente detalhado: {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(r.detailedCapexTotal)} (soma dos campos detalhados)
+            </p>
+          </>
+        ) : (
+          <>
+            <NumField label="Carregadores" value={s.charger_value} onChange={v => setV("charger_value", v)} prefix="R$"
+              help="Custo total de aquisição de todos os equipamentos de recarga (hardware)." />
+            <NumField label="Infraestrutura elétrica" value={s.electrical_infra} onChange={v => setV("electrical_infra", v)} prefix="R$"
+              help="Cabeamento, quadros elétricos, eletrodutos e materiais para distribuição de energia até os carregadores." />
+            <NumField label="Obra civil" value={s.civil_work} onChange={v => setV("civil_work", v)} prefix="R$"
+              help="Adequação do espaço físico: alvenaria, piso, proteção física dos equipamentos." />
+            <NumField label="Transformador" value={s.transformer} onChange={v => setV("transformer", v)} prefix="R$"
+              help="Transformador de energia elétrica, quando necessário para adequar a tensão ou aumentar a demanda disponível." />
+            <NumField label="Proteção elétrica" value={s.electrical_protection} onChange={v => setV("electrical_protection", v)} prefix="R$"
+              help="Dispositivos de proteção: DPS, disjuntores, aterramento e SPDA (para-raios)." />
+            <NumField label="Homologações" value={s.homologation} onChange={v => setV("homologation", v)} prefix="R$"
+              help="Taxas e projetos de aprovação junto à concessionária de energia, prefeitura e órgãos reguladores." />
+            <NumField label="Software/Backend" value={s.software_backend} onChange={v => setV("software_backend", v)} prefix="R$"
+              help="Licença ou implantação de plataforma OCPP/OCPI para gestão e monitoramento remoto dos carregadores." />
+            <NumField label="Instalação" value={s.installation} onChange={v => setV("installation", v)} prefix="R$"
+              help="Mão de obra de instalação, comissionamento e testes dos equipamentos." />
+            <NumField label="Outros" value={s.other_capex} onChange={v => setV("other_capex", v)} prefix="R$" />
+          </>
+        )}
+
+        <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/40 p-3">
+          <div className="flex justify-between text-xs">
+            <span className="text-muted-foreground">CAPEX Total</span>
+            <span className="font-bold text-emerald-700 dark:text-emerald-400">{formatCurrency(r.effective_capex)}</span>
+          </div>
+        </div>
 
         <Separator />
 
         <NumField label="Tarifa cobrada" value={s.tariff_per_kwh} onChange={v => setV("tariff_per_kwh", v)} prefix="R$" suffix="/kWh" step={0.05}
           help="Preço cobrado ao usuário final por kWh carregado." />
+        <NumField label="Tarifa de início de recarga" value={s.start_fee_per_session} onChange={v => setV("start_fee_per_session", v)} step={0.5} prefix="R$" suffix="/sessão"
+          help="Valor fixo cobrado por sessão iniciada, independente do kWh consumido. Escala proporcionalmente com a ocupação." />
+        {s.start_fee_per_session > 0 && (
+          <NumField label="Sessões por dia (100% ocup.)" value={s.sessions_per_day} onChange={v => setV("sessions_per_day", Math.max(0, v))} step={1}
+            help="Número total de sessões de recarga por dia em plena capacidade. Escala proporcionalmente com a ocupação para o cálculo da tarifa de início." />
+        )}
         <NumField label="Custo de energia" value={s.energy_cost_per_kwh} onChange={v => setV("energy_cost_per_kwh", v)} prefix="R$" suffix="/kWh" step={0.01}
           help="Tarifa de energia elétrica paga à concessionária." />
 
@@ -741,8 +874,52 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
         <Separator />
         <NumField label="OPEX mensal (fixo)" value={s.monthly_opex} onChange={v => setV("monthly_opex", v)} prefix="R$"
           help="Soma de todos os custos fixos mensais: manutenção, internet, aluguel, etc." />
-        <NumField label="Split de receita" value={s.revenue_split_pct} onChange={v => setV("revenue_split_pct", Math.min(100, v))} suffix="%" step={1}
-          help="% da receita bruta repassada ao estabelecimento parceiro (dono do espaço). Inclua também impostos (ex.: Simples Nacional ~6-15%) e taxa da plataforma de gestão (ex.: 3-10%). O padrão de 20% é uma estimativa comum que cobre esses custos combinados." />
+        <NumField label="OPEX mensal (variável)" value={s.revenue_split_pct} onChange={v => setV("revenue_split_pct", Math.min(100, v))} suffix="% da receita" step={0.5}
+          help="Custos variáveis mensais expressos como % da receita bruta: taxa da plataforma de gestão, gateway de pagamento, repasse ao estabelecimento parceiro, etc." />
+
+        <Separator />
+
+        {/* Taxes */}
+        <div className="flex items-center gap-1.5">
+          <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">Impostos</p>
+          <Help text="Alíquota efetiva de imposto sobre o lucro operacional (LP/LR) ou sobre a receita bruta (SN). Use 0 para ignorar." />
+        </div>
+        <NumField label="Alíquota efetiva de imposto" value={s.tax_rate_pct} onChange={v => setV("tax_rate_pct", Math.max(0, Math.min(100, v)))} step={0.5} suffix="%" />
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs font-medium text-slate-600 dark:text-slate-400 flex-1">Regime tributário</label>
+            <Help text="SN (Simples Nacional): imposto sobre a receita bruta. LP (Lucro Presumido): imposto sobre o lucro. LR (Lucro Real): imposto sobre o lucro real apurado." />
+          </div>
+          <select
+            value={s.tax_regime ?? "SN"}
+            onChange={e => setV("tax_regime", e.target.value as "SN" | "LP" | "LR")}
+            className="w-full rounded-lg border border-input bg-transparent px-2 py-1.5 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+          >
+            <option value="SN">SN — Simples Nacional (sobre a receita)</option>
+            <option value="LP">LP — Lucro Presumido (sobre o lucro)</option>
+            <option value="LR">LR — Lucro Real (sobre o lucro)</option>
+          </select>
+        </div>
+        <div className="rounded-lg bg-slate-100 dark:bg-black/20 p-3 space-y-1.5 text-xs text-muted-foreground">
+          <p className="font-semibold text-slate-600 dark:text-slate-400">Referências de alíquota</p>
+          <div className="flex justify-between"><span>Simples Nacional</span><span>6–15%</span></div>
+          <div className="flex justify-between"><span>Lucro Presumido</span><span>~15%</span></div>
+          <div className="flex justify-between"><span>Lucro Real</span><span>25–34%</span></div>
+        </div>
+        {s.tax_rate_pct > 0 && (
+          <div className="rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-3 space-y-1 text-xs">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Imposto/mês (est.)</span>
+              <span className="font-medium text-amber-600 dark:text-amber-400">{formatCurrency(r.monthly_tax)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Lucro pós-imposto (est.)</span>
+              <span className={`font-medium ${r.monthly_net >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}`}>
+                {formatCurrency(r.monthly_net)}
+              </span>
+            </div>
+          </div>
+        )}
       </aside>
 
       {/* Results */}
@@ -757,7 +934,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
               <h1 className="text-base font-bold text-black">Análise de Investimento de Eletropostos - Payback</h1>
               {s.establishment_name && <p className="text-sm font-semibold text-gray-700">{s.establishment_name}</p>}
               {s.location_type && <p className="text-xs text-gray-500">{s.location_type}</p>}
-              <p className="text-xs text-gray-500 mt-1">{stationsSummary} · CAPEX {formatCurrency(s.capex_total)}</p>
+              <p className="text-xs text-gray-500 mt-1">{stationsSummary} · CAPEX {formatCurrency(r.effective_capex)}</p>
             </div>
             <div className="text-right text-xs text-gray-400 space-y-0.5">
               {orgLogoUrl && (
@@ -789,7 +966,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="outline" className="text-xs">{stationsSummary}</Badge>
-              <Badge variant="outline" className="text-xs">CAPEX {formatCurrency(s.capex_total)}</Badge>
+              <Badge variant="outline" className="text-xs">CAPEX {formatCurrency(r.effective_capex)}</Badge>
               <Badge variant="outline" className="text-xs">Ocup. {s.occupancy_pct}%</Badge>
             </div>
           </div>
@@ -876,7 +1053,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: "Receita mensal (est.)", value: formatCurrency(r.monthly_revenue), color: "blue" as const },
-            { label: "Custo mensal total", value: formatCurrency(r.monthly_energy + s.monthly_opex + r.monthly_split), color: "amber" as const },
+            { label: "Custo mensal total", value: formatCurrency(r.monthly_energy + s.monthly_opex + r.monthly_split + r.monthly_tax), color: "amber" as const },
             { label: "Lucro líquido/mês", value: formatCurrency(r.monthly_net), color: r.monthly_net >= 0 ? "emerald" as const : "red" as const },
             { label: "Payback simples", value: fmtPb(r.payback_months), color: pbColor as "emerald" | "blue" | "amber" | "red" | "slate" | "purple" },
           ].map(({ label, value, color }) => (
@@ -891,10 +1068,15 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
             <CardContent className="space-y-2 text-sm">
               {([
                 ["kWh consumido/mês (est.)", `${Math.round(r.monthly_kwh).toLocaleString("pt-BR")} kWh`, "", "Calculado como 50% do kWh teórico máximo (potência × 24h × 30 × ocupação). Na prática, os veículos não operam à potência máxima durante toda a sessão — a potência cai ao final da recarga — resultando nesta redução média de 50%."],
-                ["Receita bruta", formatCurrency(r.monthly_revenue), "text-blue-600 dark:text-blue-400"],
+                ...(r.monthly_session_fee > 0 ? [
+                  ["Receita kWh", formatCurrency(r.monthly_revenue - r.monthly_session_fee), "text-blue-600 dark:text-blue-400"] as [string, string, string, string?],
+                  ["(+) Tarifa de início", formatCurrency(r.monthly_session_fee), "text-blue-500 dark:text-blue-300"] as [string, string, string, string?],
+                ] : []),
+                ["Receita bruta", formatCurrency(r.monthly_revenue), "text-blue-600 dark:text-blue-400 font-medium"],
                 ["(-) Custo de energia", formatCurrency(r.monthly_energy), "text-red-500 dark:text-red-400"],
                 ["(-) OPEX fixo", formatCurrency(s.monthly_opex), "text-red-500 dark:text-red-400"],
-                ...(r.monthly_split > 0 ? [["(-) Split de receita", formatCurrency(r.monthly_split), "text-red-500 dark:text-red-400"] as [string, string, string, string?]] : []),
+                ...(r.monthly_split > 0 ? [["(-) OPEX variável", formatCurrency(r.monthly_split), "text-red-500 dark:text-red-400"] as [string, string, string, string?]] : []),
+                ...(r.monthly_tax > 0 ? [["(-) Impostos", formatCurrency(r.monthly_tax), "text-red-500 dark:text-red-400"] as [string, string, string, string?]] : []),
                 ["= Lucro líquido/mês", formatCurrency(r.monthly_net), r.monthly_net >= 0 ? "text-emerald-600 dark:text-emerald-400 font-bold" : "text-red-500 dark:text-red-400 font-bold"],
                 ["ROI anual estimado", `${r.roi_1y.toFixed(1)}%`, r.roi_1y >= 20 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-500 dark:text-amber-400"],
               ] as [string, string, string, string?][]).map(([label, val, cls, help]) => (
@@ -910,7 +1092,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
             <CardHeader className="pb-2"><CardTitle className="text-sm">Resumo do Investimento</CardTitle></CardHeader>
             <CardContent className="space-y-2 text-sm">
               {([
-                ["CAPEX total", formatCurrency(s.capex_total), ""],
+                ["CAPEX total", formatCurrency(r.effective_capex), ""],
                 ["Capacidade instalada", `${r.total_power_kw.toFixed(1).replace(".0","")} kW`, ""],
                 ["Lucro mensal líquido", formatCurrency(r.monthly_net), r.monthly_net >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"],
                 ["Payback simples", fmtPb(r.payback_months), r.payback_months && r.payback_months <= 48 ? "text-emerald-600 dark:text-emerald-400 font-bold" : "text-amber-500 dark:text-amber-400 font-bold"],
@@ -922,10 +1104,9 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                 </div>
               ))}
               <p className="text-[0.7rem] text-muted-foreground leading-snug pt-1">
-                <strong>Sobre o CAPEX:</strong> representa o investimento inicial total do projeto,
-                compondo equipamentos (carregadores), infraestrutura elétrica, obra civil,
-                transformador/proteção, homologações, software/backend e mão de obra de instalação.
-                Ajuste o valor conforme os orçamentos reais de seus fornecedores.
+                <strong>Sobre o CAPEX:</strong> representa o investimento inicial total do projeto.
+                Use o modo <strong>Detalhado</strong> na barra lateral para especificar cada componente
+                (equipamentos, infra elétrica, obra civil, instalação, etc.) e ajuste conforme os orçamentos reais.
               </p>
               {r.monthly_net <= 0 && (
                 <p className="text-xs text-red-500 dark:text-red-400 pt-1">⚠ O projeto não gera retorno com os parâmetros atuais. Revise a tarifa, ocupação ou OPEX.</p>
@@ -1038,8 +1219,8 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                     const annualRevenue = r.monthly_revenue * 12;
                     const annualNet = r.monthly_net * 12;
                     const cumNet = annualNet * year;
-                    const roiCumulative = s.capex_total > 0 ? (cumNet / s.capex_total) * 100 : 0;
-                    const cumReturn = cumNet - s.capex_total;
+                    const roiCumulative = r.effective_capex > 0 ? (cumNet / r.effective_capex) * 100 : 0;
+                    const cumReturn = cumNet - r.effective_capex;
                     return (
                       <tr key={year} className="hover:bg-muted/30">
                         <td className="px-4 py-2.5 font-medium">Ano {year}</td>
