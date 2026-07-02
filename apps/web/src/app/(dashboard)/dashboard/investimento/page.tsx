@@ -297,16 +297,17 @@ const DEFAULT_SIMPLE: SimpleInputs = {
   stations: [],
   n_chargers: 1,
   power_kw: 60,
-  capex_mode: undefined,
-  capex_total: 93500,
-  charger_value: 80000,
-  electrical_infra: 5000,
-  civil_work: 2000,
+
+  capex_mode: "total",
+  capex_total: 0,
+  charger_value: 0,
+  electrical_infra: 0,
+  civil_work: 0,
   transformer: 0,
-  electrical_protection: 2000,
-  homologation: 1500,
-  software_backend: 1000,
-  installation: 2000,
+  electrical_protection: 0,
+  homologation: 0,
+  software_backend: 0,
+  installation: 0,
   other_capex: 0,
   tariff_per_kwh: 2.20,
   start_fee_per_session: 0,
@@ -351,7 +352,7 @@ function calcSimple(s: SimpleInputs, configs?: Record<string, ChargerConfigEntry
   const taxBase: "revenue" | "profit" = s.tax_regime === "SN" ? "revenue" : "profit";
 
   // Effective CAPEX: total override or sum of detailed components
-  const capexMode = s.capex_mode ?? "detailed";
+  const capexMode = s.capex_mode ?? "total";
   const detailedCapexTotal =
     (s.charger_value ?? 0) + (s.electrical_infra ?? 0) + (s.civil_work ?? 0) +
     (s.transformer ?? 0) + (s.electrical_protection ?? 0) + (s.homologation ?? 0) +
@@ -482,7 +483,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
     return s.stations.reduce((sum, st) => sum + (chargerConfigs[st.type]?.price_brl ?? 0) * st.quantity, 0);
   }, [s.stations, chargerConfigs]);
 
-  // Auto-fill CAPEX from suggestion when stations change
+  // Auto-fill capex_total from suggestion when stations change
   const prevSuggestedCapex = useRef(suggestedCapex);
   useEffect(() => {
     if (suggestedCapex > 0 && suggestedCapex !== prevSuggestedCapex.current) {
@@ -785,7 +786,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
                 key={m}
                 type="button"
                 onClick={() => setV("capex_mode", m)}
-                className={`px-2 py-1 transition-colors ${(s.capex_mode ?? "detailed") === m
+                className={`px-2 py-1 transition-colors ${(s.capex_mode ?? "total") === m
                   ? "bg-primary text-white font-medium"
                   : "text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10"}`}
               >
@@ -795,7 +796,7 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
           </div>
         </div>
 
-        {(s.capex_mode ?? "detailed") === "total" ? (
+        {(s.capex_mode ?? "total") === "total" ? (
           <>
             <NumField label="CAPEX Total" value={s.capex_total} onChange={v => setV("capex_total", v)} prefix="R$"
               help="Valor total do investimento inicial (carregadores, infra, instalação, etc.). Para especificar cada componente, alterne para 'Detalhado'." />
