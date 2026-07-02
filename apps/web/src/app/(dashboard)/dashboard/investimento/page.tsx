@@ -297,8 +297,9 @@ const DEFAULT_SIMPLE: SimpleInputs = {
   stations: [],
   n_chargers: 1,
   power_kw: 60,
+
   capex_mode: "total",
-  capex_total: 93500,
+  capex_total: 0,
   charger_value: 0,
   electrical_infra: 0,
   civil_work: 0,
@@ -487,7 +488,12 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
   useEffect(() => {
     if (suggestedCapex > 0 && suggestedCapex !== prevSuggestedCapex.current) {
       prevSuggestedCapex.current = suggestedCapex;
-      setS(prev => ({ ...prev, capex_total: suggestedCapex }));
+      setS(prev => {
+        if ((prev.capex_mode ?? "detailed") === "detailed") {
+          return { ...prev, charger_value: suggestedCapex };
+        }
+        return { ...prev, capex_total: suggestedCapex };
+      });
     }
   }, [suggestedCapex]);
 
@@ -751,9 +757,15 @@ function SimplifiedAnalysis({ formatCurrency }: { formatCurrency: (v: number) =>
               })()}
               <div className="px-3 py-2 text-[0.65rem] text-muted-foreground flex items-center justify-between">
                 <span>{stationsSummary}</span>
-                {suggestedCapex > 0 && suggestedCapex !== s.capex_total && (
+                {suggestedCapex > 0 && suggestedCapex !== ((s.capex_mode ?? "detailed") === "detailed" ? s.charger_value : s.capex_total) && (
                   <button type="button" className="text-primary hover:underline"
-                    onClick={() => setV("capex_total", suggestedCapex)}>
+                    onClick={() => {
+                      if ((s.capex_mode ?? "detailed") === "detailed") {
+                        setV("charger_value", suggestedCapex);
+                      } else {
+                        setV("capex_total", suggestedCapex);
+                      }
+                    }}>
                     Usar sugerido
                   </button>
                 )}
